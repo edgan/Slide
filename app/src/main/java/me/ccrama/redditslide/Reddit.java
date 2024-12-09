@@ -73,8 +73,6 @@ import me.ccrama.redditslide.util.LogUtil;
 import me.ccrama.redditslide.util.NetworkUtil;
 import me.ccrama.redditslide.util.SortingUtil;
 import me.ccrama.redditslide.util.UpgradeUtil;
-import me.ccrama.redditslide.util.billing.IabHelper;
-import me.ccrama.redditslide.util.billing.IabResult;
 import okhttp3.Dns;
 import okhttp3.OkHttpClient;
 
@@ -91,7 +89,6 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
     public static final String SHARED_PREF_IS_MOD            = "is_mod";
     public static Cache videoCache;
 
-    public static IabHelper mHelper;
     public static       long enter_animation_time            = enter_animation_time_original;
     public static final int  enter_animation_time_multiplier = 1;
 
@@ -449,10 +446,6 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
         doLanguages();
         lastPosition = new ArrayList<>();
 
-        if (BuildConfig.FLAVOR == "withGPlay") {
-            new SetupIAB().execute();
-        }
-
         if (!appRestart.contains("startScreen")) {
             Authentication.isLoggedIn = appRestart.getBoolean("loggedin", false);
             Authentication.name = appRestart.getString("name", "LOGGEDOUT");
@@ -559,29 +552,6 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
                 notificationManager.createNotificationChannel(notificationChannel);
             }
     }
-
-    private static class SetupIAB extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            if (mHelper == null) {
-                try {
-                    mHelper = new IabHelper(getAppContext(),
-                            SecretConstants.getBase64EncodedPublicKey(getAppContext()));
-                    mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
-                        public void onIabSetupFinished(IabResult result) {
-                            if (!result.isSuccess()) {
-                                LogUtil.e("Problem setting up In-app Billing: " + result);
-                            }
-                        }
-                    });
-                } catch (Exception ignored) {
-                    ignored.printStackTrace();
-                }
-            }
-            return null;
-        }
-    }
-
 
     //IPV6 workaround by /u/talklittle
     public static class GfycatIpv4Dns implements Dns {

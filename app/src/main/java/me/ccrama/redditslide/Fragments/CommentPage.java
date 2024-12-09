@@ -693,7 +693,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
         });
 
         toolbar.setTitle(subreddit);
-        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_material);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

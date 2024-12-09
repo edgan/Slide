@@ -66,7 +66,7 @@ public class Inbox extends BaseActivityAnim {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case (R.id.home):
+            case (android.R.id.home):
                 onBackPressed();
                 break;
             case (R.id.notifs):

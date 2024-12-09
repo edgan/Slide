@@ -141,6 +141,9 @@ public class SettingValues {
     public static final String PREF_ALWAYS_SHOW_FAB        = "alwaysShowFAB";
     public static final String PREF_HIGH_COLORSPACE_IMAGES = "highMemoryImages";
 
+    public static final String PREF_REDDIT_CLIENT_ID_OVERRIDE = "redditClientOverride";
+    public static String redditClientIdOverride = "";
+
     public static CreateCardView.CardEnum defaultCardView;
     public static Sorting                 defaultSorting;
     public static TimePeriod              timePeriod;
@@ -281,6 +284,8 @@ public class SettingValues {
 
     public static void setAllValues(SharedPreferences settings) {
         prefs = settings;
+
+        redditClientIdOverride = settings.getString(PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
         defaultCardView = CreateCardView.CardEnum.valueOf(
                 settings.getString("defaultCardViewNew", "LARGE").toUpperCase());
         middleImage = settings.getBoolean("middleCard", false);

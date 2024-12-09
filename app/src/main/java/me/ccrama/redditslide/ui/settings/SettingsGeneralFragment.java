@@ -15,6 +15,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.widget.EditText;
+import android.text.TextWatcher;
+import android.text.Editable;
+
+import androidx.appcompat.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,6 +65,7 @@ import me.ccrama.redditslide.util.SortingUtil;
 import me.ccrama.redditslide.util.StringUtil;
 import me.ccrama.redditslide.util.TimeUtils;
 
+import static me.ccrama.redditslide.Constants.getClientId;
 import static me.ccrama.redditslide.Constants.BackButtonBehaviorOptions;
 import static me.ccrama.redditslide.Constants.FAB_DISMISS;
 import static me.ccrama.redditslide.Constants.FAB_POST;
@@ -790,6 +799,70 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
                 });
             }
         }
+
+//* Client id override
+        RelativeLayout clientId = context.findViewById(R.id.settings_general_client_id);
+        final TextView currentClientId = context.findViewById(R.id.settings_general_client_id_current);
+        final TextView activeClientId = context.findViewById(R.id.settings_general_client_id_active_value);
+
+        // Update current value display
+        String savedClientId = SettingValues.prefs.getString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
+        if (!savedClientId.isEmpty()) {
+            currentClientId.setText(savedClientId);
+        }
+
+        // Show active client ID
+        updateActiveClientId(activeClientId);
+
+        clientId.setOnClickListener(v -> {
+            View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_client_id, null);
+            EditText input = dialogView.findViewById(R.id.client_id_input);
+
+            input.setText(savedClientId);
+
+            new AlertDialog.Builder(context)
+                .setTitle("Reddit Client ID Override")
+                .setView(dialogView)
+                .setPositiveButton("Save", (dialog, which) -> {
+                    String newValue = input.getText().toString().trim();
+                    // Save the value
+                    SettingValues.redditClientIdOverride = newValue;
+                    SettingValues.prefs.edit()
+                        .putString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, newValue)
+                        .commit();
+
+                    // Update the displays
+                    currentClientId.setText(newValue.isEmpty() ? "Click to set custom client ID" : newValue);
+                    updateActiveClientId(activeClientId);
+
+                    // Show confirmation
+                    new AlertDialog.Builder(context)
+                        .setMessage("Client ID saved: " + (newValue.isEmpty() ? "cleared" : newValue))
+                        .setPositiveButton("OK", null)
+                        .show();
+                })
+                .setNegativeButton("Cancel", null)
+                .setNeutralButton("Clear", (dialog, which) -> {
+                    SettingValues.redditClientIdOverride = "";
+                    SettingValues.prefs.edit()
+                        .putString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, "")
+                        .commit();
+                    currentClientId.setText("Click to set custom client ID");
+                    updateActiveClientId(activeClientId);
+                    new AlertDialog.Builder(context)
+                        .setMessage("Client ID override cleared")
+                        .setPositiveButton("OK", null)
+                        .show();
+                })
+                .show();
+        });
+    }
+
+    // Add helper method
+    private void updateActiveClientId(TextView view) {
+        // Get the actual client ID that will be used
+        String activeId = getClientId();
+        view.setText(activeId);
     }
 
     private void askTimePeriod() {

@@ -8,8 +8,15 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.IOException;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import java.util.List;
 import java.util.Objects;
+
+import android.os.StrictMode;
 
 import me.ccrama.redditslide.Activities.CommentsScreenSingle;
 import me.ccrama.redditslide.Activities.LiveThread;
@@ -82,6 +89,22 @@ public class OpenRedditLink {
         if (uri.getHost().startsWith("np")) {
             np = true;
             uri = uri.buildUpon().authority("reddit.com").build();
+        }
+
+       String path = Objects.requireNonNull(uri.getPath());
+
+       if (path.matches("(?i)/r/[a-z0-9-_.]+/s/.*")) {
+           try {
+                StrictMode.ThreadPolicy gfgPolicy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(gfgPolicy);
+                URL newUrl = new URL(url);
+                HttpURLConnection ucon = (HttpURLConnection) newUrl.openConnection();
+                ucon.setInstanceFollowRedirects(false);
+                url = new URL(ucon.getHeaderField("location")).toString();
+               uri = formatRedditUrl(ucon.getHeaderField("location"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         RedditLinkType type = getRedditLinkType(uri);

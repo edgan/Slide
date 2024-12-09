@@ -102,7 +102,7 @@ public class ToolbarColorizeHelper {
      * @param toolbarIconsColor
      */
     private static void setOverflowButtonColor(final Activity activity, final int toolbarIconsColor) {
-        final String overflowDescription = activity.getString(R.string.abc_action_menu_overflow_description);
+        final String overflowDescription = "More options"; // FIXME edgan
         final ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
         final ViewTreeObserver viewTreeObserver = decorView.getViewTreeObserver();
         viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.UUID;
 
+import me.ccrama.redditslide.Constants;
 import me.ccrama.redditslide.util.LogUtil;
 import me.ccrama.redditslide.util.NetworkUtil;
 import okhttp3.Protocol;
@@ -31,8 +32,6 @@ import okhttp3.Protocol;
  * Created by ccrama on 3/30/2015.
  */
 public class Authentication {
-    private static final String CLIENT_ID    = "KI2Nl9A_ouG9Qw";
-    private static final String REDIRECT_URL = "http://www.ccrama.me";
     public static boolean           isLoggedIn;
     public static RedditClient      reddit;
     public static LoggedInAccount   me;
@@ -126,8 +125,9 @@ public class Authentication {
                     if (isLoggedIn) {
                         try {
 
-                            final Credentials credentials =
-                                    Credentials.installedApp(CLIENT_ID, REDIRECT_URL);
+                            final Credentials credentials = Credentials.installedApp(
+                                      Constants.getClientId(), Constants.REDDIT_REDIRECT_URL
+                            );
                             Log.v(LogUtil.getTag(), "REAUTH LOGGED IN");
 
                             OAuthHelper oAuthHelper = reddit.getOAuthHelper();
@@ -167,8 +167,9 @@ public class Authentication {
                         }
 
                     } else {
-                        final Credentials fcreds =
-                                Credentials.userlessApp(CLIENT_ID, UUID.randomUUID());
+                        final Credentials fcreds = Credentials.userlessApp(
+                                Constants.getClientId(), UUID.randomUUID()
+                        );
                         OAuthData authData;
                         if (BuildConfig.DEBUG) LogUtil.v("Not logged in");
                         try {
@@ -254,7 +255,10 @@ public class Authentication {
             if (BuildConfig.DEBUG) LogUtil.v("TOKEN IS " + lastToken);
             if (!lastToken.isEmpty()) {
 
-                Credentials credentials = Credentials.installedApp(CLIENT_ID, REDIRECT_URL);
+                final Credentials credentials = Credentials.installedApp(
+                        Constants.getClientId(), Constants.REDDIT_REDIRECT_URL
+                );
+
                 OAuthHelper oAuthHelper = baseReddit.getOAuthHelper();
                 oAuthHelper.setRefreshToken(lastToken);
 
@@ -305,8 +309,9 @@ public class Authentication {
             } else if (!single) {
                 if (BuildConfig.DEBUG) LogUtil.v("NOT LOGGED IN");
 
-                final Credentials fcreds =
-                        Credentials.userlessApp(CLIENT_ID, UUID.randomUUID());
+                final Credentials fcreds = Credentials.userlessApp(
+                          Constants.getClientId(), UUID.randomUUID()
+                );
                 OAuthData authData;
                 try {
 

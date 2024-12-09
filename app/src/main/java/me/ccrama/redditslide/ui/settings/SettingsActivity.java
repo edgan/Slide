@@ -553,22 +553,6 @@ public class SettingsActivity extends BaseActivity
             }
         });
 
-        if(BuildConfig.isFDroid){
-            ((TextView) findViewById(R.id.settings_child_donatetext)).setText("Donate via PayPal");
-        }
-        findViewById(R.id.settings_child_support).setOnClickListener(new OnSingleClickListener() {
-            @Override
-            public void onSingleClick(View v) {
-                if(BuildConfig.isFDroid){
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=56FKCCYLX7L72"));
-                    startActivity(browserIntent);
-                } else {
-                    Intent inte = new Intent(SettingsActivity.this, DonateView.class);
-                    startActivity(inte);
-                }
-            }
-        });
-
         findViewById(R.id.settings_child_comments).setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View v) {

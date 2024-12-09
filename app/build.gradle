@@ -7,6 +7,7 @@ plugins {
 android {
     compileSdk 29
     buildToolsVersion "30.0.3"
+    namespace "me.ccrama.redditslide"
 
     defaultConfig {
         applicationId "me.ccrama.redditslide"
@@ -130,7 +131,7 @@ dependencies {
     implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 
     // Custom image view for photo galleries and large images
-    implementation 'com.github.davemorrissey:subsampling-scale-image-view:173e421'
+    implementation 'com.github.davemorrissey:subsampling-scale-image-view:173e421fdb'
 
     // Image cropping
     implementation 'com.github.CanHub:Android-Image-Cropper:3.2.2'

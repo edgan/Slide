@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import me.ccrama.redditslide.Authentication;
+import me.ccrama.redditslide.Constants;
 import me.ccrama.redditslide.R;
 import me.ccrama.redditslide.Reddit;
 import me.ccrama.redditslide.util.LogUtil;
@@ -36,9 +37,6 @@ import me.ccrama.redditslide.util.LogUtil;
  * Created by ccrama on 5/27/2015.
  */
 public class Reauthenticate extends BaseActivityAnim {
-    private static final String CLIENT_ID = "KI2Nl9A_ouG9Qw";
-    private static final String REDIRECT_URL = "http://www.ccrama.me";
-
     @Override
     public void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
@@ -48,7 +46,7 @@ public class Reauthenticate extends BaseActivityAnim {
 
         String[] scopes = {"identity", "modcontributors", "modconfig", "modothers", "modwiki", "creddits", "livemanage", "account", "privatemessages", "modflair", "modlog", "report", "modposts", "modwiki", "read", "vote", "edit", "submit", "subscribe", "save", "wikiread", "flair", "history", "mysubreddits", "wikiedit"};
         final OAuthHelper oAuthHelper = Authentication.reddit.getOAuthHelper();
-        final Credentials credentials = Credentials.installedApp(CLIENT_ID, REDIRECT_URL);
+	final Credentials credentials = Credentials.installedApp(Constants.getClientId(), Constants.REDDIT_REDIRECT_URL);
         String authorizationUrl = oAuthHelper.getAuthorizationUrl(credentials, true, scopes)
                 .toExternalForm();
         authorizationUrl = authorizationUrl.replace("www.", "i.");

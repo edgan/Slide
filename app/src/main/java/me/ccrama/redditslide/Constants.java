@@ -51,6 +51,25 @@ public class Constants {
     public static final int FAB_POST = 2;
     public static final int FAB_SEARCH = 3;
 
+    /** Reddit OAuth credentials */
+    private static final String REDDIT_CLIENT_ID_DEFAULT = "KI2Nl9A_ouG9Qw";
+
+    /**
+     * Gets the Reddit client ID to use for authentication.
+     * Returns the user-specified override if set, otherwise returns the default.
+     */
+    public static String getClientId() {
+        // Make sure settings are loaded
+        if (SettingValues.prefs == null) {
+            return REDDIT_CLIENT_ID_DEFAULT;
+        }
+
+        String override = SettingValues.prefs.getString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
+        return !override.isEmpty() ? override : REDDIT_CLIENT_ID_DEFAULT;
+    }
+
+    public static final String REDDIT_REDIRECT_URL = "http://www.ccrama.me";
+
     public enum BackButtonBehaviorOptions {
         Default(0), ConfirmExit(1), OpenDrawer(2), GotoFirst(3);
 
