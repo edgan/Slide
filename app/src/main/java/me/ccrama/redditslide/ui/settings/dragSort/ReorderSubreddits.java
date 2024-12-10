@@ -316,16 +316,12 @@ public class ReorderSubreddits extends BaseActivityAnim {
             collectionFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (UserSubscriptions.multireddits != null
-                            && !UserSubscriptions.multireddits.isEmpty()) {
+                    if (UserSubscriptions.multireddits != null && !UserSubscriptions.multireddits.isEmpty()) {
                         new AlertDialog.Builder(ReorderSubreddits.this)
                                 .setTitle(R.string.create_or_import_multi)
-                                .setPositiveButton(R.string.btn_new, (dialog, which) ->
-                                        doCollection())
+                                .setPositiveButton(R.string.btn_new, (dialog, which) -> doCollection())
                                 .setNegativeButton(R.string.btn_import_multi, (dialog, which) -> {
-                                    final String[] multis = new String[UserSubscriptions
-                                            .multireddits
-                                            .size()];
+                                    final String[] multis = new String[UserSubscriptions.multireddits.size()];
                                     int i = 0;
                                     for (MultiReddit m : UserSubscriptions.multireddits) {
                                         multis[i] = m.getDisplayName();
@@ -345,19 +341,20 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                                                 CharSequence text) {
 
                                                             String name = multis[which];
-                                                            MultiReddit r =
-                                                                    UserSubscriptions.getMultiredditByDisplayName(name);
-                                                            StringBuilder b = new StringBuilder();
+                                                            MultiReddit r = UserSubscriptions.getMultiredditByDisplayName(name);
 
-                                                            for (MultiSubreddit s : r.getSubreddits()) {
-                                                                b.append(s.getDisplayName());
-                                                                b.append("+");
-                                                            }
-                                                            int pos = addSubAlphabetically(MULTI_REDDIT
-                                                                    + r.getDisplayName());
-                                                            UserSubscriptions.setSubNameToProperties(MULTI_REDDIT
-                                                                            + r.getDisplayName(),
-                                                                    b.toString());
+                                                            // Construct the new URL format for multireddits
+                                                            String username = Authentication.name;
+                                                            String multiName = r.getDisplayName();
+                                                            String sortMode = "hot"; // default sort mode
+
+                                                            // Create the new URL format
+                                                            String url = String.format("api/user/%s/m/%s/%s?limit=25",
+                                                                    username, multiName, sortMode);
+
+                                                            int pos = addSubAlphabetically(MULTI_REDDIT + r.getDisplayName());
+                                                            UserSubscriptions.setSubNameToProperties(MULTI_REDDIT + r.getDisplayName(),
+                                                                    url);
                                                             adapter.notifyDataSetChanged();
                                                             recyclerView.smoothScrollToPosition(pos);
                                                             return false;
@@ -489,50 +486,40 @@ public class ReorderSubreddits extends BaseActivityAnim {
     public int diff;
 
     public void doCollection() {
-        final ArrayList<String> subs2 =
-                UserSubscriptions.sort(UserSubscriptions.getSubscriptions(this));
-        subs2.remove("frontpage");
-        subs2.remove("all");
-
-        ArrayList<String> toRemove = new ArrayList<>();
-        for (String s : subs2) {
-            if (s.contains(".") || s.contains(MULTI_REDDIT)) {
-                toRemove.add(s);
+        if (UserSubscriptions.multireddits != null && !UserSubscriptions.multireddits.isEmpty()) {
+            final String[] multis = new String[UserSubscriptions.multireddits.size()];
+            int i = 0;
+            for (MultiReddit m : UserSubscriptions.multireddits) {
+                multis[i] = m.getDisplayName();
+                i++;
             }
+
+            new MaterialDialog.Builder(ReorderSubreddits.this)
+                    .title(R.string.reorder_subreddits_title)
+                    .items(multis)
+                    .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                            String name = multis[which];
+                            MultiReddit r = UserSubscriptions.getMultiredditByDisplayName(name);
+
+                            // Construct the new URL format for multireddits
+                            String username = Authentication.name;
+                            String multiName = r.getDisplayName();
+                            String sortMode = "hot"; // default sort mode, can be parameterized if needed
+
+                            String url = String.format("api/user/%s/m/%s/%s?limit=25",
+                                    username, multiName, sortMode);
+
+                            int pos = addSubAlphabetically(MULTI_REDDIT + r.getDisplayName());
+                            UserSubscriptions.setSubNameToProperties(MULTI_REDDIT + r.getDisplayName(), url);
+                            adapter.notifyDataSetChanged();
+                            recyclerView.smoothScrollToPosition(pos);
+                            return false;
+                        }
+                    })
+                    .show();
         }
-        subs2.removeAll(toRemove);
-
-        final CharSequence[] subsAsChar = subs2.toArray(new CharSequence[0]);
-
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(ReorderSubreddits.this);
-        builder.title(R.string.reorder_subreddits_title)
-                .items(subsAsChar)
-                .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, Integer[] which,
-                            CharSequence[] text) {
-                        ArrayList<String> selectedSubs = new ArrayList<>();
-                        for (int i : which) {
-                            selectedSubs.add(subsAsChar[i].toString());
-                        }
-
-                        StringBuilder b = new StringBuilder();
-
-                        for (String s : selectedSubs) {
-                            b.append(s);
-                            b.append("+");
-                        }
-                        String finalS = b.substring(0, b.length() - 1);
-                        Log.v(LogUtil.getTag(), finalS);
-                        int pos = addSubAlphabetically(finalS);
-                        adapter.notifyDataSetChanged();
-                        recyclerView.smoothScrollToPosition(pos);
-                        return true;
-                    }
-                })
-                .positiveText(R.string.btn_add)
-                .negativeText(R.string.btn_cancel)
-                .show();
     }
 
     public void doAddSub(String subreddit) {
