@@ -1,16 +1,9 @@
 ## Current project status
 
-This project will be on indefinite hiatus for the foreseeable future, and may not be maintained.
-Updates are not guaranteed.
-See [here](https://github.com/edgan/Slide/issues/3449) for details.
+This project is back with this fork, and will be maintained.
 
-You may continue to use Slide if you so wish.
-However, with this said, it would be recommended to consider migrating to another (more stable) Reddit client.
-
-Some other open-source (and internally ad-free) Reddit clients include:
-- [Infinity For Reddit](https://github.com/Docile-Alligator/Infinity-For-Reddit)
-- [RedReader](https://github.com/QuantumBadger/RedReader)
-- [Dawn](https://github.com/Tunous/Dawn)
+# Backup/ Restore
+See [SlideProUnlock](https://github.com/edgan/SlideProUnlock).
 
 # Slide
 
@@ -38,17 +31,6 @@ There is an active community for Slide on the
 which anybody is welcome to join.
 
 There is also a [Discord](https://discord.gg/hVWAY8A).
-
-## Sponsors
-
-Thank you to our awesome Github Sponsors, who help keep the Slide project going.
-
-|  | GitHub profile |
-| --------- | ------------- |
-| **KevinNThomas** | https://github.com/KevinNThomas |
-| **andrewkdinh** | https://github.com/andrewkdinh |
-
-If you're interested in sponsoring our work, check out the sponsor slots for Slide contributors on the right-hand **Sponsorship** menu.
 
 ## Contributing
 
