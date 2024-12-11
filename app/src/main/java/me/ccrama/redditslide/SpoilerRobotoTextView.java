@@ -36,6 +36,17 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
+import android.graphics.Movie;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import java.io.FileInputStream;
+import org.apache.commons.io.FileUtils;
+import java.io.IOException;
+import android.text.style.DynamicDrawableSpan;
+import android.text.Layout;
+import android.graphics.Rect;
 
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.ContextCompat;
@@ -73,9 +84,11 @@ import me.ccrama.redditslide.handler.TextViewLinkHandler;
 import me.ccrama.redditslide.util.BlendModeUtil;
 import me.ccrama.redditslide.util.ClipboardUtil;
 import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.GifUtils;
 import me.ccrama.redditslide.util.LinkUtil;
 import me.ccrama.redditslide.util.LogUtil;
+import me.ccrama.redditslide.util.GifDrawable;
+import me.ccrama.redditslide.util.GifUtils;
+import me.ccrama.redditslide.util.AnimatedImageSpan;
 
 /**
  * Created by carlo_000 on 1/11/2016.
@@ -152,6 +165,9 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         replaceQuoteSpans(
                 builder); //replace the <blockquote> blue line with something more colorful
 
+        if (text.contains("free_emotes_pack")) {
+            setEmoteText(text, this);
+        }
         if (text.contains("<a")) {
             setEmoteSpans(builder); //for emote enabled subreddits
         }
@@ -177,7 +193,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
 
         builder = removeNewlines(builder);
 
-        builder.append(" ");
+        builder.append(" ");
 
         super.setText(builder, BufferType.SPANNABLE);
     }
@@ -235,6 +251,391 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             }
         }
         return html;
+    }
+
+    /**
+     * Helper method to create a transparent placeholder drawable.
+     *
+     * @param size The size (width and height) of the placeholder in pixels.
+     * @return A transparent ColorDrawable.
+     */
+    private Drawable createPlaceholder(int size) {
+        ColorDrawable placeholder = new ColorDrawable(Color.TRANSPARENT);
+        placeholder.setBounds(0, 0, size, size);
+        return placeholder;
+    }
+
+    // List to keep track of active GifDrawables to manage their lifecycle
+    private List<GifDrawable> activeGifDrawables = new ArrayList<>();
+
+    private SpannableStringBuilder currentBuilder;
+    private final Object spanLock = new Object();
+
+    private static class PendingEmoteSpan {
+        DynamicDrawableSpan span;
+        String emoteName;
+        int index;
+
+        PendingEmoteSpan(DynamicDrawableSpan span, String emoteName, int index) {
+            this.span = span;
+            this.emoteName = emoteName;
+            this.index = index;
+        }
+    }
+
+    private final List<EmoteDrawInfo> emoteDrawables = new ArrayList<>();
+
+    private static class EmoteDrawInfo {
+        GifDrawable drawable;
+        int position;  // Character position in text
+        float x;       // Cached x position
+        float y;       // Cached y position
+        boolean isValid;
+
+        EmoteDrawInfo(GifDrawable drawable, int position) {
+            this.drawable = drawable;
+            this.position = position;
+        }
+    }
+
+    private final List<PendingEmoteSpan> pendingSpans = new ArrayList<>();
+
+    private void setEmoteSpan(DynamicDrawableSpan span, String emoteName, int position) {
+        if (span == null || emoteName == null) {
+            Log.e("EmoteDebug", "Null span or emote name in setEmoteSpan");
+            return;
+        }
+
+        synchronized(spanLock) {
+            try {
+                if (!isAttachedToWindow()) {
+                    Log.d("EmoteDebug", "View not attached, queueing update for " + emoteName);
+                    pendingSpans.add(new PendingEmoteSpan((AnimatedImageSpan) span, emoteName, position));
+                    return;
+                }
+
+                // Get current text and ensure it's a SpannableStringBuilder
+                CharSequence current = getText();
+                SpannableStringBuilder text;
+                if (current instanceof SpannableStringBuilder) {
+                    text = (SpannableStringBuilder) current;
+                } else {
+                    text = new SpannableStringBuilder(current != null ? current : "");
+                    setText(text);
+                }
+
+                // Find position for emote
+                String content = text.toString();
+                int pos = -1; // Initialize pos
+                int count = 0;
+
+                while (count <= position) {
+                    pos = content.indexOf('\uFFFC', pos + 1); // '\uFFFC' is the object replacement character
+                    if (pos == -1) {
+                        Log.e("EmoteDebug", "Could not find position for emote " + emoteName);
+                        return;
+                    }
+                    count++;
+                }
+
+                // Remove any existing spans at this position
+                ImageSpan[] existingSpans = text.getSpans(pos, pos + 1, ImageSpan.class);
+                for (ImageSpan existingSpan : existingSpans) {
+                    text.removeSpan(existingSpan);
+                }
+
+                // Set the new AnimatedImageSpan
+                text.setSpan(span, pos, pos + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                // Start the GIF animation and add to active list if it's an AnimatedImageSpan
+                if (span instanceof AnimatedImageSpan) {
+                    AnimatedImageSpan animatedSpan = (AnimatedImageSpan) span;
+                    animatedSpan.start();
+                    emoteDrawables.add(new EmoteDrawInfo(animatedSpan.getGifDrawable(), pos));
+                }
+
+                // Force layout update
+                requestLayout();
+
+            } catch (Exception e) {
+                Log.e("EmoteDebug", "Error setting emote drawable for " + emoteName, e);
+            }
+        }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        synchronized(spanLock) {
+            Log.d("EmoteDebug", "View attached to window");
+
+            // First apply any pending spans
+            if (!pendingSpans.isEmpty()) {
+                Log.d("EmoteDebug", "Applying " + pendingSpans.size() + " pending spans");
+                for (PendingEmoteSpan pendingSpan : pendingSpans) {
+                    setEmoteSpan(pendingSpan.span, pendingSpan.emoteName, pendingSpan.index);
+                }
+                pendingSpans.clear();
+            }
+
+            // Start all spans
+            CharSequence text = getText();
+            if (text instanceof Spannable) {
+                Spannable spannable = (Spannable) text;
+                DynamicDrawableSpan[] spans = spannable.getSpans(0, spannable.length(), DynamicDrawableSpan.class);
+                for (DynamicDrawableSpan span : spans) {
+                    if (span instanceof AnimatedImageSpan) {
+                        ((AnimatedImageSpan) span).onAttached();
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        synchronized(spanLock) {
+            Log.d("EmoteDebug", "View detached from window");
+
+            // Stop all spans
+            CharSequence text = getText();
+            if (text instanceof Spannable) {
+                Spannable spannable = (Spannable) text;
+                DynamicDrawableSpan[] spans = spannable.getSpans(0, spannable.length(), DynamicDrawableSpan.class);
+                for (DynamicDrawableSpan span : spans) {
+                    if (span instanceof AnimatedImageSpan) {
+                        ((AnimatedImageSpan) span).onDetached();
+                    }
+                }
+            }
+        }
+        super.onDetachedFromWindow();
+    }
+
+    private void cleanupGifs() {
+        synchronized(spanLock) {
+            // Stop all active GIF animations
+            for (EmoteDrawInfo info : emoteDrawables) {
+                info.drawable.stop();
+            }
+            emoteDrawables.clear();
+
+            // Remove all AnimatedImageSpan instances from the text
+            CharSequence currentText = getText();
+            if (currentText instanceof Spannable) {
+                Spannable spannable = (Spannable) currentText;
+                AnimatedImageSpan[] spans = spannable.getSpans(0, spannable.length(), AnimatedImageSpan.class);
+                for (AnimatedImageSpan span : spans) {
+                    spannable.removeSpan(span);
+                }
+            }
+
+            // Clear pending spans
+            pendingSpans.clear();
+        }
+    }
+
+    private void setEmoteText(String text, TextView textView) {
+        if (text == null || textView == null) {
+            Log.e("EmoteDebug", "Null text or textview in setEmoteText");
+            return;
+        }
+
+        try {
+            // Clear existing state
+            cleanupGifs();
+
+            Pattern redditEmotePattern = Pattern.compile(
+                "<img\\s+src=\"(https://www\\.redditstatic\\.com/marketplace-assets/v1/core/emotes/snoomoji_emotes/free_emotes_pack/([^/\"]+)\\.gif)\"[^>]*>");
+
+            Matcher matcher = redditEmotePattern.matcher(text);
+            List<EmoteSpanRequest> spanRequests = new ArrayList<>();
+            StringBuilder processedText = new StringBuilder();
+
+            // Strip divs first
+            text = text.replaceAll("<div class=\"md\"><div>", "")
+                      .replaceAll("</div>", "");
+
+            // Process text and collect emote requests
+            int lastEnd = 0;
+            int emoteCount = 0;
+
+            while (matcher.find()) {
+                int matchStart = matcher.start();
+                int matchEnd = matcher.end();
+
+                // Append text before the match
+                if (matchStart > lastEnd) {
+                    processedText.append(text.substring(lastEnd, matchStart));
+                }
+
+                try {
+                    String gifUrl = matcher.group(1);
+                    String emoteName = matcher.group(2);
+
+                    if (gifUrl != null && emoteName != null) {
+                        processedText.append("\uFFFC"); // Object replacement character
+
+                        spanRequests.add(new EmoteSpanRequest(
+                            gifUrl,
+                            emoteCount,
+                            emoteCount + 1,
+                            emoteName
+                        ));
+
+                        emoteCount++;
+                    }
+                } catch (IllegalStateException | IndexOutOfBoundsException e) {
+                    Log.e("EmoteDebug", "Error processing match groups", e);
+                }
+
+                lastEnd = matchEnd;
+            }
+
+            // Safely append remaining text after last match
+            if (lastEnd < text.length()) {
+                processedText.append(text.substring(lastEnd));
+            }
+
+            // Create builder and ensure it's a SpannableStringBuilder
+            SpannableStringBuilder builder = new SpannableStringBuilder(processedText);
+
+            float scale = 1.0f; // Adjusted scaling factor for appropriate size
+            int placeholderSize = (int) (getTextSize() * scale);
+
+            // Set initial text with the builder
+            setText(builder);
+
+            // Set initial placeholders with transparent drawables
+            for (EmoteSpanRequest request : spanRequests) {
+                try {
+                    Drawable placeholder = createPlaceholder(placeholderSize);
+                    DynamicDrawableSpan placeholderSpan = new ImageSpan(placeholder, ImageSpan.ALIGN_BOTTOM);
+                    setEmoteSpan(placeholderSpan, request.emoteName, request.start);
+                } catch (Exception e) {
+                    Log.e("EmoteDebug", "Error setting placeholder span", e);
+                }
+            }
+
+            // Load GIFs
+            for (EmoteSpanRequest request : spanRequests) {
+                // Pass the 'pos' parameter (using 'request.start')
+                loadGifEmote(request, textView, scale, request.start);
+            }
+
+        } catch (Exception e) {
+            Log.e("EmoteDebug", "Error in setEmoteText", e);
+        }
+    }
+
+    private void loadGifEmote(EmoteSpanRequest request, TextView textView, float scale, int pos) {
+        Log.d("EmoteDebug", "Starting GIF download for: " + request.gifUrl);
+
+        GifUtils.downloadGif(request.gifUrl, new GifUtils.GifDownloadCallback() {
+            @Override
+            public void onGifDownloaded(File gifFile) {
+                try {
+                    Movie movie = Movie.decodeFile(gifFile.getAbsolutePath());
+                    if (movie != null) {
+                        // After decoding the movie and obtaining width and height
+                        int intrinsicWidth = movie.width();
+                        int intrinsicHeight = movie.height();
+
+                        int size = (int) (textView.getTextSize() * scale);
+
+                        // Adjust size proportionally if the GIF is larger than the base size
+                        if (intrinsicHeight > size) {
+                            size = (int) (intrinsicHeight * scale);
+                        }
+
+                        // Optional: Enforce a maximum size to prevent excessively large GIFs
+                        int maxHeight = (int) (textView.getTextSize() * 3); // Example maximum height
+                        size = Math.min(size, maxHeight);
+
+                        GifDrawable gifDrawable = new GifDrawable(movie, null);
+                        gifDrawable.setBounds(0, 0, size, size);
+
+                        Log.d("EmoteDebug", "Created drawable for " + request.emoteName + " with bounds " + size + "x" + size);
+
+                        // Wrap GifDrawable in AnimatedImageSpan
+                        AnimatedImageSpan animatedSpan = new AnimatedImageSpan(gifDrawable, SpoilerRobotoTextView.this);
+
+                        // Post to UI thread
+                        textView.post(() -> {
+                            synchronized(spanLock) {
+                                try {
+                                    if (!isAttachedToWindow()) {
+                                        Log.d("EmoteDebug", "View not attached, queueing update for " + request.emoteName);
+                                        pendingSpans.add(new PendingEmoteSpan(animatedSpan, request.emoteName, pos));
+                                        return;
+                                    }
+
+                                    // Replace the placeholder span with AnimatedImageSpan
+                                    CharSequence currentText = getText();
+                                    if (currentText instanceof Spannable) {
+                                        Spannable spannable = (Spannable) currentText;
+                                        ImageSpan[] imageSpans = spannable.getSpans(pos, pos + 1, ImageSpan.class);
+                                        if (imageSpans != null && imageSpans.length > 0) {
+                                            for (ImageSpan span : imageSpans) {
+                                                spannable.removeSpan(span);
+                                            }
+                                        }
+                                        spannable.setSpan(animatedSpan, pos, pos + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                    }
+
+                                    if (SettingValues.commentEmoteAnimation) {
+                                        // Start the GIF animation and add to active list
+                                        animatedSpan.start();
+                                    }
+
+                                    emoteDrawables.add(new EmoteDrawInfo(animatedSpan.getGifDrawable(), pos));
+
+                                    // Force layout update
+                                    requestLayout();
+
+                                } catch (Exception e) {
+                                    Log.e("EmoteDebug", "Error setting emote drawable for " + request.emoteName, e);
+                                }
+                            }
+                        });
+
+                    } else {
+                        Log.e("EmoteDebug", "Failed to decode movie for: " + request.emoteName);
+                    }
+                } catch (Exception e) {
+                    Log.e("EmoteDebug", "Error processing GIF: " + request.emoteName, e);
+                }
+            }
+
+            @Override
+            public void onGifDownloadFailed(Exception e) {
+                Log.e("EmoteDebug", "Failed to download GIF: " + request.gifUrl, e);
+            }
+        }, textView.getContext());
+    }
+
+    /**
+     * Example method to set text with emotes
+     *
+     * @param text The text containing emote placeholders
+     */
+    public void setTextWithEmotes(String text) {
+        setEmoteText(text, this);
+    }
+
+    // Helper class to keep track of span requests
+    private static class EmoteSpanRequest {
+        String gifUrl;
+        int start;
+        int end;
+        String emoteName;
+
+        EmoteSpanRequest(String gifUrl, int start, int end, String emoteName) {
+            this.gifUrl = gifUrl;
+            this.start = start;
+            this.end = end;
+            this.emoteName = emoteName;
+        }
     }
 
     private void setEmoteSpans(SpannableStringBuilder builder) {

@@ -281,6 +281,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
                 });
             }
         }
+
         {
             SwitchCompat highClrSpaceSwitch = context.findViewById(R.id.settings_general_high_colorspace);
             if (highClrSpaceSwitch != null) {
@@ -295,6 +296,21 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
 
                     SettingValues.prefs.edit()
                             .putBoolean(SettingValues.PREF_HIGH_COLORSPACE_IMAGES, isChecked)
+                            .apply();
+                });
+            }
+        }
+
+        {
+            SwitchCompat commentEmoteAnimationSwitch = context.findViewById(R.id.settings_general_comment_emote_animation);
+            if (commentEmoteAnimationSwitch != null) {
+                commentEmoteAnimationSwitch.setChecked(SettingValues.commentEmoteAnimation);
+                commentEmoteAnimationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    SettingsThemeFragment.changed = true;
+                    SettingValues.commentEmoteAnimation = isChecked;
+
+                    SettingValues.prefs.edit()
+                            .putBoolean(SettingValues.PREF_COMMENT_EMOTE_ANIMATION, isChecked)
                             .apply();
                 });
             }

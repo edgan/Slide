@@ -55,7 +55,7 @@ public class ContentTypeTest {
     @Test
     public void detectsExternal() {
         assertThat(ContentType.getContentType("https://twitter.com/jaffathecake/status/718071903378735105?s=09"), is(Type.EXTERNAL));
-        assertThat(ContentType.getContentType("https://github.com/ccrama/Slide"), is(Type.EXTERNAL));
+        assertThat(ContentType.getContentType("https://github.com/edgan/Slide"), is(Type.EXTERNAL));
         assertThat(ContentType.getContentType("http://example.com/path/that/matches"), is(Type.EXTERNAL));
         assertThat(ContentType.getContentType("http://example.com/path"), is(Type.EXTERNAL));
         assertThat(ContentType.getContentType("http://subdomain.example.com/path"), is(Type.EXTERNAL));

@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -115,191 +117,145 @@ public class GifUtils {
         DialogUtil.showFirstDialog((MediaView) a);
     }
 
-    /**
-     * Temporarily cache or permanently save a GIF
-     *
-     * @param uri       URL of the GIF
-     * @param a
-     * @param subreddit Subreddit for saving in sub-specific folders
-     * @param save      Whether to permanently save the GIF of just temporarily cache it
-     */
-    public static void cacheSaveGif(Uri uri, Activity a, String subreddit, String submissionTitle, boolean save) {
-        if (save) {
-            try {
-                Toast.makeText(a, a.getString(R.string.mediaview_notif_title), Toast.LENGTH_SHORT).show();
-            } catch (Exception ignored) {
+public static void downloadGif(String url, GifDownloadCallback callback, Context context) {
+    new DownloadGifTask(url, callback, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+}
+
+private static class DownloadGifTask extends AsyncTask<Void, Void, File> {
+    private String url;
+    private GifDownloadCallback callback;
+    private Context context;
+    private Exception exception;
+
+    DownloadGifTask(String url, GifDownloadCallback callback, Context context) {
+        this.url = url;
+        this.callback = callback;
+        this.context = context.getApplicationContext();
+    }
+
+    @Override
+    protected File doInBackground(Void... voids) {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(url).build();
+        Response response = null;
+        try {
+            response = client.newCall(request).execute();
+            if (!response.isSuccessful()) {
+                throw new Exception("Failed to download GIF: " + response);
+            }
+
+            // Create unique filename based on URL
+            String fileName = "emote_" + url.hashCode() + "_" + System.nanoTime() + ".gif";
+            File gifFile = new File(context.getCacheDir(), fileName);
+
+            InputStream inputStream = response.body().byteStream();
+            OutputStream outputStream = new FileOutputStream(gifFile);
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            outputStream.close();
+            inputStream.close();
+
+            return gifFile;
+        } catch (Exception e) {
+            Log.e("EmoteDebug", "Error downloading GIF", e);
+            exception = e;
+            return null;
+        } finally {
+            if (response != null) {
+                response.close();
             }
         }
+    }
 
-        if (Reddit.appRestart.getString("imagelocation", "").isEmpty()) {
-            showFirstDialog(a);
-        } else if (!new File(Reddit.appRestart.getString("imagelocation", "")).exists()) {
-            showErrorDialog(a);
+    @Override
+    protected void onPostExecute(File gifFile) {
+        if (gifFile != null) {
+            callback.onGifDownloaded(gifFile);
         } else {
-            new AsyncTask<Void, Integer, Boolean>() {
-                File outFile;
-                NotificationManager notifMgr = ContextCompat.getSystemService(a, NotificationManager.class);
+            callback.onGifDownloadFailed(exception != null ? exception : new Exception("Unknown error"));
+        }
+    }
+}
 
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                    if (save) {
-                        Notification notif = new NotificationCompat.Builder(a, Reddit.CHANNEL_IMG)
-                                .setContentTitle(a.getString(R.string.mediaview_saving,
-                                        uri.toString().replace("/DASHPlaylist.mpd", "")))
-                                .setSmallIcon(R.drawable.ic_download)
-                                .setProgress(0, 0, true)
-                                .setOngoing(true)
-                                .build();
-                        notifMgr.notify(1, notif);
-                    }
+public interface GifDownloadCallback {
+    void onGifDownloaded(File gifFile);
+    void onGifDownloadFailed(Exception e);
+}
+
+public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, String submissionTitle, boolean save) {
+    if (save) {
+        try {
+            Toast.makeText(activity, activity.getString(R.string.mediaview_notif_title), Toast.LENGTH_SHORT).show();
+        } catch (Exception ignored) {
+        }
+    }
+
+    if (Reddit.appRestart.getString("imagelocation", "").isEmpty()) {
+        showFirstDialog(activity);
+    } else if (!new File(Reddit.appRestart.getString("imagelocation", "")).exists()) {
+        showErrorDialog(activity);
+    } else {
+        new AsyncTask<Void, Integer, Boolean>() {
+            File outFile;
+            NotificationManager notifMgr = ContextCompat.getSystemService(activity, NotificationManager.class);
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                if (save) {
+                    Notification notif = new NotificationCompat.Builder(activity, Reddit.CHANNEL_IMG)
+                            .setContentTitle(activity.getString(R.string.mediaview_saving, uri.toString()))
+                            .setSmallIcon(R.drawable.ic_download)
+                            .setProgress(0, 0, true)
+                            .setOngoing(true)
+                            .build();
+                    notifMgr.notify(1, notif);
                 }
+            }
 
-                @Override
-                protected Boolean doInBackground(Void... voids) {
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                try {
                     String folderPath = Reddit.appRestart.getString("imagelocation", "");
-
                     String subFolderPath = "";
                     if (SettingValues.imageSubfolders && !subreddit.isEmpty()) {
                         subFolderPath = File.separator + subreddit;
                     }
 
-                    String extension = ".mp4";
+                    outFile = FileUtil.getValidFile(folderPath, subFolderPath, submissionTitle, "", ".gif");
 
-                    outFile = FileUtil.getValidFile(folderPath, subFolderPath, submissionTitle, "", extension);
-
-                    OutputStream out = null;
-                    InputStream in = null;
-
-                    try {
-                        DataSource.Factory downloader =
-                                new OkHttpDataSource.Factory(Reddit.client)
-                                        .setUserAgent(a.getString(R.string.app_name));
-                        DataSource.Factory cacheDataSourceFactory =
-                                new CacheDataSource.Factory()
-                                        .setCache(Reddit.videoCache)
-                                        .setUpstreamDataSourceFactory(downloader);
-                        if (uri.getLastPathSegment().endsWith("DASHPlaylist.mpd")) {
-                            InputStream dashManifestStream = new DataSourceInputStream(cacheDataSourceFactory.createDataSource(),
-                                    new DataSpec(uri));
-                            DashManifest dashManifest = new DashManifestParser().parse(uri, dashManifestStream);
-                            dashManifestStream.close();
-
-                            Uri audioUri = null;
-                            Uri videoUri = null;
-
-                            for (int i = 0; i < dashManifest.getPeriodCount(); i++) {
-                                for (AdaptationSet as : dashManifest.getPeriod(i).adaptationSets) {
-                                    boolean isAudio = false;
-                                    int bitrate = 0;
-                                    String hqUri = null;
-                                    for (Representation r : as.representations) {
-                                        if (r.format.bitrate > bitrate) {
-                                            bitrate = r.format.bitrate;
-                                            hqUri = r.baseUrl;
-                                        }
-                                        if (MimeTypes.isAudio(r.format.sampleMimeType)) {
-                                            isAudio = true;
-                                        }
-                                    }
-                                    if (isAudio) {
-                                        audioUri = Uri.parse(hqUri);
-                                    } else {
-                                        videoUri = Uri.parse(hqUri);
-                                    }
-                                }
-                            }
-
-                            if (audioUri != null) {
-                                LogUtil.v("Downloading DASH audio from: " + audioUri);
-                                DataSourceInputStream audioInputStream = new DataSourceInputStream(
-                                        cacheDataSourceFactory.createDataSource(), new DataSpec(audioUri));
-                                if (save) {
-                                    FileUtils.copyInputStreamToFile(audioInputStream,
-                                            new File(a.getCacheDir().getAbsolutePath(), "audio.mp4"));
-                                } else {
-                                    IOUtils.copy(audioInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
-                                }
-                                audioInputStream.close();
-                            }
-                            if (videoUri != null) {
-                                LogUtil.v("Downloading DASH video from: " + videoUri);
-                                DataSourceInputStream videoInputStream = new DataSourceInputStream(
-                                        cacheDataSourceFactory.createDataSource(), new DataSpec(videoUri));
-                                if (save) {
-                                    FileUtils.copyInputStreamToFile(videoInputStream,
-                                            new File(a.getCacheDir().getAbsolutePath(), "video.mp4"));
-                                } else {
-                                    IOUtils.copy(videoInputStream, NullOutputStream.NULL_OUTPUT_STREAM);
-                                }
-                                videoInputStream.close();
-                            }
-
-                            if (!save) {
-                                return true;
-                            } else if (audioUri != null && videoUri != null) {
-                                if (mux(new File(a.getCacheDir().getAbsolutePath(), "video.mp4").getAbsolutePath(),
-                                        new File(a.getCacheDir().getAbsolutePath(), "audio.mp4").getAbsolutePath(),
-                                        new File(a.getCacheDir().getAbsolutePath(), "muxed.mp4").getAbsolutePath())) {
-                                    in = new FileInputStream(new File(a.getCacheDir().getAbsolutePath(), "muxed.mp4"));
-                                } else {
-                                    throw new IOException("Muxing failed!");
-                                }
-                            } else {
-                                in = new FileInputStream(new File(a.getCacheDir().getAbsolutePath(), "video.mp4"));
-                            }
-                        } else {
-                            in = new DataSourceInputStream(cacheDataSourceFactory.createDataSource(), new DataSpec(uri));
-                        }
-
-                        out = save ? new FileOutputStream(outFile) : NullOutputStream.NULL_OUTPUT_STREAM;
-                        IOUtils.copy(in, out);
-                        out.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        LogUtil.e("Error saving GIF called with: "
-                                + "from = ["
-                                + uri
-                                + "], in = ["
-                                + in
-                                + "]");
-                        return false;
-                    } finally {
-                        try {
-                            if (out != null) {
-                                out.close();
-                            }
-                            if (in != null) {
-                                in.close();
-                            }
-                        } catch (IOException e) {
-                            LogUtil.e("Error closing GIF called with: "
-                                    + "from = ["
-                                    + uri
-                                    + "], out = ["
-                                    + out
-                                    + "]");
-                            return false;
-                        }
+                    InputStream in = activity.getContentResolver().openInputStream(uri);
+                    if (in != null) {
+                        FileUtils.copyInputStreamToFile(in, outFile);
+                        in.close();
+                        return true;
                     }
-                    return true;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                return false;
+            }
 
-                @Override
-                protected void onPostExecute(Boolean success) {
-                    super.onPostExecute(success);
-                    if (save) {
-                        notifMgr.cancel(1);
-                        if (success) {
-                            doNotifGif(outFile, a);
-                        } else {
-                            showErrorDialog(a);
-                        }
+            @Override
+            protected void onPostExecute(Boolean success) {
+                super.onPostExecute(success);
+                if (save) {
+                    notifMgr.cancel(1);
+                    if (success) {
+                        doNotifGif(outFile, activity);
+                    } else {
+                        showErrorDialog(activity);
                     }
                 }
-            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
+}
 
     public static class AsyncLoadGif extends AsyncTask<String, Void, Uri> {
 

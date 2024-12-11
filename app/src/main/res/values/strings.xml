@@ -1225,6 +1225,8 @@
     <string name="settings_hide_comment_awards">Hide awards</string>
     <string name="high_colorspace_images">High-Colorspace Images</string>
     <string name="description_high_colorspace">Loads full colorspace on images, potentially leading to higher memory usage</string>
+    <string name="comment_emote_animation">Comment emote animation</string>
+    <string name="description_comment_emote_animation">Toggles if emotes in comments are animated or not</string>
     <string name="editor_btn_select_flair">Select flair</string>
     <string name="submit_selected_flair">Selected flair: %s</string>
 </resources>
