@@ -9,6 +9,32 @@ android {
     buildToolsVersion "30.0.3"
     namespace "me.ccrama.redditslide"
 
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            // Define components of the filename
+            def appName = "slide"
+            def buildType = variant.buildType
+            def flavors = variant.productFlavors.collect { it.name }.join("-") ?: "noFlavor"
+            def versionName = variant.versionName
+            def versionCode = variant.versionCode
+
+            // Initialize newApkName with a default pattern
+            def newApkName = "${appName}-${flavors}-${versionName}(${versionCode}).apk"
+
+            if (flavors.contains("withGPlay")) {
+                newApkName = "${appName}-${versionName}.apk"
+            } else if (flavors.contains("NoGPlay")) {
+                newApkName = "${appName}-${flavor}-${versionName}.apk"
+            } else if (buildType == "debug") {
+                newApkName = "${appName}-${buildType}-${versionName}.apk"
+            }
+
+            // Assign the new filename
+            output.outputFileName = newApkName
+        }
+    }
+
     defaultConfig {
         applicationId "me.ccrama.redditslide"
         minSdk 16
