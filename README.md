@@ -2,7 +2,7 @@
 
 This project will be on indefinite hiatus for the foreseeable future, and may not be maintained.
 Updates are not guaranteed.
-See [here](https://github.com/Haptic-Apps/Slide/issues/3449) for details.
+See [here](https://github.com/edgan/Slide/issues/3449) for details.
 
 You may continue to use Slide if you so wish.
 However, with this said, it would be recommended to consider migrating to another (more stable) Reddit client.
@@ -58,8 +58,8 @@ In any project it's likely that a few bugs will slip through the cracks, so it
 helps greatly if people document any bugs they find to ensure that they get
 fixed promptly.
 
-You can view a list of known issues and feature requests using [the issue tracker](https://github.com/Haptic-Apps/Slide/issues).
-If you don't see your issue (or you aren't sure), feel free to [submit it!](https://github.com/Haptic-Apps/Slide/issues/new).
+You can view a list of known issues and feature requests using [the issue tracker](https://github.com/edgan/Slide/issues).
+If you don't see your issue (or you aren't sure), feel free to [submit it!](https://github.com/edgan/Slide/issues/new).
 
 Where appropriate, a screenshot works wonders to help us see exactly what the issue is.
 You can upload screenshots directly using the GitHub issue tracker or
@@ -85,13 +85,13 @@ If you have any questions, feel free to
 [drop me a message](https://www.reddit.com/message/compose/?to=ccrama) on Reddit.
 
 If this is your first time contributing to the project and want to tackle an
-easy issue, take a look at the issues labelled [`Good First Issue`](https://github.com/Haptic-Apps/Slide/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22).
+easy issue, take a look at the issues labelled [`Good First Issue`](https://github.com/edgan/Slide/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22).
 These issues have been marked as such because we believe they are easier to fix than other issues.
 
 ## Changelog
 
 The file [CHANGELOG.md](CHANGELOG.md) provides an overview of the changes for a
-release; for a more detailed look at changes to the app, [view individual commits](https://github.com/Haptic-Apps/Slide/commits/master).
+release; for a more detailed look at changes to the app, [view individual commits](https://github.com/edgan/Slide/commits/master).
 
 ## Licensing
 

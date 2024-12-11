@@ -1,12 +1,16 @@
 ### CHANGELOG
 
-The non-abridged changelog can be read in the [releases page](https://github.com/ccrama/Slide/releases).
+The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
-UPCOMING / 202X-XX-XX
+6.7.2 / 2024-12-11
 ==================
-* Fix bug from 6.7.1 where History and Read Later no longer worked
-* Updated translations
-* Other bug fixes and improvements
+* Fixed multi-reddit tabs
+* Added Reddit default emote support to comments
+
+6.7.1.1 / 2024-12-09
+==================
+* Added a dynamic Client ID feature
+* Added shared links fix
 
 6.7.1 / 2021-06-17
 ==================
