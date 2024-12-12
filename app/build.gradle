@@ -1,7 +1,19 @@
+import java.util.Properties
+
 plugins {
     id 'com.android.application'
     id 'com.gladed.androidgitversion' version '0.4.14'
     id 'com.github.ben-manes.versions' version '0.42.0'
+}
+
+// Load keystore properties from keystore.properties
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+} else {
+    throw new GradleException("keystore.properties file not found. Please create one with the necessary keystore configurations.")
 }
 
 android {
@@ -59,8 +71,18 @@ android {
         }
     }
 
+    signingConfigs {
+        withGPlay {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.withGPlay
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             resValue "string", "app_name", "Slide"
@@ -233,4 +255,15 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.hamcrest:hamcrest:2.2'
     testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
+}
+
+task signAPK(type: Exec) {
+    // Example: Custom signing command
+    // Replace with your actual signing logic if different
+    commandLine 'sh', '-c', 'echo "Signing APK..."'
+}
+
+tasks.register("signWithGPlayReleaseAPK") {
+    dependsOn "assembleWithGPlayRelease"
+    finalizedBy "signAPK"
 }
