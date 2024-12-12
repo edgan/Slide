@@ -163,9 +163,10 @@ public class RedditGalleryPager extends FullScreenActivity
 
         findViewById(R.id.progress).setVisibility(View.GONE);
         images = (ArrayList<GalleryImage>)
-               getIntent().getSerializableExtra(RedditGallery.GALLERY_URLS);
+                getIntent().getSerializableExtra(RedditGallery.GALLERY_URLS);
 
         p = (ViewPager) findViewById(R.id.images_horizontal);
+        p.setOffscreenPageLimit(2);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(1 + "/" + images.size());
@@ -174,6 +175,14 @@ public class RedditGalleryPager extends FullScreenActivity
         GalleryViewPagerAdapter adapter = new GalleryViewPagerAdapter(getSupportFragmentManager());
         p.setAdapter(adapter);
         p.setCurrentItem(1);
+        p.post(new Runnable() {
+            @Override
+            public void run() {
+                // Force load first two positions
+                adapter.instantiateItem(p, 0);
+                adapter.instantiateItem(p, 1);
+            }
+        });
         findViewById(R.id.grid).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

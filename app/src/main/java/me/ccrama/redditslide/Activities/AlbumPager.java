@@ -43,6 +43,7 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.File;
@@ -642,49 +643,23 @@ public class AlbumPager extends FullScreenActivity
         fakeImage.setLayoutParams(
                 new LinearLayout.LayoutParams(image.getWidth(), image.getHeight()));
         fakeImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+            .resetViewBeforeLoading(true)
+            .cacheOnDisk(true)
+            .imageScaleType(single ? ImageScaleType.NONE : ImageScaleType.NONE_SAFE)
+            .cacheInMemory(true)
+            .considerExifParams(true)
+            .build();
+
         ((Reddit) f.getActivity().getApplication()).getImageLoader()
-                .displayImage(url, new ImageViewAware(fakeImage),
-                        new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
-                                .cacheOnDisk(true)
-                                .imageScaleType(single?ImageScaleType.NONE:ImageScaleType.NONE_SAFE)
-                                .cacheInMemory(false)
-                                .build(), new ImageLoadingListener() {
-
-                            @Override
-                            public void onLoadingStarted(String imageUri, View view) {
-                                size.setVisibility(View.VISIBLE);
-                            }
-
-                            @Override
-                            public void onLoadingFailed(String imageUri, View view,
-                                    FailReason failReason) {
-                                Log.v("Slide", "AlbumPager: LOADING FAILED");
-
-                            }
-
-                            @Override
-                            public void onLoadingComplete(String imageUri, View view,
-                                    Bitmap loadedImage) {
-                                size.setVisibility(View.GONE);
-                                image.setImage(ImageSource.bitmap(loadedImage));
-                                (rootView.findViewById(R.id.progress)).setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onLoadingCancelled(String imageUri, View view) {
-                                Log.v("Slide", "AlbumPager: LOADING CANCELLED");
-
-                            }
-                        }, new ImageLoadingProgressListener() {
-                            @Override
-                            public void onProgressUpdate(String imageUri, View view, int current,
-                                    int total) {
-                                size.setText(FileUtil.readableFileSize(total));
-
-                                ((ProgressBar) rootView.findViewById(R.id.progress)).setProgress(
-                                        Math.round(100.0f * current / total));
-                            }
-                        });
+            .loadImage(url, options, new SimpleImageLoadingListener() {
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    size.setVisibility(View.GONE);
+                    image.setImage(ImageSource.bitmap(loadedImage));
+                    rootView.findViewById(R.id.progress).setVisibility(View.GONE);
+                }
+            });
     }
 
     private void showFirstDialog() {
