@@ -610,7 +610,7 @@ public class MediaFragmentComment extends Fragment {
                                     @Override
                                     public void onLoadingFailed(String imageUri, View view,
                                             FailReason failReason) {
-                                        Log.v(LogUtil.getTag(), "LOADING FAILED");
+                                        Log.v(LogUtil.getTag(), "MediaFragmentComment: LOADING FAILED");
 
                                     }
 
@@ -695,7 +695,7 @@ public class MediaFragmentComment extends Fragment {
 
                                     @Override
                                     public void onLoadingCancelled(String imageUri, View view) {
-                                        Log.v(LogUtil.getTag(), "LOADING CANCELLED");
+                                        Log.v(LogUtil.getTag(), "MediaFragmentComment: LOADING CANCELLED");
 
                                     }
                                 }, new ImageLoadingProgressListener() {

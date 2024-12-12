@@ -585,7 +585,7 @@ public class PeekMediaView extends RelativeLayout {
                                     @Override
                                     public void onLoadingFailed(String imageUri, View view,
                                             FailReason failReason) {
-                                        Log.v(LogUtil.getTag(), "LOADING FAILED");
+                                        Log.v(LogUtil.getTag(), "PeekMediaView: LOADING FAILED");
                                         imageShown = false;
                                     }
 
@@ -609,7 +609,7 @@ public class PeekMediaView extends RelativeLayout {
 
                                     @Override
                                     public void onLoadingCancelled(String imageUri, View view) {
-                                        Log.v(LogUtil.getTag(), "LOADING CANCELLED");
+                                        Log.v(LogUtil.getTag(), "PeekMediaView: LOADING CANCELLED");
 
                                     }
                                 }, new ImageLoadingProgressListener() {

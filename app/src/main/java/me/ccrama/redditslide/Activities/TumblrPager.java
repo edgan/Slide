@@ -625,7 +625,7 @@ public class TumblrPager extends FullScreenActivity
                             @Override
                             public void onLoadingFailed(String imageUri, View view,
                                     FailReason failReason) {
-                                Log.v("Slide", "LOADING FAILED");
+                                Log.v("Slide", "TumblrPager: LOADING FAILED");
 
                             }
 
@@ -639,7 +639,7 @@ public class TumblrPager extends FullScreenActivity
 
                             @Override
                             public void onLoadingCancelled(String imageUri, View view) {
-                                Log.v("Slide", "LOADING CANCELLED");
+                                Log.v("Slide", "TumblrPager: LOADING CANCELLED");
 
                             }
                         }, new ImageLoadingProgressListener() {

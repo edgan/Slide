@@ -1092,7 +1092,7 @@ public class MediaView extends FullScreenActivity
                                     @Override
                                     public void onLoadingFailed(String imageUri, View view,
                                             FailReason failReason) {
-                                        Log.v(LogUtil.getTag(), "LOADING FAILED");
+                                        Log.v(LogUtil.getTag(), "MediaView: LOADING FAILED");
                                         imageShown = false;
                                     }
 
@@ -1173,7 +1173,7 @@ public class MediaView extends FullScreenActivity
 
                                     @Override
                                     public void onLoadingCancelled(String imageUri, View view) {
-                                        Log.v(LogUtil.getTag(), "LOADING CANCELLED");
+                                        Log.v(LogUtil.getTag(), "MediaView: LOADING CANCELLED");
 
                                     }
                                 }, new ImageLoadingProgressListener() {
