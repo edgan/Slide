@@ -27,7 +27,6 @@ if (keystorePropertiesFile.exists()) {
     throw new GradleException("keystore.properties file not found. Please create one with the necessary keystore configurations.")
 }
 
-def githubToken = project.findProperty("githubToken") ?: System.getenv("GITHUB_TOKEN")
 def newApkName = ""
 
 android {
@@ -135,7 +134,7 @@ android {
 }
 
 githubRelease {
-    token = "${githubToken}"
+    token = githubProperties["githubToken"]
     owner = "edgan"
     repo = "Slide"
     tagName = "v${android.defaultConfig.versionName}" // Tag for the release
