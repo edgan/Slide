@@ -4,6 +4,17 @@ plugins {
     id 'com.android.application'
     id 'com.gladed.androidgitversion' version '0.4.14'
     id 'com.github.ben-manes.versions' version '0.42.0'
+    id 'com.github.breadmoirai.github-release' version '2.5.2'
+}
+
+// Load github properties from github.properties
+def githubProperties = new Properties()
+def githubPropertiesFile = rootProject.file("github.properties")
+
+if (githubPropertiesFile.exists()) {
+    githubProperties.load(new FileInputStream(githubPropertiesFile))
+} else {
+    throw new GradleException("github.properties file not found. Please create one with the necessary github configurations.")
 }
 
 // Load keystore properties from keystore.properties
@@ -16,6 +27,9 @@ if (keystorePropertiesFile.exists()) {
     throw new GradleException("keystore.properties file not found. Please create one with the necessary keystore configurations.")
 }
 
+def githubToken = project.findProperty("githubToken") ?: System.getenv("GITHUB_TOKEN")
+def newApkName = ""
+
 android {
     compileSdk 29
     buildToolsVersion "30.0.3"
@@ -24,15 +38,12 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            // Define components of the filename
             def appName = "slide"
             def buildType = variant.buildType
             def flavors = variant.productFlavors.collect { it.name }.join("-") ?: "noFlavor"
             def versionName = variant.versionName
             def versionCode = variant.versionCode
-
-            // Initialize newApkName with a default pattern
-            def newApkName = "${appName}-${flavors}-${versionName}(${versionCode}).apk"
+            newApkName = "${appName}-${flavors}-${versionName}(${versionCode}).apk"
 
             if (flavors.contains("withGPlay")) {
                 newApkName = "${appName}-${versionName}.apk"
@@ -121,6 +132,19 @@ android {
     buildFeatures {
         viewBinding true
     }
+}
+
+githubRelease {
+    token = "${githubToken}"
+    owner = "edgan"
+    repo = "Slide"
+    tagName = "v${android.defaultConfig.versionName}" // Tag for the release
+    releaseName = "Release v${android.defaultConfig.versionName}"
+    body = "Automated release of version ${android.defaultConfig.versionName}"
+    draft = false
+    prerelease = false
+    overwrite = false
+    releaseAssets = [file("app/build/outputs/apk/withGPlay/release/${newApkName}")] // Adjust path as necessary
 }
 
 dependencies {
