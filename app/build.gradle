@@ -138,6 +138,7 @@ githubRelease {
     owner = "edgan"
     repo = "Slide"
     tagName = "${android.defaultConfig.versionName}"
+    targetCommitish = "master"
     releaseName = "Release ${android.defaultConfig.versionName}"
     body = "Automated release of version ${android.defaultConfig.versionName}"
     draft = false
