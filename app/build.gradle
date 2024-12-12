@@ -27,8 +27,6 @@ if (keystorePropertiesFile.exists()) {
     throw new GradleException("keystore.properties file not found. Please create one with the necessary keystore configurations.")
 }
 
-def newApkName = ""
-
 android {
     compileSdk 29
     buildToolsVersion "30.0.3"
@@ -42,7 +40,7 @@ android {
             def flavors = variant.productFlavors.collect { it.name }.join("-") ?: "noFlavor"
             def versionName = variant.versionName
             def versionCode = variant.versionCode
-            newApkName = "${appName}-${flavors}-${versionName}(${versionCode}).apk"
+            def newApkName = "${appName}-${flavors}-${versionName}(${versionCode}).apk"
 
             if (flavors.contains("withGPlay")) {
                 newApkName = "${appName}-${versionName}.apk"
@@ -144,7 +142,10 @@ githubRelease {
     draft = false
     prerelease = false
     overwrite = false
-    releaseAssets = [file("app/build/outputs/apk/withGPlay/release/${newApkName}")] // Adjust path as necessary
+
+    // Dynamically set releaseAssets by searching the APK path
+    // This assumes only one APK is present in the specified directory
+    releaseAssets = fileTree(dir: "app/build/outputs/apk/withGPlay/release/", include: "*.apk").files.toList()
 }
 
 dependencies {
