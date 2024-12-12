@@ -145,7 +145,7 @@ githubRelease {
 
     // Dynamically set releaseAssets by searching the APK path
     // This assumes only one APK is present in the specified directory
-    releaseAssets = fileTree(dir: "app/build/outputs/apk/withGPlay/release/", include: "*.apk").files.toList()
+    releaseAssets = fileTree(dir: "build/outputs/apk/withGPlay/release/", include: "*.apk").files.toList()
 }
 
 dependencies {
