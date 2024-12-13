@@ -2,6 +2,11 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+6.7.4 / 2024-12-12
+==================
+* Added preview images for Reddit galleries
+* Improved the consistency of displaying images in Reddit galleries in the default view
+
 6.7.2 / 2024-12-11
 ==================
 * Fixed multi-reddit tabs
