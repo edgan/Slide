@@ -229,56 +229,66 @@ public class AlbumPager extends FullScreenActivity
 
         @Override
         public void doWithData(final List<Image> jsonElements) {
+            // Call the superclass implementation if needed
             super.doWithData(jsonElements);
-            findViewById(R.id.progress).setVisibility(View.GONE);
-            images = new ArrayList<>(jsonElements);
 
-            p = (ViewPager) findViewById(R.id.images_horizontal);
-
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setSubtitle(1 + "/" + images.size());
-            }
-
-            AlbumViewPagerAdapter adapter = new AlbumViewPagerAdapter(getSupportFragmentManager());
-            p.setAdapter(adapter);
-            p.setCurrentItem(1);
-            findViewById(R.id.grid).setOnClickListener(new View.OnClickListener() {
+            // Use runOnUiThread to ensure the following UI code runs on the main thread
+            runOnUiThread(new Runnable() {
                 @Override
-                public void onClick(View v) {
-                    LayoutInflater l = getLayoutInflater();
-                    View body = l.inflate(R.layout.album_grid_dialog, null, false);
-                    GridView gridview = body.findViewById(R.id.images);
-                    gridview.setAdapter(new ImageGridAdapter(AlbumPager.this, images));
+                public void run() {
+                    findViewById(R.id.progress).setVisibility(View.GONE);
+                    images = new ArrayList<>(jsonElements);
 
-                    final AlertDialog.Builder b = new AlertDialog.Builder(AlbumPager.this)
-                            .setView(body);
-                    final Dialog d = b.create();
-                    gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        public void onItemClick(AdapterView<?> parent, View v, int position,
-                                long id) {
-                            p.setCurrentItem(position + 1);
-                            d.dismiss();
+                    p = (ViewPager) findViewById(R.id.images_horizontal);
+
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().setSubtitle(1 + "/" + images.size());
+                    }
+
+                    AlbumViewPagerAdapter adapter = new AlbumViewPagerAdapter(getSupportFragmentManager());
+                    p.setAdapter(adapter);
+                    p.setCurrentItem(1);
+
+                    findViewById(R.id.grid).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            LayoutInflater l = getLayoutInflater();
+                            View body = l.inflate(R.layout.album_grid_dialog, null, false);
+                            GridView gridview = body.findViewById(R.id.images);
+                            gridview.setAdapter(new ImageGridAdapter(AlbumPager.this, images));
+
+                            final AlertDialog.Builder b = new AlertDialog.Builder(AlbumPager.this)
+                                    .setView(body);
+                            final Dialog d = b.create();
+                            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                public void onItemClick(AdapterView<?> parent, View v, int position,
+                                        long id) {
+                                    p.setCurrentItem(position + 1);
+                                    d.dismiss();
+                                }
+                            });
+                            d.show();
                         }
                     });
-                    d.show();
-                }
-            });
-            p.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset,
-                        int positionOffsetPixels) {
-                    if (position != 0) {
-                        if (getSupportActionBar() != null) {
-                            getSupportActionBar().setSubtitle((position) + "/" + images.size());
-                        }
-                    }
-                    if (position == 0 && positionOffset < 0.2) {
-                        finish();
-                    }
-                }
-            });
-            adapter.notifyDataSetChanged();
 
+                    p.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                        @Override
+                        public void onPageScrolled(int position, float positionOffset,
+                                int positionOffsetPixels) {
+                            if (position != 0) {
+                                if (getSupportActionBar() != null) {
+                                    getSupportActionBar().setSubtitle((position) + "/" + images.size());
+                                }
+                            }
+                            if (position == 0 && positionOffset < 0.2) {
+                                finish();
+                            }
+                        }
+                    });
+
+                    adapter.notifyDataSetChanged();
+                }
+            });
         }
     }
 

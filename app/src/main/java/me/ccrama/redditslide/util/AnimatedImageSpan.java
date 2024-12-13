@@ -28,7 +28,6 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
             @Override
             public void run() {
                 if (isAttached) {
-                    Log.d("EmoteDebug", "Invalidating view for animation");
                     view.postInvalidate();
                     handler.postDelayed(this, FRAME_DELAY);
                 }

@@ -254,6 +254,66 @@ public class HeaderImageLinkView extends RelativeLayout {
                     thumbUsed = true;
                 }
                 loadedUrl = submission.getUrl();
+            } else if (type == ContentType.Type.REDDIT_GALLERY) {
+                JsonNode dataNode = submission.getDataNode();
+
+                // If this is a crosspost, we need to load the gallery data from the parent submission
+                if (dataNode.has("crosspost_parent_list") && dataNode.get("crosspost_parent_list").size() > 0) {
+                    dataNode = dataNode.get("crosspost_parent_list").get(0);
+                }
+
+                if (dataNode.has("gallery_data")) {
+                    JsonNode galleryData = dataNode.get("gallery_data");
+                    if (galleryData.has("items") && galleryData.get("items").size() > 0) {
+                        String mediaId = galleryData.get("items").get(0).get("media_id").asText();
+                        if (dataNode.has("media_metadata") && dataNode.get("media_metadata").has(mediaId)) {
+                            JsonNode mediaMetadata = dataNode.get("media_metadata").get(mediaId);
+                            if (mediaMetadata.has("p") && mediaMetadata.get("p").size() > 0) {
+                                url = mediaMetadata.get("p").get(0).get("u").asText()
+                                        .replace("preview", "i")
+                                        .replaceAll("\\?.*", "");
+
+                                // Handle the URL similar to regular images
+                                if (!full && !SettingValues.isPicsEnabled(baseSub) || forceThumb) {
+                                    if (!submission.isSelfPost() || full) {
+                                        if (!full) {
+                                            thumbImage2.setVisibility(View.VISIBLE);
+                                        } else {
+                                            wrapArea.setVisibility(View.VISIBLE);
+                                        }
+
+                                        loadedUrl = url;
+                                        if (!full) {
+                                            ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                                                    .displayImage(url, thumbImage2);
+                                        } else {
+                                            ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                                                    .displayImage(url, thumbImage2, bigOptions);
+                                        }
+                                    } else {
+                                        thumbImage2.setVisibility(View.GONE);
+                                    }
+                                    setVisibility(View.GONE);
+                                } else {
+                                    loadedUrl = url;
+                                    if (!full) {
+                                        ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                                                .displayImage(url, backdrop);
+                                    } else {
+                                        ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                                                .displayImage(url, backdrop, bigOptions);
+                                    }
+                                    setVisibility(View.VISIBLE);
+                                    if (!full) {
+                                        thumbImage2.setVisibility(View.GONE);
+                                    } else {
+                                        wrapArea.setVisibility(View.GONE);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             } else if (type != ContentType.Type.IMAGE
                     && type != ContentType.Type.SELF
                     && (!thumbnail.isNull() && (thumbnailType != Submission.ThumbnailType.URL))
@@ -270,60 +330,6 @@ public class HeaderImageLinkView extends RelativeLayout {
                         ContextCompat.getDrawable(getContext(), R.drawable.web));
                 thumbUsed = true;
                 loadedUrl = submission.getUrl();
-} else if (type == ContentType.Type.REDDIT_GALLERY) {
-    JsonNode dataNode = submission.getDataNode();
-    if (dataNode.has("gallery_data")) {
-        JsonNode galleryData = dataNode.get("gallery_data");
-        if (galleryData.has("items") && galleryData.get("items").size() > 0) {
-            String mediaId = galleryData.get("items").get(0).get("media_id").asText();
-            if (dataNode.has("media_metadata") && dataNode.get("media_metadata").has(mediaId)) {
-                JsonNode mediaMetadata = dataNode.get("media_metadata").get(mediaId);
-                if (mediaMetadata.has("p") && mediaMetadata.get("p").size() > 0) {
-                    url = mediaMetadata.get("p").get(0).get("u").asText()
-                            .replace("preview", "i")
-                            .replaceAll("\\?.*", "");
-
-                    // Handle the URL similar to regular images
-                    if (!full && !SettingValues.isPicsEnabled(baseSub) || forceThumb) {
-                        if (!submission.isSelfPost() || full) {
-                            if (!full) {
-                                thumbImage2.setVisibility(View.VISIBLE);
-                            } else {
-                                wrapArea.setVisibility(View.VISIBLE);
-                            }
-
-                            loadedUrl = url;
-                            if (!full) {
-                                ((Reddit) getContext().getApplicationContext()).getImageLoader()
-                                        .displayImage(url, thumbImage2);
-                            } else {
-                                ((Reddit) getContext().getApplicationContext()).getImageLoader()
-                                        .displayImage(url, thumbImage2, bigOptions);
-                            }
-                        } else {
-                            thumbImage2.setVisibility(View.GONE);
-                        }
-                        setVisibility(View.GONE);
-                    } else {
-                        loadedUrl = url;
-                        if (!full) {
-                            ((Reddit) getContext().getApplicationContext()).getImageLoader()
-                                    .displayImage(url, backdrop);
-                        } else {
-                            ((Reddit) getContext().getApplicationContext()).getImageLoader()
-                                    .displayImage(url, backdrop, bigOptions);
-                        }
-                        setVisibility(View.VISIBLE);
-                        if (!full) {
-                            thumbImage2.setVisibility(View.GONE);
-                        } else {
-                            wrapArea.setVisibility(View.GONE);
-                        }
-                    }
-                }
-            }
-        }
-    }
             } else if (type == ContentType.Type.IMAGE && !thumbnail.isNull() && !thumbnail.asText()
                     .isEmpty()) {
                 if (loadLq

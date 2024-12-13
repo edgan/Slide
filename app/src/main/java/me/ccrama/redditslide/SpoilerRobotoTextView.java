@@ -367,8 +367,6 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         synchronized(spanLock) {
-            Log.d("EmoteDebug", "View attached to window");
-
             // First apply any pending spans
             if (!pendingSpans.isEmpty()) {
                 Log.d("EmoteDebug", "Applying " + pendingSpans.size() + " pending spans");
@@ -395,8 +393,6 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     @Override
     protected void onDetachedFromWindow() {
         synchronized(spanLock) {
-            Log.d("EmoteDebug", "View detached from window");
-
             // Stop all spans
             CharSequence text = getText();
             if (text instanceof Spannable) {
