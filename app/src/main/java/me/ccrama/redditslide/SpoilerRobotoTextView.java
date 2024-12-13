@@ -165,7 +165,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         replaceQuoteSpans(
                 builder); //replace the <blockquote> blue line with something more colorful
 
-        if (text.contains("free_emotes_pack")) {
+        if (text.contains("free_emotes_pack") || text.contains("giphy")) {
             setEmoteText(text, this);
         }
         if (text.contains("<a")) {
@@ -441,57 +441,22 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             // Clear existing state
             cleanupGifs();
 
-            Pattern redditEmotePattern = Pattern.compile(
-                "<img\\s+src=\"(https://www\\.redditstatic\\.com/marketplace-assets/v1/core/emotes/snoomoji_emotes/free_emotes_pack/([^/\"]+)\\.gif)\"[^>]*>");
+            Pattern redditPattern = Pattern.compile(
+                "<img\\s+src=\\\"(https://www\\.redditstatic\\.com/marketplace-assets/v1/core/emotes/snoomoji_emotes/free_emotes_pack/([^/\\\"]+)\\.gif)\\\"[^>]*>");
+            Pattern giphyPattern = Pattern.compile(
+                "<img\\s+src=\\\"(https://external-preview\\.redd\\.it/([^?]+)\\?width=([0-9]+)&height=([0-9]+)&s=([^\\\"]+))\\\"[^>]*>"
+            );
 
-            Matcher matcher = redditEmotePattern.matcher(text);
             List<EmoteSpanRequest> spanRequests = new ArrayList<>();
             StringBuilder processedText = new StringBuilder();
 
             // Strip divs first
-            text = text.replaceAll("<div class=\"md\"><div>", "")
+            text = text.replaceAll("<div class=\\\"md\\\"><div>", "")
                       .replaceAll("</div>", "");
 
-            // Process text and collect emote requests
-            int lastEnd = 0;
-            int emoteCount = 0;
-
-            while (matcher.find()) {
-                int matchStart = matcher.start();
-                int matchEnd = matcher.end();
-
-                // Append text before the match
-                if (matchStart > lastEnd) {
-                    processedText.append(text.substring(lastEnd, matchStart));
-                }
-
-                try {
-                    String gifUrl = matcher.group(1);
-                    String emoteName = matcher.group(2);
-
-                    if (gifUrl != null && emoteName != null) {
-                        processedText.append("\uFFFC"); // Object replacement character
-
-                        spanRequests.add(new EmoteSpanRequest(
-                            gifUrl,
-                            emoteCount,
-                            emoteCount + 1,
-                            emoteName
-                        ));
-
-                        emoteCount++;
-                    }
-                } catch (IllegalStateException | IndexOutOfBoundsException e) {
-                    Log.e("EmoteDebug", "Error processing match groups", e);
-                }
-
-                lastEnd = matchEnd;
-            }
-
-            // Safely append remaining text after last match
-            if (lastEnd < text.length()) {
-                processedText.append(text.substring(lastEnd));
-            }
+            // Process the text for both patterns
+            processPattern(text, redditPattern, processedText, spanRequests);
+            processPattern(text, giphyPattern, processedText, spanRequests);
 
             // Create builder and ensure it's a SpannableStringBuilder
             SpannableStringBuilder builder = new SpannableStringBuilder(processedText);
@@ -521,6 +486,49 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
 
         } catch (Exception e) {
             Log.e("EmoteDebug", "Error in setEmoteText", e);
+        }
+    }
+
+    private void processPattern(String text, Pattern pattern, StringBuilder processedText, List<EmoteSpanRequest> spanRequests) {
+        Matcher matcher = pattern.matcher(text);
+        int lastEnd = 0;
+        int emoteCount = spanRequests.size();
+
+        while (matcher.find()) {
+            int matchStart = matcher.start();
+            int matchEnd = matcher.end();
+
+            // Append text before the match
+            if (matchStart > lastEnd) {
+                processedText.append(text.substring(lastEnd, matchStart));
+            }
+
+            try {
+                String gifUrl = matcher.group(1);
+                String emoteName = matcher.group(2);
+
+                if (gifUrl != null && emoteName != null) {
+                    processedText.append("\uFFFC"); // Object replacement character
+
+                    spanRequests.add(new EmoteSpanRequest(
+                        gifUrl,
+                        emoteCount,
+                        emoteCount + 1,
+                        emoteName
+                    ));
+
+                    emoteCount++;
+                }
+            } catch (IllegalStateException | IndexOutOfBoundsException e) {
+                Log.e("EmoteDebug", "Error processing match groups", e);
+            }
+
+            lastEnd = matchEnd;
+        }
+
+        // Safely append remaining text after last match
+        if (lastEnd < text.length()) {
+            processedText.append(text.substring(lastEnd));
         }
     }
 
@@ -608,15 +616,6 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 Log.e("EmoteDebug", "Failed to download GIF: " + request.gifUrl, e);
             }
         }, textView.getContext());
-    }
-
-    /**
-     * Example method to set text with emotes
-     *
-     * @param text The text containing emote placeholders
-     */
-    public void setTextWithEmotes(String text) {
-        setEmoteText(text, this);
     }
 
     // Helper class to keep track of span requests
