@@ -141,6 +141,7 @@ public class SettingValues {
     public static final String PREF_MOD_TOOLBOX_MODMAIL     = "toolboxModmail";
     public static final String PREF_ALWAYS_SHOW_FAB         = "alwaysShowFAB";
     public static final String PREF_HIGH_COLORSPACE_IMAGES  = "highMemoryImages";
+    public static final String PREF_ALWAYS_BLACK_STATUSBAR  = "alwaysBlackStatusbar";
 
     public static final String PREF_REDDIT_CLIENT_ID_OVERRIDE = "redditClientOverride";
     public static String redditClientIdOverride = "";
@@ -282,6 +283,7 @@ public class SettingValues {
     public static boolean toolboxLock;
     public static boolean toolboxModmail;
     public static boolean alwaysShowFAB;
+    public static boolean alwaysBlackStatusbar;
 
     public static void setAllValues(SharedPreferences settings) {
         prefs = settings;
@@ -295,6 +297,8 @@ public class SettingValues {
         bigPicEnabled = settings.getBoolean("bigPicEnabled", true);
 
         alwaysShowFAB=settings.getBoolean("alwaysShowFAB",false);
+
+        alwaysBlackStatusbar=settings.getBoolean("alwaysBlackStatusbar",false);
 
         colorMatchingMode = ColorMatchingMode.valueOf(
                 settings.getString("ccolorMatchingModeNew", "MATCH_EXTERNALLY"));

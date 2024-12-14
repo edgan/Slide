@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.graphics.Color;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
@@ -422,7 +423,12 @@ public class BaseActivity extends PeekViewActivity
      */
     protected void themeSystemBars(int color) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (SettingValues.alwaysBlackStatusbar) {
+                color = Color.BLACK;
+            }
+
             getWindow().setStatusBarColor(color);
+
             if (SettingValues.colorNavBar) {
                 getWindow().setNavigationBarColor(color);
             }

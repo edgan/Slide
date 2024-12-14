@@ -16,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.graphics.Color;
 
 import androidx.annotation.ArrayRes;
 import androidx.annotation.LayoutRes;
@@ -63,6 +64,7 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
         final TextView currentTintTextView = (TextView) context.findViewById(R.id.settings_theme_tint_current);
         final SwitchCompat tintEverywhereSwitch = (SwitchCompat) context.findViewById(R.id.settings_theme_tint_everywhere);
         final SwitchCompat colorNavbarSwitch = (SwitchCompat) context.findViewById(R.id.settings_theme_colorNavbar);
+        final SwitchCompat alwaysBlackStatusbarSwitch = (SwitchCompat) context.findViewById(R.id.settings_theme_alwaysBlackStatusbar);
         final SwitchCompat colorIconSwitch = (SwitchCompat) context.findViewById(R.id.settings_theme_colorAppIcon);
 
         back = new ColorPreferences(context).getFontStyle().getThemeType();
@@ -142,6 +144,18 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
         });
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        alwaysBlackStatusbarSwitch.setChecked(SettingValues.alwaysBlackStatusbar);
+        alwaysBlackStatusbarSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SettingsThemeFragment.changed = true;
+            SettingValues.alwaysBlackStatusbar = isChecked;
+            editSharedBooleanPreference(SettingValues.PREF_ALWAYS_BLACK_STATUSBAR, isChecked);
+            context.themeSystemBars("");
+            if (!isChecked) {
+                context.getWindow().setNavigationBarColor(Color.TRANSPARENT);
+            }
+        });
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         colorIconSwitch.setChecked(SettingValues.colorIcon);
         colorIconSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             SettingValues.colorIcon = isChecked;
@@ -207,8 +221,13 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Window window = context.getWindow();
-                    window.setStatusBarColor(
-                            Palette.getDarkerColor(colorPicker2.getColor()));
+                    int color = Palette.getDarkerColor(colorPicker2.getColor());
+
+                    if (SettingValues.alwaysBlackStatusbar) {
+                        color = Color.BLACK;
+                    }
+
+                    window.setStatusBarColor(color);
                 }
                 context.setRecentBar(context.getString(R.string.title_theme_settings),
                         colorPicker2.getColor());

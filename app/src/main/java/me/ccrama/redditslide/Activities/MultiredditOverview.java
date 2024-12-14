@@ -18,6 +18,7 @@ import android.view.Window;
 import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -512,8 +513,13 @@ public class MultiredditOverview extends BaseActivityAnim {
                 doDrawerSubs(0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Window window = this.getWindow();
-                    window.setStatusBarColor(
-                            Palette.getDarkerColor(usedArray.get(0).getDisplayName()));
+                    int color = Palette.getDarkerColor(usedArray.get(0).getDisplayName());
+
+                    if (SettingValues.alwaysBlackStatusbar) {
+                        color = Color.BLACK;
+                    }
+
+                    window.setStatusBarColor(color);
                 }
                 final View header = findViewById(R.id.header);
                 tabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(pager) {
@@ -601,8 +607,13 @@ public class MultiredditOverview extends BaseActivityAnim {
                             Palette.getColor(usedArray.get(position).getDisplayName()));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         Window window = getWindow();
-                        window.setStatusBarColor(
-                                Palette.getDarkerColor(usedArray.get(position).getDisplayName()));
+                        int color = Palette.getDarkerColor(usedArray.get(position).getDisplayName());
+
+                        if (SettingValues.alwaysBlackStatusbar) {
+                            color = Color.BLACK;
+                        }
+
+                        window.setStatusBarColor(color);
                     }
                     tabs.setSelectedTabIndicatorColor(
                             new ColorPreferences(MultiredditOverview.this).getColor(

@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -66,6 +67,8 @@ import me.ccrama.redditslide.util.LinkUtil;
 import me.ccrama.redditslide.util.LogUtil;
 import me.ccrama.redditslide.util.SortingUtil;
 import me.ccrama.redditslide.util.TimeUtils;
+import me.ccrama.redditslide.SettingValues;
+
 import uz.shift.colorpicker.LineColorPicker;
 import uz.shift.colorpicker.OnColorChangedListener;
 
@@ -768,7 +771,13 @@ public class Profile extends BaseActivityAnim {
                                 mToolbar.setBackgroundColor(colorPicker2.getColor());
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 Window window = getWindow();
-                                window.setStatusBarColor(Palette.getDarkerColor(colorPicker2.getColor()));
+                                int color = Palette.getDarkerColor(colorPicker2.getColor());
+
+                                if (SettingValues.alwaysBlackStatusbar) {
+                                    color = Color.BLACK;
+                                }
+
+                                window.setStatusBarColor(color);
                             }
                             title.setBackgroundColor(colorPicker2.getColor());
                         }
@@ -862,7 +871,13 @@ public class Profile extends BaseActivityAnim {
                                     mToolbar.setBackgroundColor(currentColor);
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     Window window = getWindow();
-                                    window.setStatusBarColor(Palette.getDarkerColor(currentColor));
+                                    int color = Palette.getDarkerColor(currentColor);
+
+                                    if (SettingValues.alwaysBlackStatusbar) {
+                                        color = Color.BLACK;
+                                    }
+
+                                    window.setStatusBarColor(color);
                                 }
                             })
                             .setView(dialoglayout)

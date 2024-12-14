@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -149,8 +150,13 @@ public class NewsActivity extends BaseActivity
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = this.getWindow();
-            window.setStatusBarColor(
-                    Palette.getDarkerColor(Palette.getDarkerColor(Palette.getDefaultColor())));
+            int color = Palette.getDarkerColor(Palette.getDarkerColor(Palette.getDefaultColor()));
+
+            if (SettingValues.alwaysBlackStatusbar) {
+                color = Color.BLACK;
+            }
+
+            window.setStatusBarColor(color);
         }
 
         mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
@@ -372,7 +378,13 @@ public class NewsActivity extends BaseActivity
                             header.setBackgroundColor(color);
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                getWindow().setStatusBarColor(Palette.getDarkerColor(color));
+                                int finalColor = Palette.getDarkerColor(color);
+
+                                if (SettingValues.alwaysBlackStatusbar) {
+                                    finalColor = Color.BLACK;
+                                }
+
+                                getWindow().setStatusBarColor(finalColor);
                                 if (SettingValues.colorNavBar) {
                                     getWindow().setNavigationBarColor(
                                             Palette.getDarkerColor(color));

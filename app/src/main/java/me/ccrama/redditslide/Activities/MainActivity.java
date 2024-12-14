@@ -58,6 +58,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.Color;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
@@ -911,8 +912,13 @@ public class MainActivity extends BaseActivity
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = this.getWindow();
-            window.setStatusBarColor(
-                    Palette.getDarkerColor(Palette.getDarkerColor(Palette.getDefaultColor())));
+            int color = Palette.getDarkerColor(Palette.getDarkerColor(Palette.getDefaultColor()));
+
+            if (SettingValues.alwaysBlackStatusbar) {
+                color = Color.BLACK;
+            }
+
+            window.setStatusBarColor(color);
         }
 
         mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
@@ -3678,7 +3684,13 @@ public class MainActivity extends BaseActivity
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
-            window.setStatusBarColor(Palette.getDarkerColor(color));
+            int finalColor = Palette.getDarkerColor(color);
+
+            if (SettingValues.alwaysBlackStatusbar) {
+                finalColor = Color.BLACK;
+            }
+
+            window.setStatusBarColor(finalColor);
         }
         setRecentBar(subreddit, color);
         findViewById(R.id.header_sub).setBackgroundColor(color);
@@ -4322,7 +4334,14 @@ public class MainActivity extends BaseActivity
                             header.setBackgroundColor(color);
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                getWindow().setStatusBarColor(Palette.getDarkerColor(color));
+                                int finalColor = Palette.getDarkerColor(color);
+
+                                if (SettingValues.alwaysBlackStatusbar) {
+                                    finalColor = Color.BLACK;
+                                }
+
+                                getWindow().setStatusBarColor(finalColor);
+
                                 if (SettingValues.colorNavBar) {
                                     getWindow().setNavigationBarColor(
                                             Palette.getDarkerColor(color));
