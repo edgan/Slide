@@ -114,7 +114,6 @@ import me.ccrama.redditslide.util.LinkUtil;
 import me.ccrama.redditslide.util.MiscUtil;
 import me.ccrama.redditslide.util.NetworkUtil;
 import me.ccrama.redditslide.util.OnSingleClickListener;
-import me.ccrama.redditslide.util.ProUtil;
 import me.ccrama.redditslide.util.StringUtil;
 import me.ccrama.redditslide.util.SubmissionParser;
 import me.ccrama.redditslide.util.TimeUtils;
@@ -767,66 +766,59 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
                 }
                 return true;
             case R.id.shadowbox:
-                if (SettingValues.isPro) {
-                    if (comments.comments != null && comments.submission != null) {
-                        ShadowboxComments.comments = new ArrayList<>();
-                        for (CommentObject c : comments.comments) {
-                            if (c instanceof CommentItem) {
-                                if (c.comment.getComment()
+                if (comments.comments != null && comments.submission != null) {
+                    ShadowboxComments.comments = new ArrayList<>();
+                    for (CommentObject c : comments.comments) {
+                        if (c instanceof CommentItem) {
+                            if (c.comment.getComment()
+                                    .getDataNode()
+                                    .get("body_html")
+                                    .asText()
+                                    .contains("&lt;/a")) {
+                                String body = c.comment.getComment()
                                         .getDataNode()
                                         .get("body_html")
-                                        .asText()
-                                        .contains("&lt;/a")) {
-                                    String body = c.comment.getComment()
-                                            .getDataNode()
-                                            .get("body_html")
-                                            .asText();
-                                    String url;
-                                    String[] split = body.split("&lt;a href=\"");
-                                    if (split.length > 1) {
-                                        for (String chunk : split) {
-                                            url = chunk.substring(0,
-                                                    chunk.indexOf("\"", 1));
-                                            ContentType.Type t =
-                                                    ContentType.getContentType(url);
-
-                                            if (ContentType.mediaType(t)) {
-                                                ShadowboxComments.comments.add(
-                                                        new CommentUrlObject(c.comment,
-                                                                url, subreddit));
-                                            }
-
-                                        }
-                                    } else {
-                                        int start = body.indexOf("&lt;a href=\"");
-                                        url = body.substring(start,
-                                                body.indexOf("\"", start + 1));
+                                        .asText();
+                                String url;
+                                String[] split = body.split("&lt;a href=\"");
+                                if (split.length > 1) {
+                                    for (String chunk : split) {
+                                        url = chunk.substring(0,
+                                                chunk.indexOf("\"", 1));
                                         ContentType.Type t =
                                                 ContentType.getContentType(url);
 
                                         if (ContentType.mediaType(t)) {
                                             ShadowboxComments.comments.add(
-                                                    new CommentUrlObject(c.comment, url, subreddit));
+                                                    new CommentUrlObject(c.comment,
+                                                            url, subreddit));
                                         }
 
                                     }
+                                } else {
+                                    int start = body.indexOf("&lt;a href=\"");
+                                    url = body.substring(start,
+                                            body.indexOf("\"", start + 1));
+                                    ContentType.Type t =
+                                            ContentType.getContentType(url);
+
+                                    if (ContentType.mediaType(t)) {
+                                        ShadowboxComments.comments.add(
+                                                new CommentUrlObject(c.comment, url, subreddit));
+                                    }
+
                                 }
                             }
                         }
-                        if (!ShadowboxComments.comments.isEmpty()) {
-                            Intent i = new Intent(getActivity(), ShadowboxComments.class);
-                            startActivity(i);
-                        } else {
-                            Snackbar.make(mSwipeRefreshLayout,
-                                    R.string.shadowbox_comments_nolinks,
-                                    Snackbar.LENGTH_SHORT).show();
-                        }
                     }
-                } else {
-                    ProUtil.proUpgradeMsg(getContext(), R.string.general_shadowbox_comments_ispro)
-                            .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                                    dialog.dismiss())
-                            .show();
+                    if (!ShadowboxComments.comments.isEmpty()) {
+                        Intent i = new Intent(getActivity(), ShadowboxComments.class);
+                        startActivity(i);
+                    } else {
+                        Snackbar.make(mSwipeRefreshLayout,
+                                R.string.shadowbox_comments_nolinks,
+                                Snackbar.LENGTH_SHORT).show();
+                    }
                 }
                 return true;
             case R.id.sort: {

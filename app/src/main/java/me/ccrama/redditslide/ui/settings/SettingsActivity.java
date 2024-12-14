@@ -46,7 +46,6 @@ import me.ccrama.redditslide.Visuals.Palette;
 import me.ccrama.redditslide.ui.settings.dragSort.ReorderSubreddits;
 import me.ccrama.redditslide.util.NetworkUtil;
 import me.ccrama.redditslide.util.OnSingleClickListener;
-import me.ccrama.redditslide.util.ProUtil;
 import me.ccrama.redditslide.util.stubs.SimpleTextWatcher;
 
 /**
@@ -314,19 +313,7 @@ public class SettingsActivity extends BaseActivity
 
     private void setSettingItems() {
         View pro = findViewById(R.id.settings_child_pro);
-        if (SettingValues.isPro) {
-            pro.setVisibility(View.GONE);
-        } else {
-            pro.setOnClickListener(new OnSingleClickListener() {
-                @Override
-                public void onSingleClick(View v) {
-                    ProUtil.proUpgradeMsg(SettingsActivity.this, R.string.settings_support_slide)
-                            .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                                    dialog.dismiss())
-                            .show();
-                }
-            });
-        }
+        pro.setVisibility(View.GONE);
 
         ((EditText) findViewById(R.id.settings_search)).addTextChangedListener(new SimpleTextWatcher() {
             @Override
@@ -457,99 +444,92 @@ public class SettingsActivity extends BaseActivity
         findViewById(R.id.settings_child_tablet).setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View view) {
-                  /*  Intent inte = new Intent(Overview.this, Overview.class);
-                    inte.putExtra("type", UpdateSubreddits.COLLECTIONS);
-                    Overview.this.startActivity(inte);*/
-                if (SettingValues.isPro) {
-                    LayoutInflater inflater = getLayoutInflater();
-                    final View dialoglayout = inflater.inflate(R.layout.tabletui, null);
-                    final Resources res = getResources();
+                /*  Intent inte = new Intent(Overview.this, Overview.class);
+                  inte.putExtra("type", UpdateSubreddits.COLLECTIONS);
+                  Overview.this.startActivity(inte);*/
+                LayoutInflater inflater = getLayoutInflater();
+                final View dialoglayout = inflater.inflate(R.layout.tabletui, null);
+                final Resources res = getResources();
 
-                    dialoglayout.findViewById(R.id.title)
-                            .setBackgroundColor(Palette.getDefaultColor());
-                    //todo final Slider portrait = (Slider) dialoglayout.findViewById(R.id.portrait);
-                    final SeekBar landscape = dialoglayout.findViewById(R.id.landscape);
+                dialoglayout.findViewById(R.id.title)
+                        .setBackgroundColor(Palette.getDefaultColor());
+                //todo final Slider portrait = (Slider) dialoglayout.findViewById(R.id.portrait);
+                final SeekBar landscape = dialoglayout.findViewById(R.id.landscape);
 
-                    //todo  portrait.setBackgroundColor(Palette.getDefaultColor());
-                    landscape.setProgress(Reddit.dpWidth - 1);
+                //todo  portrait.setBackgroundColor(Palette.getDefaultColor());
+                landscape.setProgress(Reddit.dpWidth - 1);
 
-                    ((TextView) dialoglayout.findViewById(R.id.progressnumber)).setText(
-                            res.getQuantityString(R.plurals.landscape_columns,
-                                    landscape.getProgress() + 1, landscape.getProgress() + 1));
+                ((TextView) dialoglayout.findViewById(R.id.progressnumber)).setText(
+                        res.getQuantityString(R.plurals.landscape_columns,
+                                landscape.getProgress() + 1, landscape.getProgress() + 1));
 
-                    landscape.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                        @Override
-                        public void onProgressChanged(SeekBar seekBar, int progress,
-                                boolean fromUser) {
-                            ((TextView) dialoglayout.findViewById(R.id.progressnumber)).setText(
-                                    res.getQuantityString(R.plurals.landscape_columns,
-                                            landscape.getProgress() + 1,
-                                            landscape.getProgress() + 1));
-                            SettingsActivity.changed = true;
-                        }
+                landscape.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress,
+                            boolean fromUser) {
+                        ((TextView) dialoglayout.findViewById(R.id.progressnumber)).setText(
+                                res.getQuantityString(R.plurals.landscape_columns,
+                                        landscape.getProgress() + 1,
+                                        landscape.getProgress() + 1));
+                        SettingsActivity.changed = true;
+                    }
 
-                        @Override
-                        public void onStartTrackingTouch(SeekBar seekBar) {
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
 
-                        }
+                    }
 
-                        @Override
-                        public void onStopTrackingTouch(SeekBar seekBar) {
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
 
-                        }
-                    });
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this)
-                            .setView(dialoglayout);
-                    final Dialog dialog = builder.create();
-                    dialog.show();
-                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            Reddit.dpWidth = landscape.getProgress() + 1;
-                            Reddit.colors.edit()
-                                    .putInt("tabletOVERRIDE", landscape.getProgress() + 1)
-                                    .apply();
-                        }
-                    });
-                    SwitchCompat s = dialog.findViewById(R.id.dualcolumns);
-                    s.setChecked(SettingValues.dualPortrait);
-                    s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            SettingValues.dualPortrait = isChecked;
-                            SettingValues.prefs.edit()
-                                    .putBoolean(SettingValues.PREF_DUAL_PORTRAIT, isChecked)
-                                    .apply();
-                        }
-                    });
-                    SwitchCompat s2 = dialog.findViewById(R.id.fullcomment);
-                    s2.setChecked(SettingValues.fullCommentOverride);
-                    s2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            SettingValues.fullCommentOverride = isChecked;
-                            SettingValues.prefs.edit()
-                                    .putBoolean(SettingValues.PREF_FULL_COMMENT_OVERRIDE, isChecked)
-                                    .apply();
-                        }
-                    });
-                    SwitchCompat s3 = dialog.findViewById(R.id.singlecolumnmultiwindow);
-                    s3.setChecked(SettingValues.singleColumnMultiWindow);
-                    s3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            SettingValues.singleColumnMultiWindow = isChecked;
-                            SettingValues.prefs.edit()
-                                    .putBoolean(SettingValues.PREF_SINGLE_COLUMN_MULTI, isChecked)
-                                    .apply();
-                        }
-                    });
-                } else {
-                    ProUtil.proUpgradeMsg(SettingsActivity.this, R.string.general_multicolumn_ispro)
-                            .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                                    dialog.dismiss())
-                            .show();
-                }
+                    }
+                });
+                final AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this)
+                        .setView(dialoglayout);
+                final Dialog dialog = builder.create();
+                dialog.show();
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        Reddit.dpWidth = landscape.getProgress() + 1;
+                        Reddit.colors.edit()
+                                .putInt("tabletOVERRIDE", landscape.getProgress() + 1)
+                                .apply();
+                    }
+                });
+                SwitchCompat s = dialog.findViewById(R.id.dualcolumns);
+                s.setChecked(SettingValues.dualPortrait);
+                s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        SettingValues.dualPortrait = isChecked;
+                        SettingValues.prefs.edit()
+                                .putBoolean(SettingValues.PREF_DUAL_PORTRAIT, isChecked)
+                                .apply();
+                    }
+                });
+                SwitchCompat s2 = dialog.findViewById(R.id.fullcomment);
+                s2.setChecked(SettingValues.fullCommentOverride);
+                s2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        SettingValues.fullCommentOverride = isChecked;
+                        SettingValues.prefs.edit()
+                                .putBoolean(SettingValues.PREF_FULL_COMMENT_OVERRIDE, isChecked)
+                                .apply();
+                    }
+                });
+                SwitchCompat s3 = dialog.findViewById(R.id.singlecolumnmultiwindow);
+                s3.setChecked(SettingValues.singleColumnMultiWindow);
+                s3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        SettingValues.singleColumnMultiWindow = isChecked;
+                        SettingValues.prefs.edit()
+                                .putBoolean(SettingValues.PREF_SINGLE_COLUMN_MULTI, isChecked)
+                                .apply();
+                    }
+                });
             }
         });
 

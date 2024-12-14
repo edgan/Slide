@@ -49,7 +49,6 @@ import me.ccrama.redditslide.SettingValues;
 import me.ccrama.redditslide.util.FileUtil;
 import me.ccrama.redditslide.util.LayoutUtils;
 import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.ProUtil;
 
 
 /**
@@ -339,7 +338,7 @@ public class SettingsBackup extends BaseActivityAnim
     @Override
     protected void onStart() {
         super.onStart();
-        if (SettingValues.isPro) mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -348,128 +347,117 @@ public class SettingsBackup extends BaseActivityAnim
         setContentView(R.layout.activity_settings_sync);
         setupAppBar(R.id.toolbar, R.string.settings_title_backup, true, true);
 
-        if (SettingValues.isPro) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(Drive.API)
-                    .addScope(Drive.SCOPE_FILE)
-                    .addScope(Drive.SCOPE_APPFOLDER)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(Drive.API)
+                .addScope(Drive.SCOPE_FILE)
+                .addScope(Drive.SCOPE_APPFOLDER)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
 
-            findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mGoogleApiClient.isConnected()) {
-                        new AlertDialog.Builder(SettingsBackup.this)
-                                .setTitle(R.string.general_confirm)
-                                .setMessage(R.string.backup_confirm)
-                                .setOnCancelListener(null)
-                                .setPositiveButton(R.string.btn_ok, (dialog, whichButton) -> {
-                                    File prefsdir = new File(getApplicationInfo().dataDir, "shared_prefs");
+        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mGoogleApiClient.isConnected()) {
+                    new AlertDialog.Builder(SettingsBackup.this)
+                            .setTitle(R.string.general_confirm)
+                            .setMessage(R.string.backup_confirm)
+                            .setOnCancelListener(null)
+                            .setPositiveButton(R.string.btn_ok, (dialog, whichButton) -> {
+                                File prefsdir = new File(getApplicationInfo().dataDir, "shared_prefs");
 
-                                    if (prefsdir.exists() && prefsdir.isDirectory()) {
+                                if (prefsdir.exists() && prefsdir.isDirectory()) {
 
-                                        String[] list = prefsdir.list();
-                                        progress = new MaterialDialog.Builder(
-                                                SettingsBackup.this).title(
-                                                R.string.backup_backing_up)
-                                                .progress(false, list.length)
-                                                .cancelable(false)
-                                                .build();
-                                        progress.show();
-                                        appFolder.listChildren(mGoogleApiClient)
-                                                .setResultCallback(newCallback2);
-
-                                    }
-                                })
-                                .setNegativeButton(R.string.btn_no, null)
-                                .setCancelable(false)
-                                .show();
-                    } else {
-                        new AlertDialog.Builder(SettingsBackup.this)
-                                .setTitle(R.string.settings_google)
-                                .setMessage(R.string.settings_google_msg)
-                                .setOnCancelListener(null)
-                                .setPositiveButton(R.string.btn_ok, null)
-                                .setCancelable(false)
-                                .show();
-                    }
-                }
-            });
-
-
-            findViewById(R.id.restore).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mGoogleApiClient.isConnected()) {
-                        new AlertDialog.Builder(SettingsBackup.this)
-                                .setTitle(R.string.general_confirm)
-                                .setMessage(R.string.backup_restore_confirm)
-                                .setOnCancelListener(null)
-                                .setPositiveButton(R.string.btn_ok, (dialog, whichButton) -> {
-                                    progress = new MaterialDialog.Builder(SettingsBackup.this)
-                                            .title(R.string.backup_restoring)
-                                            .content(R.string.misc_please_wait)
+                                    String[] list = prefsdir.list();
+                                    progress = new MaterialDialog.Builder(
+                                            SettingsBackup.this).title(
+                                            R.string.backup_backing_up)
+                                            .progress(false, list.length)
                                             .cancelable(false)
-                                            .progress(true, 1)
                                             .build();
                                     progress.show();
-                                    appFolder.listChildren(mGoogleApiClient).setResultCallback(newCallback);
-                                })
-                                .setNegativeButton(R.string.btn_no, null)
-                                .setCancelable(false)
-                                .show();
-                    } else {
-                        new AlertDialog.Builder(SettingsBackup.this)
-                                .setTitle(R.string.settings_google)
-                                .setMessage(R.string.settings_google_msg)
-                                //avoid that the dialog can be closed
-                                .setOnCancelListener(null)
-                                .setPositiveButton(R.string.btn_ok, null)
-                                .setCancelable(false)
-                                .show();
-                    }
+                                    appFolder.listChildren(mGoogleApiClient)
+                                            .setResultCallback(newCallback2);
 
-                }
-            });
-            findViewById(R.id.backfile).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                                }
+                            })
+                            .setNegativeButton(R.string.btn_no, null)
+                            .setCancelable(false)
+                            .show();
+                } else {
                     new AlertDialog.Builder(SettingsBackup.this)
-                            .setTitle(R.string.include_personal_info)
-                            .setMessage(R.string.include_personal_info_msg)
-                            .setPositiveButton(R.string.btn_yes, (dialog, which) ->
-                                    backupToDir(false))
-                            .setNegativeButton(R.string.btn_no, (dialog, which) ->
-                                    backupToDir(true))
-                            .setNeutralButton(R.string.btn_cancel, null)
+                            .setTitle(R.string.settings_google)
+                            .setMessage(R.string.settings_google_msg)
+                            .setOnCancelListener(null)
+                            .setPositiveButton(R.string.btn_ok, null)
                             .setCancelable(false)
                             .show();
                 }
-            });
+            }
+        });
 
 
-            findViewById(R.id.restorefile).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    intent.setType("file/*");
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    String[] mimeTypes = {"text/plain"};
-                    intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-                    startActivityForResult(intent, 42);
+        findViewById(R.id.restore).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mGoogleApiClient.isConnected()) {
+                    new AlertDialog.Builder(SettingsBackup.this)
+                            .setTitle(R.string.general_confirm)
+                            .setMessage(R.string.backup_restore_confirm)
+                            .setOnCancelListener(null)
+                            .setPositiveButton(R.string.btn_ok, (dialog, whichButton) -> {
+                                progress = new MaterialDialog.Builder(SettingsBackup.this)
+                                        .title(R.string.backup_restoring)
+                                        .content(R.string.misc_please_wait)
+                                        .cancelable(false)
+                                        .progress(true, 1)
+                                        .build();
+                                progress.show();
+                                appFolder.listChildren(mGoogleApiClient).setResultCallback(newCallback);
+                            })
+                            .setNegativeButton(R.string.btn_no, null)
+                            .setCancelable(false)
+                            .show();
+                } else {
+                    new AlertDialog.Builder(SettingsBackup.this)
+                            .setTitle(R.string.settings_google)
+                            .setMessage(R.string.settings_google_msg)
+                            //avoid that the dialog can be closed
+                            .setOnCancelListener(null)
+                            .setPositiveButton(R.string.btn_ok, null)
+                            .setCancelable(false)
+                            .show();
                 }
-            });
-        } else {
-            ProUtil.proUpgradeMsg(this, R.string.general_backup_ispro)
-                    //avoid that the dialog can be closed
-                    .setOnCancelListener(dialog ->
-                            finish())
-                    .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                            finish())
-                    .setCancelable(false)
-                    .show();
-        }
+
+            }
+        });
+        findViewById(R.id.backfile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(SettingsBackup.this)
+                        .setTitle(R.string.include_personal_info)
+                        .setMessage(R.string.include_personal_info_msg)
+                        .setPositiveButton(R.string.btn_yes, (dialog, which) ->
+                                backupToDir(false))
+                        .setNegativeButton(R.string.btn_no, (dialog, which) ->
+                                backupToDir(true))
+                        .setNeutralButton(R.string.btn_cancel, null)
+                        .setCancelable(false)
+                        .show();
+            }
+        });
+
+
+        findViewById(R.id.restorefile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("file/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                String[] mimeTypes = {"text/plain"};
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+                startActivityForResult(intent, 42);
+            }
+        });
     }
 
     File file;

@@ -294,7 +294,7 @@ public class PeekMediaView extends RelativeLayout {
                 } else {
                     ad = loadedUrls.get(url);
                 }
-                return ad && SettingValues.isPro ? AdBlocker.createEmptyResource()
+                return ad ? AdBlocker.createEmptyResource()
                         : super.shouldInterceptRequest(view, url);
             }
 

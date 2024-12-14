@@ -55,7 +55,6 @@ import me.ccrama.redditslide.Visuals.ColorPreferences;
 import me.ccrama.redditslide.Visuals.Palette;
 import me.ccrama.redditslide.util.BlendModeUtil;
 import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.ProUtil;
 import me.ccrama.redditslide.util.SortingUtil;
 
 /**
@@ -135,6 +134,9 @@ public class MultiredditOverview extends BaseActivityAnim {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        List<Submission> posts =
+                ((MultiredditView) adapter.getCurrentFragment()).posts.posts;
+
         switch (item.getItemId()) {
 
             case android.R.id.home:
@@ -218,91 +220,22 @@ public class MultiredditOverview extends BaseActivityAnim {
                 ((DrawerLayout) findViewById(R.id.drawer_layout)).openDrawer(Gravity.RIGHT);
                 return true;
             case R.id.gallery:
-                if (SettingValues.isPro) {
-                    List<Submission> posts =
-                            ((MultiredditView) adapter.getCurrentFragment()).posts.posts;
-                    if (posts != null && !posts.isEmpty()) {
-                        Intent i2 = new Intent(this, Gallery.class);
-                        i2.putExtra(Gallery.EXTRA_PROFILE, profile);
-                        i2.putExtra(Gallery.EXTRA_MULTIREDDIT,
-                                ((MultiredditView) adapter.getCurrentFragment()).posts.multiReddit.getDisplayName());
-                        startActivity(i2);
-                    }
-                } else {
-                    final AlertDialog.Builder b =
-                            ProUtil.proUpgradeMsg(this, R.string.general_gallerymode_ispro)
-                                    .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                                            dialog.dismiss());
-                    if (SettingValues.previews > 0) {
-                        b.setNeutralButton(getString(R.string.pro_previews, SettingValues.previews),
-                                (dialog, which) -> {
-                                    SettingValues.prefs.edit()
-                                            .putInt(SettingValues.PREVIEWS_LEFT,
-                                                    SettingValues.previews - 1)
-                                            .apply();
-                                    SettingValues.previews = SettingValues.prefs.getInt(
-                                            SettingValues.PREVIEWS_LEFT, 10);
-                                    List<Submission> posts =
-                                            ((MultiredditView) adapter.getCurrentFragment()).posts.posts;
-                                    if (posts != null && !posts.isEmpty()) {
-                                        Intent i2 = new Intent(MultiredditOverview.this,
-                                                Gallery.class);
-                                        i2.putExtra(Gallery.EXTRA_PROFILE, profile);
-                                        i2.putExtra(Gallery.EXTRA_MULTIREDDIT,
-                                                ((MultiredditView) adapter.getCurrentFragment()).posts.multiReddit
-                                                        .getDisplayName());
-                                        startActivity(i2);
-                                    }
-                                });
-                    }
-                    b.show();
+                if (posts != null && !posts.isEmpty()) {
+                    Intent i2 = new Intent(this, Gallery.class);
+                    i2.putExtra(Gallery.EXTRA_PROFILE, profile);
+                    i2.putExtra(Gallery.EXTRA_MULTIREDDIT,
+                            ((MultiredditView) adapter.getCurrentFragment()).posts.multiReddit.getDisplayName());
+                    startActivity(i2);
                 }
                 return true;
             case R.id.action_shadowbox:
-                if (SettingValues.isPro) {
-                    List<Submission> posts =
-                            ((MultiredditView) adapter.getCurrentFragment()).posts.posts;
-                    if (posts != null && !posts.isEmpty()) {
-                        Intent i = new Intent(this, Shadowbox.class);
-                        i.putExtra(Shadowbox.EXTRA_PAGE, getCurrentPage());
-                        i.putExtra(Shadowbox.EXTRA_PROFILE, profile);
-                        i.putExtra(Shadowbox.EXTRA_MULTIREDDIT,
-                                ((MultiredditView) adapter.getCurrentFragment()).posts.multiReddit.getDisplayName());
-                        startActivity(i);
-                    }
-                } else {
-                    final AlertDialog.Builder b =
-                            ProUtil.proUpgradeMsg(this, R.string.general_shadowbox_ispro)
-                                    .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                                            dialog.dismiss());
-                    if (SettingValues.previews > 0
-                            && adapter != null
-                            && ((MultiredditView) adapter.getCurrentFragment()).posts != null
-                            && ((MultiredditView) adapter.getCurrentFragment()).posts.posts != null
-                            && !((MultiredditView) adapter.getCurrentFragment()).posts.posts.isEmpty()) {
-                        b.setNeutralButton(getString(R.string.pro_previews, SettingValues.previews),
-                                (dialog, which) -> {
-                                    SettingValues.prefs.edit()
-                                            .putInt(SettingValues.PREVIEWS_LEFT,
-                                                    SettingValues.previews - 1)
-                                            .apply();
-                                    SettingValues.previews = SettingValues.prefs.getInt(
-                                            SettingValues.PREVIEWS_LEFT, 10);
-                                    List<Submission> posts =
-                                            ((MultiredditView) adapter.getCurrentFragment()).posts.posts;
-                                    if (posts != null && !posts.isEmpty()) {
-                                        Intent i = new Intent(MultiredditOverview.this,
-                                                Shadowbox.class);
-                                        i.putExtra(Shadowbox.EXTRA_PAGE, getCurrentPage());
-                                        i.putExtra(Shadowbox.EXTRA_PROFILE, profile);
-                                        i.putExtra(Shadowbox.EXTRA_MULTIREDDIT,
-                                                ((MultiredditView) adapter.getCurrentFragment()).posts.multiReddit
-                                                        .getDisplayName());
-                                        startActivity(i);
-                                    }
-                                });
-                    }
-                    b.show();
+                if (posts != null && !posts.isEmpty()) {
+                    Intent i = new Intent(this, Shadowbox.class);
+                    i.putExtra(Shadowbox.EXTRA_PAGE, getCurrentPage());
+                    i.putExtra(Shadowbox.EXTRA_PROFILE, profile);
+                    i.putExtra(Shadowbox.EXTRA_MULTIREDDIT,
+                            ((MultiredditView) adapter.getCurrentFragment()).posts.multiReddit.getDisplayName());
+                    startActivity(i);
                 }
                 return true;
             default:

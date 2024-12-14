@@ -33,7 +33,6 @@ import me.ccrama.redditslide.SettingValues;
 import me.ccrama.redditslide.util.FileUtil;
 import me.ccrama.redditslide.util.LayoutUtils;
 import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.ProUtil;
 
 
 /**
@@ -161,44 +160,35 @@ public class SettingsBackup extends BaseActivityAnim {
         setContentView(R.layout.activity_settings_sync);
         setupAppBar(R.id.toolbar, R.string.settings_title_backup, true, true);
 
-        if (SettingValues.isPro) {
-
-            findViewById(R.id.backfile).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    new AlertDialog.Builder(SettingsBackup.this)
-                            .setTitle(R.string.settings_backup_include_personal_title)
-                            .setMessage(R.string.settings_backup_include_personal_text)
-                            .setPositiveButton(R.string.btn_yes, (dialog, which) ->
-                                    backupToDir(false))
-                            .setNegativeButton(R.string.btn_no, (dialog, which) ->
-                                    backupToDir(true))
-                            .setNeutralButton(R.string.btn_cancel, null)
-                            .setCancelable(false)
-                            .show();
-                }
-            });
+        findViewById(R.id.backfile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(SettingsBackup.this)
+                        .setTitle(R.string.settings_backup_include_personal_title)
+                        .setMessage(R.string.settings_backup_include_personal_text)
+                        .setPositiveButton(R.string.btn_yes, (dialog, which) ->
+                                backupToDir(false))
+                        .setNegativeButton(R.string.btn_no, (dialog, which) ->
+                                backupToDir(true))
+                        .setNeutralButton(R.string.btn_cancel, null)
+                        .setCancelable(false)
+                        .show();
+            }
+        });
 
 
-            findViewById(R.id.restorefile).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    intent.setType("file/*");
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    String[] mimeTypes = {"text/plain"};
-                    intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-                    startActivityForResult(intent, 42);
+        findViewById(R.id.restorefile).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("file/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                String[] mimeTypes = {"text/plain"};
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+                startActivityForResult(intent, 42);
 
-                }
-            });
-        } else {
-            ProUtil.proUpgradeMsg(this, R.string.general_backup_ispro)
-                    .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                            finish())
-                    .setCancelable(false)
-                    .show();
-        }
+            }
+        });
     }
 
     public void backupToDir(final boolean personal) {

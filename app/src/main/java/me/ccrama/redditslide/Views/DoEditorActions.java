@@ -53,7 +53,6 @@ import me.ccrama.redditslide.SpoilerRobotoTextView;
 import me.ccrama.redditslide.Visuals.ColorPreferences;
 import me.ccrama.redditslide.util.DisplayUtil;
 import me.ccrama.redditslide.util.KeyboardUtil;
-import me.ccrama.redditslide.util.ProUtil;
 import me.ccrama.redditslide.util.SubmissionParser;
 
 /**
@@ -246,28 +245,7 @@ public class DoEditorActions {
         baseView.findViewById(R.id.draw).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (SettingValues.isPro) {
-                    doDraw(a, editText, fm);
-                } else {
-                    final AlertDialog.Builder b =
-                            ProUtil.proUpgradeMsg(a, R.string.general_cropdraw_ispro)
-                                    .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                                            dialog.dismiss());
-                    if (SettingValues.previews > 0) {
-                        b.setNeutralButton(
-                                a.getString(R.string.pro_previews, SettingValues.previews),
-                                (dialog, which) -> {
-                                    SettingValues.prefs.edit()
-                                            .putInt(SettingValues.PREVIEWS_LEFT,
-                                                    SettingValues.previews - 1)
-                                            .apply();
-                                    SettingValues.previews = SettingValues.prefs.getInt(
-                                            SettingValues.PREVIEWS_LEFT, 10);
-                                    doDraw(a, editText, fm);
-                                });
-                    }
-                    b.show();
-                }
+                doDraw(a, editText, fm);
             }
         });
        /*todo baseView.findViewById(R.id.superscript).setOnClickListener(new View.OnClickListener() {
@@ -525,15 +503,6 @@ public class DoEditorActions {
         int end = Math.max(editText.getSelectionEnd(), 0);
         editText.getText().insert(Math.min(start, end), wrapText);
     }
-
-    /* not using this method anywhere ¯\_(ツ)_/¯ */
-//    public static void wrapNewline(String wrapText, EditText editText) {
-//        int start = Math.max(editText.getSelectionStart(), 0);
-//        int end = Math.max(editText.getSelectionEnd(), 0);
-//        String s = editText.getText().toString().substring(Math.min(start, end), Math.max(start, end));
-//        s = s.replace("\n", "\n" + wrapText);
-//        editText.getText().replace(Math.min(start, end), Math.max(start, end), s);
-//    }
 
     /**
      * Wrap selected text in one or multiple characters, handling newlines and spaces properly for markdown

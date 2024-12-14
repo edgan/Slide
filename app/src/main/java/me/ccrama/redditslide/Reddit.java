@@ -153,10 +153,6 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
         return false;
     }
 
-    private static boolean isProPackageInstalled() {
-        return isPackageInstalled(getAppContext().getString(R.string.ui_unlock_package));
-    }
-
     private static boolean isVideoPluginInstalled() {
         return isPackageInstalled(getAppContext().getString(R.string.youtube_plugin_package));
     }
@@ -482,7 +478,6 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
             notificationTime = 360;
         }
 
-        SettingValues.isPro = isProPackageInstalled() || BuildConfig.isFDroid;
         videoPlugin = isVideoPluginInstalled();
 
         GifCache.init(this);

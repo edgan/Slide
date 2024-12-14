@@ -46,7 +46,6 @@ import me.ccrama.redditslide.databinding.ChoosethemesmallBinding;
 import me.ccrama.redditslide.databinding.NightmodeBinding;
 import me.ccrama.redditslide.util.LogUtil;
 import me.ccrama.redditslide.util.OnSingleClickListener;
-import me.ccrama.redditslide.util.ProUtil;
 import uz.shift.colorpicker.LineColorPicker;
 
 public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartActivity> {
@@ -328,157 +327,149 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
         nightMode.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View view) {
-                if (SettingValues.isPro) {
-                    final NightmodeBinding nightmodeBinding = NightmodeBinding.inflate(context.getLayoutInflater());
+                final NightmodeBinding nightmodeBinding = NightmodeBinding.inflate(context.getLayoutInflater());
 
-                    final View root = nightmodeBinding.getRoot();
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                            .setView(root);
-                    final Dialog dialog = builder.create();
-                    dialog.show();
-                    dialog.setOnDismissListener(dialog1 -> {
-                        //todo save
-                    });
-                    final Spinner startSpinner = nightmodeBinding.startSpinner;
-                    final Spinner endSpinner = nightmodeBinding.endSpinner;
-                    final AppCompatSpinner nightModeStateSpinner = nightmodeBinding.nightModeState;
+                final View root = nightmodeBinding.getRoot();
+                final AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                        .setView(root);
+                final Dialog dialog = builder.create();
+                dialog.show();
+                dialog.setOnDismissListener(dialog1 -> {
+                    //todo save
+                });
+                final Spinner startSpinner = nightmodeBinding.startSpinner;
+                final Spinner endSpinner = nightmodeBinding.endSpinner;
+                final AppCompatSpinner nightModeStateSpinner = nightmodeBinding.nightModeState;
 
-                    nightModeStateSpinner.setAdapter(NightModeArrayAdapter.createFromResource(
-                            dialog.getContext(), R.array.night_mode_state, android.R.layout.simple_spinner_dropdown_item));
-                    nightModeStateSpinner.setSelection(SettingValues.nightModeState);
-                    nightModeStateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            startSpinner.setEnabled(position == SettingValues.NightModeState.MANUAL.ordinal());
-                            endSpinner.setEnabled(position == SettingValues.NightModeState.MANUAL.ordinal());
-                            SettingValues.nightModeState = position;
-                            SettingValues.prefs.edit()
-                                    .putInt(SettingValues.PREF_NIGHT_MODE_STATE, position)
-                                    .apply();
-                            SettingsThemeFragment.changed = true;
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent) {
-                        }
-                    });
-                    for (final Pair<Integer, Integer> pair : ColorPreferences.themePairList) {
-                        final RadioButton radioButton = root.findViewById(pair.first);
-                        if (radioButton != null) {
-                            if (SettingValues.nightTheme == pair.second) {
-                                radioButton.setChecked(true);
-                            }
-                            radioButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                                if (isChecked) {
-                                    SettingsThemeFragment.changed = true;
-                                    SettingValues.nightTheme = pair.second;
-                                    SettingValues.prefs.edit()
-                                            .putInt(SettingValues.PREF_NIGHT_THEME,
-                                                    pair.second)
-                                            .apply();
-                                }
-                            });
-                        }
+                nightModeStateSpinner.setAdapter(NightModeArrayAdapter.createFromResource(
+                        dialog.getContext(), R.array.night_mode_state, android.R.layout.simple_spinner_dropdown_item));
+                nightModeStateSpinner.setSelection(SettingValues.nightModeState);
+                nightModeStateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        startSpinner.setEnabled(position == SettingValues.NightModeState.MANUAL.ordinal());
+                        endSpinner.setEnabled(position == SettingValues.NightModeState.MANUAL.ordinal());
+                        SettingValues.nightModeState = position;
+                        SettingValues.prefs.edit()
+                                .putInt(SettingValues.PREF_NIGHT_MODE_STATE, position)
+                                .apply();
+                        SettingsThemeFragment.changed = true;
                     }
 
-                    boolean nightState = SettingValues.nightModeState == SettingValues.NightModeState.MANUAL.ordinal();
-                    startSpinner.setEnabled(nightState);
-                    endSpinner.setEnabled(nightState);
-                    final List<String> timesStart = new ArrayList<String>() {{
-                        add("6pm");
-                        add("7pm");
-                        add("8pm");
-                        add("9pm");
-                        add("10pm");
-                        add("11pm");
-                    }};
-                    nightmodeBinding.startSpinnerLayout.setVisibility(View.VISIBLE);
-                    final ArrayAdapter<String> startAdapter = new ArrayAdapter<>(context,
-                            android.R.layout.simple_spinner_item, timesStart);
-                    startAdapter.setDropDownViewResource(
-                            android.R.layout.simple_spinner_dropdown_item);
-                    startSpinner.setAdapter(startAdapter);
-
-                    //set the currently selected pref
-                    startSpinner.setSelection(startAdapter.getPosition(
-                            SettingValues.nightStart + "pm"));
-
-                    startSpinner.setOnItemSelectedListener(
-                            new AdapterView.OnItemSelectedListener() {
-                                @Override
-                                public void onItemSelected(AdapterView<?> parent, View view,
-                                                           int position, long id) {
-                                    //get the time, but remove the "pm" from the string when parsing
-                                    final int time = Integer.parseInt(
-                                            ((String) startSpinner.getItemAtPosition(
-                                                    position)).replaceAll("pm", ""));
-
-                                    SettingValues.nightStart = time;
-                                    SettingValues.prefs.edit()
-                                            .putInt(SettingValues.PREF_NIGHT_START, time)
-                                            .apply();
-                                }
-
-                                @Override
-                                public void onNothingSelected(AdapterView<?> parent) {
-                                }
-                            });
-
-
-                    final List<String> timesEnd = new ArrayList<String>() {{
-                        add("12am");
-                        add("1am");
-                        add("2am");
-                        add("3am");
-                        add("4am");
-                        add("5am");
-                        add("6am");
-                        add("7am");
-                        add("8am");
-                        add("9am");
-                        add("10am");
-                    }};
-                    nightmodeBinding.endSpinnerLayout.setVisibility(View.VISIBLE);
-                    final ArrayAdapter<String> endAdapter = new ArrayAdapter<>(context,
-                            android.R.layout.simple_spinner_item, timesEnd);
-                    endAdapter.setDropDownViewResource(
-                            android.R.layout.simple_spinner_dropdown_item);
-                    endSpinner.setAdapter(endAdapter);
-
-                    //set the currently selected pref
-                    endSpinner.setSelection(endAdapter.getPosition(
-                            SettingValues.nightEnd + "am"));
-
-                    endSpinner.setOnItemSelectedListener(
-                            new AdapterView.OnItemSelectedListener() {
-                                @Override
-                                public void onItemSelected(AdapterView<?> parent, View view,
-                                                           int position, long id) {
-                                    //get the time, but remove the "am" from the string when parsing
-                                    final int time = Integer.parseInt(
-                                            ((String) endSpinner.getItemAtPosition(
-                                                    position)).replaceAll("am", ""));
-
-                                    SettingValues.nightEnd = time;
-                                    SettingValues.prefs.edit()
-                                            .putInt(SettingValues.PREF_NIGHT_END, time)
-                                            .apply();
-                                }
-
-                                @Override
-                                public void onNothingSelected(AdapterView<?> parent) {
-                                }
-                            });
-
-                    nightmodeBinding.ok.setOnClickListener(v ->
-                            dialog.dismiss());
-
-                } else {
-                    ProUtil.proUpgradeMsg(context, R.string.general_nighttheme_ispro)
-                            .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                                    dialog.dismiss())
-                            .show();
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                });
+                for (final Pair<Integer, Integer> pair : ColorPreferences.themePairList) {
+                    final RadioButton radioButton = root.findViewById(pair.first);
+                    if (radioButton != null) {
+                        if (SettingValues.nightTheme == pair.second) {
+                            radioButton.setChecked(true);
+                        }
+                        radioButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                            if (isChecked) {
+                                SettingsThemeFragment.changed = true;
+                                SettingValues.nightTheme = pair.second;
+                                SettingValues.prefs.edit()
+                                        .putInt(SettingValues.PREF_NIGHT_THEME,
+                                                pair.second)
+                                        .apply();
+                            }
+                        });
+                    }
                 }
+
+                boolean nightState = SettingValues.nightModeState == SettingValues.NightModeState.MANUAL.ordinal();
+                startSpinner.setEnabled(nightState);
+                endSpinner.setEnabled(nightState);
+                final List<String> timesStart = new ArrayList<String>() {{
+                    add("6pm");
+                    add("7pm");
+                    add("8pm");
+                    add("9pm");
+                    add("10pm");
+                    add("11pm");
+                }};
+                nightmodeBinding.startSpinnerLayout.setVisibility(View.VISIBLE);
+                final ArrayAdapter<String> startAdapter = new ArrayAdapter<>(context,
+                        android.R.layout.simple_spinner_item, timesStart);
+                startAdapter.setDropDownViewResource(
+                        android.R.layout.simple_spinner_dropdown_item);
+                startSpinner.setAdapter(startAdapter);
+
+                //set the currently selected pref
+                startSpinner.setSelection(startAdapter.getPosition(
+                        SettingValues.nightStart + "pm"));
+
+                startSpinner.setOnItemSelectedListener(
+                        new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view,
+                                                       int position, long id) {
+                                //get the time, but remove the "pm" from the string when parsing
+                                final int time = Integer.parseInt(
+                                        ((String) startSpinner.getItemAtPosition(
+                                                position)).replaceAll("pm", ""));
+
+                                SettingValues.nightStart = time;
+                                SettingValues.prefs.edit()
+                                        .putInt(SettingValues.PREF_NIGHT_START, time)
+                                        .apply();
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+                            }
+                        });
+
+
+                final List<String> timesEnd = new ArrayList<String>() {{
+                    add("12am");
+                    add("1am");
+                    add("2am");
+                    add("3am");
+                    add("4am");
+                    add("5am");
+                    add("6am");
+                    add("7am");
+                    add("8am");
+                    add("9am");
+                    add("10am");
+                }};
+                nightmodeBinding.endSpinnerLayout.setVisibility(View.VISIBLE);
+                final ArrayAdapter<String> endAdapter = new ArrayAdapter<>(context,
+                        android.R.layout.simple_spinner_item, timesEnd);
+                endAdapter.setDropDownViewResource(
+                        android.R.layout.simple_spinner_dropdown_item);
+                endSpinner.setAdapter(endAdapter);
+
+                //set the currently selected pref
+                endSpinner.setSelection(endAdapter.getPosition(
+                        SettingValues.nightEnd + "am"));
+
+                endSpinner.setOnItemSelectedListener(
+                        new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view,
+                                                       int position, long id) {
+                                //get the time, but remove the "am" from the string when parsing
+                                final int time = Integer.parseInt(
+                                        ((String) endSpinner.getItemAtPosition(
+                                                position)).replaceAll("am", ""));
+
+                                SettingValues.nightEnd = time;
+                                SettingValues.prefs.edit()
+                                        .putInt(SettingValues.PREF_NIGHT_END, time)
+                                        .apply();
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+                            }
+                        });
+
+                nightmodeBinding.ok.setOnClickListener(v ->
+                        dialog.dismiss());
             }
         });
     }

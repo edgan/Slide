@@ -180,7 +180,6 @@ import me.ccrama.redditslide.util.MiscUtil;
 import me.ccrama.redditslide.util.NetworkStateReceiver;
 import me.ccrama.redditslide.util.NetworkUtil;
 import me.ccrama.redditslide.util.OnSingleClickListener;
-import me.ccrama.redditslide.util.ProUtil;
 import me.ccrama.redditslide.util.SortingUtil;
 import me.ccrama.redditslide.util.StringUtil;
 import me.ccrama.redditslide.util.SubmissionParser;
@@ -481,9 +480,7 @@ public class MainActivity extends BaseActivity
                 inflater.inflate(R.menu.menu_subreddit_overview, menu);
             }
             // Hide the "Share Slide" menu if the user has Pro installed
-            if (SettingValues.isPro) {
-                menu.findItem(R.id.share).setVisible(false);
-            }
+            menu.findItem(R.id.share).setVisible(false);
             if (SettingValues.fab && SettingValues.fabType == Constants.FAB_DISMISS) {
                 menu.findItem(R.id.hide_posts).setVisible(false);
             }
@@ -558,6 +555,9 @@ public class MainActivity extends BaseActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final String subreddit = usedArray.get(Reddit.currentPosition);
+
+        List<Submission> posts =
+                ((SubmissionsView) adapter.getCurrentFragment()).posts.posts;
 
         switch (item.getItemId()) {
             case R.id.filter:
@@ -709,101 +709,30 @@ public class MainActivity extends BaseActivity
             }
             return true;
             case R.id.gallery:
-                if (SettingValues.isPro) {
-                    List<Submission> posts =
-                            ((SubmissionsView) adapter.getCurrentFragment()).posts.posts;
-                    if (posts != null && !posts.isEmpty()) {
-                        Intent i2 = new Intent(this, Gallery.class);
-                        i2.putExtra("offline",
-                                ((SubmissionsView) adapter.getCurrentFragment()).posts.cached
-                                        != null
-                                        ? ((SubmissionsView) adapter.getCurrentFragment()).posts.cached.time
-                                        : 0L);
-                        i2.putExtra(Gallery.EXTRA_SUBREDDIT,
-                                ((SubmissionsView) adapter.getCurrentFragment()).posts.subreddit);
-                        startActivity(i2);
-                    }
-                } else {
-                    final AlertDialog.Builder b =
-                            ProUtil.proUpgradeMsg(this, R.string.general_gallerymode_ispro)
-                                    .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                                            dialog.dismiss());
-                    if (SettingValues.previews > 0) {
-                        b.setNeutralButton(getString(R.string.pro_previews, SettingValues.previews),
-                                (dialog, which) -> {
-                                    SettingValues.prefs.edit()
-                                            .putInt(SettingValues.PREVIEWS_LEFT,
-                                                    SettingValues.previews - 1)
-                                            .apply();
-                                    SettingValues.previews = SettingValues.prefs.getInt(
-                                            SettingValues.PREVIEWS_LEFT, 10);
-                                    List<Submission> posts =
-                                            ((SubmissionsView) adapter.getCurrentFragment()).posts.posts;
-                                    if (posts != null && !posts.isEmpty()) {
-                                        Intent i2 =
-                                                new Intent(MainActivity.this, Gallery.class);
-                                        i2.putExtra("offline",
-                                                ((SubmissionsView) adapter.getCurrentFragment()).posts.cached
-                                                        != null
-                                                        ? ((SubmissionsView) adapter.getCurrentFragment()).posts.cached.time
-                                                        : 0L);
-                                        i2.putExtra(Gallery.EXTRA_SUBREDDIT,
-                                                ((SubmissionsView) adapter.getCurrentFragment()).posts.subreddit);
-                                        startActivity(i2);
-                                    }
-                                });
-                    }
-                    b.show();
+                if (posts != null && !posts.isEmpty()) {
+                    Intent i2 = new Intent(this, Gallery.class);
+                    i2.putExtra("offline",
+                            ((SubmissionsView) adapter.getCurrentFragment()).posts.cached
+                                    != null
+                                    ? ((SubmissionsView) adapter.getCurrentFragment()).posts.cached.time
+                                    : 0L);
+                    i2.putExtra(Gallery.EXTRA_SUBREDDIT,
+                            ((SubmissionsView) adapter.getCurrentFragment()).posts.subreddit);
+                    startActivity(i2);
                 }
                 return true;
             case R.id.action_shadowbox:
-                if (SettingValues.isPro) {
-                    List<Submission> posts =
-                            ((SubmissionsView) adapter.getCurrentFragment()).posts.posts;
-                    if (posts != null && !posts.isEmpty()) {
-                        Intent i2 = new Intent(this, Shadowbox.class);
-                        i2.putExtra(Shadowbox.EXTRA_PAGE, getCurrentPage());
-                        i2.putExtra("offline",
-                                ((SubmissionsView) adapter.getCurrentFragment()).posts.cached
-                                        != null
-                                        ? ((SubmissionsView) adapter.getCurrentFragment()).posts.cached.time
-                                        : 0L);
-                        i2.putExtra(Shadowbox.EXTRA_SUBREDDIT,
-                                ((SubmissionsView) adapter.getCurrentFragment()).posts.subreddit);
-                        startActivity(i2);
-                    }
-                } else {
-                    final AlertDialog.Builder b =
-                            ProUtil.proUpgradeMsg(this, R.string.general_shadowbox_ispro)
-                                    .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                                            dialog.dismiss());
-                    if (SettingValues.previews > 0) {
-                        b.setNeutralButton("Preview (" + SettingValues.previews + ")",
-                                (dialog, which) -> {
-                                    SettingValues.prefs.edit()
-                                            .putInt(SettingValues.PREVIEWS_LEFT,
-                                                    SettingValues.previews - 1)
-                                            .apply();
-                                    SettingValues.previews = SettingValues.prefs.getInt(
-                                            SettingValues.PREVIEWS_LEFT, 10);
-                                    List<Submission> posts =
-                                            ((SubmissionsView) adapter.getCurrentFragment()).posts.posts;
-                                    if (posts != null && !posts.isEmpty()) {
-                                        Intent i2 =
-                                                new Intent(MainActivity.this, Shadowbox.class);
-                                        i2.putExtra(Shadowbox.EXTRA_PAGE, getCurrentPage());
-                                        i2.putExtra("offline",
-                                                ((SubmissionsView) adapter.getCurrentFragment()).posts.cached
-                                                        != null
-                                                        ? ((SubmissionsView) adapter.getCurrentFragment()).posts.cached.time
-                                                        : 0L);
-                                        i2.putExtra(Shadowbox.EXTRA_SUBREDDIT,
-                                                ((SubmissionsView) adapter.getCurrentFragment()).posts.subreddit);
-                                        startActivity(i2);
-                                    }
-                                });
-                    }
-                    b.show();
+                if (posts != null && !posts.isEmpty()) {
+                    Intent i2 = new Intent(this, Shadowbox.class);
+                    i2.putExtra(Shadowbox.EXTRA_PAGE, getCurrentPage());
+                    i2.putExtra("offline",
+                            ((SubmissionsView) adapter.getCurrentFragment()).posts.cached
+                                    != null
+                                    ? ((SubmissionsView) adapter.getCurrentFragment()).posts.cached.time
+                                    : 0L);
+                    i2.putExtra(Shadowbox.EXTRA_SUBREDDIT,
+                            ((SubmissionsView) adapter.getCurrentFragment()).posts.subreddit);
+                    startActivity(i2);
                 }
                 return true;
             default:
@@ -904,18 +833,6 @@ public class MainActivity extends BaseActivity
                                                 "announcement" + s.getFullName())
                                                 && s.getTitle()
                                                 .contains(BuildConfig.VERSION_NAME)) {
-                                            Reddit.appRestart.edit()
-                                                    .putBoolean("announcement" + s.getFullName(),
-                                                            true)
-                                                    .apply();
-                                            return s;
-                                        } else if (s.isStickied()
-                                                && s.getSubmissionFlair()
-                                                .getText()
-                                                .equalsIgnoreCase("PRO")
-                                                && !SettingValues.isPro
-                                                && !Reddit.appRestart.contains(
-                                                "announcement" + s.getFullName())) {
                                             Reddit.appRestart.edit()
                                                     .putBoolean("announcement" + s.getFullName(),
                                                             true)
@@ -1912,19 +1829,17 @@ public class MainActivity extends BaseActivity
 
         {   // Set up quick setting toggles
             final SwitchCompat toggleNightMode = expandSettings.findViewById(R.id.toggle_night_mode);
-            if (SettingValues.isPro) {
-                toggleNightMode.setVisibility(View.VISIBLE);
-                toggleNightMode.setChecked(inNightMode);
-                toggleNightMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        SettingValues.forcedNightModeState = isChecked
-                                ? SettingValues.ForcedState.FORCED_ON
-                                : SettingValues.ForcedState.FORCED_OFF;
-                        restartTheme();
-                    }
-                });
-            }
+            toggleNightMode.setVisibility(View.VISIBLE);
+            toggleNightMode.setChecked(inNightMode);
+            toggleNightMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    SettingValues.forcedNightModeState = isChecked
+                            ? SettingValues.ForcedState.FORCED_ON
+                            : SettingValues.ForcedState.FORCED_OFF;
+                    restartTheme();
+                }
+            });
 
             final SwitchCompat toggleImmersiveMode = expandSettings.findViewById(R.id.toggle_immersive_mode);
             toggleImmersiveMode.setChecked(SettingValues.immersiveMode);
@@ -1984,19 +1899,7 @@ public class MainActivity extends BaseActivity
         if (Authentication.didOnline) {
             View support = header.findViewById(R.id.support);
 
-            if (SettingValues.isPro) {
-                support.setVisibility(View.GONE);
-            } else {
-                support.setOnClickListener(new OnSingleClickListener() {
-                    @Override
-                    public void onSingleClick(View view) {
-                        ProUtil.proUpgradeMsg(MainActivity.this, R.string.settings_support_slide)
-                                .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                                        dialog.dismiss())
-                                .show();
-                    }
-                });
-            }
+            support.setVisibility(View.GONE);
             header.findViewById(R.id.prof).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

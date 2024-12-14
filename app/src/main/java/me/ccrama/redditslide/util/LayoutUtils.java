@@ -57,7 +57,7 @@ public class LayoutUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             singleColumnMultiWindow = activity.isInMultiWindowMode() && SettingValues.singleColumnMultiWindow;
         }
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE && SettingValues.isPro && !singleColumnMultiWindow) {
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE && !singleColumnMultiWindow) {
             numColumns = Reddit.dpWidth;
         } else if (orientation == Configuration.ORIENTATION_PORTRAIT && SettingValues.dualPortrait) {
             numColumns = 2;

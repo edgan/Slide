@@ -291,14 +291,6 @@
             </intent-filter>
         </activity-alias>
 
-        <receiver android:name=".CheckInstall">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_INSTALL"/>
-                <action android:name="android.intent.action.PACKAGE_ADDED"/>
-                <data android:scheme="package"/>
-            </intent-filter>
-        </receiver>
-
         <activity android:name=".Activities.MakeExternal"/>
 
         <activity

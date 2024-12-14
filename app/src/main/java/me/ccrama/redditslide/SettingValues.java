@@ -236,7 +236,6 @@ public class SettingValues {
     public static boolean fab     = true;
     public static int     fabType = Constants.FAB_POST;
     public static boolean hideButton;
-    public static boolean isPro;
     public static boolean customtabs;
     public static boolean titleTop;
     public static boolean dualPortrait;
@@ -555,7 +554,7 @@ public class SettingValues {
          *
          * Forced night mode state is intentionally not persisted between app runs and defaults to unset
          */
-        if (isPro && NightModeState.isEnabled()) {
+        if (NightModeState.isEnabled()) {
             boolean night = false;
 
             if (Reddit.canUseNightModeAuto && nightModeState == NightModeState.AUTOMATIC.ordinal()) {

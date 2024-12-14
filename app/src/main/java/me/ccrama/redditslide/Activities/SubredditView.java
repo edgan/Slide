@@ -93,7 +93,6 @@ import me.ccrama.redditslide.util.LayoutUtils;
 import me.ccrama.redditslide.util.LogUtil;
 import me.ccrama.redditslide.util.MiscUtil;
 import me.ccrama.redditslide.util.OnSingleClickListener;
-import me.ccrama.redditslide.util.ProUtil;
 import me.ccrama.redditslide.util.SortingUtil;
 import me.ccrama.redditslide.util.StringUtil;
 import me.ccrama.redditslide.util.SubmissionParser;
@@ -313,25 +312,18 @@ public class SubredditView extends BaseActivity {
                 }
                 return true;
             case R.id.gallery:
-                if (SettingValues.isPro) {
-                    List<Submission> posts =
-                            ((SubmissionsView) adapter.getCurrentFragment()).posts.posts;
-                    if (posts != null && !posts.isEmpty()) {
-                        Intent i2 = new Intent(this, Gallery.class);
-                        i2.putExtra("offline",
-                                ((SubmissionsView) adapter.getCurrentFragment()).posts.cached
-                                        != null
-                                        ? ((SubmissionsView) adapter.getCurrentFragment()).posts.cached.time
-                                        : 0L);
-                        i2.putExtra(Gallery.EXTRA_SUBREDDIT,
-                                ((SubmissionsView) adapter.getCurrentFragment()).posts.subreddit);
-                        startActivity(i2);
-                    }
-                } else {
-                    ProUtil.proUpgradeMsg(this, R.string.general_gallerymode_ispro)
-                            .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                                    dialog.dismiss())
-                            .show();
+                List<Submission> gPosts =
+                        ((SubmissionsView) adapter.getCurrentFragment()).posts.posts;
+                if (gPosts != null && !gPosts.isEmpty()) {
+                    Intent i2 = new Intent(this, Gallery.class);
+                    i2.putExtra("offline",
+                            ((SubmissionsView) adapter.getCurrentFragment()).posts.cached
+                                    != null
+                                    ? ((SubmissionsView) adapter.getCurrentFragment()).posts.cached.time
+                                    : 0L);
+                    i2.putExtra(Gallery.EXTRA_SUBREDDIT,
+                            ((SubmissionsView) adapter.getCurrentFragment()).posts.subreddit);
+                    startActivity(i2);
                 }
                 return true;
             case R.id.search:
@@ -389,21 +381,14 @@ public class SubredditView extends BaseActivity {
                 ((SubmissionsView) adapter.getCurrentFragment()).clearSeenPosts(false);
                 return true;
             case R.id.action_shadowbox:
-                if (SettingValues.isPro) {
-                    List<Submission> posts =
-                            ((SubmissionsView) ((SubredditPagerAdapter) pager.getAdapter()).getCurrentFragment()).posts.posts;
-                    if (posts != null && !posts.isEmpty()) {
-                        Intent i2 = new Intent(this, Shadowbox.class);
-                        i2.putExtra(Shadowbox.EXTRA_PAGE, getCurrentPage());
-                        i2.putExtra(Shadowbox.EXTRA_SUBREDDIT,
-                                ((SubmissionsView) adapter.getCurrentFragment()).posts.subreddit);
-                        startActivity(i2);
-                    }
-                } else {
-                    ProUtil.proUpgradeMsg(this, R.string.general_shadowbox_ispro)
-                            .setNegativeButton(R.string.btn_no_thanks, (dialog, whichButton) ->
-                                    dialog.dismiss())
-                            .show();
+                List<Submission> sPosts =
+                        ((SubmissionsView) ((SubredditPagerAdapter) pager.getAdapter()).getCurrentFragment()).posts.posts;
+                if (sPosts != null && !sPosts.isEmpty()) {
+                    Intent i2 = new Intent(this, Shadowbox.class);
+                    i2.putExtra(Shadowbox.EXTRA_PAGE, getCurrentPage());
+                    i2.putExtra(Shadowbox.EXTRA_SUBREDDIT,
+                            ((SubmissionsView) adapter.getCurrentFragment()).posts.subreddit);
+                    startActivity(i2);
                 }
                 return true;
             default:

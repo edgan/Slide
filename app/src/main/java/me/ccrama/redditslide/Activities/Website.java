@@ -352,7 +352,7 @@ public class Website extends BaseActivityAnim {
             } else {
                 ad = loadedUrls.get(url);
             }
-            return ad && (currentURL != null && !currentURL.contains("twitter.com")) && SettingValues.isPro
+            return ad && (currentURL != null && !currentURL.contains("twitter.com"))
                     ? AdBlocker.createEmptyResource()
                     : super.shouldInterceptRequest(view, url);
         }
