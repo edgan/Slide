@@ -2,6 +2,13 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+6.7.5 / 2024-12-14
+==================
+* Removed Pro mode, but not any of the features
+* Added support for giphy gifs in Reddit comments
+* Added preview image for crossposted galleries
+* Improved the consistency of gallery image display
+
 6.7.4 / 2024-12-12
 ==================
 * Added preview images for Reddit galleries
