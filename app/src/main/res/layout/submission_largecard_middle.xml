@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:gravity="center"
-    android:orientation="vertical"
     cardview:cardBackgroundColor="?attr/card_background"
     cardview:cardCornerRadius="2dp">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!-- Keep a RelativeLayout as the parent to preserve original structure -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground">
 
+        <!-- This section holds the title and thumbnail -->
         <me.ccrama.redditslide.Views.RevealRelativeLayout
             android:id="@+id/innerrelative"
             android:layout_width="match_parent"
@@ -27,8 +28,8 @@
                 android:layout_width="@dimen/big_thumbnail_width"
                 android:layout_height="@dimen/big_thumbnail_height"
                 android:layout_alignParentTop="true"
-                android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_marginLeft="18dp"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
@@ -40,40 +41,37 @@
                 style="@style/Ripple.List"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
                 android:padding="8dp"
                 android:tag="tint"
                 android:tint="?attr/tintColor"
-                android:layout_marginLeft="-4dp"
                 app:srcCompat="@drawable/ic_keyboard_arrow_down" />
 
             <RelativeLayout
                 android:id="@+id/inside"
                 android:layout_width="match_parent"
-                android:layout_marginBottom="6dp"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/secondMenu"
-                android:layout_toRightOf="@+id/thumbimage2">
+                android:layout_marginBottom="6dp"
+                android:layout_toRightOf="@id/thumbimage2"
+                android:layout_toLeftOf="@id/secondMenu">
 
                 <me.ccrama.redditslide.Views.TitleTextView
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="0dp"
                     android:layout_marginEnd="16dp"
-                    android:tag="tint"
                     android:text="@string/example_title"
                     android:textColor="?attr/fontColor"
-                    android:textSize="?attr/font_cardtitle" />
+                    android:textSize="?attr/font_cardtitle"
+                    android:tag="tint" />
 
                 <me.ccrama.redditslide.SpoilerRobotoTextView
                     android:id="@+id/body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/title"
-                    android:layout_gravity="start"
+                    android:layout_below="@id/title"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginTop="8dp"
@@ -84,26 +82,27 @@
                     android:textSize="?attr/font_commentbody"
                     android:visibility="gone" />
             </RelativeLayout>
+
         </me.ccrama.redditslide.Views.RevealRelativeLayout>
 
+        <!-- Make sure the headerimage is placed below innerrelative -->
         <me.ccrama.redditslide.SubmissionViews.HeaderImageLinkView
             android:id="@+id/headerimage"
             android:layout_width="match_parent"
-            android:layout_marginTop="4dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/innerrelative" />
+            android:layout_below="@id/innerrelative"
+            android:layout_marginTop="4dp" />
 
-        <me.ccrama.redditslide.Views.RevealRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <!-- Bottom section below headerimage -->
+        <me.ccrama.redditslide.Views.RevealRelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/headerimage">
+            android:layout_below="@id/headerimage">
 
             <LinearLayout
                 android:id="@+id/vote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/menu"
-                android:layout_alignParentTop="true"
                 android:orientation="horizontal" />
 
             <ImageView
@@ -111,8 +110,6 @@
                 android:labelFor="@+id/score"
                 android:layout_width="15dp"
                 android:layout_height="36dp"
-                android:layout_below="@+id/headerimage"
-                android:layout_gravity="center_vertical"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="4dp"
                 android:tag="tintactionbar"
@@ -124,13 +121,11 @@
                 android:id="@+id/score"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:layout_below="@+id/headerimage"
-                android:layout_gravity="center_vertical"
-                android:textColor="?attr/tintColor"
-                android:layout_toRightOf="@+id/scoreimg"
+                android:layout_toRightOf="@id/scoreimg"
                 android:gravity="center_vertical"
                 android:tag="tintactionbar"
                 android:text="400"
+                android:textColor="?attr/tintColor"
                 android:textSize="?attr/font_cardinfo" />
 
             <ImageView
@@ -138,28 +133,23 @@
                 android:labelFor="@+id/comments"
                 android:layout_width="15dp"
                 android:layout_height="36dp"
-                android:layout_below="@+id/headerimage"
-                android:layout_gravity="center_vertical"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="4dp"
-                android:layout_toRightOf="@+id/score"
+                android:layout_toRightOf="@id/score"
                 android:tag="tintactionbar"
                 android:tint="?attr/tintColor"
                 android:contentDescription="@string/img_comments"
-
                 app:srcCompat="@drawable/ic_forum" />
 
             <TextView
                 android:id="@+id/comments"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:layout_below="@+id/headerimage"
-                android:textColor="?attr/tintColor"
-                android:layout_gravity="center_vertical"
-                android:layout_toRightOf="@+id/pointsimg"
+                android:layout_toRightOf="@id/pointsimg"
                 android:gravity="center_vertical"
                 android:tag="tintactionbar"
                 android:text="420"
+                android:textColor="?attr/tintColor"
                 android:textSize="?attr/font_cardinfo" />
 
             <ImageView
@@ -167,7 +157,6 @@
                 style="@style/Ripple.List"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_below="@+id/innerrelative"
                 android:layout_toLeftOf="@+id/save"
                 android:padding="8dp"
                 android:tag="tintactionbar"
@@ -180,7 +169,6 @@
                 style="@style/Ripple.List"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_below="@+id/headerimage"
                 android:layout_toLeftOf="@+id/hide"
                 android:padding="8dp"
                 android:tag="tintactionbar"
@@ -193,7 +181,6 @@
                 style="@style/Ripple.List"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_below="@+id/headerimage"
                 android:layout_toLeftOf="@+id/upvote"
                 android:padding="8dp"
                 android:tag="tintactionbar"
@@ -206,7 +193,6 @@
                 style="@style/Ripple.List"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_below="@+id/headerimage"
                 android:layout_toLeftOf="@+id/mod"
                 android:padding="8dp"
                 android:tag="tintactionbar"
@@ -219,7 +205,6 @@
                 style="@style/Ripple.List"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_below="@+id/headerimage"
                 android:layout_toLeftOf="@+id/downvote"
                 android:padding="8dp"
                 android:tag="tintactionbar"
@@ -232,7 +217,6 @@
                 style="@style/Ripple.List"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_below="@+id/headerimage"
                 android:layout_toLeftOf="@+id/menu"
                 android:padding="8dp"
                 android:tag="tintactionbar"
@@ -252,5 +236,6 @@
                 android:contentDescription="@string/btn_menu"
                 app:srcCompat="@drawable/ic_more_vert" />
         </me.ccrama.redditslide.Views.RevealRelativeLayout>
+
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

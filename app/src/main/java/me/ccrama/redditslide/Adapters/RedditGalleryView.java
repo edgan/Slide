@@ -67,12 +67,15 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
                     gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         public void onItemClick(AdapterView<?> parent, View v,
                                                 int position, long id) {
+                            View imagesView = context.findViewById(R.id.images);
                             if (context instanceof Album) {
-                                ((LinearLayoutManager) ((Album) context).album.album.recyclerView.getLayoutManager()).scrollToPositionWithOffset(position + 1, context.findViewById(R.id.toolbar).getHeight());
-
-
-                            } else {
-                                ((LinearLayoutManager) ((RecyclerView) context.findViewById(R.id.images)).getLayoutManager()).scrollToPositionWithOffset(position + 1, context.findViewById(R.id.toolbar).getHeight());
+                                ((LinearLayoutManager) ((Album) context).album.album.recyclerView.getLayoutManager())
+                                    .scrollToPositionWithOffset(position + 1, context.findViewById(R.id.toolbar).getHeight());
+                            } else if (imagesView instanceof RecyclerView) {
+                                ((LinearLayoutManager) ((RecyclerView) imagesView).getLayoutManager())
+                                    .scrollToPositionWithOffset(position + 1, context.findViewById(R.id.toolbar).getHeight());
+                            } else if (imagesView instanceof androidx.viewpager.widget.ViewPager) {
+                                ((androidx.viewpager.widget.ViewPager) imagesView).setCurrentItem(position);
                             }
                             d.dismiss();
                         }
