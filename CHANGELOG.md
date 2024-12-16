@@ -2,6 +2,11 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+6.7.6 / 2024-12-15
+==================
+* Fixed crash in RedditGalleryView
+* Changed layout/submission_largecard_middle.xml to be Linear instead of Relative to attempt to fix a cut off bug
+
 6.7.5 / 2024-12-14
 ==================
 * Removed Pro mode, but not any of the features
