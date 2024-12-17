@@ -1,5 +1,4 @@
 # Current project status
-
 This project is back with this fork, and is being **maintained**.
 
 # Backup/ Restore
@@ -14,6 +13,12 @@ features.
 As of release [6.7.5](https://github.com/edgan/Slide/tree/6.7.5) I have removed
 the need for the unlock. I did this by removing the Pro features unlock from the
 code, but I did not remove the features.
+
+# Updates
+The easiest way, for now, to get updates is
+[Obtainium](https://github.com/ImranR98/Obtainium).
+[Obtainium](https://github.com/ImranR98/Obtainium) can also be found on
+[F-Droid](https://f-droid.org/).
 
 # Slide
 <img src="app/src/main/res/drawable/ic_launcher.png"
