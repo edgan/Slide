@@ -4,7 +4,7 @@ This project is back with this fork, and is being **maintained**.
 
 # Backup/ Restore
 The original dead [project](https://github.com/Haptic-Apps/Slide) had Pro
-features. Those required a paid Unlock app the
+features. Those required a paid unlock app the
 [Google Play Store](https://play.google.com/store/games). But that app is no
 longer available. As a workaround I created a placeholder app that unlocks the
 features.
