@@ -10,13 +10,9 @@ local.properties
 # Gradle generated files
 .gradle/
 
-# Signing files
-.signing/
-
 # User-specific configurations
 .idea/
 *.iml
-projectFilesBackup/
 
 # OS-specific files
 .DS_Store
@@ -33,6 +29,5 @@ cd
 captures
 
 crowdin.properties
-app/src/main/assets/secretconstants.properties
 app/noGPlay/
 app/withGPlay/
