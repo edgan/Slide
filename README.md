@@ -10,9 +10,9 @@ features.
 
 [SlideProUnlock](https://github.com/edgan/SlideProUnlock).
 
-As of release [6.7.5](https://github.com/edgan/Slide/tree/6.7.5) I have removed
-the need for the unlock. I did this by removing the Pro features unlock from the
-code, but I did not remove the features.
+With the [6.7.5](https://github.com/edgan/Slide/tree/6.7.5) release I have
+removed the need for the unlock. I did this by removing the Pro features unlock
+from the code, but I did not remove the features.
 
 # Updates
 The easiest way, for now, to get updates is
