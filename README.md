@@ -51,7 +51,7 @@ If you are able to contribute a translation into a language missing from Slide,
 or spot any room for improvement in an existing translation, we greatly
 appreciate anything you can assist with!
 
-[The project uses Crowdin](https://crowdin.com/project/slide-reddit). Not to be
+This project uses [Crowdin](https://crowdin.com/project/slide-reddit). Not to be
 confused with the original project's
 [Crowdin](https://crowdin.com/project/slide-for-reddit). It is a platform that
 allows anybody to contribute to translating the app with as many words at a time
