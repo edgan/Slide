@@ -5,6 +5,8 @@ plugins {
     id 'com.gladed.androidgitversion' version '0.4.14'
     id 'com.github.ben-manes.versions' version '0.42.0'
     id 'com.github.breadmoirai.github-release' version '2.5.2'
+    id 'shot'
+    id 'org.jetbrains.kotlin.android' version "2.1.0"
 }
 
 // Load github properties from github.properties
@@ -27,9 +29,12 @@ if (keystorePropertiesFile.exists()) {
     throw new GradleException("keystore.properties file not found. Please create one with the necessary keystore configurations.")
 }
 
+shot {
+  applicationId = "me.ccrama.redditslide.test"
+}
+
 android {
-    compileSdk 29
-    buildToolsVersion "30.0.3"
+    compileSdk 30
     namespace "me.ccrama.redditslide"
 
 
@@ -57,7 +62,7 @@ android {
 
     defaultConfig {
         applicationId "me.ccrama.redditslide"
-        minSdk 16
+        minSdk 21
         //Change to 28 for F-Droid, need to add this to the scheme
         targetSdk 29
         versionCode 337
@@ -65,6 +70,9 @@ android {
 
         multiDexEnabled true
         vectorDrawables.useSupportLibrary true
+
+        testApplicationId "me.ccrama.redditslide.test"
+        testInstrumentationRunner "com.karumi.shot.ShotTestRunner"
     }
 
     flavorDimensions "variant"
@@ -107,8 +115,8 @@ android {
 
     compileOptions {
         encoding "UTF-8"
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility 21  //JavaVersion.VERSION_1_8
+        targetCompatibility 21 //JavaVersion.VERSION_1_8
     }
 
     lint {
@@ -280,6 +288,20 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.hamcrest:hamcrest:2.2'
     testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
+
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android'
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+
+    // Ensure you have Espresso or UI Automator for UI interaction if needed
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    androidTestImplementation "androidx.test:runner:1.5.2"
+    androidTestImplementation "androidx.test:rules:1.5.0"
+    androidTestImplementation('com.facebook.testing.screenshot:core:0.8.0') {
+        exclude group: 'com.crittercism.dexmaker', module: 'dexmaker'
+        exclude group: 'com.crittercism.dexmaker', module: 'dexmaker-dx'
+    }
 }
 
 task signAPK(type: Exec) {
