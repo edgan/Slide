@@ -62,17 +62,10 @@ knowledge of the code is needed.
 If you are a developer and wish to contribute to the app, please fork the
 project and submit a pull request.
 
-If this is your first time contributing to the project and want to tackle an
-easy issue, take a look at the issues labelled
-[Good First Issue](https://github.com/edgan/Slide/issues?q=is%3Aopen+is%3Aissue+label%3A%22Good+First+Issue%22).
-These issues have been marked as such because we believe they are easier to fix
-than other issues.
-
 ## Changelog
 The file [CHANGELOG.md](CHANGELOG.md) provides an overview of the changes for a
 release; for a more detailed look at changes to the app,
 [view individual commits](https://github.com/edgan/Slide/commits/master).
 
 ## Licensing
-
 Slide is licensed under the [GNU v3 Public License](LICENSE.txt).
