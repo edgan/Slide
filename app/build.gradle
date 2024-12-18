@@ -291,3 +291,11 @@ tasks.register("signWithGPlayReleaseAPK") {
     dependsOn "assembleWithGPlayRelease"
     finalizedBy "signAPK"
 }
+
+task buildReleaseAndPublish {
+    dependsOn signWithGPlayReleaseAPK
+    dependsOn githubRelease
+
+    // Ensure correct order of execution if needed
+    githubRelease.mustRunAfter signWithGPlayReleaseAPK
+}
