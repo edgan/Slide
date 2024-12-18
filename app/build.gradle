@@ -297,5 +297,5 @@ task buildReleaseAndPublish {
     dependsOn 'githubRelease'
 
     // Force order of execution
-    tasks.findByPath('githubRelease').dependsOn tasks.findByPath('signWithGPlayReleaseAPK')
+    tasks.findByPath('githubRelease').dependsOn tasks.findByPath('signAPK')
 }
