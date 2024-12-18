@@ -295,8 +295,4 @@ tasks.register("signWithGPlayReleaseAPK") {
 task buildReleaseAndPublish {
     dependsOn signWithGPlayReleaseAPK
     dependsOn githubRelease
-
-    tasks.githubRelease {
-        mustRunAfter tasks.signWithGPlayReleaseAPK
-    }
 }
