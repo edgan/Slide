@@ -293,6 +293,9 @@ tasks.register("signWithGPlayReleaseAPK") {
 }
 
 task buildReleaseAndPublish {
-    dependsOn signWithGPlayReleaseAPK
-    dependsOn githubRelease
+    dependsOn 'signWithGPlayReleaseAPK'
+    dependsOn 'githubRelease'
+
+    // Force order of execution
+    tasks.findByPath('githubRelease').dependsOn tasks.findByPath('signWithGPlayReleaseAPK')
 }
