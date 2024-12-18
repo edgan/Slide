@@ -296,6 +296,7 @@ task buildReleaseAndPublish {
     dependsOn signWithGPlayReleaseAPK
     dependsOn githubRelease
 
-    // Ensure correct order of execution if needed
-    githubRelease.mustRunAfter signWithGPlayReleaseAPK
+    tasks.githubRelease {
+        mustRunAfter tasks.signWithGPlayReleaseAPK
+    }
 }
