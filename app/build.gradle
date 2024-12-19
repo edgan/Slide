@@ -280,21 +280,3 @@ dependencies {
     testImplementation 'org.hamcrest:hamcrest:2.2'
     testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
 }
-
-afterEvaluate {
-    def githubReleaseExtension = extensions.findByType(com.github.breadmoirai.githubreleaseplugin.GithubReleaseExtension)
-    if (githubReleaseExtension) {
-        println "Configuring releaseAssets for githubRelease..."
-        def renamedApk = fileTree(dir: "build/outputs/apk/withGPlay/release/", include: "*.apk").files.toList()
-        if (renamedApk.isEmpty()) {
-            throw new GradleException("No APK file found in expected output directory after rename!")
-        }
-        githubReleaseExtension.releaseAssets = renamedApk
-        println "Assigned renamed APK(s): ${renamedApk}"
-    }
-}
-
-task buildReleaseAndPublish {
-    dependsOn "assembleWithGPlayRelease"
-    finalizedBy "githubRelease"
-}
