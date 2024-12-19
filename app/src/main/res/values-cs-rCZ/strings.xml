@@ -834,8 +834,8 @@
     <string name="time_hours_short">%dh</string>
     <string name="time_minutes_short">%dm</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">Přihlásit se k odběru /r/slideforreddit?</string>
-    <string name="login_subscribe_rslideforreddit_desc">Chcete se přihlásit k odběru /r/slideforreddit pro nejnovější zprávy a hlášení chyb?</string>
+    <string name="login_subscribe_rslideforreddit">Přihlásit se k odběru /r/slidereddit?</string>
+    <string name="login_subscribe_rslideforreddit_desc">Chcete se přihlásit k odběru /r/slidereddit pro nejnovější zprávy a hlášení chyb?</string>
     <string name="login_sync_colors">Synchronizovat barvy nyní?</string>
     <string name="login_sync_colors_desc">Chcete nyní synchronizovat barvy subredditů? Lze to provést později v Nastavení → Vzhled subredditu</string>
     <string name="login_authenticating">Slide ověřuje</string>

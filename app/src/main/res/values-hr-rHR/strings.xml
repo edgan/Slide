@@ -644,7 +644,7 @@
     <string name="time_hours_short">%ds</string>
     <string name="time_minutes_short">%dm</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">Pretplatite se na /r/slideforreddit?</string>
+    <string name="login_subscribe_rslideforreddit">Pretplatite se na /r/slidereddit?</string>
     <string name="login_sync_colors">Sinkronizirati boje sada?</string>
     <string name="login_starting">Postavljanje stvari!</string>
     <string name="login_starting_desc">Ovo bi trebalo trajati samo sekundu&#8230;</string>

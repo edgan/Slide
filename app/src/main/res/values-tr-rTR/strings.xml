@@ -808,8 +808,8 @@
     <string name="time_hours_short">%dst</string>
     <string name="time_minutes_short">%ddk</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">/r/slideforreddit\'e abone ol?</string>
-    <string name="login_subscribe_rslideforreddit_desc">/r/slideforreddit\'e sorunları bildirmek ve son durumdan haberdar olmak için abone olmak ister misiniz?</string>
+    <string name="login_subscribe_rslideforreddit">/r/slidereddit\'e abone ol?</string>
+    <string name="login_subscribe_rslideforreddit_desc">/r/slidereddit\'e sorunları bildirmek ve son durumdan haberdar olmak için abone olmak ister misiniz?</string>
     <string name="login_sync_colors">Renkleri şimdi eşle?</string>
     <string name="login_sync_colors_desc">Subreddit renklerini şimdi eşlemek ister misiniz? Ayarlar → Subreddit temaları kısmından da yapabilirsiniz</string>
     <string name="login_authenticating">Slide bilgilerinizi doğruluyor</string>

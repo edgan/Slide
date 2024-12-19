@@ -813,8 +813,8 @@
     <string name="time_hours_short">%d時間</string>
     <string name="time_minutes_short">%d分</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">/r/slideforredditを購読しますか?</string>
-    <string name="login_subscribe_rslideforreddit_desc">最新のお知らせや問題の報告の為に/r/slideforredditを購読しますか?</string>
+    <string name="login_subscribe_rslideforreddit">/r/slideredditを購読しますか?</string>
+    <string name="login_subscribe_rslideforreddit_desc">最新のお知らせや問題の報告の為に/r/slideredditを購読しますか?</string>
     <string name="login_sync_colors">色を今同期しますか?</string>
     <string name="login_sync_colors_desc">今あなたのサブレディットの色を同期しますか? 後で 設定 → サブレディット テーマ からでも変更できます</string>
     <string name="login_authenticating">Slideは認証中です</string>

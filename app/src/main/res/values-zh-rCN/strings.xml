@@ -816,8 +816,8 @@
     <string name="time_hours_short">%d时</string>
     <string name="time_minutes_short">%d分</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">订阅 /r/slideforreddit？</string>
-    <string name="login_subscribe_rslideforreddit_desc">你想订阅 /r/slideforreddit 以获得最新消息和报告问题？</string>
+    <string name="login_subscribe_rslideforreddit">订阅 /r/slidereddit？</string>
+    <string name="login_subscribe_rslideforreddit_desc">你想订阅 /r/slidereddit 以获得最新消息和报告问题？</string>
     <string name="login_sync_colors">现在同步颜色？</string>
     <string name="login_sync_colors_desc">你想现在同步你的版块颜色吗？这可在以后再做，设置→版块主题</string>
     <string name="login_authenticating">Slide 正在验证</string>

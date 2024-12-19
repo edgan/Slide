@@ -486,8 +486,8 @@
     <string name="time_hours_short">%dt</string>
     <string name="time_minutes_short">%dm</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">Abonnere på /r/slideforreddit?</string>
-    <string name="login_subscribe_rslideforreddit_desc">Ønsker du å abonnere på /r/slideforreddit for å få de siste nyhetene og for å rapportere problemer?</string>
+    <string name="login_subscribe_rslideforreddit">Abonnere på /r/slidereddit?</string>
+    <string name="login_subscribe_rslideforreddit_desc">Ønsker du å abonnere på /r/slidereddit for å få de siste nyhetene og for å rapportere problemer?</string>
     <string name="login_sync_colors">Synkroniser farger nå?</string>
     <string name="login_sync_colors_desc">Ønsker du å synkronisere subreddit-fargene nå? Dette kan gjøres senere i innstillinger → Subreddit-temaer</string>
     <string name="login_authenticating">Slide autoriserer</string>

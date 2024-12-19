@@ -724,8 +724,8 @@
     <string name="time_hours_short">%d小時</string>
     <string name="time_minutes_short">%d分</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">要訂閱 /r/slideforreddit 嗎？</string>
-    <string name="login_subscribe_rslideforreddit_desc">你想不想訂閱 /r/slideforreddit，以接收最新消息及報告問題？</string>
+    <string name="login_subscribe_rslideforreddit">要訂閱 /r/slidereddit 嗎？</string>
+    <string name="login_subscribe_rslideforreddit_desc">你想不想訂閱 /r/slidereddit，以接收最新消息及報告問題？</string>
     <string name="login_sync_colors">立刻同步 Subreddit 顏色？</string>
     <string name="login_sync_colors_desc">你確定要立即同部 Subreddit 的顏色嗎？此這可在設定 → Subreddit 主題中進行。</string>
     <string name="login_authenticating">Slide 正在認證中</string>

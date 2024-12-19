@@ -910,8 +910,8 @@
 
 
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">Subscribe to /r/slideforreddit?</string>
-    <string name="login_subscribe_rslideforreddit_desc">Would you like to subscribe to /r/slideforreddit for the latest news and to report issues?</string>
+    <string name="login_subscribe_rslideforreddit">Subscribe to /r/slidereddit?</string>
+    <string name="login_subscribe_rslideforreddit_desc">Would you like to subscribe to /r/slidereddit for the latest news and to report issues?</string>
     <string name="login_sync_colors">Sync colors now?</string>
     <string name="login_sync_colors_desc">Would you like to sync your subreddit colors now? This can be done later in Settings → Subreddit themes</string>
     <string name="login_authenticating">Slide is authenticating</string>
