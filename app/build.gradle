@@ -281,21 +281,10 @@ dependencies {
     testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
 }
 
-task signAPK(type: Exec) {
-    // Example: Custom signing command
-    // Replace with your actual signing logic if different
-    commandLine 'sh', '-c', 'echo "Signing APK..."'
-}
-
-tasks.register("signWithGPlayReleaseAPK") {
-    dependsOn "assembleWithGPlayRelease"
-    finalizedBy "signAPK"
-}
-
 task buildReleaseAndPublish {
-    dependsOn 'signWithGPlayReleaseAPK'
+    dependsOn 'assembleWithGPlayRelease'
     dependsOn 'githubRelease'
 
     // Force order of execution
-    tasks.findByPath('githubRelease').dependsOn tasks.findByPath('signAPK')
+    tasks.findByPath('githubRelease').dependsOn tasks.findByPath('assembleWithGPlayRelease')
 }
