@@ -550,7 +550,6 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                                         return;
                                     }
 
-                                    Log.e("EmoteDebug", getText().toString());
                                     CharSequence currentText = getText();
                                     if (currentText instanceof Spannable) {
                                         Spannable spannable = (Spannable) currentText;
@@ -558,7 +557,6 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                                         int end = start + currentText.toString().length();
 
                                         boolean found = findObjectReplacementChar(currentText);
-                                        Log.d("EmoteDebug", "test "  + found);
                                         if (found) {
                                             spannable.setSpan(animatedSpan, start, start + 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                                         } else {

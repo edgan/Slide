@@ -267,68 +267,88 @@ public class HeaderImageLinkView extends RelativeLayout {
 
                 if (dataNode.has("gallery_data")) {
                     JsonNode galleryData = dataNode.get("gallery_data");
+                    JsonNode mediaMetadata = dataNode.get("media_metadata");
+
                     if (galleryData.has("items") && galleryData.get("items").size() > 0) {
-                        String mediaId = galleryData.get("items").get(0).get("media_id").asText();
-                        if (dataNode.has("media_metadata") && dataNode.get("media_metadata").has(mediaId)) {
-                            JsonNode mediaMetadata = dataNode.get("media_metadata").get(mediaId);
-                            if (mediaMetadata.has("p") && mediaMetadata.get("p").size() > 0) {
-                                url = mediaMetadata.get("p").get(0).get("u").asText()
-                                        .replace("preview", "i")
-                                        .replaceAll("\\?.*", "");
+                        boolean allFailed = true;
+                        for (JsonNode item : galleryData.get("items")) {
+                            String mediaId = item.get("media_id").asText();
+                            if (mediaMetadata != null && mediaMetadata.has(mediaId)) {
+                                JsonNode mediaInfo = mediaMetadata.get(mediaId);
+                                if (!"failed".equals(mediaInfo.get("status").asText())) {
+                                    allFailed = false;
+                                    if (mediaInfo.has("p") && mediaInfo.get("p").size() > 0) {
+                                        url = mediaInfo.get("p").get(0).get("u").asText()
+                                                .replace("preview", "i")
+                                                .replaceAll("\\?.*", "");
 
-                                // Handle the URL similar to regular images
-                                if (!full && !SettingValues.isPicsEnabled(baseSub) || forceThumb) {
-                                    if (!submission.isSelfPost() || full) {
-                                        if (!full) {
-                                            thumbImage2.setVisibility(View.VISIBLE);
+                                        // Handle the URL similar to regular images
+                                        if (!full && !SettingValues.isPicsEnabled(baseSub) || forceThumb) {
+                                            if (!submission.isSelfPost() || full) {
+                                                if (!full && thumbImage2 != null) {
+                                                    thumbImage2.setVisibility(View.VISIBLE);
+                                                } else if (wrapArea != null) {
+                                                    wrapArea.setVisibility(View.VISIBLE);
+                                                }
+
+                                                loadedUrl = url;
+                                                if (!full) {
+                                                    ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                                                            .displayImage(url, thumbImage2);
+                                                } else {
+                                                    ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                                                            .displayImage(url, thumbImage2, bigOptions);
+                                                }
+                                            } else if (thumbImage2 != null) {
+                                                thumbImage2.setVisibility(View.GONE);
+                                            }
+                                            setVisibility(View.GONE);
                                         } else {
-                                            wrapArea.setVisibility(View.VISIBLE);
+                                            loadedUrl = url;
+                                            if (!full) {
+                                                ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                                                        .displayImage(url, backdrop);
+                                            } else {
+                                                ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                                                        .displayImage(url, backdrop, bigOptions);
+                                            }
+                                            setVisibility(View.VISIBLE);
+                                            if (!full && thumbImage2 != null) {
+                                                thumbImage2.setVisibility(View.GONE);
+                                            } else if (wrapArea != null) {
+                                                wrapArea.setVisibility(View.GONE);
+                                            }
                                         }
 
-                                        loadedUrl = url;
-                                        if (!full) {
-                                            ((Reddit) getContext().getApplicationContext()).getImageLoader()
-                                                    .displayImage(url, thumbImage2);
-                                        } else {
-                                            ((Reddit) getContext().getApplicationContext()).getImageLoader()
-                                                    .displayImage(url, thumbImage2, bigOptions);
+                                        // Dimension handling
+                                        if (mediaInfo.has("s") &&
+                                                mediaInfo.get("s").has("x") &&
+                                                mediaInfo.get("s").has("y")) {
+                                            int width = mediaInfo.get("s").get("x").asInt();
+                                            int height = mediaInfo.get("s").get("y").asInt();
+                                            double h = getHeightFromAspectRatio(height, width);
+                                            if (h > 0) {
+                                                backdrop.setLayoutParams(
+                                                    new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                                                        (int) Math.min(h, 3200)));
+                                            }
                                         }
-                                    } else {
-                                        thumbImage2.setVisibility(View.GONE);
                                     }
-                                    setVisibility(View.GONE);
-                                } else {
-                                    loadedUrl = url;
-                                    if (!full) {
-                                        ((Reddit) getContext().getApplicationContext()).getImageLoader()
-                                                .displayImage(url, backdrop);
-                                    } else {
-                                        ((Reddit) getContext().getApplicationContext()).getImageLoader()
-                                                .displayImage(url, backdrop, bigOptions);
-                                    }
-                                    setVisibility(View.VISIBLE);
-                                    if (!full) {
-                                        thumbImage2.setVisibility(View.GONE);
-                                    } else {
-                                        wrapArea.setVisibility(View.GONE);
-                                    }
-                                }
-                            }
-
-                            // Add dimension handling
-                            if (mediaMetadata.has("s") &&
-                                       mediaMetadata.get("s").has("x") &&
-                                       mediaMetadata.get("s").has("y")) {
-                                int width = mediaMetadata.get("s").get("x").asInt();
-                                int height = mediaMetadata.get("s").get("y").asInt();
-                                double h = getHeightFromAspectRatio(height, width);
-                                if (h > 0) {
-                                    backdrop.setLayoutParams(
-                                        new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                            (int) Math.min(h, 3200)));
                                 }
                             }
                         }
+
+                        if (allFailed) {
+                            // Handle the case where all media failed
+                            setVisibility(View.GONE);
+                            if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
+                            if (wrapArea != null) wrapArea.setVisibility(View.GONE);
+                        }
+                    } else {
+                        // Handle the case where gallery_data is missing or empty
+                        setVisibility(View.GONE);
+                        if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
+                        if (wrapArea != null) wrapArea.setVisibility(View.GONE);
                     }
                 }
             } else if (type != ContentType.Type.IMAGE
