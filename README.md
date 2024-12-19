@@ -1,18 +1,8 @@
 # Current project status
 This project is back with this fork, and is being **maintained**.
 
-# Backup/ Restore
-The original dead [project](https://github.com/Haptic-Apps/Slide) had Pro
-features. Those required a paid unlock app the
-[Google Play Store](https://play.google.com/store/games). But that app is no
-longer available. As a workaround I created a placeholder app that unlocks the
-features.
-
-[SlideProUnlock](https://github.com/edgan/SlideProUnlock).
-
-With the [6.7.5](https://github.com/edgan/Slide/tree/6.7.5) release I have
-removed the need for the unlock. I did this by removing the Pro features unlock
-from the code, but I did not remove the features.
+# Setup
+See [SETUP.md](/SETUP.md)
 
 # Updates
 The easiest way, for now, to get updates is
