@@ -284,7 +284,4 @@ dependencies {
 task buildReleaseAndPublish {
     dependsOn 'assembleWithGPlayRelease'
     dependsOn 'githubRelease'
-
-    // Force order of execution
-    tasks.findByPath('githubRelease').dependsOn tasks.findByPath('assembleWithGPlayRelease')
 }
