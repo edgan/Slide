@@ -592,12 +592,15 @@ public class HeaderImageLinkView extends RelativeLayout {
 
     public void onLinkLongClick(final String url, MotionEvent event) {
         popped = false;
-        if (url == null) {
+
+        if (url == null || SettingValues.noPreviewImageLongClick) {
             return;
         }
+
         performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
         Activity activity = null;
         final Context context = getContext();
+
         if (context instanceof Activity) {
             activity = (Activity) context;
         } else if (context instanceof ContextThemeWrapper) {

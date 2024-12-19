@@ -317,6 +317,21 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
         }
 
         {
+            SwitchCompat noPreviewImageLongClickSwitch = context.findViewById(R.id.settings_general_no_preview_image_longclick);
+            if (noPreviewImageLongClickSwitch != null) {
+                noPreviewImageLongClickSwitch.setChecked(SettingValues.noPreviewImageLongClick);
+                noPreviewImageLongClickSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    SettingsThemeFragment.changed = true;
+                    SettingValues.noPreviewImageLongClick = isChecked;
+
+                    SettingValues.prefs.edit()
+                            .putBoolean(SettingValues.PREF_NO_PREVIEW_IMAGE_LONGCLICK, isChecked)
+                            .apply();
+                });
+            }
+        }
+
+        {
             SwitchCompat forceLangSwitch = context.findViewById(R.id.settings_general_forcelanguage);
 
             if (forceLangSwitch != null) {
