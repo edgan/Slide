@@ -10,6 +10,8 @@ import android.view.View;
 import android.util.Log;
 import android.graphics.Rect;
 
+import me.ccrama.redditslide.SettingValues;
+
 public class AnimatedImageSpan extends DynamicDrawableSpan {
     private final GifDrawable drawable;
     private final View view;
@@ -80,7 +82,7 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
             if (drawableHeight > textHeight) {
                 int heightDiff = drawableHeight - textHeight;
                 // Distribute the extra height equally above and below
-                int extraSpace = heightDiff / 2;
+                int extraSpace = drawableHeight;
 
                 fm.top = originalFm.top - extraSpace;
                 fm.ascent = originalFm.ascent - extraSpace;
@@ -123,7 +125,9 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
         if (!isAttached) {
             isAttached = true;
             handler.post(invalidateRunnable);
-            drawable.start();
+            if (SettingValues.commentEmoteAnimation) {
+                drawable.start();
+            }
         }
     }
 

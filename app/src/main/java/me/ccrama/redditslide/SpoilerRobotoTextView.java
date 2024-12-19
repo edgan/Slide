@@ -253,18 +253,6 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         return html;
     }
 
-    /**
-     * Helper method to create a transparent placeholder drawable.
-     *
-     * @param size The size (width and height) of the placeholder in pixels.
-     * @return A transparent ColorDrawable.
-     */
-    private Drawable createPlaceholder(int size) {
-        ColorDrawable placeholder = new ColorDrawable(Color.TRANSPARENT);
-        placeholder.setBounds(0, 0, size, size);
-        return placeholder;
-    }
-
     // List to keep track of active GifDrawables to manage their lifecycle
     private List<GifDrawable> activeGifDrawables = new ArrayList<>();
 
@@ -299,6 +287,14 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     }
 
     private final List<PendingEmoteSpan> pendingSpans = new ArrayList<>();
+
+    public static boolean findObjectReplacementChar(CharSequence text) {
+        boolean atStart = text.charAt(0) == '\uFFFC';
+
+        if (atStart) return true;
+
+        return false;
+    }
 
     private void setEmoteSpan(DynamicDrawableSpan span, String emoteName, int position) {
         if (span == null || emoteName == null) {
@@ -347,11 +343,13 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 // Set the new AnimatedImageSpan
                 text.setSpan(span, pos, pos + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                // Start the GIF animation and add to active list if it's an AnimatedImageSpan
-                if (span instanceof AnimatedImageSpan) {
-                    AnimatedImageSpan animatedSpan = (AnimatedImageSpan) span;
-                    animatedSpan.start();
-                    emoteDrawables.add(new EmoteDrawInfo(animatedSpan.getGifDrawable(), pos));
+                if (SettingValues.commentEmoteAnimation) {
+                    // Start the GIF animation and add to active list if it's an AnimatedImageSpan
+                    if (span instanceof AnimatedImageSpan) {
+                        AnimatedImageSpan animatedSpan = (AnimatedImageSpan) span;
+                        animatedSpan.start();
+                        emoteDrawables.add(new EmoteDrawInfo(animatedSpan.getGifDrawable(), pos));
+                    }
                 }
 
                 // Force layout update
@@ -461,27 +459,12 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             // Create builder and ensure it's a SpannableStringBuilder
             SpannableStringBuilder builder = new SpannableStringBuilder(processedText);
 
-            float scale = 1.0f; // Adjusted scaling factor for appropriate size
-            int placeholderSize = (int) (getTextSize() * scale);
-
             // Set initial text with the builder
             setText(builder);
 
-            // Set initial placeholders with transparent drawables
-            for (EmoteSpanRequest request : spanRequests) {
-                try {
-                    Drawable placeholder = createPlaceholder(placeholderSize);
-                    DynamicDrawableSpan placeholderSpan = new ImageSpan(placeholder, ImageSpan.ALIGN_BOTTOM);
-                    setEmoteSpan(placeholderSpan, request.emoteName, request.start);
-                } catch (Exception e) {
-                    Log.e("EmoteDebug", "Error setting placeholder span", e);
-                }
-            }
-
             // Load GIFs
             for (EmoteSpanRequest request : spanRequests) {
-                // Pass the 'pos' parameter (using 'request.start')
-                loadGifEmote(request, textView, scale, request.start);
+                loadGifEmote(request, textView, request.start);
             }
 
         } catch (Exception e) {
@@ -532,34 +515,27 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         }
     }
 
-    private void loadGifEmote(EmoteSpanRequest request, TextView textView, float scale, int pos) {
+    private void loadGifEmote(EmoteSpanRequest request, TextView textView, int pos) {
         Log.d("EmoteDebug", "Starting GIF download for: " + request.gifUrl);
 
         GifUtils.downloadGif(request.gifUrl, new GifUtils.GifDownloadCallback() {
             @Override
             public void onGifDownloaded(File gifFile) {
+                float scale = 0.5f;
                 try {
                     Movie movie = Movie.decodeFile(gifFile.getAbsolutePath());
                     if (movie != null) {
                         // After decoding the movie and obtaining width and height
-                        int intrinsicWidth = movie.width();
                         int intrinsicHeight = movie.height();
+                        int intrinsicWidth = movie.width();
 
-                        int size = (int) (textView.getTextSize() * scale);
-
-                        // Adjust size proportionally if the GIF is larger than the base size
-                        if (intrinsicHeight > size) {
-                            size = (int) (intrinsicHeight * scale);
-                        }
-
-                        // Optional: Enforce a maximum size to prevent excessively large GIFs
-                        int maxHeight = (int) (textView.getTextSize() * 3); // Example maximum height
-                        size = Math.min(size, maxHeight);
+                        int height = (int) (intrinsicHeight * scale);
+                        int width = (int) (intrinsicWidth * scale);
 
                         GifDrawable gifDrawable = new GifDrawable(movie, null);
-                        gifDrawable.setBounds(0, 0, size, size);
+                        gifDrawable.setBounds(0, 0, 0, height);
 
-                        Log.d("EmoteDebug", "Created drawable for " + request.emoteName + " with bounds " + size + "x" + size);
+                        Log.d("EmoteDebug", "Created drawable for " + request.emoteName + " with bounds " + height + "x" + width);
 
                         // Wrap GifDrawable in AnimatedImageSpan
                         AnimatedImageSpan animatedSpan = new AnimatedImageSpan(gifDrawable, SpoilerRobotoTextView.this);
@@ -574,17 +550,20 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                                         return;
                                     }
 
-                                    // Replace the placeholder span with AnimatedImageSpan
+                                    Log.e("EmoteDebug", getText().toString());
                                     CharSequence currentText = getText();
                                     if (currentText instanceof Spannable) {
                                         Spannable spannable = (Spannable) currentText;
-                                        ImageSpan[] imageSpans = spannable.getSpans(pos, pos + 1, ImageSpan.class);
-                                        if (imageSpans != null && imageSpans.length > 0) {
-                                            for (ImageSpan span : imageSpans) {
-                                                spannable.removeSpan(span);
-                                            }
+                                        int start = spannable.toString().indexOf(currentText.toString());
+                                        int end = start + currentText.toString().length();
+
+                                        boolean found = findObjectReplacementChar(currentText);
+                                        Log.d("EmoteDebug", "test "  + found);
+                                        if (found) {
+                                            spannable.setSpan(animatedSpan, start, start + 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+                                        } else {
+                                            spannable.setSpan(animatedSpan, end - 2, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                                         }
-                                        spannable.setSpan(animatedSpan, pos, pos + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                                     }
 
                                     if (SettingValues.commentEmoteAnimation) {
