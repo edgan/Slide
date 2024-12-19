@@ -304,13 +304,13 @@ dependencies {
     }
 }
 
-task signAPK(type: Exec) {
-    // Example: Custom signing command
-    // Replace with your actual signing logic if different
-    commandLine 'sh', '-c', 'echo "Signing APK..."'
+tasks.configureEach {
+    if (name == "githubRelease") {
+        mustRunAfter(tasks.assembleWithGPlayRelease)
+    }
 }
 
-tasks.register("signWithGPlayReleaseAPK") {
-    dependsOn "assembleWithGPlayRelease"
-    finalizedBy "signAPK"
+task buildReleaseAndPublish {
+    dependsOn 'assembleWithGPlayRelease'
+    dependsOn 'githubRelease'
 }

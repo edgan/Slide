@@ -612,8 +612,8 @@
     <string name="time_hours_short">%du</string>
     <string name="time_minutes_short">%dm</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">Abonneren op /r/slideforreddit?</string>
-    <string name="login_subscribe_rslideforreddit_desc">Wil je abonneren op /r/slideforreddit voor het laatste nieuws en om problemen te melden?</string>
+    <string name="login_subscribe_rslideforreddit">Abonneren op /r/slidereddit?</string>
+    <string name="login_subscribe_rslideforreddit_desc">Wil je abonneren op /r/slidereddit voor het laatste nieuws en om problemen te melden?</string>
     <string name="login_sync_colors">Kleuren nu synchroniseren?</string>
     <string name="login_sync_colors_desc">Wil je de subredditkleuren nu synchroniseren? Je kan dit later doen via Instellingen → Subreddit-thema\'s</string>
     <string name="login_authenticating">Slide is aan het aanmelden</string>

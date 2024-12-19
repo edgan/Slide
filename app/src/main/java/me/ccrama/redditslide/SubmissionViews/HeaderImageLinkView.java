@@ -97,6 +97,9 @@ public class HeaderImageLinkView extends RelativeLayout {
 
     public void doImageAndText(final Submission submission, boolean full, String baseSub, boolean news) {
 
+        backdrop.setLayoutParams(
+            new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+
         boolean fullImage = ContentType.fullImage(type);
         thumbUsed = false;
 
@@ -309,6 +312,20 @@ public class HeaderImageLinkView extends RelativeLayout {
                                     } else {
                                         wrapArea.setVisibility(View.GONE);
                                     }
+                                }
+                            }
+
+                            // Add dimension handling
+                            if (mediaMetadata.has("s") &&
+                                       mediaMetadata.get("s").has("x") &&
+                                       mediaMetadata.get("s").has("y")) {
+                                int width = mediaMetadata.get("s").get("x").asInt();
+                                int height = mediaMetadata.get("s").get("y").asInt();
+                                double h = getHeightFromAspectRatio(height, width);
+                                if (h > 0) {
+                                    backdrop.setLayoutParams(
+                                        new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                                            (int) Math.min(h, 3200)));
                                 }
                             }
                         }
@@ -575,12 +592,15 @@ public class HeaderImageLinkView extends RelativeLayout {
 
     public void onLinkLongClick(final String url, MotionEvent event) {
         popped = false;
-        if (url == null) {
+
+        if (url == null || SettingValues.noPreviewImageLongClick) {
             return;
         }
+
         performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
         Activity activity = null;
         final Context context = getContext();
+
         if (context instanceof Activity) {
             activity = (Activity) context;
         } else if (context instanceof ContextThemeWrapper) {

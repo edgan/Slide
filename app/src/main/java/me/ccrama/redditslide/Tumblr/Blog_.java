@@ -36,7 +36,7 @@ public class Blog_ {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     *
      * @return
      *     The name
      */
@@ -46,7 +46,7 @@ public class Blog_ {
     }
 
     /**
-     * 
+     *
      * @param name
      *     The name
      */
@@ -56,7 +56,7 @@ public class Blog_ {
     }
 
     /**
-     * 
+     *
      * @return
      *     The active
      */
@@ -66,7 +66,7 @@ public class Blog_ {
     }
 
     /**
-     * 
+     *
      * @param active
      *     The active
      */
@@ -76,7 +76,7 @@ public class Blog_ {
     }
 
     /**
-     * 
+     *
      * @return
      *     The theme
      */
@@ -86,7 +86,7 @@ public class Blog_ {
     }
 
     /**
-     * 
+     *
      * @param theme
      *     The theme
      */
@@ -96,7 +96,7 @@ public class Blog_ {
     }
 
     /**
-     * 
+     *
      * @return
      *     The shareLikes
      */
@@ -106,7 +106,7 @@ public class Blog_ {
     }
 
     /**
-     * 
+     *
      * @param shareLikes
      *     The share_likes
      */
@@ -116,7 +116,7 @@ public class Blog_ {
     }
 
     /**
-     * 
+     *
      * @return
      *     The shareFollowing
      */
@@ -126,7 +126,7 @@ public class Blog_ {
     }
 
     /**
-     * 
+     *
      * @param shareFollowing
      *     The share_following
      */

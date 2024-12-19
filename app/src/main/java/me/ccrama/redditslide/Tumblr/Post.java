@@ -101,7 +101,7 @@ public class Post {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     *
      * @return
      *     The blogName
      */
@@ -111,7 +111,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param blogName
      *     The blog_name
      */
@@ -121,7 +121,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The id
      */
@@ -131,7 +131,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param id
      *     The id
      */
@@ -141,7 +141,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The postUrl
      */
@@ -151,7 +151,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param postUrl
      *     The post_url
      */
@@ -161,7 +161,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The slug
      */
@@ -171,7 +171,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param slug
      *     The slug
      */
@@ -181,7 +181,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The type
      */
@@ -191,7 +191,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param type
      *     The type
      */
@@ -201,7 +201,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The date
      */
@@ -211,7 +211,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param date
      *     The date
      */
@@ -221,7 +221,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The timestamp
      */
@@ -231,7 +231,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param timestamp
      *     The timestamp
      */
@@ -241,7 +241,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The state
      */
@@ -251,7 +251,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param state
      *     The state
      */
@@ -261,7 +261,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The format
      */
@@ -271,7 +271,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param format
      *     The format
      */
@@ -281,7 +281,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The reblogKey
      */
@@ -291,7 +291,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param reblogKey
      *     The reblog_key
      */
@@ -301,7 +301,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The tags
      */
@@ -311,7 +311,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param tags
      *     The tags
      */
@@ -321,7 +321,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The shortUrl
      */
@@ -331,7 +331,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param shortUrl
      *     The short_url
      */
@@ -341,7 +341,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The summary
      */
@@ -351,7 +351,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param summary
      *     The summary
      */
@@ -361,7 +361,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The recommendedSource
      */
@@ -371,7 +371,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param recommendedSource
      *     The recommended_source
      */
@@ -381,7 +381,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The recommendedColor
      */
@@ -391,7 +391,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param recommendedColor
      *     The recommended_color
      */
@@ -401,7 +401,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The highlighted
      */
@@ -411,7 +411,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param highlighted
      *     The highlighted
      */
@@ -421,7 +421,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The noteCount
      */
@@ -431,7 +431,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param noteCount
      *     The note_count
      */
@@ -441,7 +441,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The caption
      */
@@ -451,7 +451,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param caption
      *     The caption
      */
@@ -461,7 +461,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The reblog
      */
@@ -471,7 +471,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param reblog
      *     The reblog
      */
@@ -481,7 +481,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The trail
      */
@@ -491,7 +491,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param trail
      *     The trail
      */
@@ -501,7 +501,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The photosetLayout
      */
@@ -511,7 +511,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param photosetLayout
      *     The photoset_layout
      */
@@ -521,7 +521,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The photos
      */
@@ -531,7 +531,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param photos
      *     The photos
      */
@@ -541,7 +541,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The canSendInMessage
      */
@@ -551,7 +551,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param canSendInMessage
      *     The can_send_in_message
      */
@@ -561,7 +561,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The canLike
      */
@@ -571,7 +571,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param canLike
      *     The can_like
      */
@@ -581,7 +581,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The canReblog
      */
@@ -591,7 +591,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param canReblog
      *     The can_reblog
      */
@@ -601,7 +601,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @return
      *     The displayAvatar
      */
@@ -611,7 +611,7 @@ public class Post {
     }
 
     /**
-     * 
+     *
      * @param displayAvatar
      *     The display_avatar
      */

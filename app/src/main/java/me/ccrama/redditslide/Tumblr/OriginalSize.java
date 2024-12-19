@@ -30,7 +30,7 @@ public class OriginalSize {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     *
      * @return
      *     The url
      */
@@ -40,7 +40,7 @@ public class OriginalSize {
     }
 
     /**
-     * 
+     *
      * @param url
      *     The url
      */
@@ -50,7 +50,7 @@ public class OriginalSize {
     }
 
     /**
-     * 
+     *
      * @return
      *     The width
      */
@@ -60,7 +60,7 @@ public class OriginalSize {
     }
 
     /**
-     * 
+     *
      * @param width
      *     The width
      */
@@ -70,7 +70,7 @@ public class OriginalSize {
     }
 
     /**
-     * 
+     *
      * @return
      *     The height
      */
@@ -80,7 +80,7 @@ public class OriginalSize {
     }
 
     /**
-     * 
+     *
      * @param height
      *     The height
      */

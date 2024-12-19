@@ -808,8 +808,8 @@
     <string name="time_hours_short">%dh</string>
     <string name="time_minutes_short">%dm</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">Subscriure\'s a /r/slideforreddit?</string>
-    <string name="login_subscribe_rslideforreddit_desc">Voldrieu subscriure\'s a /r/slideforreddit per obtenir les darreres notícies i informar d\'errors?</string>
+    <string name="login_subscribe_rslideforreddit">Subscriure\'s a /r/slidereddit?</string>
+    <string name="login_subscribe_rslideforreddit_desc">Voldrieu subscriure\'s a /r/slidereddit per obtenir les darreres notícies i informar d\'errors?</string>
     <string name="login_sync_colors">Sincronitzar colors ara?</string>
     <string name="login_sync_colors_desc">Voldrieu sincronitzar els vostres colors de subreddits? Ho podeu desfer posteriorment a Configuració → Temes dels Subreddits</string>
     <string name="login_authenticating">Slide s\'està autenticant</string>

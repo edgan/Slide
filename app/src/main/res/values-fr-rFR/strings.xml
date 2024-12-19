@@ -820,8 +820,8 @@
     <string name="time_hours_short">%dh</string>
     <string name="time_minutes_short">%dm</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">S\'abonner à /r/slideforreddit ?</string>
-    <string name="login_subscribe_rslideforreddit_desc">Souhaitez-vous vous abonner à /r/slideforreddit pour être informé des nouveautés et pour pouvoir rapporter des problèmes ?</string>
+    <string name="login_subscribe_rslideforreddit">S\'abonner à /r/slidereddit ?</string>
+    <string name="login_subscribe_rslideforreddit_desc">Souhaitez-vous vous abonner à /r/slidereddit pour être informé des nouveautés et pour pouvoir rapporter des problèmes ?</string>
     <string name="login_sync_colors">Synchroniser les couleurs maintenant ?</string>
     <string name="login_sync_colors_desc">Voulez-vous synchroniser les couleurs de vos subreddit maintenant ? Cela peut être fait plus tard dans Paramètres → Thèmes de subreddit</string>
     <string name="login_authenticating">Slide s\'authentifie</string>

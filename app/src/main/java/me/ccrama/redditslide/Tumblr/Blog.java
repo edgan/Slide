@@ -60,7 +60,7 @@ public class Blog {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     *
      * @return
      *     The title
      */
@@ -70,7 +70,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param title
      *     The title
      */
@@ -80,7 +80,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The name
      */
@@ -90,7 +90,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param name
      *     The name
      */
@@ -100,7 +100,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The totalPosts
      */
@@ -110,7 +110,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param totalPosts
      *     The total_posts
      */
@@ -120,7 +120,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The posts
      */
@@ -130,7 +130,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param posts
      *     The posts
      */
@@ -140,7 +140,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The url
      */
@@ -150,7 +150,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param url
      *     The url
      */
@@ -160,7 +160,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The updated
      */
@@ -170,7 +170,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param updated
      *     The updated
      */
@@ -180,7 +180,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The description
      */
@@ -190,7 +190,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param description
      *     The description
      */
@@ -200,7 +200,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The isNsfw
      */
@@ -210,7 +210,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param isNsfw
      *     The is_nsfw
      */
@@ -220,7 +220,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The ask
      */
@@ -230,7 +230,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param ask
      *     The ask
      */
@@ -240,7 +240,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The askPageTitle
      */
@@ -250,7 +250,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param askPageTitle
      *     The ask_page_title
      */
@@ -260,7 +260,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The askAnon
      */
@@ -270,7 +270,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param askAnon
      *     The ask_anon
      */
@@ -280,7 +280,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The shareLikes
      */
@@ -290,7 +290,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param shareLikes
      *     The share_likes
      */
@@ -300,7 +300,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The likes
      */
@@ -310,7 +310,7 @@ public class Blog {
     }
 
     /**
-     * 
+     *
      * @param likes
      *     The likes
      */

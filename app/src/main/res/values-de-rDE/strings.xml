@@ -819,8 +819,8 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="time_hours_short">%dh</string>
     <string name="time_minutes_short">%dmin</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">/r/slideforreddit abonnieren?</string>
-    <string name="login_subscribe_rslideforreddit_desc">Möchtest du /r/slideforreddit abonnieren, um über die Neuigkeiten informiert zu werden?</string>
+    <string name="login_subscribe_rslideforreddit">/r/slidereddit abonnieren?</string>
+    <string name="login_subscribe_rslideforreddit_desc">Möchtest du /r/slidereddit abonnieren, um über die Neuigkeiten informiert zu werden?</string>
     <string name="login_sync_colors">Farben jetzt synchronisieren?</string>
     <string name="login_sync_colors_desc">Möchten Sie die Subreddit-Farben jetzt synchronisieren? Das kann auch später über die Einstellungen→Subreddit Themes erledigt werden</string>
     <string name="login_authenticating">Slide authentifiziert sich</string>

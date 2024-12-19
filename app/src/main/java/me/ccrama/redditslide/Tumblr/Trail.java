@@ -39,7 +39,7 @@ public class Trail {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     *
      * @return
      *     The blog
      */
@@ -49,7 +49,7 @@ public class Trail {
     }
 
     /**
-     * 
+     *
      * @param blog
      *     The blog
      */
@@ -59,7 +59,7 @@ public class Trail {
     }
 
     /**
-     * 
+     *
      * @return
      *     The post
      */
@@ -69,7 +69,7 @@ public class Trail {
     }
 
     /**
-     * 
+     *
      * @param post
      *     The post
      */
@@ -79,7 +79,7 @@ public class Trail {
     }
 
     /**
-     * 
+     *
      * @return
      *     The contentRaw
      */
@@ -89,7 +89,7 @@ public class Trail {
     }
 
     /**
-     * 
+     *
      * @param contentRaw
      *     The content_raw
      */
@@ -99,7 +99,7 @@ public class Trail {
     }
 
     /**
-     * 
+     *
      * @return
      *     The content
      */
@@ -109,7 +109,7 @@ public class Trail {
     }
 
     /**
-     * 
+     *
      * @param content
      *     The content
      */
@@ -119,7 +119,7 @@ public class Trail {
     }
 
     /**
-     * 
+     *
      * @return
      *     The isCurrentItem
      */
@@ -129,7 +129,7 @@ public class Trail {
     }
 
     /**
-     * 
+     *
      * @param isCurrentItem
      *     The is_current_item
      */
@@ -139,7 +139,7 @@ public class Trail {
     }
 
     /**
-     * 
+     *
      * @return
      *     The isRootItem
      */
@@ -149,7 +149,7 @@ public class Trail {
     }
 
     /**
-     * 
+     *
      * @param isRootItem
      *     The is_root_item
      */

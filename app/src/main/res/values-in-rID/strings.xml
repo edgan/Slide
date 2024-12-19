@@ -540,8 +540,7 @@
     <string name="settings_notifdisabled">Pemberitahuan dinonaktifkan</string>
     <string name="settings_colored_navigation_bar">Bar navigasi berwarna</string>
     <string name="settings_colored_icon">Warna ikon apl (eksperimental)</string>
-    <string name="settings_colored_icon_desc">Mungkin perlu memulai lagi telepon untuk bekerja. 
-ini juga akan menghapus ikon dari layar depan anda.</string>
+    <string name="settings_colored_icon_desc">Mungkin perlu memulai lagi telepon untuk bekerja. ini juga akan menghapus ikon dari layar depan anda.</string>
     <string name="settings_filter_domain">Filter domain</string>
     <string name="settings_filter_selfttext">Filter Selftext</string>
     <string name="settings_filter_title">Filter judul</string>
@@ -797,8 +796,8 @@ ini juga akan menghapus ikon dari layar depan anda.</string>
     <string name="time_hours_short">%d jam</string>
     <string name="time_minutes_short">%dm</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">Berlangganan /r/slideforreddit?</string>
-    <string name="login_subscribe_rslideforreddit_desc">Apakah Anda ingin berlangganan untuk /r/slideforreddit untuk berita terbaru dan laporan masalah?</string>
+    <string name="login_subscribe_rslideforreddit">Berlangganan /r/slidereddit?</string>
+    <string name="login_subscribe_rslideforreddit_desc">Apakah Anda ingin berlangganan untuk /r/slidereddit untuk berita terbaru dan laporan masalah?</string>
     <string name="login_sync_colors">Sinkronkan warna sekarang?</string>
     <string name="login_sync_colors_desc">Ingin Anda sinkronkan warna subreddit Anda sekarang? Ini dapat dilakukan nanti dalam pengaturan → Subreddit tema</string>
     <string name="login_authenticating">Slide otentikasi</string>

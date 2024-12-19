@@ -30,7 +30,7 @@ public class AltSize {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     *
      * @return
      *     The url
      */
@@ -40,7 +40,7 @@ public class AltSize {
     }
 
     /**
-     * 
+     *
      * @param url
      *     The url
      */
@@ -50,7 +50,7 @@ public class AltSize {
     }
 
     /**
-     * 
+     *
      * @return
      *     The width
      */
@@ -60,7 +60,7 @@ public class AltSize {
     }
 
     /**
-     * 
+     *
      * @param width
      *     The width
      */
@@ -70,7 +70,7 @@ public class AltSize {
     }
 
     /**
-     * 
+     *
      * @return
      *     The height
      */
@@ -80,7 +80,7 @@ public class AltSize {
     }
 
     /**
-     * 
+     *
      * @param height
      *     The height
      */

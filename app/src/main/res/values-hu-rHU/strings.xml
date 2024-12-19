@@ -686,7 +686,7 @@
     <string name="time_hours_short">%dó</string>
     <string name="time_minutes_short">%dp</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">Feliratkozol a /r/slideforreddit-re?</string>
+    <string name="login_subscribe_rslideforreddit">Feliratkozol a /r/slidereddit-re?</string>
     <string name="login_sync_colors">Szinkronizáljam a színeket?</string>
     <string name="login_sync_colors_desc">Szeretnéd szinkronizálni az alredditek színeit most? Ezt később is megteheted itt: Beállítások → Alreddit témák</string>
     <string name="login_authenticating">A Slide hitelesít</string>

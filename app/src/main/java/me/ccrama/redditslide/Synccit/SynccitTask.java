@@ -58,7 +58,7 @@ public abstract class SynccitTask extends HttpPostTask<SynccitResponse> {
 	
 	/**
 	 * https://github.com/drakeapps/synccit#example-json-update-call
-	 * 
+	 *
 	 * {
 		    "username"  : "james",
 		    "auth"      : "9m89x0",
@@ -82,7 +82,7 @@ public abstract class SynccitTask extends HttpPostTask<SynccitResponse> {
 		        }
 		    ]
 		}
-	 * @throws JSONException 
+	 * @throws JSONException
 	 */
 	private String buildJson(String... linkIds) throws JSONException {
 		JSONObject rootOb = new JSONObject();

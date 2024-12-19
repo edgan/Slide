@@ -880,7 +880,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
 
     @Override
     public void onLinkLongClick(final String baseUrl, MotionEvent event) {
-        if (baseUrl == null) {
+        if (baseUrl == null || SettingValues.noPreviewImageLongClick) {
             return;
         }
         final String url = StringEscapeUtils.unescapeHtml4(baseUrl);

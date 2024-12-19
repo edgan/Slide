@@ -32,7 +32,7 @@ public class Photo {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     *
      * @return
      *     The caption
      */
@@ -42,7 +42,7 @@ public class Photo {
     }
 
     /**
-     * 
+     *
      * @param caption
      *     The caption
      */
@@ -52,7 +52,7 @@ public class Photo {
     }
 
     /**
-     * 
+     *
      * @return
      *     The altSizes
      */
@@ -62,7 +62,7 @@ public class Photo {
     }
 
     /**
-     * 
+     *
      * @param altSizes
      *     The alt_sizes
      */
@@ -72,7 +72,7 @@ public class Photo {
     }
 
     /**
-     * 
+     *
      * @return
      *     The originalSize
      */
@@ -82,7 +82,7 @@ public class Photo {
     }
 
     /**
-     * 
+     *
      * @param originalSize
      *     The original_size
      */

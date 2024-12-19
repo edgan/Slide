@@ -561,8 +561,8 @@
     <string name="time_hours_short">%d ore</string>
     <string name="time_minutes_short">%d luni</string>
     <!-- Strings present during the login process -->
-    <string name="login_subscribe_rslideforreddit">Te abonezi la /r/slideforreddit?</string>
-    <string name="login_subscribe_rslideforreddit_desc">Doriți să vă abonați la /r/slideforreddit pentru noutăți și raportare de probleme?</string>
+    <string name="login_subscribe_rslideforreddit">Te abonezi la /r/slidereddit?</string>
+    <string name="login_subscribe_rslideforreddit_desc">Doriți să vă abonați la /r/slidereddit pentru noutăți și raportare de probleme?</string>
     <string name="login_sync_colors">Sincronizați culorile acum?</string>
     <string name="login_sync_colors_desc">Doriți să sincronizați culorile subreddit-ului acum? Acest lucru poate fi făcut mai târziu în Setări → Teme subreddit</string>
     <string name="login_authenticating">Slide se autentifică</string>

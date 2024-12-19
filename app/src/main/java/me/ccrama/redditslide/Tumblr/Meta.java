@@ -27,7 +27,7 @@ public class Meta {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     *
      * @return
      *     The status
      */
@@ -37,7 +37,7 @@ public class Meta {
     }
 
     /**
-     * 
+     *
      * @param status
      *     The status
      */
@@ -47,7 +47,7 @@ public class Meta {
     }
 
     /**
-     * 
+     *
      * @return
      *     The msg
      */
@@ -57,7 +57,7 @@ public class Meta {
     }
 
     /**
-     * 
+     *
      * @param msg
      *     The msg
      */
