@@ -281,6 +281,12 @@ dependencies {
     testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
 }
 
+tasks.configureEach {
+    if (name == "githubRelease") {
+        mustRunAfter(tasks.assembleWithGPlayRelease)
+    }
+}
+
 task buildReleaseAndPublish {
     dependsOn 'assembleWithGPlayRelease'
     dependsOn 'githubRelease'
