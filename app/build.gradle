@@ -284,6 +284,11 @@ dependencies {
 tasks.configureEach {
     if (name == "githubRelease") {
         mustRunAfter(tasks.assembleWithGPlayRelease)
+
+        doFirst {
+            println "Waiting for file renaming to complete..."
+            sleep(2000) // Delay for 2 seconds
+        }
     }
 }
 
