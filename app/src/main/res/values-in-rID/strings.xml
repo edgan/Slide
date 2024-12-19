@@ -540,8 +540,7 @@
     <string name="settings_notifdisabled">Pemberitahuan dinonaktifkan</string>
     <string name="settings_colored_navigation_bar">Bar navigasi berwarna</string>
     <string name="settings_colored_icon">Warna ikon apl (eksperimental)</string>
-    <string name="settings_colored_icon_desc">Mungkin perlu memulai lagi telepon untuk bekerja. 
-ini juga akan menghapus ikon dari layar depan anda.</string>
+    <string name="settings_colored_icon_desc">Mungkin perlu memulai lagi telepon untuk bekerja. ini juga akan menghapus ikon dari layar depan anda.</string>
     <string name="settings_filter_domain">Filter domain</string>
     <string name="settings_filter_selfttext">Filter Selftext</string>
     <string name="settings_filter_title">Filter judul</string>

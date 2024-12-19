@@ -81,7 +81,7 @@ public class Theme {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     *
      * @return
      *     The headerFullWidth
      */
@@ -91,7 +91,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param headerFullWidth
      *     The header_full_width
      */
@@ -101,7 +101,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The headerFullHeight
      */
@@ -111,7 +111,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param headerFullHeight
      *     The header_full_height
      */
@@ -121,7 +121,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The headerFocusWidth
      */
@@ -131,7 +131,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param headerFocusWidth
      *     The header_focus_width
      */
@@ -141,7 +141,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The headerFocusHeight
      */
@@ -151,7 +151,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param headerFocusHeight
      *     The header_focus_height
      */
@@ -161,7 +161,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The avatarShape
      */
@@ -171,7 +171,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param avatarShape
      *     The avatar_shape
      */
@@ -181,7 +181,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The backgroundColor
      */
@@ -191,7 +191,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param backgroundColor
      *     The background_color
      */
@@ -201,7 +201,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The bodyFont
      */
@@ -211,7 +211,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param bodyFont
      *     The body_font
      */
@@ -221,7 +221,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The headerBounds
      */
@@ -231,7 +231,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param headerBounds
      *     The header_bounds
      */
@@ -241,7 +241,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The headerImage
      */
@@ -251,7 +251,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param headerImage
      *     The header_image
      */
@@ -261,7 +261,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The headerImageFocused
      */
@@ -271,7 +271,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param headerImageFocused
      *     The header_image_focused
      */
@@ -281,7 +281,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The headerImageScaled
      */
@@ -291,7 +291,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param headerImageScaled
      *     The header_image_scaled
      */
@@ -301,7 +301,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The headerStretch
      */
@@ -311,7 +311,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param headerStretch
      *     The header_stretch
      */
@@ -321,7 +321,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The linkColor
      */
@@ -331,7 +331,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param linkColor
      *     The link_color
      */
@@ -341,7 +341,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The showAvatar
      */
@@ -351,7 +351,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param showAvatar
      *     The show_avatar
      */
@@ -361,7 +361,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The showDescription
      */
@@ -371,7 +371,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param showDescription
      *     The show_description
      */
@@ -381,7 +381,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The showHeaderImage
      */
@@ -391,7 +391,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param showHeaderImage
      *     The show_header_image
      */
@@ -401,7 +401,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The showTitle
      */
@@ -411,7 +411,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param showTitle
      *     The show_title
      */
@@ -421,7 +421,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The titleColor
      */
@@ -431,7 +431,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param titleColor
      *     The title_color
      */
@@ -441,7 +441,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The titleFont
      */
@@ -451,7 +451,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param titleFont
      *     The title_font
      */
@@ -461,7 +461,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @return
      *     The titleFontWeight
      */
@@ -471,7 +471,7 @@ public class Theme {
     }
 
     /**
-     * 
+     *
      * @param titleFontWeight
      *     The title_font_weight
      */

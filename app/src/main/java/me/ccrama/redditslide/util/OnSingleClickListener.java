@@ -9,7 +9,7 @@ import android.view.View;
  * To use this class, implement {@link #onSingleClick(View)} instead of {@link View.OnClickListener#onClick(View)}.
  */
 public abstract class OnSingleClickListener implements View.OnClickListener {
-    
+
     private static final long MIN_DELAY_MS = 300;
     private static final String TAG = OnSingleClickListener.class.getSimpleName();
     private static long mLastClickTime;

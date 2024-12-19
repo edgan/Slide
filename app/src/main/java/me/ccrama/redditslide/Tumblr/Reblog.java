@@ -1,4 +1,3 @@
-
 package me.ccrama.redditslide.Tumblr;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -27,7 +26,7 @@ public class Reblog {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     *
      * @return
      *     The treeHtml
      */
@@ -37,7 +36,7 @@ public class Reblog {
     }
 
     /**
-     * 
+     *
      * @param treeHtml
      *     The tree_html
      */
@@ -47,7 +46,7 @@ public class Reblog {
     }
 
     /**
-     * 
+     *
      * @return
      *     The comment
      */
@@ -57,7 +56,7 @@ public class Reblog {
     }
 
     /**
-     * 
+     *
      * @param comment
      *     The comment
      */

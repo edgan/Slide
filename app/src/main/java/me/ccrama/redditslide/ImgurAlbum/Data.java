@@ -28,7 +28,7 @@ public class Data {
     private Map<String, Object> additionalProperties = new HashMap<>();
 
     /**
-     * 
+     *
      * @return
      *     The count
      */
@@ -38,7 +38,7 @@ public class Data {
     }
 
     /**
-     * 
+     *
      * @param count
      *     The count
      */
@@ -48,7 +48,7 @@ public class Data {
     }
 
     /**
-     * 
+     *
      * @return
      *     The images
      */
@@ -58,7 +58,7 @@ public class Data {
     }
 
     /**
-     * 
+     *
      * @param images
      *     The images
      */

@@ -32,7 +32,7 @@ public class Response {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     *
      * @return
      *     The blog
      */
@@ -42,7 +42,7 @@ public class Response {
     }
 
     /**
-     * 
+     *
      * @param blog
      *     The blog
      */
@@ -52,7 +52,7 @@ public class Response {
     }
 
     /**
-     * 
+     *
      * @return
      *     The posts
      */
@@ -62,7 +62,7 @@ public class Response {
     }
 
     /**
-     * 
+     *
      * @param posts
      *     The posts
      */
@@ -72,7 +72,7 @@ public class Response {
     }
 
     /**
-     * 
+     *
      * @return
      *     The totalPosts
      */
@@ -82,7 +82,7 @@ public class Response {
     }
 
     /**
-     * 
+     *
      * @param totalPosts
      *     The total_posts
      */

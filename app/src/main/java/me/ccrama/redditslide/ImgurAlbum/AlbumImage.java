@@ -29,7 +29,7 @@ public class AlbumImage {
     private Map<String, Object> additionalProperties = new HashMap<>();
 
     /**
-     * 
+     *
      * @return
      *     The data
      */
@@ -39,7 +39,7 @@ public class AlbumImage {
     }
 
     /**
-     * 
+     *
      * @param data
      *     The data
      */
@@ -49,7 +49,7 @@ public class AlbumImage {
     }
 
     /**
-     * 
+     *
      * @return
      *     The success
      */
@@ -59,7 +59,7 @@ public class AlbumImage {
     }
 
     /**
-     * 
+     *
      * @param success
      *     The success
      */
@@ -69,7 +69,7 @@ public class AlbumImage {
     }
 
     /**
-     * 
+     *
      * @return
      *     The status
      */
@@ -79,7 +79,7 @@ public class AlbumImage {
     }
 
     /**
-     * 
+     *
      * @param status
      *     The status
      */

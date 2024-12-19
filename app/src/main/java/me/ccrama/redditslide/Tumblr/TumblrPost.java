@@ -20,7 +20,7 @@ public class TumblrPost {
     private Response response;
 
     /**
-     * 
+     *
      * @return
      *     The meta
      */
@@ -30,7 +30,7 @@ public class TumblrPost {
     }
 
     /**
-     * 
+     *
      * @param meta
      *     The meta
      */
@@ -40,7 +40,7 @@ public class TumblrPost {
     }
 
     /**
-     * 
+     *
      * @return
      *     The response
      */
@@ -50,7 +50,7 @@ public class TumblrPost {
     }
 
     /**
-     * 
+     *
      * @param response
      *     The response
      */
