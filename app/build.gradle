@@ -281,14 +281,13 @@ dependencies {
     testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
 }
 
-afterEvaluate {
-    tasks.findByName("githubRelease")?.let { githubReleaseTask ->
-        githubReleaseTask.mustRunAfter(tasks.named("assembleWithGPlayRelease"))
+task delayedGitHubRelease {
+    dependsOn "assembleWithGPlayRelease"
+    finalizedBy "githubRelease"
 
-        githubReleaseTask.doFirst {
-            println "Waiting for file renaming to complete..."
-            sleep(2000) // Delay for 2 seconds
-        }
+    doLast {
+        println "Waiting for file renaming to complete..."
+        sleep(2000) // Delay for 2 seconds
     }
 }
 
