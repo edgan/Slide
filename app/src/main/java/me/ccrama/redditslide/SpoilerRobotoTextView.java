@@ -564,8 +564,10 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                                         }
                                     }
 
+                                    // Explicitly call onAttached for the new span
+                                    animatedSpan.onAttached();
+
                                     if (SettingValues.commentEmoteAnimation) {
-                                        // Start the GIF animation and add to active list
                                         animatedSpan.start();
                                     }
 
@@ -579,7 +581,6 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                                 }
                             }
                         });
-
                     } else {
                         Log.e("EmoteDebug", "Failed to decode movie for: " + request.emoteName);
                     }

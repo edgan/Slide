@@ -17,6 +17,7 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
     private final View view;
     private final Handler handler;
     private boolean isAttached = false;
+    private boolean isAnimationEnabled = false;
     private final Runnable invalidateRunnable;
     private static final int FRAME_DELAY = 16;  // Approximately 60fps
 
@@ -25,11 +26,12 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
         this.drawable = drawable;
         this.view = view;
         this.handler = new Handler(Looper.getMainLooper());
+        this.isAnimationEnabled = SettingValues.commentEmoteAnimation; // Initialize based on setting
 
         invalidateRunnable = new Runnable() {
             @Override
             public void run() {
-                if (isAttached) {
+                if (isAttached && isAnimationEnabled) {
                     view.postInvalidate();
                     handler.postDelayed(this, FRAME_DELAY);
                 }
@@ -40,6 +42,9 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end,
                     float x, int top, int y, int bottom, Paint paint) {
+        if (!isAnimationEnabled) {
+            drawable.seekToFirstFrame(); // Ensure we're on first frame when not animating
+        }
         Drawable drawable = getDrawable();
         if (drawable == null) {
             Log.e("EmoteDebug", "Drawable is null in span draw");
@@ -101,18 +106,23 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
     }
 
     public void start() {
-        drawable.start();
-        if (!isAttached) {
-            isAttached = true;
-            handler.post(invalidateRunnable);
+        if (SettingValues.commentEmoteAnimation) {
+            isAnimationEnabled = true;
+            if (isAttached) {
+                handler.removeCallbacks(invalidateRunnable); // Remove any existing callbacks
+                drawable.start();
+                handler.post(invalidateRunnable);
+            }
         }
     }
 
     public void stop() {
+        isAnimationEnabled = false;
+        handler.removeCallbacks(invalidateRunnable);
         drawable.stop();
+        drawable.seekToFirstFrame();
         if (isAttached) {
-            isAttached = false;
-            handler.removeCallbacks(invalidateRunnable);
+            view.postInvalidate();
         }
     }
 
@@ -122,21 +132,19 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
 
     public void onAttached() {
         Log.d("EmoteDebug", "Span attached to view");
-        if (!isAttached) {
-            isAttached = true;
+        isAttached = true;
+        if (isAnimationEnabled && SettingValues.commentEmoteAnimation) {
+            handler.removeCallbacks(invalidateRunnable); // Remove any existing callbacks
+            drawable.start();
             handler.post(invalidateRunnable);
-            if (SettingValues.commentEmoteAnimation) {
-                drawable.start();
-            }
         }
     }
 
     public void onDetached() {
         Log.d("EmoteDebug", "Span detached from view");
-        if (isAttached) {
-            isAttached = false;
-            handler.removeCallbacks(invalidateRunnable);
-            drawable.stop();
-        }
+        isAttached = false;
+        handler.removeCallbacks(invalidateRunnable);
+        drawable.stop();
+        drawable.seekToFirstFrame();
     }
 }
