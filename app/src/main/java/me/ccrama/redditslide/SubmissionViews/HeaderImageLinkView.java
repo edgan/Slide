@@ -257,6 +257,40 @@ public class HeaderImageLinkView extends RelativeLayout {
                     thumbUsed = true;
                 }
                 loadedUrl = submission.getUrl();
+            } else if (type == ContentType.Type.GIF) {
+                JsonNode dataNode = submission.getDataNode();
+
+                url = submission.getUrl();
+                String redditPreviewUrl = null;
+
+                // Check for preview data
+                if (dataNode.has("preview")) {
+                    JsonNode previewNode = dataNode.get("preview").get("images");
+                    if (previewNode != null && previewNode.size() > 0) {
+                        JsonNode sourceNode = previewNode.get(0).get("source");
+                        if (sourceNode != null && sourceNode.has("url")) {
+                            redditPreviewUrl = sourceNode.get("url").asText();
+                        }
+                    }
+                }
+
+                // Use Reddit preview URL if available
+                if (redditPreviewUrl != null) {
+                    url = redditPreviewUrl;
+                }
+
+                // Load the URL
+                if (!full && !SettingValues.isPicsEnabled(baseSub)) {
+                    thumbImage2.setVisibility(View.VISIBLE);
+                    ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                            .displayImage(url, thumbImage2);
+                    setVisibility(View.GONE);
+                } else {
+                    backdrop.setVisibility(View.VISIBLE);
+                    ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                            .displayImage(url, backdrop);
+                    setVisibility(View.VISIBLE);
+                }
             } else if (type == ContentType.Type.REDDIT_GALLERY) {
                 JsonNode dataNode = submission.getDataNode();
 
