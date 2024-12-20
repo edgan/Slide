@@ -368,6 +368,7 @@ public class HeaderImageLinkView extends RelativeLayout {
                                             }
                                         }
                                     }
+                                    break; // Break on the first valid image
                                 }
                             }
                         }
