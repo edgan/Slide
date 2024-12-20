@@ -231,6 +231,10 @@ public class ContentType {
             return Type.SELF; //hopefully shouldn't be null, but catch it in case
         }
 
+        if (submission.isGallery()) {
+            return Type.REDDIT_GALLERY;
+        }
+
         if (submission.isSelfPost()) {
             return Type.SELF;
         }

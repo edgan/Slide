@@ -152,7 +152,7 @@ dependencies {
     withGPlayImplementation 'com.google.android.gms:play-services-drive:11.4.2'
 
 /** Custom **/
-    implementation 'com.github.Haptic-Apps:JRAW:9c8a410a06'
+    implementation 'com.github.edgan:JRAW:ac8f33e1a7'
     implementation 'com.github.Haptic-Apps:TedBottomPicker:496623c9b6'
     def commonmarkVersion = '0ebc0749c7'
     implementation "com.github.Haptic-Apps.commonmark-java:commonmark:$commonmarkVersion"
@@ -274,6 +274,7 @@ dependencies {
     implementation 'org.mp4parser:isoparser:1.9.41'
     implementation 'org.mp4parser:muxer:1.9.41'
 
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.6.0'
 
 /** Testing **/
     testImplementation 'junit:junit:4.13.2'
