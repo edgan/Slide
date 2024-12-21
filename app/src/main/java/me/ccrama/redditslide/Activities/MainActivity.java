@@ -1081,7 +1081,7 @@ public class MainActivity extends BaseActivity
          * int for the current base theme selected.
          * 0 = Dark, 1 = Light, 2 = AMOLED, 3 = Dark blue, 4 = AMOLED with contrast, 5 = Sepia
          */
-        SettingValues.currentTheme = 5; //new ColorPreferences(this).getFontStyle().getThemeType();
+        SettingValues.currentTheme = new ColorPreferences(this).getFontStyle().getThemeType();
         networkStateReceiver = new NetworkStateReceiver();
         networkStateReceiver.addListener(this);
         try {
