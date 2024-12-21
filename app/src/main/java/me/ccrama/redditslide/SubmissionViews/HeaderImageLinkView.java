@@ -291,6 +291,7 @@ public class HeaderImageLinkView extends RelativeLayout {
                             .displayImage(url, backdrop);
                     setVisibility(View.VISIBLE);
                 }
+                if (wrapArea != null) wrapArea.setVisibility(View.GONE);
             } else if (type == ContentType.Type.REDDIT_GALLERY) {
                 JsonNode dataNode = submission.getDataNode();
 
