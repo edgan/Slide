@@ -28,7 +28,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdk 29
+    compileSdk 31
     namespace "me.ccrama.redditslide"
 
 
@@ -106,8 +106,8 @@ android {
 
     compileOptions {
         encoding "UTF-8"
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
 
     lint {
@@ -172,6 +172,8 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.webkit:webkit:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
+    implementation "androidx.concurrent:concurrent-futures:1.1.0"
+    implementation "androidx.lifecycle:lifecycle-runtime:2.5.1"
 
 /** ExoPlayer **/
     // Application level media player

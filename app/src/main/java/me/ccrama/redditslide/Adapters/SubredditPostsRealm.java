@@ -249,11 +249,11 @@ public class SubredditPostsRealm implements PostLoader {
             SubmissionCache.cacheSubmissions(filteredSubmissions, context, subreddit);
 
             if (reset || offline || posts == null) {
-                posts = new ArrayList<>(new LinkedHashSet(filteredSubmissions));
+                posts = new ArrayList<>(new LinkedHashSet<>(filteredSubmissions));
                 start = -1;
             } else {
                 posts.addAll(filteredSubmissions);
-                posts = new ArrayList<>(new LinkedHashSet(posts));
+                posts = new ArrayList<>(new LinkedHashSet<>(posts));
                 offline = false;
             }
 
@@ -276,14 +276,12 @@ public class SubredditPostsRealm implements PostLoader {
 
             try {
                 if (paginator != null && paginator.hasNext()) {
-                    if (force18 && paginator instanceof SubredditPaginator) {
-                        ((SubredditPaginator) paginator).setObeyOver18(false);
-                    }
-                    adding.addAll(paginator.next());
+                    @SuppressWarnings("unchecked")
+                    List<Submission> fetchedSubmissions = (List<Submission>) paginator.next();
+                    adding.addAll(fetchedSubmissions);
                 } else {
                     nomore = true;
                 }
-
 
                 for (Submission s : adding) {
                     if (!PostMatch.doesMatch(s, paginator instanceof SubredditPaginator
@@ -301,7 +299,6 @@ public class SubredditPostsRealm implements PostLoader {
                 if (e.getMessage() != null && e.getMessage().contains("Forbidden")) {
                     Reddit.authentication.updateToken(context);
                 }
-
             }
             return filteredSubmissions;
         }

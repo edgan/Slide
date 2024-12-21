@@ -36,7 +36,7 @@ import me.ccrama.redditslide.util.PhotoLoader;
 /**
  * Created by carlo_000 on 4/18/2016.
  */
-public class CommentCacheAsync extends AsyncTask {
+public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
 
     public static final String SAVED_SUBMISSIONS = "read later";
     List<Submission> alreadyReceived;
@@ -70,7 +70,7 @@ public class CommentCacheAsync extends AsyncTask {
     boolean[] otherChoices;
 
     @Override
-    public Void doInBackground(Object[] params) {
+    public Void doInBackground(Void... params) {
         if (Authentication.isLoggedIn && Authentication.me == null || Authentication.reddit == null) {
 
             if (Authentication.reddit == null) {

@@ -118,8 +118,7 @@ public class SubredditPosts implements PostLoader {
         public int start;
 
         @Override
-        public void onPreExecute()
-        {
+        public void onPreExecute() {
             if(reset) {
                 posts.clear();
                 displayer.onAdapterUpdated();
@@ -167,7 +166,6 @@ public class SubredditPosts implements PostLoader {
                 }
 
                 // update online
-
                 displayer.updateSuccess(posts, start);
                 currentid = 0;
                 OfflineSubreddit.currentid = currentid;
@@ -263,7 +261,6 @@ public class SubredditPosts implements PostLoader {
 
             List<Submission> filteredSubmissions = getNextFiltered();
 
-
             if (!(SettingValues.noImages && ((!NetworkUtil.isConnectedWifi(c)
                     && SettingValues.lowResMobile) || SettingValues.lowResAlways))) {
                 PhotoLoader.loadPhotos(c, filteredSubmissions);
@@ -275,11 +272,11 @@ public class SubredditPosts implements PostLoader {
             SubmissionCache.cacheSubmissions(filteredSubmissions, context, subreddit);
 
             if (reset || offline || posts == null) {
-                posts = new ArrayList<>(new LinkedHashSet(filteredSubmissions));
+                posts = new ArrayList<>(new LinkedHashSet<>(filteredSubmissions));
                 start = -1;
             } else {
                 posts.addAll(filteredSubmissions);
-                posts = new ArrayList<>(new LinkedHashSet(posts));
+                posts = new ArrayList<>(new LinkedHashSet<>(posts));
                 offline = false;
             }
 
@@ -310,7 +307,6 @@ public class SubredditPosts implements PostLoader {
                     nomore = true;
                 }
 
-
                 for (Submission s : adding) {
                     if (!PostMatch.doesMatch(s, paginator instanceof SubredditPaginator
                             ? ((SubredditPaginator) paginator).getSubreddit()
@@ -327,14 +323,12 @@ public class SubredditPosts implements PostLoader {
                 if (e.getMessage() != null && e.getMessage().contains("Forbidden")) {
                     Reddit.authentication.updateToken(context);
                 }
-
             }
             return filteredSubmissions;
         }
 
         Exception error;
     }
-
 
     public void doMainActivityOffline(final Context c, final SubmissionDisplay displayer) {
         LogUtil.v(subreddit);
@@ -389,7 +383,6 @@ public class SubredditPosts implements PostLoader {
 
                                     @Override
                                     protected void onPostExecute(Void aVoid) {
-
                                         if (cached.submissions.isEmpty()) {
                                             displayer.updateOfflineError();
                                         }

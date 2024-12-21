@@ -17,6 +17,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
+import android.view.WindowMetrics;
 
 import androidx.annotation.FloatRange;
 import androidx.annotation.IdRes;
@@ -163,12 +164,10 @@ public class PeekView extends FrameLayout {
         androidContentView = (FrameLayout) context.findViewById(android.R.id.content).getRootView();
 
         // initialize the display size
-        Display display = context.getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-
-        screenHeight = size.y;
-        screenWidth = size.x;
+        WindowMetrics windowMetrics = context.getWindowManager().getCurrentWindowMetrics();
+        Rect bounds = windowMetrics.getBounds();
+        screenHeight = bounds.height();
+        screenWidth = bounds.width();
 
         // set up the content we want to show
         this.content = content;

@@ -91,11 +91,11 @@ public class SubredditNames {
                 }
 
                 if (reset || posts == null) {
-                    posts = new ArrayList<>(new LinkedHashSet(submissions));
+                    posts = new ArrayList<>(new LinkedHashSet<>(submissions));
                     start = -1;
                 } else {
                     posts.addAll(submissions);
-                    posts = new ArrayList<>(new LinkedHashSet(posts));
+                    posts = new ArrayList<>(new LinkedHashSet<>(posts));
                 }
 
                 final int finalStart = start;

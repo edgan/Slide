@@ -53,10 +53,10 @@ public class ModeratorPosts {
             if (subs != null) {
 
                 if(reset || posts == null){
-                    posts = new ArrayList<>(new LinkedHashSet(subs));
+                    posts = new ArrayList<>(new LinkedHashSet<>(subs));
                 } else {
                     posts.addAll(subs);
-                    posts = new ArrayList<>(new LinkedHashSet(posts));
+                    posts = new ArrayList<>(new LinkedHashSet<>(posts));
                 }
                 loading = false;
                 refreshLayout.setRefreshing(false);

@@ -110,11 +110,11 @@ public class MultiredditPosts implements PostLoader {
                 }
 
                 if (reset || offline || posts == null) {
-                    posts = new ArrayList<>(new LinkedHashSet(submissions));
+                    posts = new ArrayList<>(new LinkedHashSet<>(submissions));
                     start = -1;
                 } else {
                     posts.addAll(submissions);
-                    posts = new ArrayList<>(new LinkedHashSet(posts));
+                    posts = new ArrayList<>(new LinkedHashSet<>(posts));
                     offline = false;
                 }
                 if (!usedOffline)

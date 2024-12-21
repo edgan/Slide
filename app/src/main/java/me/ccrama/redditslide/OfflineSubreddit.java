@@ -349,11 +349,12 @@ public class OfflineSubreddit {
         return base;
     }
 
-    public static class MultiComparator<T> implements Comparator<T> {
-        public int compare(T o1, T o2) {
-            double first = Double.parseDouble(((String) o1).split(",")[1]);
-            double second = Double.parseDouble(((String) o2).split(",")[1]);
-            return first >= second ? first == second ? 0 : -1 : 1;
+    public static class MultiComparator implements Comparator<String> {
+        @Override
+        public int compare(String o1, String o2) {
+            double first = Double.parseDouble(o1.split(",")[1]);
+            double second = Double.parseDouble(o2.split(",")[1]);
+            return Double.compare(second, first); // Simplified comparison
         }
     }
 
