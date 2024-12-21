@@ -276,12 +276,14 @@ public class SubredditPostsRealm implements PostLoader {
 
             try {
                 if (paginator != null && paginator.hasNext()) {
-                    @SuppressWarnings("unchecked")
-                    List<Submission> fetchedSubmissions = (List<Submission>) paginator.next();
-                    adding.addAll(fetchedSubmissions);
+                    if (force18 && paginator instanceof SubredditPaginator) {
+                        ((SubredditPaginator) paginator).setObeyOver18(false);
+                    }
+                    adding.addAll(paginator.next());
                 } else {
                     nomore = true;
                 }
+
 
                 for (Submission s : adding) {
                     if (!PostMatch.doesMatch(s, paginator instanceof SubredditPaginator
