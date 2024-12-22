@@ -17,6 +17,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -48,6 +49,9 @@ import me.ccrama.redditslide.util.DialogUtil;
 import me.ccrama.redditslide.util.LinkUtil;
 import me.ccrama.redditslide.util.NetworkUtil;
 import me.ccrama.redditslide.util.ShareUtil;
+import me.ccrama.redditslide.Views.ExoVideoView;
+import me.ccrama.redditslide.util.GifUtils;
+import me.ccrama.redditslide.util.LogUtil;
 
 import static me.ccrama.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
 
@@ -251,12 +255,21 @@ public class RedditGalleryPager extends FullScreenActivity
             }
             i--;
 
-            Fragment f = new ImageFullNoSubmission();
-            Bundle args = new Bundle();
-            args.putInt("page", i);
-            f.setArguments(args);
+            GalleryImage current = images.get(i);
 
-            return f;
+            if (current.isAnimated()) {
+                Fragment f = new Gif();
+                Bundle args = new Bundle();
+                args.putInt("page", i);
+                f.setArguments(args);
+                return f;
+            } else {
+                Fragment f = new ImageFullNoSubmission();
+                Bundle args = new Bundle();
+                args.putInt("page", i);
+                f.setArguments(args);
+                return f;
+            }
         }
 
         @Override
@@ -265,6 +278,81 @@ public class RedditGalleryPager extends FullScreenActivity
                 return 0;
             }
             return images.size() + 1;
+        }
+    }
+
+    public static class Gif extends Fragment {
+        private int i = 0;
+        private View gif;
+        ViewGroup rootView;
+        ProgressBar loader;
+
+        @Override
+        public void setUserVisibleHint(boolean isVisibleToUser) {
+            super.setUserVisibleHint(isVisibleToUser);
+            if (this.isVisible()) {
+                if (!isVisibleToUser) {
+                    ((ExoVideoView) gif).pause();
+                    gif.setVisibility(View.GONE);
+                }
+                if (isVisibleToUser) {
+                    ((ExoVideoView) gif).play();
+                    gif.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+            rootView = (ViewGroup) inflater.inflate(R.layout.submission_gifcard_album, container, false);
+            loader = rootView.findViewById(R.id.gifprogress);
+            gif = rootView.findViewById(R.id.gif);
+
+            gif.setVisibility(View.VISIBLE);
+            final ExoVideoView v = (ExoVideoView) gif;
+            v.clearFocus();
+
+            GalleryImage current = ((RedditGalleryPager) getActivity()).images.get(i);
+            final String url = current.getImageUrl(); // Now uses metadata-aware URL getter
+
+            LogUtil.i(url);
+
+            new GifUtils.AsyncLoadGif(getActivity(),
+                rootView.findViewById(R.id.gif),
+                loader,
+                null,
+                null,
+                false,
+                true,
+                rootView.findViewById(R.id.size),
+                ((RedditGalleryPager)getActivity()).subreddit,
+                getActivity().getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE)
+            ).execute(url);
+
+            rootView.findViewById(R.id.more).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((RedditGalleryPager) getActivity()).showBottomSheetImage(url, true, i);
+                }
+            });
+            rootView.findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MediaView.doOnClick.run();
+                }
+            });
+            if (!SettingValues.imageDownloadButton) {
+                rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
+            }
+            return rootView;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            Bundle bundle = this.getArguments();
+            i = bundle.getInt("page", 0);
         }
     }
 

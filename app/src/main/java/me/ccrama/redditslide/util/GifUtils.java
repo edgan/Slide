@@ -330,7 +330,7 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
         Gson gson;
 
         public enum VideoType {
-            IMGUR, STREAMABLE, GFYCAT, DIRECT, OTHER, VREDDIT;
+            IMGUR, STREAMABLE, GFYCAT, DIRECT, OTHER, VREDDIT, REDDIT_GALLERY;
 
             public boolean shouldLoadPreview() {
                 return this == OTHER;
@@ -378,6 +378,9 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
          */
         public static VideoType getVideoType(String url) {
             String realURL = url.toLowerCase(Locale.ENGLISH);
+            if (realURL.contains("i.redd.it")) {
+                return VideoType.REDDIT_GALLERY;
+            }
             if (realURL.contains("v.redd.it")) {
                 return VideoType.VREDDIT;
             }
@@ -392,23 +395,23 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
             return VideoType.OTHER;
         }
 
-      public static Map<String, String> makeHeaderMap(String domain){
-        Map<String, String> map = new HashMap<>();
-        map.put("Host", domain);
-        map.put("Sec-Fetch-Dest", "empty");
-        map.put("Sec-Fetch-Mode", "cors");
-        map.put("Sec-Fetch-Site", "same-origin");
-        map.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; rv:107.0) Gecko/20100101 Firefox/107.0");
-        return map;
-      }
+        public static Map<String, String> makeHeaderMap(String domain){
+          Map<String, String> map = new HashMap<>();
+          map.put("Host", domain);
+          map.put("Sec-Fetch-Dest", "empty");
+          map.put("Sec-Fetch-Mode", "cors");
+          map.put("Sec-Fetch-Site", "same-origin");
+          map.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; rv:107.0) Gecko/20100101 Firefox/107.0");
+          return map;
+        }
 
-      /**
-       * Get an API response for a given host and gfy name
-       *
-       * @param host the host to send the req to
-       * @param name the name of the gfy
-       * @return the result
-       */
+        /**
+         * Get an API response for a given host and gfy name
+         *
+         * @param host the host to send the req to
+         * @param name the name of the gfy
+         * @return the result
+         */
         JsonObject getApiResponse(String host, String name){
           String domain = "api." + host + ".com";
           String gfycatUrl = "https://" + domain + "/v1/gfycats" + name;
@@ -416,12 +419,12 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
           return HttpUtil.getJsonObject(client, gson, gfycatUrl, makeHeaderMap(domain));
         }
 
-       /**
-        * Get the correct mp4/mobile url from a given result JsonObject
-        *
-        * @param result the result to check
-        * @return the video url
-        */
+        /**
+         * Get the correct mp4/mobile url from a given result JsonObject
+         *
+         * @param result the result to check
+         * @return the video url
+         */
         String getUrlFromApi(JsonObject result){
           if (!SettingValues.hqgif && result.getAsJsonObject("gfyItem").has("mobileUrl")) {
             return result.getAsJsonObject("gfyItem").get("mobileUrl").getAsString();
@@ -611,6 +614,8 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
                                 + "]");
                     }
                     break;
+                case REDDIT_GALLERY:
+                    return Uri.parse(url);
                 case DIRECT:
                 case IMGUR:
                     try {
