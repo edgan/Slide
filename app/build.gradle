@@ -55,11 +55,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "me.ccrama.redditslide"
-        minSdk 16
+        applicationId "me.edgan.redditslide"
+        minSdk 21
         //Change to 28 for F-Droid, need to add this to the scheme
         targetSdk 29
-        versionCode 337
+        versionCode 338
         versionName androidGitVersion.name()
 
         multiDexEnabled true
