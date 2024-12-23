@@ -24,7 +24,7 @@
                 android:background="?android:selectableItemBackground"
                 android:orientation="vertical">
 
-            <me.ccrama.redditslide.SpoilerRobotoTextView
+            <me.edgan.redditslide.SpoilerRobotoTextView
                     android:id="@+id/imagetitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -32,9 +32,9 @@
                     android:textColor="#fff"
                     android:textSize="14sp">
 
-            </me.ccrama.redditslide.SpoilerRobotoTextView>
+            </me.edgan.redditslide.SpoilerRobotoTextView>
 
-            <me.ccrama.redditslide.Views.MaxHeightImageView
+            <me.edgan.redditslide.Views.MaxHeightImageView
                     android:id="@+id/image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
                     android:cropToPadding="false"
                    />
 
-            <me.ccrama.redditslide.SpoilerRobotoTextView
+            <me.edgan.redditslide.SpoilerRobotoTextView
                     android:id="@+id/imageCaption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                     android:textColor="#fff"
                     android:textSize="12sp">
 
-            </me.ccrama.redditslide.SpoilerRobotoTextView>
+            </me.edgan.redditslide.SpoilerRobotoTextView>
 
 
         </LinearLayout>

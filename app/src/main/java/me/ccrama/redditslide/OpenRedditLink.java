@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,21 +18,21 @@ import java.util.Objects;
 
 import android.os.StrictMode;
 
-import me.ccrama.redditslide.Activities.CommentsScreenSingle;
-import me.ccrama.redditslide.Activities.LiveThread;
-import me.ccrama.redditslide.Activities.MainActivity;
-import me.ccrama.redditslide.Activities.MultiredditOverview;
-import me.ccrama.redditslide.Activities.OpenContent;
-import me.ccrama.redditslide.Activities.Profile;
-import me.ccrama.redditslide.Activities.Search;
-import me.ccrama.redditslide.Activities.SendMessage;
-import me.ccrama.redditslide.Activities.Submit;
-import me.ccrama.redditslide.Activities.SubredditView;
-import me.ccrama.redditslide.Activities.Website;
-import me.ccrama.redditslide.Activities.Wiki;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.LinkUtil;
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.Activities.CommentsScreenSingle;
+import me.edgan.redditslide.Activities.LiveThread;
+import me.edgan.redditslide.Activities.MainActivity;
+import me.edgan.redditslide.Activities.MultiredditOverview;
+import me.edgan.redditslide.Activities.OpenContent;
+import me.edgan.redditslide.Activities.Profile;
+import me.edgan.redditslide.Activities.Search;
+import me.edgan.redditslide.Activities.SendMessage;
+import me.edgan.redditslide.Activities.Submit;
+import me.edgan.redditslide.Activities.SubredditView;
+import me.edgan.redditslide.Activities.Website;
+import me.edgan.redditslide.Activities.Wiki;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.LogUtil;
 
 public class OpenRedditLink {
 

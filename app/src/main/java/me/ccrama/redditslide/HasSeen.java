@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.database.Cursor;
 import android.net.Uri;
@@ -15,12 +15,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import me.ccrama.redditslide.Synccit.SynccitRead;
+import me.edgan.redditslide.Synccit.SynccitRead;
 
 import static com.lusfold.androidkeyvaluestore.core.KVManagerImpl.COLUMN_KEY;
 import static com.lusfold.androidkeyvaluestore.core.KVManagerImpl.TABLE_NAME;
-import static me.ccrama.redditslide.OpenRedditLink.formatRedditUrl;
-import static me.ccrama.redditslide.OpenRedditLink.getRedditLinkType;
+import static me.edgan.redditslide.OpenRedditLink.formatRedditUrl;
+import static me.edgan.redditslide.OpenRedditLink.getRedditLinkType;
 
 /**
  * Created by ccrama on 7/19/2015.

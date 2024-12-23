@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import java.util.ArrayList;
 import java.util.Collections;

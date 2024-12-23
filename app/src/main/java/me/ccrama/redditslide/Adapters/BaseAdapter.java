@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 /**
  * Created by carlo_000 on 10/30/2015.

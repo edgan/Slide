@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -26,11 +26,11 @@ import net.dean.jraw.models.LoggedInAccount;
 import java.util.HashSet;
 import java.util.Set;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.util.LogUtil;
 
 
 /**

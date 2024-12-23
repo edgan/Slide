@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util.stubs;
+package me.edgan.redditslide.util.stubs;
 
 import android.text.Editable;
 import android.text.TextWatcher;

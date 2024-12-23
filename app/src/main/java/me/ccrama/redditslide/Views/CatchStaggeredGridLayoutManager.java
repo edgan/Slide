@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Views;
+package me.edgan.redditslide.Views;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.LogUtil;
 
 /**
  * Created by carlo_000 on 4/8/2016.

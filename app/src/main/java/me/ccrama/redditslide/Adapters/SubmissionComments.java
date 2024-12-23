@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.os.AsyncTask;
 
@@ -22,10 +22,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Fragments.CommentPage;
-import me.ccrama.redditslide.LastComments;
-import me.ccrama.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Fragments.CommentPage;
+import me.edgan.redditslide.LastComments;
+import me.edgan.redditslide.util.NetworkUtil;
 
 /**
  * Created by ccrama on 9/17/2015.

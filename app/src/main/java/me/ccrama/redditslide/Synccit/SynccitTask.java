@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Synccit;
+package me.edgan.redditslide.Synccit;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import me.ccrama.redditslide.Synccit.http.HttpPostTask;
+import me.edgan.redditslide.Synccit.http.HttpPostTask;
 
 public abstract class SynccitTask extends HttpPostTask<SynccitResponse> {
 

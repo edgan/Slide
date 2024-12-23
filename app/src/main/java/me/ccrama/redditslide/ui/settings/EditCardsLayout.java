@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,11 +14,11 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import java.util.Map;
 
-import me.ccrama.redditslide.Activities.BaseActivityAnim;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SubmissionCache;
-import me.ccrama.redditslide.Views.CreateCardView;
+import me.edgan.redditslide.Activities.BaseActivityAnim;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SubmissionCache;
+import me.edgan.redditslide.Views.CreateCardView;
 
 /**
  * Created by ccrama on 9/17/2015.

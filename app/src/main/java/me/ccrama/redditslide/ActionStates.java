@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import net.dean.jraw.models.Comment;
 import net.dean.jraw.models.PublicContribution;

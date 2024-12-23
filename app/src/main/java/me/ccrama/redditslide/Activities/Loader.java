@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 /**
  * Created by carlo_000 on 1/20/2016.
@@ -6,7 +6,7 @@ package me.ccrama.redditslide.Activities;
 
 import android.os.Bundle;
 
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.R;
 
 /**
  * Created by ccrama on 9/17/2015.

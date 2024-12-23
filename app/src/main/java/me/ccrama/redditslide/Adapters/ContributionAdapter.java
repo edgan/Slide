@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 /**
  * Created by ccrama on 3/22/2015.
@@ -36,28 +36,28 @@ import net.dean.jraw.models.VoteDirection;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.ActionStates;
-import me.ccrama.redditslide.Activities.Profile;
-import me.ccrama.redditslide.Activities.SubredditView;
-import me.ccrama.redditslide.Activities.Website;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.HasSeen;
-import me.ccrama.redditslide.Hidden;
-import me.ccrama.redditslide.OpenRedditLink;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SubmissionViews.PopulateSubmissionViewHolder;
-import me.ccrama.redditslide.Views.CatchStaggeredGridLayoutManager;
-import me.ccrama.redditslide.Views.CreateCardView;
-import me.ccrama.redditslide.Visuals.FontPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.LayoutUtils;
-import me.ccrama.redditslide.util.LinkUtil;
-import me.ccrama.redditslide.util.MiscUtil;
-import me.ccrama.redditslide.util.SubmissionParser;
-import me.ccrama.redditslide.util.TimeUtils;
+import me.edgan.redditslide.ActionStates;
+import me.edgan.redditslide.Activities.Profile;
+import me.edgan.redditslide.Activities.SubredditView;
+import me.edgan.redditslide.Activities.Website;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.Hidden;
+import me.edgan.redditslide.OpenRedditLink;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SubmissionViews.PopulateSubmissionViewHolder;
+import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
+import me.edgan.redditslide.Views.CreateCardView;
+import me.edgan.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.MiscUtil;
+import me.edgan.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.util.TimeUtils;
 
 
 public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements BaseAdapter {

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.os.AsyncTask;
 import android.os.Build;
@@ -22,14 +22,14 @@ import net.dean.jraw.models.Subreddit;
 
 import java.util.List;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.OpenRedditLink;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Views.CommentOverflow;
-import me.ccrama.redditslide.util.SubmissionParser;
-import me.ccrama.redditslide.util.stubs.SimpleTextWatcher;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.OpenRedditLink;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Views.CommentOverflow;
+import me.edgan.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
 
 
 /**

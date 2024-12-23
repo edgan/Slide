@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Fragments;
+package me.edgan.redditslide.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,13 +12,13 @@ import net.dean.jraw.models.Submission;
 
 import java.util.List;
 
-import me.ccrama.redditslide.Activities.CommentsScreen;
-import me.ccrama.redditslide.Activities.Shadowbox;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.SubmissionViews.PopulateShadowboxInfo;
-import me.ccrama.redditslide.Views.CommentOverflow;
-import me.ccrama.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.Activities.CommentsScreen;
+import me.edgan.redditslide.Activities.Shadowbox;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.SubmissionViews.PopulateShadowboxInfo;
+import me.edgan.redditslide.Views.CommentOverflow;
+import me.edgan.redditslide.util.SubmissionParser;
 
 
 /**

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.app.Activity;
 import android.app.NotificationManager;
@@ -29,9 +29,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import me.ccrama.redditslide.util.GifUtils;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.PhotoLoader;
+import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.PhotoLoader;
 
 /**
  * Created by carlo_000 on 4/18/2016.

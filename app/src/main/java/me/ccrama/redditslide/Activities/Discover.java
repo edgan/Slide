@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,10 +19,10 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.tabs.TabLayout;
 
-import me.ccrama.redditslide.Fragments.SubredditListView;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
+import me.edgan.redditslide.Fragments.SubredditListView;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
 
 /**
  * Created by ccrama on 9/17/2015.

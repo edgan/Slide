@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -13,10 +13,10 @@ import net.dean.jraw.models.Submission;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.ccrama.redditslide.Adapters.SubredditPosts;
-import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.TimeUtils;
+import me.edgan.redditslide.Adapters.SubredditPosts;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.TimeUtils;
 
 public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private final Context mContext;

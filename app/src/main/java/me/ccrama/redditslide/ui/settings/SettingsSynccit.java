@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
@@ -12,12 +12,12 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.Collections;
 
-import me.ccrama.redditslide.Activities.BaseActivityAnim;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Synccit.MySynccitReadTask;
-import me.ccrama.redditslide.Synccit.MySynccitUpdateTask;
-import me.ccrama.redditslide.Synccit.SynccitRead;
+import me.edgan.redditslide.Activities.BaseActivityAnim;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Synccit.MySynccitReadTask;
+import me.edgan.redditslide.Synccit.MySynccitUpdateTask;
+import me.edgan.redditslide.Synccit.SynccitRead;
 
 
 /**

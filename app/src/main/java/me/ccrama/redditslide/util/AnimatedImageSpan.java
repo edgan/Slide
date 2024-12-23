@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,7 +10,7 @@ import android.view.View;
 import android.util.Log;
 import android.graphics.Rect;
 
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.SettingValues;
 
 public class AnimatedImageSpan extends DynamicDrawableSpan {
     private final GifDrawable drawable;

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Toolbox;
+package me.edgan.redditslide.Toolbox;
 
 import android.util.Base64;
 

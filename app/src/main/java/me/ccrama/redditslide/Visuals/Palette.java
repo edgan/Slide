@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Visuals;
+package me.edgan.redditslide.Visuals;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -6,8 +6,8 @@ import android.util.TypedValue;
 
 import java.util.Locale;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
 
 public class Palette {
 

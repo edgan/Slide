@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -19,13 +19,13 @@ import net.dean.jraw.managers.WikiManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Fragments.WikiPage;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Views.ToggleSwipeViewPager;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Fragments.WikiPage;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Views.ToggleSwipeViewPager;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.LogUtil;
 
 /**
  * Created by ccrama on 9/17/2015.

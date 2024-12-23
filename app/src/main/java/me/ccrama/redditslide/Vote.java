@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,7 +12,7 @@ import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.models.PublicContribution;
 import net.dean.jraw.models.VoteDirection;
 
-import me.ccrama.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.LayoutUtils;
 
 /**
  * Created by ccrama on 9/19/2015.

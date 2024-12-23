@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -23,21 +23,21 @@ import net.dean.jraw.managers.InboxManager;
 import java.util.HashSet;
 import java.util.Set;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Autocache.AutoCacheScheduler;
-import me.ccrama.redditslide.ContentGrabber;
-import me.ccrama.redditslide.Fragments.InboxPage;
-import me.ccrama.redditslide.Notifications.NotificationJobScheduler;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.ui.settings.SettingsGeneralFragment;
-import me.ccrama.redditslide.util.KeyboardUtil;
-import me.ccrama.redditslide.util.LayoutUtils;
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Autocache.AutoCacheScheduler;
+import me.edgan.redditslide.ContentGrabber;
+import me.edgan.redditslide.Fragments.InboxPage;
+import me.edgan.redditslide.Notifications.NotificationJobScheduler;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.ui.settings.SettingsGeneralFragment;
+import me.edgan.redditslide.util.KeyboardUtil;
+import me.edgan.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.LogUtil;
 
 /**
  * Created by ccrama on 9/17/2015.

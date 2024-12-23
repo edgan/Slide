@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.SettingValues;
 
 public class UpgradeUtil {
     // Increment for each needed change

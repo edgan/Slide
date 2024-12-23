@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,13 +11,13 @@ import net.dean.jraw.models.CommentNode;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.ccrama.redditslide.Adapters.CommentAdapterSearch;
-import me.ccrama.redditslide.Adapters.CommentItem;
-import me.ccrama.redditslide.Adapters.CommentObject;
-import me.ccrama.redditslide.DataShare;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Views.PreCachingLayoutManager;
-import me.ccrama.redditslide.util.stubs.SimpleTextWatcher;
+import me.edgan.redditslide.Adapters.CommentAdapterSearch;
+import me.edgan.redditslide.Adapters.CommentItem;
+import me.edgan.redditslide.Adapters.CommentObject;
+import me.edgan.redditslide.DataShare;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Views.PreCachingLayoutManager;
+import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
 
 /**
  * Created by ccrama on 9/17/2015.

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;

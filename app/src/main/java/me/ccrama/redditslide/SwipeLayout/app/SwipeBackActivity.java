@@ -1,13 +1,13 @@
 
-package me.ccrama.redditslide.SwipeLayout.app;
+package me.edgan.redditslide.SwipeLayout.app;
 
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import me.ccrama.redditslide.SwipeLayout.SwipeBackLayout;
-import me.ccrama.redditslide.SwipeLayout.Utils;
+import me.edgan.redditslide.SwipeLayout.SwipeBackLayout;
+import me.edgan.redditslide.SwipeLayout.Utils;
 // * By ikew0ng
 
 

@@ -62,7 +62,7 @@
                 android:layout_height="match_parent"/>
     </LinearLayout>
 
-    <me.ccrama.redditslide.Views.PeekMediaView
+    <me.edgan.redditslide.Views.PeekMediaView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/peek"

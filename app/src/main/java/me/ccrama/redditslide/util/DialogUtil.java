@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.os.Environment;
 
@@ -6,8 +6,8 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import me.ccrama.redditslide.Fragments.FolderChooserDialogCreate;
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.Fragments.FolderChooserDialogCreate;
+import me.edgan.redditslide.R;
 
 /**
  * Created by TacoTheDank on 07/14/2021.

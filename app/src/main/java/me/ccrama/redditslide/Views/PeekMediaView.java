@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Views;
+package me.edgan.redditslide.Views;
 
 import android.content.Context;
 import android.content.Intent;
@@ -41,22 +41,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import me.ccrama.redditslide.Adapters.ImageGridAdapter;
-import me.ccrama.redditslide.ContentType;
-import me.ccrama.redditslide.ForceTouch.PeekViewActivity;
-import me.ccrama.redditslide.ImgurAlbum.AlbumUtils;
-import me.ccrama.redditslide.ImgurAlbum.Image;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SecretConstants;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Tumblr.Photo;
-import me.ccrama.redditslide.Tumblr.TumblrUtils;
-import me.ccrama.redditslide.util.AdBlocker;
-import me.ccrama.redditslide.util.GifUtils;
-import me.ccrama.redditslide.util.HttpUtil;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.Adapters.ImageGridAdapter;
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.ForceTouch.PeekViewActivity;
+import me.edgan.redditslide.ImgurAlbum.AlbumUtils;
+import me.edgan.redditslide.ImgurAlbum.Image;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SecretConstants;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Tumblr.Photo;
+import me.edgan.redditslide.Tumblr.TumblrUtils;
+import me.edgan.redditslide.util.AdBlocker;
+import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.HttpUtil;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.NetworkUtil;
 
 
 /**

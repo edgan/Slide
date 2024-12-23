@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 /**
  * Created by ccrama on 3/22/2015.
@@ -67,37 +67,37 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import me.ccrama.redditslide.ActionStates;
-import me.ccrama.redditslide.Activities.BaseActivity;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.BuildConfig;
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.Drafts;
-import me.ccrama.redditslide.Fragments.CommentPage;
-import me.ccrama.redditslide.HasSeen;
-import me.ccrama.redditslide.ImageFlairs;
-import me.ccrama.redditslide.LastComments;
-import me.ccrama.redditslide.OpenRedditLink;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.SubmissionViews.PopulateSubmissionViewHolder;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Views.CommentOverflow;
-import me.ccrama.redditslide.Views.DoEditorActions;
-import me.ccrama.redditslide.Views.PreCachingLayoutManagerComments;
-import me.ccrama.redditslide.Visuals.FontPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.Vote;
-import me.ccrama.redditslide.util.AnimatorUtil;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.DisplayUtil;
-import me.ccrama.redditslide.util.KeyboardUtil;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.OnSingleClickListener;
-import me.ccrama.redditslide.util.SubmissionParser;
-import me.ccrama.redditslide.util.stubs.SimpleTextWatcher;
+import me.edgan.redditslide.ActionStates;
+import me.edgan.redditslide.Activities.BaseActivity;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.BuildConfig;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.Drafts;
+import me.edgan.redditslide.Fragments.CommentPage;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.ImageFlairs;
+import me.edgan.redditslide.LastComments;
+import me.edgan.redditslide.OpenRedditLink;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.SubmissionViews.PopulateSubmissionViewHolder;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Views.CommentOverflow;
+import me.edgan.redditslide.Views.DoEditorActions;
+import me.edgan.redditslide.Views.PreCachingLayoutManagerComments;
+import me.edgan.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.Vote;
+import me.edgan.redditslide.util.AnimatorUtil;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.DisplayUtil;
+import me.edgan.redditslide.util.KeyboardUtil;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.OnSingleClickListener;
+import me.edgan.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
 
 
 public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -2343,7 +2343,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private RedditClient getAuthenticatedClient(String profileName) {
         String token;
         RedditClient reddit = new RedditClient(
-                UserAgent.of("android:me.ccrama.RedditSlide:v" + BuildConfig.VERSION_NAME));
+                UserAgent.of("android:me.edgan.RedditSlide:v" + BuildConfig.VERSION_NAME));
         final HashMap<String, String> accounts = new HashMap<>();
 
         for (String s : Authentication.authentication.getStringSet("accounts",

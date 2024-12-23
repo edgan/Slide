@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +13,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
 
 public class ShareUtil {
     private ShareUtil() {

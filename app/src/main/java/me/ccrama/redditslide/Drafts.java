@@ -1,10 +1,10 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 
-import me.ccrama.redditslide.util.StringUtil;
+import me.edgan.redditslide.util.StringUtil;
 
 
 /**

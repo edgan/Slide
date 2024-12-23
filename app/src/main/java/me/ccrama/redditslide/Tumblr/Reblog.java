@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Tumblr;
+package me.edgan.redditslide.Tumblr;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 
-import me.ccrama.redditslide.ContentType;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.Views.ExoVideoView;
-import me.ccrama.redditslide.util.GifUtils;
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.Views.ExoVideoView;
+import me.edgan.redditslide.util.GifUtils;
 
 /**
  * Created by ccrama on 01/29/2016.

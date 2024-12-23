@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Toolbox;
+package me.edgan.redditslide.Toolbox;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

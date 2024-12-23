@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.os.Bundle;
 import android.view.ViewGroup;
@@ -7,9 +7,9 @@ import androidx.annotation.NonNull;
 
 import java.io.File;
 
-import me.ccrama.redditslide.Activities.BaseActivityAnim;
-import me.ccrama.redditslide.Fragments.FolderChooserDialogCreate;
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.Activities.BaseActivityAnim;
+import me.edgan.redditslide.Fragments.FolderChooserDialogCreate;
+import me.edgan.redditslide.R;
 
 /**
  * Created by ccrama on 3/5/2015.

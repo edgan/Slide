@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.SwipeLayout.app;
+package me.edgan.redditslide.SwipeLayout.app;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -6,9 +6,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SwipeLayout.SwipeBackLayout;
-import me.ccrama.redditslide.SwipeLayout.Utils;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SwipeLayout.SwipeBackLayout;
+import me.edgan.redditslide.SwipeLayout.Utils;
 
 
 /**

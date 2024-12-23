@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -34,19 +34,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import me.ccrama.redditslide.Activities.BaseActivity;
-import me.ccrama.redditslide.Activities.Slide;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.databinding.ChooseaccentBinding;
-import me.ccrama.redditslide.databinding.ChoosemainBinding;
-import me.ccrama.redditslide.databinding.ChoosethemesmallBinding;
-import me.ccrama.redditslide.databinding.NightmodeBinding;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.OnSingleClickListener;
+import me.edgan.redditslide.Activities.BaseActivity;
+import me.edgan.redditslide.Activities.Slide;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.databinding.ChooseaccentBinding;
+import me.edgan.redditslide.databinding.ChoosemainBinding;
+import me.edgan.redditslide.databinding.ChoosethemesmallBinding;
+import me.edgan.redditslide.databinding.NightmodeBinding;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.OnSingleClickListener;
 import uz.shift.colorpicker.LineColorPicker;
 
 public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartActivity> {

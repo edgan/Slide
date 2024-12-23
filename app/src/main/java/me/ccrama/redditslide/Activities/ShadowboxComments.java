@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
 
@@ -12,11 +12,11 @@ import net.dean.jraw.models.Comment;
 
 import java.util.ArrayList;
 
-import me.ccrama.redditslide.Adapters.CommentUrlObject;
-import me.ccrama.redditslide.ContentType;
-import me.ccrama.redditslide.Fragments.AlbumFullComments;
-import me.ccrama.redditslide.Fragments.MediaFragmentComment;
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.Adapters.CommentUrlObject;
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.Fragments.AlbumFullComments;
+import me.edgan.redditslide.Fragments.MediaFragmentComment;
+import me.edgan.redditslide.R;
 
 /**
  * Created by ccrama on 9/17/2015.

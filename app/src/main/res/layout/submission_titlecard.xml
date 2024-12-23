@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/black">
 
-        <me.ccrama.redditslide.Views.TitleTextView
+        <me.edgan.redditslide.Views.TitleTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
             android:textColor="#bcffffff"
             android:textSize="14sp" />
 
-        <me.ccrama.redditslide.Views.RevealRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <me.edgan.redditslide.Views.RevealRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/desc">
@@ -165,6 +165,6 @@
                 android:tint="?attr/tintColor"
                 android:contentDescription="@string/btn_menu"
                 app:srcCompat="@drawable/ic_more_vert" />
-        </me.ccrama.redditslide.Views.RevealRelativeLayout>
+        </me.edgan.redditslide.Views.RevealRelativeLayout>
     </RelativeLayout>
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

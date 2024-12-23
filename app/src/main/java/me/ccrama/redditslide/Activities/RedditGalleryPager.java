@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -34,26 +34,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import me.ccrama.redditslide.Adapters.ImageGridAdapter;
-import me.ccrama.redditslide.Fragments.BlankFragment;
-import me.ccrama.redditslide.Fragments.FolderChooserDialogCreate;
-import me.ccrama.redditslide.Fragments.SubmissionsView;
-import me.ccrama.redditslide.Notifications.ImageDownloadNotificationService;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Views.ToolbarColorizeHelper;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.DialogUtil;
-import me.ccrama.redditslide.util.LinkUtil;
-import me.ccrama.redditslide.util.NetworkUtil;
-import me.ccrama.redditslide.util.ShareUtil;
-import me.ccrama.redditslide.Views.ExoVideoView;
-import me.ccrama.redditslide.util.GifUtils;
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.Adapters.ImageGridAdapter;
+import me.edgan.redditslide.Fragments.BlankFragment;
+import me.edgan.redditslide.Fragments.FolderChooserDialogCreate;
+import me.edgan.redditslide.Fragments.SubmissionsView;
+import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Views.ToolbarColorizeHelper;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.DialogUtil;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.util.ShareUtil;
+import me.edgan.redditslide.Views.ExoVideoView;
+import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.LogUtil;
 
-import static me.ccrama.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
+import static me.edgan.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
 
 /**
  * Created by ccrama on 11/7/2020. <p/> This is an extension of RedditAlbum.java which utilizes a

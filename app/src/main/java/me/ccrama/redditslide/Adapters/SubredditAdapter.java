@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 /**
  * Created by ccrama on 3/22/2015.
@@ -19,16 +19,16 @@ import net.dean.jraw.models.Subreddit;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Activities.SubredditView;
-import me.ccrama.redditslide.Fragments.SubredditListView;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.Views.CatchStaggeredGridLayoutManager;
-import me.ccrama.redditslide.Views.CommentOverflow;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.OnSingleClickListener;
-import me.ccrama.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.Activities.SubredditView;
+import me.edgan.redditslide.Fragments.SubredditListView;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
+import me.edgan.redditslide.Views.CommentOverflow;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.OnSingleClickListener;
+import me.edgan.redditslide.util.SubmissionParser;
 
 
 public class SubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements BaseAdapter {

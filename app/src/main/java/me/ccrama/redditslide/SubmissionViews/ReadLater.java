@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.SubmissionViews;
+package me.edgan.redditslide.SubmissionViews;
 
 import com.lusfold.androidkeyvaluestore.KVStore;
 

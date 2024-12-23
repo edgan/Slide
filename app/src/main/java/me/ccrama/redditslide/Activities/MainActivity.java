@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -132,62 +132,62 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import me.ccrama.redditslide.Adapters.SideArrayAdapter;
-import me.ccrama.redditslide.Adapters.SubredditPosts;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Autocache.AutoCacheScheduler;
-import me.ccrama.redditslide.BuildConfig;
-import me.ccrama.redditslide.CaseInsensitiveArrayList;
-import me.ccrama.redditslide.CommentCacheAsync;
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.ContentType;
-import me.ccrama.redditslide.ForceTouch.util.DensityUtils;
-import me.ccrama.redditslide.Fragments.CommentPage;
-import me.ccrama.redditslide.Fragments.DrawerItemsDialog;
-import me.ccrama.redditslide.Fragments.SubmissionsView;
-import me.ccrama.redditslide.HasSeen;
-import me.ccrama.redditslide.ImageFlairs;
-import me.ccrama.redditslide.Notifications.CheckForMail;
-import me.ccrama.redditslide.Notifications.NotificationJobScheduler;
-import me.ccrama.redditslide.OpenRedditLink;
-import me.ccrama.redditslide.PostMatch;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.Synccit.MySynccitUpdateTask;
-import me.ccrama.redditslide.Synccit.SynccitRead;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Views.CatchStaggeredGridLayoutManager;
-import me.ccrama.redditslide.Views.CommentOverflow;
-import me.ccrama.redditslide.Views.PreCachingLayoutManager;
-import me.ccrama.redditslide.Views.SidebarLayout;
-import me.ccrama.redditslide.Views.ToggleSwipeViewPager;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.ui.settings.ManageOfflineContent;
-import me.ccrama.redditslide.ui.settings.SettingsActivity;
-import me.ccrama.redditslide.ui.settings.SettingsGeneralFragment;
-import me.ccrama.redditslide.ui.settings.SettingsSubAdapter;
-import me.ccrama.redditslide.ui.settings.SettingsThemeFragment;
-import me.ccrama.redditslide.util.AnimatorUtil;
-import me.ccrama.redditslide.util.DrawableUtil;
-import me.ccrama.redditslide.util.EditTextValidator;
-import me.ccrama.redditslide.util.ImageUtil;
-import me.ccrama.redditslide.util.KeyboardUtil;
-import me.ccrama.redditslide.util.LayoutUtils;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.MiscUtil;
-import me.ccrama.redditslide.util.NetworkStateReceiver;
-import me.ccrama.redditslide.util.NetworkUtil;
-import me.ccrama.redditslide.util.OnSingleClickListener;
-import me.ccrama.redditslide.util.SortingUtil;
-import me.ccrama.redditslide.util.StringUtil;
-import me.ccrama.redditslide.util.SubmissionParser;
-import me.ccrama.redditslide.util.TimeUtils;
-import me.ccrama.redditslide.util.stubs.SimpleTextWatcher;
+import me.edgan.redditslide.Adapters.SideArrayAdapter;
+import me.edgan.redditslide.Adapters.SubredditPosts;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Autocache.AutoCacheScheduler;
+import me.edgan.redditslide.BuildConfig;
+import me.edgan.redditslide.CaseInsensitiveArrayList;
+import me.edgan.redditslide.CommentCacheAsync;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.ForceTouch.util.DensityUtils;
+import me.edgan.redditslide.Fragments.CommentPage;
+import me.edgan.redditslide.Fragments.DrawerItemsDialog;
+import me.edgan.redditslide.Fragments.SubmissionsView;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.ImageFlairs;
+import me.edgan.redditslide.Notifications.CheckForMail;
+import me.edgan.redditslide.Notifications.NotificationJobScheduler;
+import me.edgan.redditslide.OpenRedditLink;
+import me.edgan.redditslide.PostMatch;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.Synccit.MySynccitUpdateTask;
+import me.edgan.redditslide.Synccit.SynccitRead;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
+import me.edgan.redditslide.Views.CommentOverflow;
+import me.edgan.redditslide.Views.PreCachingLayoutManager;
+import me.edgan.redditslide.Views.SidebarLayout;
+import me.edgan.redditslide.Views.ToggleSwipeViewPager;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.ui.settings.ManageOfflineContent;
+import me.edgan.redditslide.ui.settings.SettingsActivity;
+import me.edgan.redditslide.ui.settings.SettingsGeneralFragment;
+import me.edgan.redditslide.ui.settings.SettingsSubAdapter;
+import me.edgan.redditslide.ui.settings.SettingsThemeFragment;
+import me.edgan.redditslide.util.AnimatorUtil;
+import me.edgan.redditslide.util.DrawableUtil;
+import me.edgan.redditslide.util.EditTextValidator;
+import me.edgan.redditslide.util.ImageUtil;
+import me.edgan.redditslide.util.KeyboardUtil;
+import me.edgan.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.MiscUtil;
+import me.edgan.redditslide.util.NetworkStateReceiver;
+import me.edgan.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.util.OnSingleClickListener;
+import me.edgan.redditslide.util.SortingUtil;
+import me.edgan.redditslide.util.StringUtil;
+import me.edgan.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.util.TimeUtils;
+import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
 
-import static me.ccrama.redditslide.UserSubscriptions.modOf;
+import static me.edgan.redditslide.UserSubscriptions.modOf;
 
 
 public class MainActivity extends BaseActivity
@@ -700,7 +700,7 @@ public class MainActivity extends BaseActivity
                 return true;
             case R.id.share:
                 Reddit.defaultShareText("Slide for Reddit",
-                        "https://play.google.com/store/apps/details?id=me.ccrama.redditslide",
+                        "https://play.google.com/store/apps/details?id=me.edgan.redditslide",
                         MainActivity.this);
                 return true;
             case R.id.submit: {

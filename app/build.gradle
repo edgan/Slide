@@ -29,7 +29,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     compileSdk 31
-    namespace "me.ccrama.redditslide"
+    namespace "me.edgan.redditslide"
 
 
     applicationVariants.all { variant ->
@@ -58,7 +58,7 @@ android {
         applicationId "me.edgan.redditslide"
         minSdk 21
         //Change to 28 for F-Droid, need to add this to the scheme
-        targetSdk 29
+        targetSdk 34
         versionCode 338
         versionName androidGitVersion.name()
 

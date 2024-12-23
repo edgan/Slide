@@ -1,12 +1,12 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.Visuals.Palette;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.Visuals.Palette;
 
 /**
  * Created by tomer aka rosenpin on 11/27/15.

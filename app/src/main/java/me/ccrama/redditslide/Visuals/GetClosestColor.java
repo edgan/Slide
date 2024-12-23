@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Visuals;
+package me.edgan.redditslide.Visuals;
 
 
 import android.content.Context;
@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat;
 import java.util.Map;
 import java.util.TreeMap;
 
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.R;
 
 /**
  * Created by carlo_000 on 2/8/2016.

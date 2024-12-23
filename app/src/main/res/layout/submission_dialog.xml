@@ -32,7 +32,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <me.ccrama.redditslide.Views.TitleTextView
+                    <me.edgan.redditslide.Views.TitleTextView
                         android:id="@+id/submission_dialog_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -40,14 +40,14 @@
                         android:textColor="?attr/fontColor"
                         android:textSize="?attr/font_cardtitle" />
 
-                    <me.ccrama.redditslide.SpoilerRobotoTextView
+                    <me.edgan.redditslide.SpoilerRobotoTextView
                         android:id="@+id/submission_dialog_firstTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="?attr/fontColor"
                         android:textSize="?attr/font_commentbody" />
 
-                    <me.ccrama.redditslide.Views.CommentOverflow
+                    <me.edgan.redditslide.Views.CommentOverflow
                         android:id="@+id/submission_dialog_commentOverflow"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

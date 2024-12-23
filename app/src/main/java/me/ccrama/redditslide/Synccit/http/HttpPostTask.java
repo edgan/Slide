@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Synccit.http;
+package me.edgan.redditslide.Synccit.http;
 
 import android.os.AsyncTask;
 import android.util.Log;

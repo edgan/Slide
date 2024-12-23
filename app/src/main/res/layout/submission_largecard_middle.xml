@@ -17,13 +17,13 @@
         android:background="?android:selectableItemBackground">
 
         <!-- This section holds the title and thumbnail -->
-        <me.ccrama.redditslide.Views.RevealRelativeLayout
+        <me.edgan.redditslide.Views.RevealRelativeLayout
             android:id="@+id/innerrelative"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="4dp">
 
-            <me.ccrama.redditslide.Views.RoundImageTriangleView
+            <me.edgan.redditslide.Views.RoundImageTriangleView
                 android:id="@+id/thumbimage2"
                 android:layout_width="@dimen/big_thumbnail_width"
                 android:layout_height="@dimen/big_thumbnail_height"
@@ -56,7 +56,7 @@
                 android:layout_toRightOf="@id/thumbimage2"
                 android:layout_toLeftOf="@id/secondMenu">
 
-                <me.ccrama.redditslide.Views.TitleTextView
+                <me.edgan.redditslide.Views.TitleTextView
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                     android:textSize="?attr/font_cardtitle"
                     android:tag="tint" />
 
-                <me.ccrama.redditslide.SpoilerRobotoTextView
+                <me.edgan.redditslide.SpoilerRobotoTextView
                     android:id="@+id/body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -83,10 +83,10 @@
                     android:visibility="gone" />
             </RelativeLayout>
 
-        </me.ccrama.redditslide.Views.RevealRelativeLayout>
+        </me.edgan.redditslide.Views.RevealRelativeLayout>
 
         <!-- Make sure the headerimage is placed below innerrelative -->
-        <me.ccrama.redditslide.SubmissionViews.HeaderImageLinkView
+        <me.edgan.redditslide.SubmissionViews.HeaderImageLinkView
             android:id="@+id/headerimage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
             android:layout_marginTop="4dp" />
 
         <!-- Bottom section below headerimage -->
-        <me.ccrama.redditslide.Views.RevealRelativeLayout
+        <me.edgan.redditslide.Views.RevealRelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/headerimage">
@@ -235,7 +235,7 @@
                 android:tint="?attr/tintColor"
                 android:contentDescription="@string/btn_menu"
                 app:srcCompat="@drawable/ic_more_vert" />
-        </me.ccrama.redditslide.Views.RevealRelativeLayout>
+        </me.edgan.redditslide.Views.RevealRelativeLayout>
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

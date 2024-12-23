@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Fragments;
+package me.edgan.redditslide.Fragments;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -41,38 +41,38 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
-import me.ccrama.redditslide.Activities.Album;
-import me.ccrama.redditslide.Activities.AlbumPager;
-import me.ccrama.redditslide.Activities.CommentsScreen;
-import me.ccrama.redditslide.Activities.FullscreenVideo;
-import me.ccrama.redditslide.Activities.GalleryImage;
-import me.ccrama.redditslide.Activities.MediaView;
-import me.ccrama.redditslide.Activities.RedditGallery;
-import me.ccrama.redditslide.Activities.RedditGalleryPager;
-import me.ccrama.redditslide.Activities.Shadowbox;
-import me.ccrama.redditslide.Activities.Tumblr;
-import me.ccrama.redditslide.Activities.TumblrPager;
-import me.ccrama.redditslide.Activities.Website;
-import me.ccrama.redditslide.ContentType;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SecretConstants;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SubmissionViews.PopulateShadowboxInfo;
-import me.ccrama.redditslide.SubmissionViews.PopulateSubmissionViewHolder;
-import me.ccrama.redditslide.Views.ExoVideoView;
-import me.ccrama.redditslide.Views.ImageSource;
-import me.ccrama.redditslide.Views.SubsamplingScaleImageView;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.GifUtils;
-import me.ccrama.redditslide.util.HttpUtil;
-import me.ccrama.redditslide.util.JsonUtil;
-import me.ccrama.redditslide.util.LinkUtil;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.Activities.Album;
+import me.edgan.redditslide.Activities.AlbumPager;
+import me.edgan.redditslide.Activities.CommentsScreen;
+import me.edgan.redditslide.Activities.FullscreenVideo;
+import me.edgan.redditslide.Activities.GalleryImage;
+import me.edgan.redditslide.Activities.MediaView;
+import me.edgan.redditslide.Activities.RedditGallery;
+import me.edgan.redditslide.Activities.RedditGalleryPager;
+import me.edgan.redditslide.Activities.Shadowbox;
+import me.edgan.redditslide.Activities.Tumblr;
+import me.edgan.redditslide.Activities.TumblrPager;
+import me.edgan.redditslide.Activities.Website;
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SecretConstants;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SubmissionViews.PopulateShadowboxInfo;
+import me.edgan.redditslide.SubmissionViews.PopulateSubmissionViewHolder;
+import me.edgan.redditslide.Views.ExoVideoView;
+import me.edgan.redditslide.Views.ImageSource;
+import me.edgan.redditslide.Views.SubsamplingScaleImageView;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.HttpUtil;
+import me.edgan.redditslide.util.JsonUtil;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.NetworkUtil;
 import okhttp3.OkHttpClient;
 
-import static me.ccrama.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
+import static me.edgan.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
 
 
 /**

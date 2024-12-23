@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 /**
  * Created by Carlos on 9/12/2016.
@@ -12,7 +12,7 @@ import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import java.io.IOException;
 import java.io.InputStream;
 
-import me.ccrama.redditslide.Reddit;
+import me.edgan.redditslide.Reddit;
 import okhttp3.Request;
 import okhttp3.ResponseBody;
 

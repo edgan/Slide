@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Synccit;
+package me.edgan.redditslide.Synccit;
 
 import org.json.JSONArray;
 import org.json.JSONException;

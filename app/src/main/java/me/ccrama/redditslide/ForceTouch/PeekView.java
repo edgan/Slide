@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ForceTouch;
+package me.edgan.redditslide.ForceTouch;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -29,16 +29,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jp.wasabeef.blurry.Blurry;
-import me.ccrama.redditslide.ForceTouch.builder.PeekViewOptions;
-import me.ccrama.redditslide.ForceTouch.callback.OnButtonUp;
-import me.ccrama.redditslide.ForceTouch.callback.OnPeek;
-import me.ccrama.redditslide.ForceTouch.callback.OnPop;
-import me.ccrama.redditslide.ForceTouch.callback.OnRemove;
-import me.ccrama.redditslide.ForceTouch.util.DensityUtils;
-import me.ccrama.redditslide.ForceTouch.util.NavigationUtils;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Views.PeekMediaView;
-import me.ccrama.redditslide.util.DisplayUtil;
+import me.edgan.redditslide.ForceTouch.builder.PeekViewOptions;
+import me.edgan.redditslide.ForceTouch.callback.OnButtonUp;
+import me.edgan.redditslide.ForceTouch.callback.OnPeek;
+import me.edgan.redditslide.ForceTouch.callback.OnPop;
+import me.edgan.redditslide.ForceTouch.callback.OnRemove;
+import me.edgan.redditslide.ForceTouch.util.DensityUtils;
+import me.edgan.redditslide.ForceTouch.util.NavigationUtils;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Views.PeekMediaView;
+import me.edgan.redditslide.util.DisplayUtil;
 
 public class PeekView extends FrameLayout {
 

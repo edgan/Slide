@@ -1,11 +1,11 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.content.Context;
 import android.content.res.Resources;
 
 import net.dean.jraw.paginators.TimePeriod;
 
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.R;
 
 /**
  * Created by ccrama on 3/1/2015.

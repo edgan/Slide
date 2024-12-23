@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.os.AsyncTask;
 
@@ -12,10 +12,10 @@ import net.dean.jraw.paginators.UserContributionPaginator;
 
 import java.util.ArrayList;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.HasSeen;
-import me.ccrama.redditslide.PostMatch;
-import me.ccrama.redditslide.util.SortingUtil;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.PostMatch;
+import me.edgan.redditslide.util.SortingUtil;
 
 /**
  * Created by ccrama on 9/17/2015.

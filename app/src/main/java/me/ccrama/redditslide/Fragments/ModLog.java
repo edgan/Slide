@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Fragments;
+package me.edgan.redditslide.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,14 +9,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import me.ccrama.redditslide.Activities.ModQueue;
-import me.ccrama.redditslide.Adapters.ModLogAdapter;
-import me.ccrama.redditslide.Adapters.ModLogPosts;
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Views.PreCachingLayoutManager;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.handler.ToolbarScrollHideHandler;
+import me.edgan.redditslide.Activities.ModQueue;
+import me.edgan.redditslide.Adapters.ModLogAdapter;
+import me.edgan.redditslide.Adapters.ModLogPosts;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Views.PreCachingLayoutManager;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.handler.ToolbarScrollHideHandler;
 
 public class ModLog extends Fragment {
 

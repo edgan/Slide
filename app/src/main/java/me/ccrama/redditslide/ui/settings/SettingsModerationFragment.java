@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -13,12 +13,12 @@ import com.afollestad.materialdialogs.MaterialDialog;
 
 import net.dean.jraw.http.NetworkException;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SettingValues.RemovalReasonType;
-import me.ccrama.redditslide.SettingValues.ToolboxRemovalMessageType;
-import me.ccrama.redditslide.Toolbox.Toolbox;
-import me.ccrama.redditslide.UserSubscriptions;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SettingValues.RemovalReasonType;
+import me.edgan.redditslide.SettingValues.ToolboxRemovalMessageType;
+import me.edgan.redditslide.Toolbox.Toolbox;
+import me.edgan.redditslide.UserSubscriptions;
 
 public class SettingsModerationFragment {
 

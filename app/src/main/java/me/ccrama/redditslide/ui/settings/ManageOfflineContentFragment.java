@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.app.Activity;
 import android.content.res.Resources;
@@ -22,17 +22,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import me.ccrama.redditslide.Autocache.AutoCacheScheduler;
-import me.ccrama.redditslide.CommentCacheAsync;
-import me.ccrama.redditslide.OfflineSubreddit;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.util.NetworkUtil;
-import me.ccrama.redditslide.util.StringUtil;
-import me.ccrama.redditslide.util.TimeUtils;
+import me.edgan.redditslide.Autocache.AutoCacheScheduler;
+import me.edgan.redditslide.CommentCacheAsync;
+import me.edgan.redditslide.OfflineSubreddit;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.util.StringUtil;
+import me.edgan.redditslide.util.TimeUtils;
 
 public class ManageOfflineContentFragment {
 

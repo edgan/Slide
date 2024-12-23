@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
 import android.view.View;
@@ -9,15 +9,15 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import java.util.List;
 
-import me.ccrama.redditslide.OpenRedditLink;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.Views.CommentOverflow;
-import me.ccrama.redditslide.Views.SidebarLayout;
-import me.ccrama.redditslide.Views.TitleTextView;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.OpenRedditLink;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.Views.CommentOverflow;
+import me.edgan.redditslide.Views.SidebarLayout;
+import me.edgan.redditslide.Views.TitleTextView;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.util.SubmissionParser;
 
 public class Announcement extends BaseActivity {
 

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
@@ -33,25 +33,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import me.ccrama.redditslide.Adapters.SubredditPostsRealm;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.CaseInsensitiveArrayList;
-import me.ccrama.redditslide.Fragments.NewsView;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Synccit.MySynccitUpdateTask;
-import me.ccrama.redditslide.Synccit.SynccitRead;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Views.CatchStaggeredGridLayoutManager;
-import me.ccrama.redditslide.Views.ToggleSwipeViewPager;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.LayoutUtils;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.NetworkStateReceiver;
-import me.ccrama.redditslide.util.NetworkUtil;
-import me.ccrama.redditslide.util.StringUtil;
+import me.edgan.redditslide.Adapters.SubredditPostsRealm;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.CaseInsensitiveArrayList;
+import me.edgan.redditslide.Fragments.NewsView;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Synccit.MySynccitUpdateTask;
+import me.edgan.redditslide.Synccit.SynccitRead;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
+import me.edgan.redditslide.Views.ToggleSwipeViewPager;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.NetworkStateReceiver;
+import me.edgan.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.util.StringUtil;
 
 public class NewsActivity extends BaseActivity
         implements NetworkStateReceiver.NetworkStateReceiverListener {

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Views;
+package me.edgan.redditslide.Views;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -6,8 +6,8 @@ import android.util.AttributeSet;
 
 import com.devspark.robototextview.RobotoTypefaces;
 
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.Visuals.FontPreferences;
 
 /**
  * Created by carlo_000 on 1/10/2016.

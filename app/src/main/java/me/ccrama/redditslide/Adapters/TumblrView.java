@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -23,17 +23,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import me.ccrama.redditslide.Activities.MediaView;
-import me.ccrama.redditslide.Activities.Tumblr;
-import me.ccrama.redditslide.ContentType;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.Tumblr.Photo;
-import me.ccrama.redditslide.Visuals.FontPreferences;
-import me.ccrama.redditslide.util.LinkUtil;
-import me.ccrama.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.Activities.MediaView;
+import me.edgan.redditslide.Activities.Tumblr;
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.Tumblr.Photo;
+import me.edgan.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.SubmissionParser;
 
 public class TumblrView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<Photo> users;

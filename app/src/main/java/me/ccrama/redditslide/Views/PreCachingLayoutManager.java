@@ -1,11 +1,11 @@
-package me.ccrama.redditslide.Views;
+package me.edgan.redditslide.Views;
 
 import android.content.Context;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.LogUtil;
 
 /**
  * Created by carlo_000 on 10/12/2015.

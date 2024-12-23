@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.test;
+package me.edgan.redditslide.test;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -6,8 +6,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import me.ccrama.redditslide.CaseInsensitiveArrayList;
-import me.ccrama.redditslide.UserSubscriptions;
+import me.edgan.redditslide.CaseInsensitiveArrayList;
+import me.edgan.redditslide.UserSubscriptions;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

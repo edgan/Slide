@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,13 +25,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.Views.CanvasView;
-import me.ccrama.redditslide.Views.DoEditorActions;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.FileUtil;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.Views.CanvasView;
+import me.edgan.redditslide.Views.DoEditorActions;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.FileUtil;
 
 
 /**

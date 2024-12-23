@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -45,21 +45,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.ContentType;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.Views.CommentOverflow;
-import me.ccrama.redditslide.Views.SidebarLayout;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.HttpUtil;
-import me.ccrama.redditslide.util.LinkUtil;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.SubmissionParser;
-import me.ccrama.redditslide.util.TimeUtils;
-import me.ccrama.redditslide.util.TwitterObject;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.Views.CommentOverflow;
+import me.edgan.redditslide.Views.SidebarLayout;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.HttpUtil;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.util.TimeUtils;
+import me.edgan.redditslide.util.TwitterObject;
 import okhttp3.OkHttpClient;
 
 public class LiveThread extends BaseActivityAnim {

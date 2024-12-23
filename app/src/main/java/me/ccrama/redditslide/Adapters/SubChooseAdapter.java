@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,16 +20,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Activities.OpenContent;
-import me.ccrama.redditslide.Activities.SetupWidget;
-import me.ccrama.redditslide.Activities.Shortcut;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.Widget.SubredditWidgetProvider;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.DrawableUtil;
-import me.ccrama.redditslide.util.ImageUtil;
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.Activities.OpenContent;
+import me.edgan.redditslide.Activities.SetupWidget;
+import me.edgan.redditslide.Activities.Shortcut;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.Widget.SubredditWidgetProvider;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.DrawableUtil;
+import me.edgan.redditslide.util.ImageUtil;
+import me.edgan.redditslide.util.LogUtil;
 
 
 /**

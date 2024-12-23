@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -63,12 +63,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
 
-import me.ccrama.redditslide.Activities.MediaView;
-import me.ccrama.redditslide.Activities.Website;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Views.ExoVideoView;
+import me.edgan.redditslide.Activities.MediaView;
+import me.edgan.redditslide.Activities.Website;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Views.ExoVideoView;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

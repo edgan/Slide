@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Fragments;
+package me.edgan.redditslide.Fragments;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -21,13 +21,13 @@ import net.dean.jraw.models.Submission;
 
 import java.util.List;
 
-import me.ccrama.redditslide.Activities.CommentsScreen;
-import me.ccrama.redditslide.Activities.Shadowbox;
-import me.ccrama.redditslide.Adapters.AlbumView;
-import me.ccrama.redditslide.ImgurAlbum.AlbumUtils;
-import me.ccrama.redditslide.ImgurAlbum.Image;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SubmissionViews.PopulateShadowboxInfo;
+import me.edgan.redditslide.Activities.CommentsScreen;
+import me.edgan.redditslide.Activities.Shadowbox;
+import me.edgan.redditslide.Adapters.AlbumView;
+import me.edgan.redditslide.ImgurAlbum.AlbumUtils;
+import me.edgan.redditslide.ImgurAlbum.Image;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SubmissionViews.PopulateShadowboxInfo;
 
 
 /**

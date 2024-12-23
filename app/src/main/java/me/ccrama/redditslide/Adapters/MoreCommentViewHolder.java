@@ -1,11 +1,11 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.R;
 
 /**
  * Created by ccrama on 9/17/2015.

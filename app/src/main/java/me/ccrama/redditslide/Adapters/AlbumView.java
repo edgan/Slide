@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -21,18 +21,18 @@ import com.devspark.robototextview.RobotoTypefaces;
 
 import java.util.List;
 
-import me.ccrama.redditslide.Activities.Album;
-import me.ccrama.redditslide.Activities.MediaView;
-import me.ccrama.redditslide.ImgurAlbum.Image;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.Visuals.FontPreferences;
-import me.ccrama.redditslide.util.LinkUtil;
-import me.ccrama.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.Activities.Album;
+import me.edgan.redditslide.Activities.MediaView;
+import me.edgan.redditslide.ImgurAlbum.Image;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.SubmissionParser;
 
-import static me.ccrama.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
+import static me.edgan.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
 
 public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<Image> users;

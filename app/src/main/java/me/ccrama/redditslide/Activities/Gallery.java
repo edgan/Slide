@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -12,17 +12,17 @@ import net.dean.jraw.models.Submission;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.ccrama.redditslide.Adapters.GalleryView;
-import me.ccrama.redditslide.Adapters.MultiredditPosts;
-import me.ccrama.redditslide.Adapters.SubmissionDisplay;
-import me.ccrama.redditslide.Adapters.SubredditPosts;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.ContentType;
-import me.ccrama.redditslide.OfflineSubreddit;
-import me.ccrama.redditslide.PostLoader;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Views.CatchStaggeredGridLayoutManager;
-import me.ccrama.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.Adapters.GalleryView;
+import me.edgan.redditslide.Adapters.MultiredditPosts;
+import me.edgan.redditslide.Adapters.SubmissionDisplay;
+import me.edgan.redditslide.Adapters.SubredditPosts;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.OfflineSubreddit;
+import me.edgan.redditslide.PostLoader;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
+import me.edgan.redditslide.util.LayoutUtils;
 
 /**
  * Created by ccrama on 9/17/2015.

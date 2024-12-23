@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -8,12 +8,12 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import me.ccrama.redditslide.Adapters.SubChooseAdapter;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.FontPreferences;
-import me.ccrama.redditslide.util.stubs.SimpleTextWatcher;
+import me.edgan.redditslide.Adapters.SubChooseAdapter;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
 
 /**
  * Created by ccrama on 10/2/2015.

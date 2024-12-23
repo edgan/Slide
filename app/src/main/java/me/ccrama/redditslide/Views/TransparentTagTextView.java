@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Views;
+package me.edgan.redditslide.Views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,7 +14,7 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatTextView;
 
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.R;
 
 /**
  * Created by carlos on 3/14/16.

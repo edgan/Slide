@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -11,8 +11,8 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
 
 /**
  * Created by TacoTheDank on 12/31/2020.

@@ -16,7 +16,7 @@
                 android:adjustViewBounds="true"
                 android:background="@drawable/circle" />
     </androidx.appcompat.widget.Toolbar>
-    <me.ccrama.redditslide.Views.CanvasView
+    <me.edgan.redditslide.Views.CanvasView
         android:id="@+id/paintView"
         android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"

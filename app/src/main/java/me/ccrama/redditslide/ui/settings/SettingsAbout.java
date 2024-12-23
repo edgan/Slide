@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,12 +8,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import me.ccrama.redditslide.Activities.BaseActivityAnim;
-import me.ccrama.redditslide.BuildConfig;
-import me.ccrama.redditslide.OpenRedditLink;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.util.ClipboardUtil;
-import me.ccrama.redditslide.util.LinkUtil;
+import me.edgan.redditslide.Activities.BaseActivityAnim;
+import me.edgan.redditslide.BuildConfig;
+import me.edgan.redditslide.OpenRedditLink;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.util.ClipboardUtil;
+import me.edgan.redditslide.util.LinkUtil;
 
 
 /**

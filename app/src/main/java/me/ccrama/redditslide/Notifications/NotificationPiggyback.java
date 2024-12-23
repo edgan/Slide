@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Notifications;
+package me.edgan.redditslide.Notifications;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

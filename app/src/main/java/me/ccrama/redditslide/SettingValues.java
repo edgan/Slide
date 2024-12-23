@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -12,10 +12,10 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import me.ccrama.redditslide.Views.CreateCardView;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.ui.settings.SettingsHandlingFragment;
-import me.ccrama.redditslide.util.SortingUtil;
+import me.edgan.redditslide.Views.CreateCardView;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.ui.settings.SettingsHandlingFragment;
+import me.edgan.redditslide.util.SortingUtil;
 
 /**
  * Created by ccrama on 9/19/2015.

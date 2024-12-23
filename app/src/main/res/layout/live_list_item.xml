@@ -32,7 +32,7 @@
             android:layout_toLeftOf="@+id/go"
             android:textSize="?attr/font_commentbody" />
 
-        <me.ccrama.redditslide.SpoilerRobotoTextView
+        <me.edgan.redditslide.SpoilerRobotoTextView
             android:id="@+id/body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

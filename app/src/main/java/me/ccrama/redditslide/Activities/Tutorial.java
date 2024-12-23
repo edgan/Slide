@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -20,17 +20,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.FontPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.databinding.ActivityTutorialBinding;
-import me.ccrama.redditslide.databinding.ChooseaccentBinding;
-import me.ccrama.redditslide.databinding.ChoosemainBinding;
-import me.ccrama.redditslide.databinding.ChoosethemesmallBinding;
-import me.ccrama.redditslide.databinding.FragmentPersonalizeBinding;
-import me.ccrama.redditslide.databinding.FragmentWelcomeBinding;
-import me.ccrama.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.databinding.ActivityTutorialBinding;
+import me.edgan.redditslide.databinding.ChooseaccentBinding;
+import me.edgan.redditslide.databinding.ChoosemainBinding;
+import me.edgan.redditslide.databinding.ChoosethemesmallBinding;
+import me.edgan.redditslide.databinding.FragmentPersonalizeBinding;
+import me.edgan.redditslide.databinding.FragmentWelcomeBinding;
+import me.edgan.redditslide.util.BlendModeUtil;
 
 /**
  * Created by ccrama on 3/5/2015.

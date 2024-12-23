@@ -7,7 +7,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <me.ccrama.redditslide.Views.MaxHeightImageView
+    <me.edgan.redditslide.Views.MaxHeightImageView
         android:id="@+id/leadimage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,7 +17,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/chameleon" />
 
-    <me.ccrama.redditslide.Views.TransparentTagTextView
+    <me.edgan.redditslide.Views.TransparentTagTextView
         android:layout_width="wrap_content"
         android:text="IMAGE"
         android:id="@+id/tag"

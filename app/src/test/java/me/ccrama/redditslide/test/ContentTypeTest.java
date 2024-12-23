@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.test;
+package me.edgan.redditslide.test;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -6,10 +6,10 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import me.ccrama.redditslide.ContentType;
-import me.ccrama.redditslide.ContentType.Type;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.ContentType.Type;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;

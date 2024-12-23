@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.handler;
+package me.edgan.redditslide.handler;
 
 import android.view.View;
 import android.view.animation.LinearInterpolator;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.ccrama.redditslide.ui.settings.dragSort;
+package me.edgan.redditslide.ui.settings.dragSort;
 
 import android.app.Dialog;
 import android.content.res.Resources;
@@ -56,20 +56,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Activities.BaseActivityAnim;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.CaseInsensitiveArrayList;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.ui.settings.SettingsThemeFragment;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.DisplayUtil;
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.Activities.BaseActivityAnim;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.CaseInsensitiveArrayList;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.ui.settings.SettingsThemeFragment;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.DisplayUtil;
+import me.edgan.redditslide.util.LogUtil;
 
-import static me.ccrama.redditslide.UserSubscriptions.setPinned;
+import static me.edgan.redditslide.UserSubscriptions.setPinned;
 
 public class ReorderSubreddits extends BaseActivityAnim {
 

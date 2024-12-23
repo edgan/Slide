@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.SubmissionViews;
+package me.edgan.redditslide.SubmissionViews;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -7,10 +7,10 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import me.ccrama.redditslide.OpenRedditLink;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.LinkUtil;
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.OpenRedditLink;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.LogUtil;
 
 public class OpenVRedditTask extends AsyncTask<String, Void, Void> {
 

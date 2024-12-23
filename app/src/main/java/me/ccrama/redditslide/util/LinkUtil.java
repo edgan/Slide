@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -31,17 +31,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 
-import me.ccrama.redditslide.Activities.Crosspost;
-import me.ccrama.redditslide.Activities.MakeExternal;
-import me.ccrama.redditslide.Activities.ReaderMode;
-import me.ccrama.redditslide.Activities.Website;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.SubmissionViews.PopulateBase;
+import me.edgan.redditslide.Activities.Crosspost;
+import me.edgan.redditslide.Activities.MakeExternal;
+import me.edgan.redditslide.Activities.ReaderMode;
+import me.edgan.redditslide.Activities.Website;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.SubmissionViews.PopulateBase;
 
-import static me.ccrama.redditslide.ui.settings.SettingsHandlingFragment.LinkHandlingMode;
+import static me.edgan.redditslide.ui.settings.SettingsHandlingFragment.LinkHandlingMode;
 
 public class LinkUtil {
 

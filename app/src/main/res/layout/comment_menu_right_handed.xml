@@ -98,7 +98,7 @@
                 android:padding="5dp"
                 android:layout_height="wrap_content"/>
 
-        <me.ccrama.redditslide.Views.ImageInsertEditText
+        <me.edgan.redditslide.Views.ImageInsertEditText
                 android:id="@+id/replyLine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

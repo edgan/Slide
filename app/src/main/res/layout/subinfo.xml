@@ -80,7 +80,7 @@
                         android:layout_centerVertical="true"/>
             </RelativeLayout>
 
-            <me.ccrama.redditslide.SpoilerRobotoTextView
+            <me.edgan.redditslide.SpoilerRobotoTextView
                     android:id="@+id/sub_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
                     android:textColor="@android:color/white"
                     android:textSize="14sp"/>
 
-            <me.ccrama.redditslide.Views.CommentOverflow
+            <me.edgan.redditslide.Views.CommentOverflow
                     android:id="@+id/sub_title_overflow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -398,7 +398,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <me.ccrama.redditslide.SpoilerRobotoTextView android:id="@+id/sidebar_text"
+        <me.edgan.redditslide.SpoilerRobotoTextView android:id="@+id/sidebar_text"
                                                      xmlns:android="http://schemas.android.com/apk/res/android"
                                                      android:layout_width="match_parent"
                                                      android:layout_height="match_parent"
@@ -406,7 +406,7 @@
                                                      android:textColor="?attr/fontColor"
                                                      android:textSize="?attr/font_commentbody"/>
 
-        <me.ccrama.redditslide.Views.CommentOverflow
+        <me.edgan.redditslide.Views.CommentOverflow
                 android:id="@+id/commentOverflow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

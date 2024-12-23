@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ForceTouch.callback;
+package me.edgan.redditslide.ForceTouch.callback;
 
 /**
  * Wrapper class for if you only need to implement the initialization method

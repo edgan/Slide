@@ -14,7 +14,7 @@
             app:srcCompat="@drawable/ic_keyboard_arrow_up"
             android:layout_height="0dp"/>
 
-    <me.ccrama.redditslide.Views.PeekMediaView
+    <me.edgan.redditslide.Views.PeekMediaView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/peek"

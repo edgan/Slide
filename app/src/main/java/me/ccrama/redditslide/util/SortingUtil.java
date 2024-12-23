@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -16,10 +16,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import me.ccrama.redditslide.Activities.Search;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Activities.Search;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.Visuals.ColorPreferences;
 
 public class SortingUtil {
     public static final Map<String, TimePeriod>              times  = new HashMap<>();

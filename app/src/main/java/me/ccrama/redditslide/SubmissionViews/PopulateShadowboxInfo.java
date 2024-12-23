@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.SubmissionViews;
+package me.edgan.redditslide.SubmissionViews;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -43,24 +43,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.ActionStates;
-import me.ccrama.redditslide.Activities.Profile;
-import me.ccrama.redditslide.Activities.SubredditView;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.HasSeen;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Views.RoundedBackgroundSpan;
-import me.ccrama.redditslide.Views.TitleTextView;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.Vote;
-import me.ccrama.redditslide.util.AnimatorUtil;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.ClipboardUtil;
-import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.LinkUtil;
-import me.ccrama.redditslide.util.TimeUtils;
+import me.edgan.redditslide.ActionStates;
+import me.edgan.redditslide.Activities.Profile;
+import me.edgan.redditslide.Activities.SubredditView;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Views.RoundedBackgroundSpan;
+import me.edgan.redditslide.Views.TitleTextView;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.Vote;
+import me.edgan.redditslide.util.AnimatorUtil;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.ClipboardUtil;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.TimeUtils;
 
 /**
  * Created by carlo_000 on 2/27/2016.

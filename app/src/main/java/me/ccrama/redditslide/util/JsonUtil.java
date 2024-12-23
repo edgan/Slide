@@ -1,10 +1,10 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import org.apache.commons.text.StringEscapeUtils;
 
-import me.ccrama.redditslide.Activities.GalleryImage;
+import me.edgan.redditslide.Activities.GalleryImage;
 
 /**
  * Created by TacoTheDank on 04/04/2021.

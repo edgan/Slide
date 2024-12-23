@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Views;
+package me.edgan.redditslide.Views;
 /**
  * CanvasView.java
  * <p/>

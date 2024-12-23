@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.app.Activity;
 import android.os.Build;
@@ -24,10 +24,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.util.LinkUtil;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.util.LinkUtil;
 
 public class SettingsHandlingFragment implements CompoundButton.OnCheckedChangeListener {
 

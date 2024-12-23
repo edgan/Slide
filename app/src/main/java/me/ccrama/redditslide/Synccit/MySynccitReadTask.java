@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Synccit;
+package me.edgan.redditslide.Synccit;
 
 /**
  * Created by carlo_000 on 2/16/2016.
@@ -6,9 +6,9 @@ package me.ccrama.redditslide.Synccit;
 
 import java.util.HashSet;
 
-import me.ccrama.redditslide.Adapters.SubmissionDisplay;
-import me.ccrama.redditslide.HasSeen;
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.Adapters.SubmissionDisplay;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.SettingValues;
 
 public class MySynccitReadTask extends SynccitReadTask {
 

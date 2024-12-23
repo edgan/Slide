@@ -4,7 +4,7 @@
     android:updatePeriodMillis="3600000"
     android:initialLayout="@layout/widget"
     android:resizeMode="horizontal|vertical"
-    android:configure="me.ccrama.redditslide.Activities.SetupWidget"
+    android:configure="me.edgan.redditslide.Activities.SetupWidget"
     android:widgetCategory="home_screen">
 
 </appwidget-provider>

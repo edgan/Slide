@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -58,21 +58,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Activities.MainActivity;
-import me.ccrama.redditslide.Autocache.AutoCacheScheduler;
-import me.ccrama.redditslide.ImgurAlbum.AlbumUtils;
-import me.ccrama.redditslide.Notifications.NotificationJobScheduler;
-import me.ccrama.redditslide.Notifications.NotificationPiggyback;
-import me.ccrama.redditslide.Tumblr.TumblrUtils;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.AdBlocker;
-import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.GifCache;
-import me.ccrama.redditslide.util.ImageLoaderUtils;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.NetworkUtil;
-import me.ccrama.redditslide.util.SortingUtil;
-import me.ccrama.redditslide.util.UpgradeUtil;
+import me.edgan.redditslide.Activities.MainActivity;
+import me.edgan.redditslide.Autocache.AutoCacheScheduler;
+import me.edgan.redditslide.ImgurAlbum.AlbumUtils;
+import me.edgan.redditslide.Notifications.NotificationJobScheduler;
+import me.edgan.redditslide.Notifications.NotificationPiggyback;
+import me.edgan.redditslide.Tumblr.TumblrUtils;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.AdBlocker;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.GifCache;
+import me.edgan.redditslide.util.ImageLoaderUtils;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.util.SortingUtil;
+import me.edgan.redditslide.util.UpgradeUtil;
 import okhttp3.Dns;
 import okhttp3.OkHttpClient;
 

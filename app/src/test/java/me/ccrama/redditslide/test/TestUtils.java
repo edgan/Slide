@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.test;
+package me.edgan.redditslide.test;
 
 import android.content.SharedPreferences;
 

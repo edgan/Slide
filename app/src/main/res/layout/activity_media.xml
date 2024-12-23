@@ -19,13 +19,13 @@
         android:background="#33000000"
         android:id="@+id/gifarea">
 
-        <me.ccrama.redditslide.Views.ExoVideoView
+        <me.edgan.redditslide.Views.ExoVideoView
             android:id="@+id/gif"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true">
 
-        </me.ccrama.redditslide.Views.ExoVideoView>
+        </me.edgan.redditslide.Views.ExoVideoView>
 
         <FrameLayout
             android:id="@+id/placeholder"
@@ -42,7 +42,7 @@
             android:progress="0" />
     </RelativeLayout>
 
-    <me.ccrama.redditslide.Views.SubsamplingScaleImageView
+    <me.edgan.redditslide.Views.SubsamplingScaleImageView
         android:id="@+id/submission_image"
         android:layout_width="match_parent"
         android:transitionName="large_image"

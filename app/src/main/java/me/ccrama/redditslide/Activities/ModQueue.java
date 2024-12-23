@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
 import android.view.View;
@@ -13,13 +13,13 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
-import me.ccrama.redditslide.Fragments.InboxPage;
-import me.ccrama.redditslide.Fragments.ModLog;
-import me.ccrama.redditslide.Fragments.ModPage;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
+import me.edgan.redditslide.Fragments.InboxPage;
+import me.edgan.redditslide.Fragments.ModLog;
+import me.edgan.redditslide.Fragments.ModPage;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
 
 /**
  * Created by ccrama on 9/17/2015.

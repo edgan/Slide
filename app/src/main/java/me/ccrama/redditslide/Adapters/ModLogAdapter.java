@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 /**
  * Created by ccrama on 3/22/2015.
@@ -26,14 +26,14 @@ import net.dean.jraw.models.ModAction;
 
 import java.util.Locale;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.OpenRedditLink;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.Views.RoundedBackgroundSpan;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.TimeUtils;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.OpenRedditLink;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.Views.RoundedBackgroundSpan;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.TimeUtils;
 
 
 public class ModLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>

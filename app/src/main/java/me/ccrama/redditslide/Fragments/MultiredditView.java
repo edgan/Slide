@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Fragments;
+package me.edgan.redditslide.Fragments;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -31,24 +31,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Activities.Search;
-import me.ccrama.redditslide.Activities.Submit;
-import me.ccrama.redditslide.Adapters.MultiredditAdapter;
-import me.ccrama.redditslide.Adapters.MultiredditPosts;
-import me.ccrama.redditslide.Adapters.SubmissionDisplay;
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.HasSeen;
-import me.ccrama.redditslide.Hidden;
-import me.ccrama.redditslide.OfflineSubreddit;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Views.CatchStaggeredGridLayoutManager;
-import me.ccrama.redditslide.Views.CreateCardView;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.handler.ToolbarScrollHideHandler;
-import me.ccrama.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.Activities.Search;
+import me.edgan.redditslide.Activities.Submit;
+import me.edgan.redditslide.Adapters.MultiredditAdapter;
+import me.edgan.redditslide.Adapters.MultiredditPosts;
+import me.edgan.redditslide.Adapters.SubmissionDisplay;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.Hidden;
+import me.edgan.redditslide.OfflineSubreddit;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
+import me.edgan.redditslide.Views.CreateCardView;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.handler.ToolbarScrollHideHandler;
+import me.edgan.redditslide.util.LayoutUtils;
 
 public class MultiredditView extends Fragment implements SubmissionDisplay {
 

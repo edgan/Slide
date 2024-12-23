@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ImgurAlbum;
+package me.edgan.redditslide.ImgurAlbum;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,9 +11,9 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.util.ImgurUtils;
-import me.ccrama.redditslide.util.ProgressRequestBody;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.util.ImgurUtils;
+import me.edgan.redditslide.util.ProgressRequestBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;

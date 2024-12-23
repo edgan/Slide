@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 /**
  * Created by ccrama on 10/30/2015.
@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.R;
 
 
 public class ErrorAdapter extends RecyclerView.Adapter<ErrorAdapter.ViewHolder> {

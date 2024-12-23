@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground">
 
-        <me.ccrama.redditslide.SubmissionViews.HeaderImageLinkView
+        <me.edgan.redditslide.SubmissionViews.HeaderImageLinkView
             android:id="@+id/headerimage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
             android:layout_toRightOf="@+id/score"
             android:paddingTop="6dp">
 
-            <me.ccrama.redditslide.Views.RoundImageTriangleView
+            <me.edgan.redditslide.Views.RoundImageTriangleView
                 android:id="@+id/thumbimage2"
                 android:layout_width="64dp"
                 android:layout_height="48dp"
@@ -101,7 +101,7 @@
                 android:paddingBottom="4dp"
                 android:layout_toRightOf="@+id/thumbimage2">
 
-                <me.ccrama.redditslide.Views.TitleTextView
+                <me.edgan.redditslide.Views.TitleTextView
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -113,7 +113,7 @@
                     android:textColor="?attr/fontColor"
                     android:textSize="?attr/font_cardtitle" />
 
-                <me.ccrama.redditslide.SpoilerRobotoTextView
+                <me.edgan.redditslide.SpoilerRobotoTextView
                     android:id="@+id/body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -130,7 +130,7 @@
             </RelativeLayout>
         </RelativeLayout>
 
-        <me.ccrama.redditslide.Views.RevealRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <me.edgan.redditslide.Views.RevealRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_toRightOf="@+id/downvote"
             android:layout_height="wrap_content"
@@ -233,6 +233,6 @@
                 android:tint="?attr/tintColor"
                 android:contentDescription="@string/btn_menu"
                 app:srcCompat="@drawable/ic_more_vert" />
-        </me.ccrama.redditslide.Views.RevealRelativeLayout>
+        </me.edgan.redditslide.Views.RevealRelativeLayout>
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

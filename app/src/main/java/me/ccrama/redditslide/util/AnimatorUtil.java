@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -11,7 +11,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import io.codetail.animation.ViewAnimationUtils;
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.R;
 
 /**
  * Created by TacoTheDank on 03/15/2021.

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,14 +26,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import me.ccrama.redditslide.Activities.Login;
-import me.ccrama.redditslide.Activities.MainActivity;
-import me.ccrama.redditslide.Activities.MultiredditOverview;
-import me.ccrama.redditslide.Activities.NewsActivity;
-import me.ccrama.redditslide.Toolbox.Toolbox;
-import me.ccrama.redditslide.ui.settings.dragSort.ReorderSubreddits;
-import me.ccrama.redditslide.util.NetworkUtil;
-import me.ccrama.redditslide.util.StringUtil;
+import me.edgan.redditslide.Activities.Login;
+import me.edgan.redditslide.Activities.MainActivity;
+import me.edgan.redditslide.Activities.MultiredditOverview;
+import me.edgan.redditslide.Activities.NewsActivity;
+import me.edgan.redditslide.Toolbox.Toolbox;
+import me.edgan.redditslide.ui.settings.dragSort.ReorderSubreddits;
+import me.edgan.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.util.StringUtil;
 
 /**
  * Created by carlo_000 on 1/16/2016.

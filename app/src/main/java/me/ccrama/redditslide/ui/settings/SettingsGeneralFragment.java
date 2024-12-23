@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -46,33 +46,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.CaseInsensitiveArrayList;
-import me.ccrama.redditslide.Fragments.DrawerItemsDialog;
-import me.ccrama.redditslide.Fragments.FolderChooserDialogCreate;
-import me.ccrama.redditslide.Fragments.FolderChooserDialogCreate.FolderCallback;
-import me.ccrama.redditslide.Notifications.CheckForMail;
-import me.ccrama.redditslide.Notifications.NotificationJobScheduler;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.DialogUtil;
-import me.ccrama.redditslide.util.ImageLoaderUtils;
-import me.ccrama.redditslide.util.OnSingleClickListener;
-import me.ccrama.redditslide.util.SortingUtil;
-import me.ccrama.redditslide.util.StringUtil;
-import me.ccrama.redditslide.util.TimeUtils;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.CaseInsensitiveArrayList;
+import me.edgan.redditslide.Fragments.DrawerItemsDialog;
+import me.edgan.redditslide.Fragments.FolderChooserDialogCreate;
+import me.edgan.redditslide.Fragments.FolderChooserDialogCreate.FolderCallback;
+import me.edgan.redditslide.Notifications.CheckForMail;
+import me.edgan.redditslide.Notifications.NotificationJobScheduler;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.DialogUtil;
+import me.edgan.redditslide.util.ImageLoaderUtils;
+import me.edgan.redditslide.util.OnSingleClickListener;
+import me.edgan.redditslide.util.SortingUtil;
+import me.edgan.redditslide.util.StringUtil;
+import me.edgan.redditslide.util.TimeUtils;
 
-import static me.ccrama.redditslide.Constants.getClientId;
-import static me.ccrama.redditslide.Constants.BackButtonBehaviorOptions;
-import static me.ccrama.redditslide.Constants.FAB_DISMISS;
-import static me.ccrama.redditslide.Constants.FAB_POST;
-import static me.ccrama.redditslide.Constants.FAB_SEARCH;
-import static me.ccrama.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_BOTH;
-import static me.ccrama.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_DRAWER;
-import static me.ccrama.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR;
+import static me.edgan.redditslide.Constants.getClientId;
+import static me.edgan.redditslide.Constants.BackButtonBehaviorOptions;
+import static me.edgan.redditslide.Constants.FAB_DISMISS;
+import static me.edgan.redditslide.Constants.FAB_POST;
+import static me.edgan.redditslide.Constants.FAB_SEARCH;
+import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_BOTH;
+import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_DRAWER;
+import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR;
 
 /**
  * Created by ccrama on 3/5/2015.

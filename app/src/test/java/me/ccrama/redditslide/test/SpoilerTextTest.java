@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.test;
+package me.edgan.redditslide.test;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import me.ccrama.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.SpoilerRobotoTextView;
 
 import static org.junit.Assert.fail;
 

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -12,21 +12,21 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.HasSeen;
-import me.ccrama.redditslide.LastComments;
-import me.ccrama.redditslide.OfflineSubreddit;
-import me.ccrama.redditslide.PostLoader;
-import me.ccrama.redditslide.PostMatch;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SubmissionCache;
-import me.ccrama.redditslide.Synccit.MySynccitReadTask;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.NetworkUtil;
-import me.ccrama.redditslide.util.PhotoLoader;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.LastComments;
+import me.edgan.redditslide.OfflineSubreddit;
+import me.edgan.redditslide.PostLoader;
+import me.edgan.redditslide.PostMatch;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SubmissionCache;
+import me.edgan.redditslide.Synccit.MySynccitReadTask;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.util.PhotoLoader;
 
 /**
  * This class is reponsible for loading subreddit specific submissions

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Views;/*
+package me.edgan.redditslide.Views;/*
 Copyright 2015 Michal Pawlowski
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,8 +27,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.util.ArrayList;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.util.BlendModeUtil;
 
 
 /**

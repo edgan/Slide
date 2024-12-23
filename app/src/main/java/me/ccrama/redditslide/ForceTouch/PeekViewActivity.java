@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ForceTouch;
+package me.edgan.redditslide.ForceTouch;
 
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -7,9 +7,9 @@ import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.util.DisplayUtil;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.util.DisplayUtil;
 
 
 public class PeekViewActivity extends AppCompatActivity {

@@ -1,8 +1,8 @@
-package me.ccrama.redditslide.ForceTouch.callback;
+package me.edgan.redditslide.ForceTouch.callback;
 
 import android.view.View;
 
-import me.ccrama.redditslide.ForceTouch.PeekView;
+import me.edgan.redditslide.ForceTouch.PeekView;
 
 /**
  * Provides callbacks for the lifecycle events of the PeekView

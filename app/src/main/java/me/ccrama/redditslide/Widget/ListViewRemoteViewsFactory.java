@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Widget;
+package me.edgan.redditslide.Widget;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -22,18 +22,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import me.ccrama.redditslide.Activities.OpenContent;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Autocache.AutoCacheScheduler;
-import me.ccrama.redditslide.Notifications.NotificationJobScheduler;
-import me.ccrama.redditslide.PostMatch;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.NetworkUtil;
-import me.ccrama.redditslide.util.TimeUtils;
+import me.edgan.redditslide.Activities.OpenContent;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Autocache.AutoCacheScheduler;
+import me.edgan.redditslide.Notifications.NotificationJobScheduler;
+import me.edgan.redditslide.PostMatch;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.util.TimeUtils;
 
 public class ListViewRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     String subreddit;

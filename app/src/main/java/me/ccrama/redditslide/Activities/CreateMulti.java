@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -52,12 +52,12 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.LogUtil;
 
 /**
  * This class handles creation of Multireddits.

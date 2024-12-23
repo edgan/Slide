@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,17 +24,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import me.ccrama.redditslide.Activities.MainActivity;
-import me.ccrama.redditslide.Activities.SubredditView;
-import me.ccrama.redditslide.CaseInsensitiveArrayList;
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.KeyboardUtil;
-import me.ccrama.redditslide.util.StringUtil;
+import me.edgan.redditslide.Activities.MainActivity;
+import me.edgan.redditslide.Activities.SubredditView;
+import me.edgan.redditslide.CaseInsensitiveArrayList;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.KeyboardUtil;
+import me.edgan.redditslide.util.StringUtil;
 
 
 /**

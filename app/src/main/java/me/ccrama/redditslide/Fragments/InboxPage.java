@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Fragments;
+package me.edgan.redditslide.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,14 +10,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import me.ccrama.redditslide.Adapters.InboxAdapter;
-import me.ccrama.redditslide.Adapters.InboxMessages;
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Views.CatchStaggeredGridLayoutManager;
-import me.ccrama.redditslide.Views.PreCachingLayoutManager;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.handler.ToolbarScrollHideHandler;
+import me.edgan.redditslide.Adapters.InboxAdapter;
+import me.edgan.redditslide.Adapters.InboxMessages;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
+import me.edgan.redditslide.Views.PreCachingLayoutManager;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.handler.ToolbarScrollHideHandler;
 
 public class InboxPage extends Fragment {
 

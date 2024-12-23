@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Notifications;
+package me.edgan.redditslide.Notifications;
 
 /**
  * Created by carlo_000 on 10/13/2015.
@@ -35,18 +35,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Activities.CancelSubNotifs;
-import me.ccrama.redditslide.Activities.Inbox;
-import me.ccrama.redditslide.Activities.ModQueue;
-import me.ccrama.redditslide.Activities.OpenContent;
-import me.ccrama.redditslide.Adapters.MarkAsReadService;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.HasSeen;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.StringUtil;
+import me.edgan.redditslide.Activities.CancelSubNotifs;
+import me.edgan.redditslide.Activities.Inbox;
+import me.edgan.redditslide.Activities.ModQueue;
+import me.edgan.redditslide.Activities.OpenContent;
+import me.edgan.redditslide.Adapters.MarkAsReadService;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.StringUtil;
 
 public class CheckForMail extends BroadcastReceiver {
 
@@ -86,7 +86,7 @@ public class CheckForMail extends BroadcastReceiver {
                     try {
 
                         ContentValues cv = new ContentValues();
-                        cv.put("tag", "me.ccrama.redditslide/me.ccrama.redditslide.MainActivity");
+                        cv.put("tag", "me.edgan.redditslide/me.edgan.redditslide.MainActivity");
                         cv.put("count", messages.size());
                         c.getContentResolver()
                                 .insert(Uri.parse(

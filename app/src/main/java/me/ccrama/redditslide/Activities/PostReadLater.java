@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
 
@@ -8,9 +8,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import me.ccrama.redditslide.Fragments.ReadLaterView;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Fragments.ReadLaterView;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Visuals.ColorPreferences;
 
 /**
  * Created by ccrama on 9/17/2015.

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Fragments;
+package me.edgan.redditslide.Fragments;
 
 import android.os.Bundle;
 import android.view.View;
@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.ui.settings.SettingsThemeFragment;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.ui.settings.SettingsThemeFragment;
 
 public class DrawerItemsDialog extends MaterialDialog {
     public DrawerItemsDialog(final Builder builder) {

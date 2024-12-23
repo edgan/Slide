@@ -1,6 +1,6 @@
-package me.ccrama.redditslide.Synccit;
+package me.edgan.redditslide.Synccit;
 
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.SettingValues;
 
 /**
  * Created by carlo_000 on 2/16/2016.

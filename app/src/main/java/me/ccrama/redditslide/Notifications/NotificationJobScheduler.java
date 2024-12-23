@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Notifications;
+package me.edgan.redditslide.Notifications;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -8,7 +8,7 @@ import android.content.Intent;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.content.ContextCompat;
 
-import me.ccrama.redditslide.Reddit;
+import me.edgan.redditslide.Reddit;
 
 /**
  * Created by carlo_000 on 10/13/2015.

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -12,9 +12,9 @@ import androidx.core.content.ContextCompat;
 import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.managers.InboxManager;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Notifications.CheckForMail;
-import me.ccrama.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Notifications.CheckForMail;
+import me.edgan.redditslide.util.NetworkUtil;
 
 /**
  * Created by brent on 1/27/16.

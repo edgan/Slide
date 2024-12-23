@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.content.Context;
 
@@ -6,7 +6,7 @@ import net.dean.jraw.models.Submission;
 
 import java.util.List;
 
-import me.ccrama.redditslide.Adapters.SubmissionDisplay;
+import me.edgan.redditslide.Adapters.SubmissionDisplay;
 
 /**
  * This interface provides methods for loading and retrieving submissions (such

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ForceTouch.util;
+package me.edgan.redditslide.ForceTouch.util;
 
 import android.content.Context;
 import android.content.res.Resources;

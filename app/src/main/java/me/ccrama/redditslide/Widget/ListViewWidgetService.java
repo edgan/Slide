@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Widget;
+package me.edgan.redditslide.Widget;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;

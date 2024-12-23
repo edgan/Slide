@@ -12,7 +12,7 @@
     limitations under the License.
  */
 
-package me.ccrama.redditslide.ForceTouch.builder;
+package me.edgan.redditslide.ForceTouch.builder;
 
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,9 +20,9 @@ import android.view.View;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 
-import me.ccrama.redditslide.ForceTouch.PeekView;
-import me.ccrama.redditslide.ForceTouch.PeekViewActivity;
-import me.ccrama.redditslide.ForceTouch.callback.OnPeek;
+import me.edgan.redditslide.ForceTouch.PeekView;
+import me.edgan.redditslide.ForceTouch.PeekViewActivity;
+import me.edgan.redditslide.ForceTouch.callback.OnPeek;
 
 /**
  * This is a builder class to facilitate the creation of the PeekView.

@@ -64,7 +64,7 @@
         android:textSize="10sp"
         android:textStyle="bold"/>
 
-    <me.ccrama.redditslide.SpoilerRobotoTextView
+    <me.edgan.redditslide.SpoilerRobotoTextView
         android:id="@+id/firstTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
         android:textColor="?attr/fontColor"
         android:textSize="?attr/font_commentbody" />
 
-    <me.ccrama.redditslide.Views.CommentOverflow
+    <me.edgan.redditslide.Views.CommentOverflow
         android:id="@+id/commentOverflow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

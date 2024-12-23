@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Notifications;
+package me.edgan.redditslide.Notifications;
 
 /**
  * Created by carlo_000 on 10/13/2015.
@@ -27,13 +27,13 @@ import org.apache.commons.text.StringEscapeUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.ccrama.redditslide.Activities.Inbox;
-import me.ccrama.redditslide.Activities.OpenContent;
-import me.ccrama.redditslide.Adapters.MarkAsReadService;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.Activities.Inbox;
+import me.edgan.redditslide.Activities.OpenContent;
+import me.edgan.redditslide.Adapters.MarkAsReadService;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
 
 public class CheckForMailSingle extends BroadcastReceiver {
 
@@ -60,7 +60,7 @@ public class CheckForMailSingle extends BroadcastReceiver {
 
                         ContentValues cv = new ContentValues();
 
-                        cv.put("tag", "me.ccrama.redditslide/me.ccrama.redditslide.MainActivity");
+                        cv.put("tag", "me.edgan.redditslide/me.edgan.redditslide.MainActivity");
 
                         cv.put("count", messages.size());
 

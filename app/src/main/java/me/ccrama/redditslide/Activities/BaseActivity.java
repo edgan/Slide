@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
@@ -24,17 +24,17 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.util.Locale;
 
-import me.ccrama.redditslide.ForceTouch.PeekViewActivity;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SwipeLayout.SwipeBackLayout;
-import me.ccrama.redditslide.SwipeLayout.Utils;
-import me.ccrama.redditslide.SwipeLayout.app.SwipeBackActivityBase;
-import me.ccrama.redditslide.SwipeLayout.app.SwipeBackActivityHelper;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.FontPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
+import me.edgan.redditslide.ForceTouch.PeekViewActivity;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SwipeLayout.SwipeBackLayout;
+import me.edgan.redditslide.SwipeLayout.Utils;
+import me.edgan.redditslide.SwipeLayout.app.SwipeBackActivityBase;
+import me.edgan.redditslide.SwipeLayout.app.SwipeBackActivityHelper;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.Visuals.Palette;
 
 /**
  * This is an activity which is the base for most of Slide's activities. It has support for handling

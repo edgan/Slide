@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.os.AsyncTask;
 
@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.PostMatch;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.PostMatch;
 
 /**
  * Created by ccrama on 9/17/2015.

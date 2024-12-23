@@ -1,5 +1,5 @@
 
-package me.ccrama.redditslide.SwipeLayout;
+package me.edgan.redditslide.SwipeLayout;
 
 import android.app.Activity;
 import android.app.ActivityOptions;

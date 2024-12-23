@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Toolbox;
+package me.edgan.redditslide.Toolbox;
 
 import android.content.Context;
 import android.content.Intent;
@@ -51,12 +51,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import me.ccrama.redditslide.Activities.Reauthenticate;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.OpenRedditLink;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Views.RoundedBackgroundSpan;
+import me.edgan.redditslide.Activities.Reauthenticate;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.OpenRedditLink;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Views.RoundedBackgroundSpan;
 
 /**
  * Misc UI stuff for toolbox - usernote display, removal display, etc.

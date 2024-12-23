@@ -10,7 +10,7 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-    <me.ccrama.redditslide.SubmissionViews.HeaderImageLinkView
+    <me.edgan.redditslide.SubmissionViews.HeaderImageLinkView
             android:id="@+id/headerimage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -31,7 +31,7 @@
                 android:paddingStart="16dp"
                 android:paddingTop="20dp">
 
-            <me.ccrama.redditslide.Views.TitleTextView
+            <me.edgan.redditslide.Views.TitleTextView
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -160,7 +160,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-            <me.ccrama.redditslide.SpoilerRobotoTextView
+            <me.edgan.redditslide.SpoilerRobotoTextView
                     android:id="@+id/firstTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -171,7 +171,7 @@
                     android:textColor="?attr/fontColor"
                     android:textSize="?attr/font_commentbody"/>
 
-            <me.ccrama.redditslide.Views.CommentOverflow
+            <me.edgan.redditslide.Views.CommentOverflow
                     android:id="@+id/commentOverflow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -181,7 +181,7 @@
                     android:visibility="gone"/>
         </LinearLayout>
 
-        <me.ccrama.redditslide.Views.RevealRelativeLayout
+        <me.edgan.redditslide.Views.RevealRelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
                 android:gravity="center_vertical">
@@ -339,7 +339,7 @@
                     android:tint="?attr/tintColor"
                     android:contentDescription="@string/btn_mod"
                     app:srcCompat="@drawable/ic_verified_user"/>
-        </me.ccrama.redditslide.Views.RevealRelativeLayout>
+        </me.edgan.redditslide.Views.RevealRelativeLayout>
 
 
         <LinearLayout
@@ -359,7 +359,7 @@
                     android:padding="5dp"
                     android:layout_height="wrap_content"/>
 
-            <me.ccrama.redditslide.Views.ImageInsertEditText
+            <me.edgan.redditslide.Views.ImageInsertEditText
                     android:id="@+id/replyLine"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

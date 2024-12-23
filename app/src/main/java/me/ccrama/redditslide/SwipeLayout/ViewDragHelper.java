@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.ccrama.redditslide.SwipeLayout;
+package me.edgan.redditslide.SwipeLayout;
 
 import android.content.Context;
 import android.view.MotionEvent;

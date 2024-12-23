@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Autocache;
+package me.edgan.redditslide.Autocache;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat;
 
 import java.util.Calendar;
 
-import me.ccrama.redditslide.Reddit;
+import me.edgan.redditslide.Reddit;
 
 /**
  * Created by carlo_000 on 10/13/2015.

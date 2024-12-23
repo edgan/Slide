@@ -1,11 +1,11 @@
-package me.ccrama.redditslide.test;
+package me.edgan.redditslide.test;
 
 import android.net.Uri;
 
 import org.junit.Test;
 
-import me.ccrama.redditslide.OpenRedditLink;
-import me.ccrama.redditslide.OpenRedditLink.RedditLinkType;
+import me.edgan.redditslide.OpenRedditLink;
+import me.edgan.redditslide.OpenRedditLink.RedditLinkType;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

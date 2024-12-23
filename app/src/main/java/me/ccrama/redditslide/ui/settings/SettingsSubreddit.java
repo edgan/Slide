@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -20,16 +20,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Activities.BaseActivityAnim;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.GetClosestColor;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.Activities.BaseActivityAnim;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.GetClosestColor;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.LayoutUtils;
 
 
 /**

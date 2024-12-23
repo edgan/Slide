@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Fragments;
+package me.edgan.redditslide.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -20,16 +20,16 @@ import net.dean.jraw.models.Subreddit;
 
 import java.util.List;
 
-import me.ccrama.redditslide.Activities.BaseActivity;
-import me.ccrama.redditslide.Adapters.SubredditAdapter;
-import me.ccrama.redditslide.Adapters.SubredditNames;
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Views.PreCachingLayoutManager;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.handler.ToolbarScrollHideHandler;
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.Activities.BaseActivity;
+import me.edgan.redditslide.Adapters.SubredditAdapter;
+import me.edgan.redditslide.Adapters.SubredditNames;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Views.PreCachingLayoutManager;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.handler.ToolbarScrollHideHandler;
+import me.edgan.redditslide.util.LogUtil;
 
 public class SubredditListView extends Fragment {
     public SubredditNames posts;

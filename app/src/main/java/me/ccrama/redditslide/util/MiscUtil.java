@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,9 +9,9 @@ import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.widget.TextView;
 
-import me.ccrama.redditslide.Adapters.ProfileCommentViewHolder;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.Adapters.ProfileCommentViewHolder;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.R;
 
 /**
  * Created by TacoTheDank on 03/15/2021.

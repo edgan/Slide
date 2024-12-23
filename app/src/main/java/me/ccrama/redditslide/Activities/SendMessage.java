@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.os.AsyncTask;
 import android.os.Build;
@@ -25,12 +25,12 @@ import net.dean.jraw.models.PrivateMessage;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.DataShare;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.Views.DoEditorActions;
-import me.ccrama.redditslide.Visuals.Palette;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.DataShare;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Views.DoEditorActions;
+import me.edgan.redditslide.Visuals.Palette;
 
 /**
  * Created by ccrama on 3/5/2015.

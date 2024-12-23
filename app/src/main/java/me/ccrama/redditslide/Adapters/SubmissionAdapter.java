@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 /**
  * Created by ccrama on 3/22/2015.
@@ -23,19 +23,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Activities.CommentsScreen;
-import me.ccrama.redditslide.Activities.MainActivity;
-import me.ccrama.redditslide.Activities.SubredditView;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Fragments.SubmissionsView;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SubmissionViews.PopulateSubmissionViewHolder;
-import me.ccrama.redditslide.Views.CatchStaggeredGridLayoutManager;
-import me.ccrama.redditslide.Views.CreateCardView;
-import me.ccrama.redditslide.util.LayoutUtils;
-import me.ccrama.redditslide.util.OnSingleClickListener;
+import me.edgan.redditslide.Activities.CommentsScreen;
+import me.edgan.redditslide.Activities.MainActivity;
+import me.edgan.redditslide.Activities.SubredditView;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Fragments.SubmissionsView;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SubmissionViews.PopulateSubmissionViewHolder;
+import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
+import me.edgan.redditslide.Views.CreateCardView;
+import me.edgan.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.OnSingleClickListener;
 
 
 public class SubmissionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>

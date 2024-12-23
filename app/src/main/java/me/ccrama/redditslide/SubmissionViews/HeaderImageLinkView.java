@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.SubmissionViews;
+package me.edgan.redditslide.SubmissionViews;
 
 import android.app.Activity;
 import android.content.Context;
@@ -31,25 +31,25 @@ import net.dean.jraw.models.Submission;
 import java.util.Arrays;
 import java.util.List;
 
-import me.ccrama.redditslide.ContentType;
-import me.ccrama.redditslide.ForceTouch.PeekView;
-import me.ccrama.redditslide.ForceTouch.PeekViewActivity;
-import me.ccrama.redditslide.ForceTouch.builder.Peek;
-import me.ccrama.redditslide.ForceTouch.builder.PeekViewOptions;
-import me.ccrama.redditslide.ForceTouch.callback.OnButtonUp;
-import me.ccrama.redditslide.ForceTouch.callback.OnPop;
-import me.ccrama.redditslide.ForceTouch.callback.OnRemove;
-import me.ccrama.redditslide.ForceTouch.callback.SimpleOnPeek;
-import me.ccrama.redditslide.HasSeen;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Views.PeekMediaView;
-import me.ccrama.redditslide.Views.TransparentTagTextView;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.LinkUtil;
-import me.ccrama.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.ForceTouch.PeekView;
+import me.edgan.redditslide.ForceTouch.PeekViewActivity;
+import me.edgan.redditslide.ForceTouch.builder.Peek;
+import me.edgan.redditslide.ForceTouch.builder.PeekViewOptions;
+import me.edgan.redditslide.ForceTouch.callback.OnButtonUp;
+import me.edgan.redditslide.ForceTouch.callback.OnPop;
+import me.edgan.redditslide.ForceTouch.callback.OnRemove;
+import me.edgan.redditslide.ForceTouch.callback.SimpleOnPeek;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Views.PeekMediaView;
+import me.edgan.redditslide.Views.TransparentTagTextView;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.NetworkUtil;
 
 /**
  * Created by carlo_000 on 2/7/2016.

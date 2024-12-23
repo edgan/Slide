@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings.dragSort;
+package me.edgan.redditslide.ui.settings.dragSort;
 
 /**
  * Created by carlo_000 on 10/18/2015.
@@ -36,7 +36,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.R;
 
 
 class DragSortRecycler extends RecyclerView.ItemDecoration implements RecyclerView.OnItemTouchListener {

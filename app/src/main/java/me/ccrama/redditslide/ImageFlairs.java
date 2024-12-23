@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -35,9 +35,9 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import me.ccrama.redditslide.Activities.SendMessage;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.OkHttpImageDownloader;
+import me.edgan.redditslide.Activities.SendMessage;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.OkHttpImageDownloader;
 
 /**
  * Created by Carlos on 4/15/2017.

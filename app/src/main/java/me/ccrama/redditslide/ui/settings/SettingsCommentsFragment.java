@@ -1,12 +1,12 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.app.Activity;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.SwitchCompat;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
 
 public class SettingsCommentsFragment {
 

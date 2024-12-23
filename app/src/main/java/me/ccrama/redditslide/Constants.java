@@ -1,6 +1,6 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
-import me.ccrama.redditslide.util.DisplayUtil;
+import me.edgan.redditslide.util.DisplayUtil;
 
 /**
  * Constants used throughout the app

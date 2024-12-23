@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.SwipeLayout;
+package me.edgan.redditslide.SwipeLayout;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,7 +15,7 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.R;
 
 public class SwipeBackLayout extends FrameLayout {
     /**

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Flair;
+package me.edgan.redditslide.Flair;
 
 
 import com.google.gson.annotations.Expose;

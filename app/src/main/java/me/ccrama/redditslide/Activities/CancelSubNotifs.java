@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,9 +7,9 @@ import android.os.Bundle;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Notifications.CheckForMail;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.util.StringUtil;
+import me.edgan.redditslide.Notifications.CheckForMail;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.util.StringUtil;
 
 /**
  * Created by ccrama on 9/28/2015.

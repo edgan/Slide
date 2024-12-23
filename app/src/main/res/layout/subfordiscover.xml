@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <me.ccrama.redditslide.SpoilerRobotoTextView
+            <me.edgan.redditslide.SpoilerRobotoTextView
                 android:id="@+id/body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
                 android:textColor="?attr/fontColor"
                 android:textSize="14sp" />
 
-            <me.ccrama.redditslide.Views.CommentOverflow
+            <me.edgan.redditslide.Views.CommentOverflow
                 android:id="@+id/overflow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

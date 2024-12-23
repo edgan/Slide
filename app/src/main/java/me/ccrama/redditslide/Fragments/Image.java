@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Fragments;
+package me.edgan.redditslide.Fragments;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -13,8 +13,8 @@ import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
 
 
 /**

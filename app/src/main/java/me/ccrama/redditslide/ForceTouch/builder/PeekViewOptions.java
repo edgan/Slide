@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ForceTouch.builder;
+package me.edgan.redditslide.ForceTouch.builder;
 
 import android.graphics.Color;
 

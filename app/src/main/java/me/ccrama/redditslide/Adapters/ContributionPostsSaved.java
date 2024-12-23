@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import net.dean.jraw.models.Contribution;
 import net.dean.jraw.models.Submission;
@@ -6,10 +6,10 @@ import net.dean.jraw.paginators.UserSavedPaginator;
 
 import java.util.ArrayList;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.HasSeen;
-import me.ccrama.redditslide.PostMatch;
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.PostMatch;
+import me.edgan.redditslide.SettingValues;
 
 /**
  * Created by ccrama on 9/17/2015.

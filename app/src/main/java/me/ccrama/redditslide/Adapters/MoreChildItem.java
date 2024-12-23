@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import net.dean.jraw.models.CommentNode;
 import net.dean.jraw.models.MoreChildren;

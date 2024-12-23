@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -7,7 +7,7 @@ import android.os.Bundle;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.SettingValues;
 
 /**
  * Created by ccrama on 9/28/2015.

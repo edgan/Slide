@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Notifications;
+package me.edgan.redditslide.Notifications;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -33,12 +33,12 @@ import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Activities.DeleteFile;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.util.FileUtil;
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.Activities.DeleteFile;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.util.FileUtil;
+import me.edgan.redditslide.util.LogUtil;
 
 /**
  * Created by Carlos on 7/15/2016.

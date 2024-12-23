@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -19,10 +19,10 @@ import androidx.core.util.Consumer;
 import java.util.Locale;
 import java.util.Set;
 
-import me.ccrama.redditslide.Activities.BaseActivityAnim;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Visuals.Palette;
+import me.edgan.redditslide.Activities.BaseActivityAnim;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Visuals.Palette;
 
 /**
  * Created by l3d00m on 11/13/2015.

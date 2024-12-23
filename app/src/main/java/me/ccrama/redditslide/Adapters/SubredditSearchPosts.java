@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -17,11 +17,11 @@ import net.dean.jraw.paginators.TimePeriod;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import me.ccrama.redditslide.Activities.MultiredditOverview;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.PostMatch;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.util.SortingUtil;
+import me.edgan.redditslide.Activities.MultiredditOverview;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.PostMatch;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.util.SortingUtil;
 
 /**
  * Created by ccrama on 9/17/2015.

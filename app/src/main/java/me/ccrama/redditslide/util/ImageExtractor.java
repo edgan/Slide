@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 /**
  * Created by carlo_000 on 1/29/2016.

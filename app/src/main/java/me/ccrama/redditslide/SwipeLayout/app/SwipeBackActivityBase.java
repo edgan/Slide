@@ -1,6 +1,6 @@
-package me.ccrama.redditslide.SwipeLayout.app;
+package me.edgan.redditslide.SwipeLayout.app;
 
-import me.ccrama.redditslide.SwipeLayout.SwipeBackLayout;
+import me.edgan.redditslide.SwipeLayout.SwipeBackLayout;
 
 /**
  * @author Yrom

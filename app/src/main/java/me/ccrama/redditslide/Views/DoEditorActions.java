@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Views;
+package me.edgan.redditslide.Views;
 
 import android.app.Activity;
 import android.content.Context;
@@ -43,17 +43,17 @@ import java.util.Collections;
 import java.util.List;
 
 import gun0912.tedbottompicker.TedBottomPicker;
-import me.ccrama.redditslide.Activities.Draw;
-import me.ccrama.redditslide.Drafts;
-import me.ccrama.redditslide.ImgurAlbum.UploadImgur;
-import me.ccrama.redditslide.ImgurAlbum.UploadImgurAlbum;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.util.DisplayUtil;
-import me.ccrama.redditslide.util.KeyboardUtil;
-import me.ccrama.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.Activities.Draw;
+import me.edgan.redditslide.Drafts;
+import me.edgan.redditslide.ImgurAlbum.UploadImgur;
+import me.edgan.redditslide.ImgurAlbum.UploadImgurAlbum;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.util.DisplayUtil;
+import me.edgan.redditslide.util.KeyboardUtil;
+import me.edgan.redditslide.util.SubmissionParser;
 
 /**
  * Created by carlo_000 on 10/18/2015.

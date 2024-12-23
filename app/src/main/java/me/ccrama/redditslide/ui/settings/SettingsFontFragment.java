@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.ui.settings;
+package me.edgan.redditslide.ui.settings;
 
 import android.app.Activity;
 import android.view.Menu;
@@ -10,11 +10,11 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import com.devspark.robototextview.widget.RobotoRadioButton;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Visuals.FontPreferences;
-import me.ccrama.redditslide.Visuals.FontPreferences.FontTypeComment;
-import me.ccrama.redditslide.Visuals.FontPreferences.FontTypeTitle;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.Visuals.FontPreferences.FontTypeComment;
+import me.edgan.redditslide.Visuals.FontPreferences.FontTypeTitle;
 
 public class SettingsFontFragment {
 

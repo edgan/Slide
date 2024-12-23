@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,30 +25,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import me.ccrama.redditslide.Activities.Album;
-import me.ccrama.redditslide.Activities.AlbumPager;
-import me.ccrama.redditslide.Activities.CommentsScreen;
-import me.ccrama.redditslide.Activities.FullscreenVideo;
-import me.ccrama.redditslide.Activities.Gallery;
-import me.ccrama.redditslide.Activities.GalleryImage;
-import me.ccrama.redditslide.Activities.MediaView;
-import me.ccrama.redditslide.Activities.RedditGallery;
-import me.ccrama.redditslide.Activities.RedditGalleryPager;
-import me.ccrama.redditslide.Activities.Tumblr;
-import me.ccrama.redditslide.Activities.TumblrPager;
-import me.ccrama.redditslide.ContentType;
-import me.ccrama.redditslide.PostMatch;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SubmissionViews.PopulateSubmissionViewHolder;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.JsonUtil;
-import me.ccrama.redditslide.util.LinkUtil;
+import me.edgan.redditslide.Activities.Album;
+import me.edgan.redditslide.Activities.AlbumPager;
+import me.edgan.redditslide.Activities.CommentsScreen;
+import me.edgan.redditslide.Activities.FullscreenVideo;
+import me.edgan.redditslide.Activities.Gallery;
+import me.edgan.redditslide.Activities.GalleryImage;
+import me.edgan.redditslide.Activities.MediaView;
+import me.edgan.redditslide.Activities.RedditGallery;
+import me.edgan.redditslide.Activities.RedditGalleryPager;
+import me.edgan.redditslide.Activities.Tumblr;
+import me.edgan.redditslide.Activities.TumblrPager;
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.PostMatch;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SubmissionViews.PopulateSubmissionViewHolder;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.JsonUtil;
+import me.edgan.redditslide.util.LinkUtil;
 
-import static me.ccrama.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
+import static me.edgan.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
 
 public class GalleryView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final Gallery main;

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -18,12 +18,12 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.LinkUtil;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.LinkUtil;
 
 public class ReaderMode extends BaseActivityAnim {
     private       int    mSubredditColor;

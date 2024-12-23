@@ -1,5 +1,5 @@
 
-package me.ccrama.redditslide.ImgurAlbum;
+package me.edgan.redditslide.ImgurAlbum;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;

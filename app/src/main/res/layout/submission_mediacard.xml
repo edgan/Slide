@@ -24,13 +24,13 @@
             android:gravity="center"
             android:visibility="gone">
 
-            <me.ccrama.redditslide.Views.ExoVideoView
+            <me.edgan.redditslide.Views.ExoVideoView
                 android:id="@+id/gif"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true">
 
-            </me.ccrama.redditslide.Views.ExoVideoView>
+            </me.edgan.redditslide.Views.ExoVideoView>
 
             <FrameLayout
                 android:id="@+id/placeholder"
@@ -57,7 +57,7 @@
             android:scaleType="centerCrop"
             app:riv_corner_radius="2dp" />
 
-        <me.ccrama.redditslide.Views.SubsamplingScaleImageView
+        <me.edgan.redditslide.Views.SubsamplingScaleImageView
             android:id="@+id/submission_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
 
-        <me.ccrama.redditslide.Views.TitleTextView
+        <me.edgan.redditslide.Views.TitleTextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
             android:textColor="#bcffffff"
             android:textSize="14sp" />
 
-        <me.ccrama.redditslide.Views.RevealRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <me.edgan.redditslide.Views.RevealRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/desc">
@@ -234,6 +234,6 @@
                 android:tint="?attr/tintColor"
                 android:contentDescription="@string/btn_menu"
                 sothree:srcCompat="@drawable/ic_more_vert" />
-        </me.ccrama.redditslide.Views.RevealRelativeLayout>
+        </me.edgan.redditslide.Views.RevealRelativeLayout>
     </RelativeLayout>
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

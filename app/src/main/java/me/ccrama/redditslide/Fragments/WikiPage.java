@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Fragments;
+package me.edgan.redditslide.Fragments;
 
 import android.os.AsyncTask;
 import android.os.Build;
@@ -20,12 +20,12 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import java.lang.ref.WeakReference;
 
-import me.ccrama.redditslide.Activities.Wiki;
-import me.ccrama.redditslide.BuildConfig;
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.OpenRedditLink;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Visuals.Palette;
+import me.edgan.redditslide.Activities.Wiki;
+import me.edgan.redditslide.BuildConfig;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.OpenRedditLink;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Visuals.Palette;
 
 
 public class WikiPage extends Fragment {

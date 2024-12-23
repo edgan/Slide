@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.SubmissionViews;
+package me.edgan.redditslide.SubmissionViews;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -10,11 +10,11 @@ import net.dean.jraw.ApiException;
 import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.models.Submission;
 
-import me.ccrama.redditslide.Activities.MediaView;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Fragments.SubmissionsView;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.Activities.MediaView;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Fragments.SubmissionsView;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.util.LayoutUtils;
 
 /**
  * Created by TacoTheDank on 04/04/2021.

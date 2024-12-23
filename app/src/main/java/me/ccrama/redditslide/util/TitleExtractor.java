@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 /**
  * Created by ccrama on 4/10/2016.
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import me.ccrama.redditslide.Reddit;
+import me.edgan.redditslide.Reddit;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

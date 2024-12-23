@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,19 +25,19 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import java.util.Locale;
 
-import me.ccrama.redditslide.Adapters.ContributionAdapter;
-import me.ccrama.redditslide.Adapters.SubredditSearchPosts;
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Views.CatchStaggeredGridLayoutManager;
-import me.ccrama.redditslide.Views.PreCachingLayoutManager;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.handler.ToolbarScrollHideHandler;
-import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.LayoutUtils;
-import me.ccrama.redditslide.util.SortingUtil;
-import me.ccrama.redditslide.util.TimeUtils;
+import me.edgan.redditslide.Adapters.ContributionAdapter;
+import me.edgan.redditslide.Adapters.SubredditSearchPosts;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
+import me.edgan.redditslide.Views.PreCachingLayoutManager;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.handler.ToolbarScrollHideHandler;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.SortingUtil;
+import me.edgan.redditslide.util.TimeUtils;
 
 public class Search extends BaseActivityAnim {
 

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Widget;
+package me.edgan.redditslide.Widget;
 
 /**
  * Created by carlo_000 on 5/4/2016.
@@ -13,11 +13,11 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import me.ccrama.redditslide.Activities.OpenContent;
-import me.ccrama.redditslide.Activities.SetupWidget;
-import me.ccrama.redditslide.Activities.SubredditView;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Visuals.Palette;
+import me.edgan.redditslide.Activities.OpenContent;
+import me.edgan.redditslide.Activities.SetupWidget;
+import me.edgan.redditslide.Activities.SubredditView;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Visuals.Palette;
 
 public class SubredditWidgetProvider extends AppWidgetProvider {
     public static final String UPDATE_MEETING_ACTION = "android.appwidget.action.APPWIDGET_UPDATE";

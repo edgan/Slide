@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Toolbox;
+package me.edgan.redditslide.Toolbox;
 
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Reddit;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Reddit;
 
 /**
  * Main class for /r/toolbox functionality

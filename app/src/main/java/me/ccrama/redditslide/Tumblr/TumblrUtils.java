@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Tumblr;
+package me.edgan.redditslide.Tumblr;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.util.HttpUtil;
-import me.ccrama.redditslide.util.LogUtil;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.util.HttpUtil;
+import me.edgan.redditslide.util.LogUtil;
 import okhttp3.OkHttpClient;
 
 /**

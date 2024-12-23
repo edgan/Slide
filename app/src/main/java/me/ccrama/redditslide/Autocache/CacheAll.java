@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Autocache;
+package me.edgan.redditslide.Autocache;
 
 /**
  * Created by carlo_000 on 10/13/2015.
@@ -9,9 +9,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 
-import me.ccrama.redditslide.CommentCacheAsync;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.CommentCacheAsync;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.util.NetworkUtil;
 
 public class CacheAll extends BroadcastReceiver {
 

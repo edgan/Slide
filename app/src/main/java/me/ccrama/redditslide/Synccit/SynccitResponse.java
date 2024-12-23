@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Synccit;
+package me.edgan.redditslide.Synccit;
 
 /**
  * https://github.com/drakeapps/synccit#example-json-update-call

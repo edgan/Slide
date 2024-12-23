@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.content.Context;
 
@@ -7,9 +7,9 @@ import net.dean.jraw.models.Thumbnails;
 
 import java.util.List;
 
-import me.ccrama.redditslide.ContentType;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
 
 /**
  * Created by TacoTheDank on 12/11/2020.

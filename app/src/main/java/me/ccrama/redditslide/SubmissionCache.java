@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -20,14 +20,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.WeakHashMap;
 
-import me.ccrama.redditslide.Adapters.CommentAdapterHelper;
-import me.ccrama.redditslide.Toolbox.ToolboxUI;
-import me.ccrama.redditslide.Views.RoundedBackgroundSpan;
-import me.ccrama.redditslide.Visuals.FontPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.MiscUtil;
-import me.ccrama.redditslide.util.TimeUtils;
+import me.edgan.redditslide.Adapters.CommentAdapterHelper;
+import me.edgan.redditslide.Toolbox.ToolboxUI;
+import me.edgan.redditslide.Views.RoundedBackgroundSpan;
+import me.edgan.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.MiscUtil;
+import me.edgan.redditslide.util.TimeUtils;
 
 /**
  * Created by carlo_000 on 4/22/2016.

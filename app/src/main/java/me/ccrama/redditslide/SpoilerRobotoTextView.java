@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.app.Activity;
 import android.content.Context;
@@ -64,31 +64,31 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import me.ccrama.redditslide.Activities.Album;
-import me.ccrama.redditslide.Activities.AlbumPager;
-import me.ccrama.redditslide.Activities.MediaView;
-import me.ccrama.redditslide.Activities.TumblrPager;
-import me.ccrama.redditslide.ForceTouch.PeekView;
-import me.ccrama.redditslide.ForceTouch.PeekViewActivity;
-import me.ccrama.redditslide.ForceTouch.builder.Peek;
-import me.ccrama.redditslide.ForceTouch.builder.PeekViewOptions;
-import me.ccrama.redditslide.ForceTouch.callback.OnButtonUp;
-import me.ccrama.redditslide.ForceTouch.callback.OnPop;
-import me.ccrama.redditslide.ForceTouch.callback.OnRemove;
-import me.ccrama.redditslide.ForceTouch.callback.SimpleOnPeek;
-import me.ccrama.redditslide.SubmissionViews.OpenVRedditTask;
-import me.ccrama.redditslide.Views.CustomQuoteSpan;
-import me.ccrama.redditslide.Views.PeekMediaView;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.handler.TextViewLinkHandler;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.ClipboardUtil;
-import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.LinkUtil;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.GifDrawable;
-import me.ccrama.redditslide.util.GifUtils;
-import me.ccrama.redditslide.util.AnimatedImageSpan;
+import me.edgan.redditslide.Activities.Album;
+import me.edgan.redditslide.Activities.AlbumPager;
+import me.edgan.redditslide.Activities.MediaView;
+import me.edgan.redditslide.Activities.TumblrPager;
+import me.edgan.redditslide.ForceTouch.PeekView;
+import me.edgan.redditslide.ForceTouch.PeekViewActivity;
+import me.edgan.redditslide.ForceTouch.builder.Peek;
+import me.edgan.redditslide.ForceTouch.builder.PeekViewOptions;
+import me.edgan.redditslide.ForceTouch.callback.OnButtonUp;
+import me.edgan.redditslide.ForceTouch.callback.OnPop;
+import me.edgan.redditslide.ForceTouch.callback.OnRemove;
+import me.edgan.redditslide.ForceTouch.callback.SimpleOnPeek;
+import me.edgan.redditslide.SubmissionViews.OpenVRedditTask;
+import me.edgan.redditslide.Views.CustomQuoteSpan;
+import me.edgan.redditslide.Views.PeekMediaView;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.handler.TextViewLinkHandler;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.ClipboardUtil;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.GifDrawable;
+import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.AnimatedImageSpan;
 
 /**
  * Created by carlo_000 on 1/11/2016.

@@ -1,9 +1,9 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
 import android.widget.TextView;
 
-import me.ccrama.redditslide.R;
+import me.edgan.redditslide.R;
 
 
 /**

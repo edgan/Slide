@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -54,20 +54,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Fragments.ContributionsView;
-import me.ccrama.redditslide.Fragments.HistoryView;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.UserTags;
-import me.ccrama.redditslide.Visuals.ColorPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.LayoutUtils;
-import me.ccrama.redditslide.util.LinkUtil;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.SortingUtil;
-import me.ccrama.redditslide.util.TimeUtils;
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Fragments.ContributionsView;
+import me.edgan.redditslide.Fragments.HistoryView;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.UserTags;
+import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.SortingUtil;
+import me.edgan.redditslide.util.TimeUtils;
+import me.edgan.redditslide.SettingValues;
 
 import uz.shift.colorpicker.LineColorPicker;
 import uz.shift.colorpicker.OnColorChangedListener;

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide;
+package me.edgan.redditslide;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,9 +23,9 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.UUID;
 
-import me.ccrama.redditslide.Constants;
-import me.ccrama.redditslide.util.LogUtil;
-import me.ccrama.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.NetworkUtil;
 import okhttp3.Protocol;
 
 /**
@@ -64,7 +64,7 @@ public class Authentication {
             httpAdapter = new OkHttpAdapter(Reddit.client, Protocol.HTTP_2);
             isLoggedIn = false;
             reddit = new RedditClient(
-                    UserAgent.of("android:me.ccrama.RedditSlide:v" + BuildConfig.VERSION_NAME),
+                    UserAgent.of("android:me.edgan.RedditSlide:v" + BuildConfig.VERSION_NAME),
                     httpAdapter);
             reddit.setRetryLimit(2);
             if (BuildConfig.DEBUG) reddit.setLoggingMode(LoggingMode.ALWAYS);
@@ -96,7 +96,7 @@ public class Authentication {
             hasDone = true;
             isLoggedIn = false;
             reddit = new RedditClient(
-                    UserAgent.of("android:me.ccrama.RedditSlide:v" + BuildConfig.VERSION_NAME));
+                    UserAgent.of("android:me.edgan.RedditSlide:v" + BuildConfig.VERSION_NAME));
             reddit.setLoggingMode(LoggingMode.ALWAYS);
             didOnline = true;
 

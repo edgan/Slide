@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package me.ccrama.redditslide.util;
+package me.edgan.redditslide.util;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,9 +26,9 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.ccrama.redditslide.SettingValues;
+import me.edgan.redditslide.SettingValues;
 
-import static me.ccrama.redditslide.ui.settings.SettingsHandlingFragment.LinkHandlingMode;
+import static me.edgan.redditslide.ui.settings.SettingsHandlingFragment.LinkHandlingMode;
 
 /**
  * Helper class for Custom Tabs.

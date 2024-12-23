@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 /**
  * Created by ccrama on 3/22/2015.
@@ -46,27 +46,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Activities.Inbox;
-import me.ccrama.redditslide.Activities.Profile;
-import me.ccrama.redditslide.Activities.SendMessage;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.DataShare;
-import me.ccrama.redditslide.Drafts;
-import me.ccrama.redditslide.OpenRedditLink;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.UserSubscriptions;
-import me.ccrama.redditslide.UserTags;
-import me.ccrama.redditslide.Views.DoEditorActions;
-import me.ccrama.redditslide.Views.RoundedBackgroundSpan;
-import me.ccrama.redditslide.Visuals.FontPreferences;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.BlendModeUtil;
-import me.ccrama.redditslide.util.ClipboardUtil;
-import me.ccrama.redditslide.util.CompatUtil;
-import me.ccrama.redditslide.util.LayoutUtils;
-import me.ccrama.redditslide.util.SubmissionParser;
-import me.ccrama.redditslide.util.TimeUtils;
+import me.edgan.redditslide.Activities.Inbox;
+import me.edgan.redditslide.Activities.Profile;
+import me.edgan.redditslide.Activities.SendMessage;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.DataShare;
+import me.edgan.redditslide.Drafts;
+import me.edgan.redditslide.OpenRedditLink;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.UserTags;
+import me.edgan.redditslide.Views.DoEditorActions;
+import me.edgan.redditslide.Views.RoundedBackgroundSpan;
+import me.edgan.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.ClipboardUtil;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.util.TimeUtils;
 
 
 public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>

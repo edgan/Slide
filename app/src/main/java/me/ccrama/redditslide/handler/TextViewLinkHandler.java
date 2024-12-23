@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.handler;
+package me.edgan.redditslide.handler;
 
 import android.os.Handler;
 import android.text.Layout;
@@ -9,9 +9,9 @@ import android.text.style.URLSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import me.ccrama.redditslide.ClickableText;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.ClickableText;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SpoilerRobotoTextView;
 
 public class TextViewLinkHandler extends BaseMovementMethod {
     private final ClickableText clickableText;

@@ -28,7 +28,7 @@
             cardview:srcCompat="@drawable/ic_thumb_up"
             cardview:tint="?attr/tintColor" />
 
-        <me.ccrama.redditslide.SpoilerRobotoTextView
+        <me.edgan.redditslide.SpoilerRobotoTextView
             android:id="@+id/body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

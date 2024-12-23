@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Activities;
+package me.edgan.redditslide.Activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -22,20 +22,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import me.ccrama.redditslide.Adapters.MultiredditPosts;
-import me.ccrama.redditslide.Adapters.SubmissionDisplay;
-import me.ccrama.redditslide.Adapters.SubredditPosts;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.Fragments.BlankFragment;
-import me.ccrama.redditslide.Fragments.CommentPage;
-import me.ccrama.redditslide.LastComments;
-import me.ccrama.redditslide.OfflineSubreddit;
-import me.ccrama.redditslide.PostLoader;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.Reddit;
-import me.ccrama.redditslide.SettingValues;
-import me.ccrama.redditslide.Visuals.Palette;
-import me.ccrama.redditslide.util.KeyboardUtil;
+import me.edgan.redditslide.Adapters.MultiredditPosts;
+import me.edgan.redditslide.Adapters.SubmissionDisplay;
+import me.edgan.redditslide.Adapters.SubredditPosts;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Fragments.BlankFragment;
+import me.edgan.redditslide.Fragments.CommentPage;
+import me.edgan.redditslide.LastComments;
+import me.edgan.redditslide.OfflineSubreddit;
+import me.edgan.redditslide.PostLoader;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.KeyboardUtil;
 
 /**
  * This activity is responsible for the view when clicking on a post, showing the post and its

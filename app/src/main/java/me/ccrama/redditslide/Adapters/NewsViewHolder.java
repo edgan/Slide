@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -6,9 +6,9 @@ import android.widget.RelativeLayout;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.SpoilerRobotoTextView;
-import me.ccrama.redditslide.SubmissionViews.HeaderImageLinkView;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.SubmissionViews.HeaderImageLinkView;
 
 /**
  * Created by ccrama on 11/19/2017.

@@ -1,4 +1,4 @@
-package me.ccrama.redditslide.Adapters;
+package me.edgan.redditslide.Adapters;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -9,10 +9,10 @@ import com.google.android.material.snackbar.Snackbar;
 import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.models.Submission;
 
-import me.ccrama.redditslide.ActionStates;
-import me.ccrama.redditslide.Authentication;
-import me.ccrama.redditslide.R;
-import me.ccrama.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.ActionStates;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.util.LayoutUtils;
 
 public class AsyncSave extends AsyncTask<Submission, Void, Void> {
     final Activity mContext;
