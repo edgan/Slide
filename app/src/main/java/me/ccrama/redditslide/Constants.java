@@ -6,6 +6,8 @@ import me.edgan.redditslide.util.DisplayUtil;
  * Constants used throughout the app
  */
 public class Constants {
+    public static final int REQUEST_CODE_MANAGE_EXTERNAL_STORAGE = 1001;
+
     public static final int PAGINATOR_POST_LIMIT = 25;
     /** Maximum posts to request from Reddit **/
 
