@@ -49,7 +49,7 @@ Google Play Services is used for backing up app settings to Google Drive.
 Backup data is stored in your personal Google Drive account. Access to backups
 is controlled by your Google account settings. This feature is subject to
 Google's
-[Privacy Policy]([Privacy Policy](https://www.reddit.com/policies/privacy-policy)
+[Privacy Policy](https://www.reddit.com/policies/privacy-policy)
 and Terms of Service.
 
 ### Tumblr
