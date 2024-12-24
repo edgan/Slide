@@ -24,7 +24,7 @@ the [Google Play Store](https://play.google.com/store/games) and
 [F-Droid](https://f-droid.org/) in the future.
 
 There is an active community for Slide on the
-[/r/slideeddit](https://www.reddit.com/r/slidereddit) subreddit,
+[/r/slidereddit](https://www.reddit.com/r/slidereddit) subreddit,
 which anybody is welcome to join.
 
 ### Issues
