@@ -18,7 +18,7 @@ public class StartOnBoot extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
             /* Setting the alarm here */
             Intent alarmIntent = new Intent(context, NotificationJobScheduler.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
 
             AlarmManager manager = ContextCompat.getSystemService(context, AlarmManager.class);
             int interval = 8000;

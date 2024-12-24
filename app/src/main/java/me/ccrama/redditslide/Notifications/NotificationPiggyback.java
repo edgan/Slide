@@ -29,7 +29,7 @@ public class NotificationPiggyback extends NotificationListenerService {
             }
             Intent alarmIntent = new Intent(getApplicationContext(), CheckForMailSingle.class);
             PendingIntent pendingIntent =
-                    PendingIntent.getBroadcast(getApplicationContext(), 0, alarmIntent, 0);
+                    PendingIntent.getBroadcast(getApplicationContext(), 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
             AlarmManager manager =
                     ContextCompat.getSystemService(getApplication(), AlarmManager.class);
             if (manager != null) {

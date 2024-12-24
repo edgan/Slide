@@ -83,7 +83,7 @@ public class CheckForMailSingle extends BroadcastReceiver {
                 notificationIntent.setFlags(
                         Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-                PendingIntent intent = PendingIntent.getActivity(c, 0, notificationIntent, 0);
+                PendingIntent intent = PendingIntent.getActivity(c, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
                 //Intent for mark as read notification action
                 PendingIntent readPI = MarkAsReadService.getMarkAsReadIntent(2, c,
@@ -163,7 +163,7 @@ public class CheckForMailSingle extends BroadcastReceiver {
 
                     PendingIntent openPi =
                             PendingIntent.getActivity(c, 3 + (int) message.getCreated().getTime(),
-                                    openPIBase, 0);
+                                    openPIBase, PendingIntent.FLAG_IMMUTABLE);
 
                     String unescape = StringEscapeUtils.unescapeHtml4(message.getDataNode().get("body_html").asText());
                     notiStyle.bigText(Html.fromHtml(unescape, Html.FROM_HTML_MODE_LEGACY));

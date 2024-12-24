@@ -90,7 +90,7 @@ public class GifUtils {
                     public void onScanCompleted(String path, Uri uri) {
                         final Intent shareIntent = FileUtil.getFileIntent(f, new Intent(Intent.ACTION_VIEW), c);
                         PendingIntent contentIntent =
-                                PendingIntent.getActivity(c, 0, shareIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                                PendingIntent.getActivity(c, 0, shareIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
 
 
                         Notification notif =

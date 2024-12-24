@@ -109,7 +109,7 @@ public class CheckForMail extends BroadcastReceiver {
 
                 Intent notificationIntent = new Intent(c, Inbox.class);
                 notificationIntent.putExtra(Inbox.EXTRA_UNREAD, true);
-                PendingIntent intent = PendingIntent.getActivity(c, 0, notificationIntent, 0);
+                PendingIntent intent = PendingIntent.getActivity(c, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
                 //Intent for mark as read notification action
                 PendingIntent readPI = MarkAsReadService.getMarkAsReadIntent(2, c, messageNames);
@@ -197,7 +197,7 @@ public class CheckForMail extends BroadcastReceiver {
 
                         PendingIntent openPi =
                                 PendingIntent.getActivity(c, 3 + (int) m.getCreated().getTime(),
-                                        openPIBase, 0);
+                                        openPIBase, PendingIntent.FLAG_IMMUTABLE);
 
                         String unescape = StringEscapeUtils.unescapeHtml4(m.getDataNode().get("body_html").asText());
                         notiStyle.bigText(Html.fromHtml(unescape, Html.FROM_HTML_MODE_LEGACY));
@@ -265,7 +265,7 @@ public class CheckForMail extends BroadcastReceiver {
               //  notificationIntent.setFlags(
               //          Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-                PendingIntent intent = PendingIntent.getActivity(c, 0, notificationIntent, 0);
+                PendingIntent intent = PendingIntent.getActivity(c, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
                 {
                     int amount = messages.size();
@@ -382,12 +382,12 @@ public class CheckForMail extends BroadcastReceiver {
                         readIntent.setAction(s.getTitle());
                         PendingIntent readPI = PendingIntent.getActivity(c,
                                 (int) (s.getCreated().getTime() / 1000), readIntent,
-                                0);
+                                PendingIntent.FLAG_IMMUTABLE);
 
                         Intent cancelIntent = new Intent(c, CancelSubNotifs.class);
                         cancelIntent.putExtra(CancelSubNotifs.EXTRA_SUB, s.getSubredditName());
                         PendingIntent cancelPi = PendingIntent.getActivity(c,  (int)s.getCreated().getTime() / 1000, cancelIntent,
-                                0);
+                                PendingIntent.FLAG_IMMUTABLE);
 
 
                         NotificationCompat.BigTextStyle notiStyle =

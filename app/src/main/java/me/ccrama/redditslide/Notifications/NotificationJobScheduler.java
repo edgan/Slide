@@ -21,7 +21,7 @@ public class NotificationJobScheduler {
 
     public NotificationJobScheduler(Context context) {
         final Intent alarmIntent = new Intent(context, CheckForMail.class);
-        pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+        pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
         manager = ContextCompat.getSystemService(context, AlarmManager.class);
         start();
     }

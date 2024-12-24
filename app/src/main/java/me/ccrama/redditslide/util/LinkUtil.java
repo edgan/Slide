@@ -70,7 +70,7 @@ public class LinkUtil {
             @NonNull Activity contextActivity, @NonNull String packageName) {
         Intent intent = new Intent(contextActivity, MakeExternal.class);
         intent.putExtra(LinkUtil.EXTRA_URL, url);
-        PendingIntent pendingIntent = PendingIntent.getActivity(contextActivity, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(contextActivity, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         CustomTabsIntent.Builder builder =
                 new CustomTabsIntent.Builder(getSession())

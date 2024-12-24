@@ -140,7 +140,7 @@ public class SubredditWidgetProvider extends AppWidgetProvider {
             refreshIntent.setData(data);
             refreshIntent.setAction(SUBMISSION);
             refreshIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            PendingIntent pendingRefresh = PendingIntent.getBroadcast(context, 0, refreshIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            PendingIntent pendingRefresh = PendingIntent.getBroadcast(context, 0, refreshIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
             rv.setOnClickPendingIntent(R.id.open, pendingRefresh);
         }
         {
@@ -148,7 +148,7 @@ public class SubredditWidgetProvider extends AppWidgetProvider {
             refreshIntent.setAction(REFRESH);
             refreshIntent.setData(data);
             refreshIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            PendingIntent pendingRefresh = PendingIntent.getBroadcast(context, 0, refreshIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            PendingIntent pendingRefresh = PendingIntent.getBroadcast(context, 0, refreshIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
             rv.setOnClickPendingIntent(R.id.refresh, pendingRefresh);
         }
         // The empty view is displayed when the collection has no items.
@@ -161,7 +161,7 @@ public class SubredditWidgetProvider extends AppWidgetProvider {
         // Do additional processing specific to this app widget...
         //
         final Intent activityIntent = new Intent(context, OpenContent.class);
-        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, activityIntent, 0);
+        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, activityIntent, PendingIntent.FLAG_IMMUTABLE);
         rv.setPendingIntentTemplate(R.id.list_view, pendingIntent);
 
         appWidgetManager.updateAppWidget(appWidgetId, rv);
@@ -207,7 +207,7 @@ public class SubredditWidgetProvider extends AppWidgetProvider {
             refreshIntent.setAction(SUBMISSION);
             refreshIntent.setData(data);
             refreshIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            PendingIntent pendingRefresh = PendingIntent.getBroadcast(context, 0, refreshIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            PendingIntent pendingRefresh = PendingIntent.getBroadcast(context, 0, refreshIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
             rv.setOnClickPendingIntent(R.id.open, pendingRefresh);
         }
         {
@@ -215,7 +215,7 @@ public class SubredditWidgetProvider extends AppWidgetProvider {
             refreshIntent.setAction(REFRESH);
             refreshIntent.setData(data);
             refreshIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-            PendingIntent pendingRefresh = PendingIntent.getBroadcast(context, 0, refreshIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            PendingIntent pendingRefresh = PendingIntent.getBroadcast(context, 0, refreshIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
             rv.setOnClickPendingIntent(R.id.refresh, pendingRefresh);
         }
         // The empty view is displayed when the collection has no items.
@@ -228,7 +228,7 @@ public class SubredditWidgetProvider extends AppWidgetProvider {
         // Do additional processing specific to this app widget...
         //
         final Intent activityIntent = new Intent(context, OpenContent.class);
-        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, activityIntent, 0);
+        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, activityIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_IMMUTABLE);
         rv.setPendingIntentTemplate(R.id.list_view, pendingIntent);
 
         appWidgetManager.updateAppWidget(appWidgetId, rv);

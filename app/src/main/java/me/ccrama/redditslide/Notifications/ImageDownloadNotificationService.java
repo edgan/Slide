@@ -248,7 +248,7 @@ public class ImageDownloadNotificationService extends Service {
 
                                 pContentIntent =
                                         PendingIntent.getActivity(getApplicationContext(), id,
-                                                shareIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                                                shareIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
                             }
 
                             {
@@ -266,7 +266,7 @@ public class ImageDownloadNotificationService extends Service {
 
                                 pEditIntent =
                                         PendingIntent.getActivity(getApplicationContext(), id + 1,
-                                                shareIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                                                shareIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
                             }
 
                             {
@@ -290,7 +290,7 @@ public class ImageDownloadNotificationService extends Service {
                                         PendingIntent.getActivity(getApplicationContext(), id + 2,
                                                 Intent.createChooser(shareIntent,
                                                         getString(R.string.misc_img_share)),
-                                                PendingIntent.FLAG_CANCEL_CURRENT);
+                                                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
                             }
 
                             {

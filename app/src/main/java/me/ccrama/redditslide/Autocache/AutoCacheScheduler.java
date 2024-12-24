@@ -22,7 +22,7 @@ public class AutoCacheScheduler {
 
     public AutoCacheScheduler(Context context) {
         final Intent alarmIntent = new Intent(context, CacheAll.class);
-        pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+        pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
         manager = ContextCompat.getSystemService(context, AlarmManager.class);
         start();
     }

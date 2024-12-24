@@ -324,7 +324,7 @@ public class MediaView extends FullScreenActivity
                                         PendingIntent contentIntent =
                                                 PendingIntent.getActivity(MediaView.this, 0,
                                                         shareIntent,
-                                                        PendingIntent.FLAG_CANCEL_CURRENT);
+                                                        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
 
 
                                         Notification notif = new NotificationCompat.Builder(

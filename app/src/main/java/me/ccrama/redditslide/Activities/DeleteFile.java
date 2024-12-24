@@ -27,7 +27,7 @@ public class DeleteFile extends Activity {
         Intent intent = new Intent(context, DeleteFile.class);
         intent.putExtra(NOTIFICATION_ID , notificationId - 3);
         intent.putExtra(PATH, toDelete);
-        return PendingIntent.getActivity(context, notificationId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        return PendingIntent.getActivity(context, notificationId, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     @Override
