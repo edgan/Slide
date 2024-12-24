@@ -249,8 +249,6 @@ public class Album extends FullScreenActivity implements FolderChooserDialogCrea
             ((Album) getActivity()).url =
                     getActivity().getIntent().getExtras().getString(EXTRA_URL, "");
 
-            ((BaseActivity) getActivity()).setShareUrl(((Album) getActivity()).url);
-
             new LoadIntoRecycler(((Album) getActivity()).url, getActivity()).executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR);
             ((Album) getActivity()).mToolbar = rootView.findViewById(R.id.toolbar);

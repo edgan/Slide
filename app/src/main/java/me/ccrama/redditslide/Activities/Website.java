@@ -279,8 +279,6 @@ public class Website extends BaseActivityAnim {
                         if (getSupportActionBar() != null) {
                             getSupportActionBar().setTitle(title);
 
-                            setShareUrl(url);
-
                             if (url.contains("/")) {
                                 getSupportActionBar().setSubtitle(getDomainName(url));
                             }

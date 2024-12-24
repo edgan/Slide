@@ -28,7 +28,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdk 31
+    compileSdk 34
     namespace "me.edgan.redditslide"
 
 
@@ -126,6 +126,7 @@ android {
     }
 
     buildFeatures {
+        dataBinding true
         viewBinding true
     }
 }
@@ -153,7 +154,7 @@ dependencies {
 
 /** Custom **/
     implementation 'com.github.edgan:JRAW:ac8f33e1a7'
-    implementation 'com.github.Haptic-Apps:TedBottomPicker:496623c9b6'
+    implementation 'io.github.ParkSangGwon:tedimagepicker:1.6.1'
     def commonmarkVersion = '0ebc0749c7'
     implementation "com.github.Haptic-Apps.commonmark-java:commonmark:$commonmarkVersion"
     implementation "com.github.Haptic-Apps.commonmark-java:commonmark-ext-gfm-strikethrough:$commonmarkVersion"
@@ -174,7 +175,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
     implementation "androidx.concurrent:concurrent-futures:1.1.0"
     implementation "androidx.lifecycle:lifecycle-runtime:2.5.1"
-
+    implementation "androidx.databinding:databinding-runtime:8.7.3"
 /** ExoPlayer **/
     // Application level media player
     // Cannot update beyond this point: extension's minimum SDK version is 21 in 2.15.0 and above

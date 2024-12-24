@@ -52,8 +52,6 @@ public class Wiki extends BaseActivityAnim implements WikiPage.WikiPageListener 
 
         subreddit = getIntent().getExtras().getString(EXTRA_SUBREDDIT, "");
 
-        setShareUrl("https://reddit.com/r/" + subreddit + "/wiki/");
-
         applyColorTheme(subreddit);
         createCustomCss();
         createCustomJavaScript();

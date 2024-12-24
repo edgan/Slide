@@ -237,8 +237,6 @@ public class Tumblr extends FullScreenActivity implements FolderChooserDialogCre
             ((Tumblr) getActivity()).url =
                     getActivity().getIntent().getExtras().getString(EXTRA_URL, "");
 
-            ((BaseActivity) getActivity()).setShareUrl(((Tumblr) getActivity()).url);
-
             new LoadIntoRecycler(((Tumblr) getActivity()).url, getActivity()).executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR);
             ((Tumblr) getActivity()).mToolbar = rootView.findViewById(R.id.toolbar);

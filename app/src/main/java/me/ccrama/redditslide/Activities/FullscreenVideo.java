@@ -66,7 +66,6 @@ public class FullscreenVideo extends FullScreenActivity {
                 dat = "https:" + dat;
             }
             LogUtil.v(dat);
-            setShareUrl(dat);
             v.loadUrl(dat);
             if ((dat.contains("youtube.co" ) || dat.contains("youtu.be")) && !Reddit.appRestart.contains("showYouTubePopup")) {
                 new AlertDialog.Builder(FullscreenVideo.this)

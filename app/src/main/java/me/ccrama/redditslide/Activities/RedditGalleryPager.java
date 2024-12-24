@@ -159,7 +159,6 @@ public class RedditGalleryPager extends FullScreenActivity
         adapterPosition = getIntent().getIntExtra(MediaView.ADAPTER_POSITION, -1);
 
         String url = getIntent().getExtras().getString("url", "");
-        setShareUrl(url);
 
         if (!Reddit.appRestart.contains("tutorialSwipe")) {
             startActivityForResult(new Intent(this, SwipeTutorial.class), 3);

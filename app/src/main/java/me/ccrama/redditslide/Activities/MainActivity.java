@@ -406,33 +406,6 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (!Environment.isExternalStorageManager()) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                intent.setData(Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, Constants.REQUEST_CODE_MANAGE_EXTERNAL_STORAGE);
-            }
-        } else {
-            requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-    }
-
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new RequestPermission(), isGranted -> {
-                if (!isGranted) {
-                    runOnUiThread(() ->
-                            new AlertDialog.Builder(MainActivity.this)
-                                    .setTitle(R.string.err_permission)
-                                    .setMessage(R.string.err_permission_msg)
-                                    .setPositiveButton(R.string.btn_yes, (dialog, which) ->
-                                            requestPermission())
-                                    .setNegativeButton(R.string.btn_no, (dialog, which) ->
-                                            dialog.dismiss())
-                                    .show());
-                }
-            });
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -765,10 +738,6 @@ public class MainActivity extends BaseActivity
             Slide.hasStarted = true;
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            requestPermission();
-        }
         boolean first = false;
         if (Reddit.colors != null && !Reddit.colors.contains("firstStart53")) {
             new AlertDialog.Builder(this)

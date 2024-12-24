@@ -560,7 +560,6 @@ public class MediaView extends FullScreenActivity
             finish();
             return;
         }
-        setShareUrl(contentUrl);
 
         if (contentUrl.contains("reddituploads.com")) {
             contentUrl = CompatUtil.fromHtml(contentUrl).toString();

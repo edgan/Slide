@@ -243,8 +243,6 @@ public class RedditGallery extends FullScreenActivity implements FolderChooserDi
             galleryActivity.images = (ArrayList<GalleryImage>)
                     getActivity().getIntent().getSerializableExtra(RedditGallery.GALLERY_URLS);
 
-            ((BaseActivity) getActivity()).setShareUrl(galleryActivity.url);
-
             galleryActivity.mToolbar = rootView.findViewById(R.id.toolbar);
             galleryActivity.mToolbar.setTitle(R.string.type_album);
             ToolbarColorizeHelper.colorizeToolbar(galleryActivity.mToolbar, Color.WHITE,

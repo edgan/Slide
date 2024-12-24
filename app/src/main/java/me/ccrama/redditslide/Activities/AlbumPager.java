@@ -179,7 +179,6 @@ public class AlbumPager extends FullScreenActivity
         adapterPosition = getIntent().getIntExtra(MediaView.ADAPTER_POSITION, -1);
 
         String url = getIntent().getExtras().getString("url", "");
-        setShareUrl(url);
         pagerLoad = new LoadIntoPager(url, this);
         pagerLoad.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 

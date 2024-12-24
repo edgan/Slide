@@ -170,10 +170,6 @@ public class SubredditPosts implements PostLoader {
                 currentid = 0;
                 OfflineSubreddit.currentid = currentid;
 
-                if (c instanceof BaseActivity) {
-                    ((BaseActivity) c).setShareUrl("https://reddit.com/r/" + subreddit);
-                }
-
                 if (subreddit.equals("random") || subreddit.equals("myrandom") || subreddit.equals(
                         "randnsfw")) {
                     subredditRandom = submissions.get(0).getSubredditName();

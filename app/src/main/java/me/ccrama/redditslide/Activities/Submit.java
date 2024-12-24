@@ -43,8 +43,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Collections;
 
-import gun0912.tedbottompicker.TedBottomPicker;
+import gun0912.tedimagepicker.builder.TedImagePicker;
+import gun0912.tedimagepicker.builder.listener.OnSelectedListener;
+
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Drafts;
 import me.edgan.redditslide.Flair.RichFlair;
@@ -280,15 +283,15 @@ public class Submit extends BaseActivity {
         findViewById(R.id.selImage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TedBottomPicker tedBottomPicker =
-                        new TedBottomPicker.Builder(Submit.this).setOnImageSelectedListener(
-                                Submit.this::handleImageIntent)
-                                .setLayoutResource(R.layout.image_sheet_dialog)
-                                .setTitle("Choose a photo")
-                                .create();
-
-                tedBottomPicker.show(getSupportFragmentManager());
-                KeyboardUtil.hideKeyboard(Submit.this, findViewById(R.id.bodytext).getWindowToken(), 0);
+                findViewById(R.id.selImage).setOnClickListener(v -> {
+                    TedImagePicker.with(Submit.this)
+                            .title("Choose a photo")
+                            .start(uri -> {
+                                List<Uri> uris = Collections.singletonList(uri);
+                                handleImageIntent(uris);
+                                KeyboardUtil.hideKeyboard(Submit.this, findViewById(R.id.bodytext).getWindowToken(), 0);
+                            });
+                });
             }
         });
 

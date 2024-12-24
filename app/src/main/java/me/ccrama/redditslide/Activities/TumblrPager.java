@@ -173,7 +173,6 @@ public class TumblrPager extends FullScreenActivity
         adapterPosition = getIntent().getIntExtra(MediaView.ADAPTER_POSITION, -1);
 
         String url = getIntent().getExtras().getString("url", "");
-        setShareUrl(url);
         new LoadIntoPager(url, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         if (!Reddit.appRestart.contains("tutorialSwipe")) {

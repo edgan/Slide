@@ -215,9 +215,6 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
             mPage.resetScroll(true);
         }
-        if (mContext instanceof BaseActivity) {
-            ((BaseActivity) mContext).setShareUrl("https://reddit.com" + submission.getPermalink());
-        }
     }
 
     @Override
@@ -1013,13 +1010,6 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             setCommentStateUnhighlighted(currentlySelected, currentBaseNode, true);
         }
 
-        if (mContext instanceof BaseActivity) {
-            ((BaseActivity) mContext).setShareUrl("https://reddit.com"
-                    + submission.getPermalink()
-                    + n.getFullName()
-                    + "?context=3");
-        }
-
         // If a comment is hidden and (Swap long press == true), then a single click will un-hide the comment
         // and expand to show all children comments
         if (SettingValues.swap
@@ -1572,10 +1562,6 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         if (view != null) {
                             KeyboardUtil.hideKeyboard(mContext, view.getWindowToken(), 0);
                         }
-                        if (mContext instanceof BaseActivity) {
-                            ((BaseActivity) mContext).setShareUrl(
-                                    "https://reddit.com" + submission.getPermalink());
-                        }
 
                         setCommentStateUnhighlighted(holder, comment, baseNode, true);
 
@@ -1583,10 +1569,6 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .setNegativeButton(R.string.btn_no, null)
                     .show();
         } else {
-            if (mContext instanceof BaseActivity) {
-                ((BaseActivity) mContext).setShareUrl(
-                        "https://freddit.com" + submission.getPermalink());
-            }
             currentlySelected = null;
             currentSelectedItem = "";
             if (animate) {

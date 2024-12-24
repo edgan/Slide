@@ -150,7 +150,7 @@ public class FolderChooserDialogCreate extends DialogFragment implements Materia
                     } else {
                         final String msg = "Unable to create folder "
                                 + newFile.getAbsolutePath()
-                                + ", make sure you have the MANAGE_EXTERNAL_STORAGE permission or root permissions.";
+                                + ", make sure you have the READ_MEDIA_VISUAL_USER_SELECTED permission or root permissions.";
                         Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
                     }
                 })
