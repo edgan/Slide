@@ -765,15 +765,6 @@
     <string name="title_inbox">受信箱</string>
     <string name="title_theme_settings">テーマ</string>
     <string name="title_create_multi">Multireddit を作成</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">この金額で&#8230;</string>
-    <string name="donate_info_student">私は学生の開発者です。あなたの寛大な寄付に非常に感謝しています! (無料の) Slide を作るために本当に役立ちました :)</string>
-    <string name="donate_btn">寄付</string>
-    <string name="donate_amount_ads1">省きます</string>
-    <string name="donate_amount_ads2">広告が表示されるのを</string>
-    <string name="donate_amount_hours1">サポートします</string>
-    <string name="donate_amount_hours2">時間の開発期間</string>
-    <string name="donate_title">Slide for Reddit のサポート</string>
     <!-- Offline mode -->
     <string name="offline_msg">それを行うには、オンラインにして subreddit を更新してください</string>
     <string name="offline_last_update">最終更新 %1$s</string>

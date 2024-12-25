@@ -561,15 +561,6 @@
     <string name="title_inbox">Inbox</string>
     <string name="title_theme_settings">Thema</string>
     <string name="title_create_multi">Creëer een multireddit</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Dit bedrag&#8230;</string>
-    <string name="donate_info_student">Ik ben een student-ontwikkelaar, en ben zeer dankbaar voor de gulle donaties! De donaties hebben geholpen om een gratis Slide mogelijk te maken!</string>
-    <string name="donate_btn">Doneren</string>
-    <string name="donate_amount_ads1">Voorkomt</string>
-    <string name="donate_amount_ads2">weergegeven advertenties</string>
-    <string name="donate_amount_hours1">Ondersteunt</string>
-    <string name="donate_amount_hours2">uur programmeren</string>
-    <string name="donate_title">Slide for Reddit steunen</string>
     <!-- Offline mode -->
     <string name="offline_msg">Ga online en vernieuw de subreddit om dit te doen</string>
     <string name="offline_last_update">Laatst bijgewerkt: %1$s</string>

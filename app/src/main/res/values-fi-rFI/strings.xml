@@ -395,9 +395,6 @@
     <string name="title_inbox">Postilaatikko</string>
     <string name="title_theme_settings">Teema</string>
     <string name="title_create_multi">Luo multiredditti</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Tämä määrä&#8230;</string>
-    <string name="donate_btn">Lahjoita</string>
     <!-- Offline mode -->
     <!-- Website -->
     <string name="website_external">Avaa ulkoisessa selaimessa</string>

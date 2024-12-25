@@ -435,15 +435,6 @@
     <string name="title_inbox">Innboks</string>
     <string name="title_theme_settings">Temainnstillinger</string>
     <string name="title_create_multi">Opprett en multireddit</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Dette beløpet&#8230;</string>
-    <string name="donate_info_student">Jeg er en studentutvikler, og er veldig takknemlig for deres sjenerøse donasjoner! De har bidratt til å gjøre Slide til en (gratis) virkelighet :)</string>
-    <string name="donate_btn">Doner</string>
-    <string name="donate_amount_ads1">Forhindrer</string>
-    <string name="donate_amount_ads2">reklamevisninger</string>
-    <string name="donate_amount_hours1">Støtter</string>
-    <string name="donate_amount_hours2">timer med utvikling</string>
-    <string name="donate_title">Støtt Slide for Reddit</string>
     <!-- Offline mode -->
     <string name="offline_msg">Vennligst gå online og oppdater subredditen for å gjøre det</string>
     <string name="offline_last_update">Sist oppdatert %1$s</string>

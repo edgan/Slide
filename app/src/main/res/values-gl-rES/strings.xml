@@ -92,8 +92,6 @@
     <string name="title_settings">Axustes</string>
     <string name="title_multireddits">Multireddits</string>
     <string name="title_inbox">Bandexa de entrada</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_btn">Doar</string>
     <!-- Offline mode -->
     <!-- Website -->
     <!-- Time -->

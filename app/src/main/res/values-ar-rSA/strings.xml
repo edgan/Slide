@@ -383,15 +383,6 @@
     <string name="title_inbox">صندوق الوارد</string>
     <string name="title_theme_settings">المظهر</string>
     <string name="title_create_multi">أنشاء multireddit</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">هذا المبلغ&#8230;</string>
-    <string name="donate_info_student">أنا مطور طالب، وأنا ممتن جداً للتبرع السخي! أنهم ساهموا في جعل Slide (مجاني) حقيقه :)</string>
-    <string name="donate_btn">التبرع</string>
-    <string name="donate_amount_ads1">محفوظات</string>
-    <string name="donate_amount_ads2">إعلان من العرض</string>
-    <string name="donate_amount_hours1">تدعيمات</string>
-    <string name="donate_amount_hours2">ساعات من التطوير</string>
-    <string name="donate_title">دعم Slide for Reddit</string>
     <!-- Offline mode -->
     <!-- Website -->
     <!-- Time -->

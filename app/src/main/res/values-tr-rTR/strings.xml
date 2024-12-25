@@ -753,15 +753,6 @@
     <string name="title_inbox">Gelen Kutusu</string>
     <string name="title_theme_settings">Tema ayarları</string>
     <string name="title_create_multi">Multireddit oluştur</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Bu miktar&#8230;</string>
-    <string name="donate_info_student">Ben bir öğrenci ve geliştiriciyim, cömert bağışlarınız için çok teşekkür ederim! Bağışlarınız bana Slide\'ı (ücretsiz) bir gerçek yapmamda yardımcı oldu :)</string>
-    <string name="donate_btn">Bağış yapın</string>
-    <string name="donate_amount_ads1">engeller</string>
-    <string name="donate_amount_ads2">reklamın gösterilmesini</string>
-    <string name="donate_amount_hours1">destekler</string>
-    <string name="donate_amount_hours2">saat geliştirmeyi</string>
-    <string name="donate_title">Slide for Reddit\'i Destekleyin</string>
     <!-- Offline mode -->
     <string name="offline_msg">Bunu yapmak için lütfen çevrimiçi olun ve bu subredditi yenileyin</string>
     <string name="offline_last_update">Son güncelleme %1$s</string>

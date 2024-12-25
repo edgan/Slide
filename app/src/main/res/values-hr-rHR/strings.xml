@@ -582,15 +582,6 @@
     <string name="title_inbox">Ulazna pošta</string>
     <string name="title_theme_settings">Tema</string>
     <string name="title_create_multi">Kreirajte multireddit</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Ovaj iznos&#8230;</string>
-    <string name="donate_info_student">Ja sam student programer, i vrlo sam Vam zahvalan za vaše velikodušne donacije! One su pomogle da se Slide (besplatno) realizira :)</string>
-    <string name="donate_btn">Doniraj</string>
-    <string name="donate_amount_ads1">Čuva</string>
-    <string name="donate_amount_ads2">reklama da ne budu prikazane</string>
-    <string name="donate_amount_hours1">Podržava</string>
-    <string name="donate_amount_hours2">sati razvoja</string>
-    <string name="donate_title">Podrži Slide za Reddit</string>
     <!-- Offline mode -->
     <string name="offline_msg">Molimo Vas povežite se na internet i osvježite podreddite kako bi ste to napravili</string>
     <string name="offline_last_update">Posljednje ažurirano %1$s</string>

@@ -712,15 +712,6 @@
     <string name="title_inbox">Caixa de Recepção</string>
     <string name="title_theme_settings">Tema</string>
     <string name="title_create_multi">Criar um multireddit</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Esta quantidade&#8230;</string>
-    <string name="donate_info_student">Eu sou um programador estudante e estou muito grato por suas generosas doações! Elas ajudaram a fazer o Slide uma realidade (grátis) :)</string>
-    <string name="donate_btn">Faça uma doação</string>
-    <string name="donate_amount_ads1">Evita</string>
-    <string name="donate_amount_ads2">anúncios de serem exibidos</string>
-    <string name="donate_amount_hours1">Garante</string>
-    <string name="donate_amount_hours2">horas de desenvolvimento</string>
-    <string name="donate_title">Ajude o Slide for Reddit</string>
     <!-- Offline mode -->
     <string name="offline_msg">Por favor, ligue-se à internet e atualize o subreddit para fazer isso</string>
     <string name="offline_last_update">Ultima atualização %1$s</string>

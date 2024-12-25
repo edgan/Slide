@@ -636,15 +636,6 @@
     <string name="title_inbox">Beérkező</string>
     <string name="title_theme_settings">Téma</string>
     <string name="title_create_multi">Multireddit létrehozása</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Ez az összeg&#8230;</string>
-    <string name="donate_info_student">Egy diák fejlesztő vagyok, és nagyon hálás vagyok a nagylelkű adományokért, mivel így ingyenes lehet a Slide. :)</string>
-    <string name="donate_btn">Adományozás</string>
-    <string name="donate_amount_ads1">helyettesít</string>
-    <string name="donate_amount_ads2">hirdetést</string>
-    <string name="donate_amount_hours1">támogat</string>
-    <string name="donate_amount_hours2">órányi fejlesztést</string>
-    <string name="donate_title">Támogasd a Slide for Redditet</string>
     <!-- Offline mode -->
     <string name="offline_msg">Ehhez csatlakozz az internethez és frissítsd az alredditet</string>
     <string name="offline_last_update">Utoljára frissítve: %1$s</string>

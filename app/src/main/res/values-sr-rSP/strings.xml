@@ -657,14 +657,6 @@
     <string name="title_inbox">Примљене поруке</string>
     <string name="title_theme_settings">Тема</string>
     <string name="title_create_multi">Направи мултиредит</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Овај износ&#8230;</string>
-    <string name="donate_btn">Донирај</string>
-    <string name="donate_amount_ads1">Вас чува од</string>
-    <string name="donate_amount_ads2">приказивања реклама</string>
-    <string name="donate_amount_hours1">Подржава</string>
-    <string name="donate_amount_hours2">сати развоја</string>
-    <string name="donate_title">Подржите Slide за Редит</string>
     <!-- Offline mode -->
     <string name="offline_msg">Идите на интернет и освежите субредите да бисте урадили ово</string>
     <string name="offline_last_update">Последње ажурирано %1$s</string>

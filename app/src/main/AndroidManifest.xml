@@ -523,10 +523,6 @@
                 android:name=".Activities.Tutorial"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode"/>
         <activity
-                android:name=".ui.settings.DonateView"
-                android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode"
-                android:theme="@style/swipeable"/>
-        <activity
                 android:name=".Activities.Shadowbox"
                 android:alwaysRetainTaskState="true"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode"

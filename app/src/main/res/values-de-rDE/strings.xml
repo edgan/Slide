@@ -764,15 +764,6 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="title_inbox">Posteingang</string>
     <string name="title_theme_settings">Theme-Einstellungen</string>
     <string name="title_create_multi">Einen Multireddit erstellen</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Dieser Betrag&#8230;</string>
-    <string name="donate_info_student">Ich bin Student und entwickle Slide nur nebenher. Für grosszügige Spenden bin ich sehr dankbar. Spenden haben geholfen Slide (kostenlos) zur Verfügung zu stellen :)</string>
-    <string name="donate_btn">Spenden</string>
-    <string name="donate_amount_ads1">Stoppt</string>
-    <string name="donate_amount_ads2">Werbebanner</string>
-    <string name="donate_amount_hours1">Unterstützt</string>
-    <string name="donate_amount_hours2">Entwickelungsstunden</string>
-    <string name="donate_title">Unterstütze Slide for Reddit</string>
     <!-- Offline mode -->
     <string name="offline_msg">Bitte stelle eine Verbindung her und aktualisiere den Subreddit, um diese Aktion auszuführen</string>
     <string name="offline_last_update">Zuletzt aktualisiert am %1$s</string>

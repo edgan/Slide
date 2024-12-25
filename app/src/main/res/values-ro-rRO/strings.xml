@@ -524,15 +524,6 @@
     <string name="title_inbox">Inbox</string>
     <string name="title_theme_settings">Temă</string>
     <string name="title_create_multi">Crează un multireddit</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Suma aceasta&#8230;</string>
-    <string name="donate_info_student">Ca programator student, sunt toate recunoscător pentru donațiile voastre generoase! M-au ajutat să din Slide o realitate (gratuită) :)</string>
-    <string name="donate_btn">Donează</string>
-    <string name="donate_amount_ads1">Evită ca</string>
-    <string name="donate_amount_ads2">de reclame să fie afișate</string>
-    <string name="donate_amount_hours1">Susține</string>
-    <string name="donate_amount_hours2">ore de dezvoltare</string>
-    <string name="donate_title">Ajută Slide for Reddit</string>
     <!-- Offline mode -->
     <string name="offline_msg">Conectează-te la internet și reîmprospătează subreddit-ul ca să faci asta</string>
     <string name="offline_last_update">Ultima actualizare: %1$s</string>

@@ -753,15 +753,6 @@
     <string name="title_inbox">Bústia d\'entrada</string>
     <string name="title_theme_settings">Tema</string>
     <string name="title_create_multi">Crear un multireddit</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Aquesta xifra&#8230;</string>
-    <string name="donate_info_student">Sóc un estudiant, i estic molt agraït per les vostres donacions generoses! Són la raó que Slide sigui una realitat (gratuïta) :)</string>
-    <string name="donate_btn">Donar</string>
-    <string name="donate_amount_ads1">Desats</string>
-    <string name="donate_amount_ads2">anuncis per ser mostrats</string>
-    <string name="donate_amount_hours1">Donar suport</string>
-    <string name="donate_amount_hours2">hores de desenvolupament</string>
-    <string name="donate_title">Donar suport a Slide for Reddit</string>
     <!-- Offline mode -->
     <string name="offline_msg">Si us plau connecteu-vos a internet i actualitzeu el subreddit per tal de fer això</string>
     <string name="offline_last_update">Darrera actualització %1$s</string>

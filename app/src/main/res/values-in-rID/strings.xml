@@ -748,15 +748,6 @@
     <string name="title_inbox">Pesan Masuk</string>
     <string name="title_theme_settings">Tema</string>
     <string name="title_create_multi">Membuat multireddit</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Jumlah ini&#8230;</string>
-    <string name="donate_info_student">Saya seorang mahasiswa pengembang, dan saya sangat berterima kasih atas sumbangan Anda! Mereka telah membantu membuat halaman :) kenyataan (gratis)</string>
-    <string name="donate_btn">Donasi</string>
-    <string name="donate_amount_ads1">Menyimpan</string>
-    <string name="donate_amount_ads2">iklan dari yang ditampilkan</string>
-    <string name="donate_amount_hours1">Dukungan</string>
-    <string name="donate_amount_hours2">jam pembangunan</string>
-    <string name="donate_title">Dukungan Halaman untuk Reddit</string>
     <!-- Offline mode -->
     <string name="offline_msg">Silakan online dan menyegarkan subreddit untuk melakukan itu</string>
     <string name="offline_last_update">Pembaruan terkahir: %1$s</string>

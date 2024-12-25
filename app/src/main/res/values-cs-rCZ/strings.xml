@@ -765,15 +765,6 @@
     <string name="title_inbox">Příchozí zprávy</string>
     <string name="title_theme_settings">Téma</string>
     <string name="title_create_multi">Vytvořit multireddit</string>
-    <!-- Text in Donation-Activity -->
-    <string name="donate_amount_title">Tato částka&#8230;</string>
-    <string name="donate_info_student">Jsem student developer a jsem velmi vděčný za vaše štědré dary! Pomohly mi učinit Slide (bezplatnou) realitou :)</string>
-    <string name="donate_btn">Přispějte</string>
-    <string name="donate_amount_ads1">Zastaví</string>
-    <string name="donate_amount_ads2">reklam od zobrazení</string>
-    <string name="donate_amount_hours1">Podpoří</string>
-    <string name="donate_amount_hours2">hodin vývoje</string>
-    <string name="donate_title">Podpořte Slide for Reddit</string>
     <!-- Offline mode -->
     <string name="offline_msg">Chcete-li to provést, připojte se k internetu a obnovte subreddit</string>
     <string name="offline_last_update">Naposledy aktualizováno %1$s</string>
