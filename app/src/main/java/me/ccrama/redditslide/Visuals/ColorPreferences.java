@@ -18,6 +18,7 @@ import me.edgan.redditslide.Activities.Slide;
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Constants;
 
 /**
  * Created by ccrama on 7/9/2015.
@@ -522,12 +523,12 @@ public class ColorPreferences {
         try {
             if (SettingValues.isNight()) {
                 return getColoredTheme(SettingValues.nightTheme,
-                        getUserThemeName(FONT_STYLE, Theme.dark_amber.name()),
-                        Theme.valueOf(open().getString(FONT_STYLE, Theme.dark_amber.name())));
+                        getUserThemeName(FONT_STYLE, Theme.valueOf(Constants.DEFAULT_THEME).name()),
+                        Theme.valueOf(open().getString(FONT_STYLE, Theme.valueOf(Constants.DEFAULT_THEME).name())));
             }
-            return Theme.valueOf(getUserThemeName(FONT_STYLE, Theme.dark_amber.name()));
+            return Theme.valueOf(getUserThemeName(FONT_STYLE, Theme.valueOf(Constants.DEFAULT_THEME).name()));
         } catch (Exception e) {
-            return Theme.dark_amber;
+            return Theme.valueOf(Constants.DEFAULT_THEME);
         }
     }
 
@@ -535,7 +536,7 @@ public class ColorPreferences {
         try {
             return Theme.valueOf(getUserThemeName(s, getFontStyle().name()));
         } catch (Exception e) {
-            return Theme.dark_amber;
+            return Theme.valueOf(Constants.DEFAULT_THEME);
         }
     }
 

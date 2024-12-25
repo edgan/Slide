@@ -6,8 +6,11 @@ import me.edgan.redditslide.util.DisplayUtil;
  * Constants used throughout the app
  */
 public class Constants {
-    public static final int PAGINATOR_POST_LIMIT = 25;
+    public static final int DEFAULT_THEME_TYPE = 2;
+    public static final String DEFAULT_THEME = "amoled_amber";
+
     /** Maximum posts to request from Reddit **/
+    public static final int PAGINATOR_POST_LIMIT = 25;
 
     /**
      * This is the estimated height of the Tabs view mode in dp.

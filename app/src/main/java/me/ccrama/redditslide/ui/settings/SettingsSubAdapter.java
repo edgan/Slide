@@ -26,7 +26,7 @@ import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.LogUtil;
 import uz.shift.colorpicker.LineColorPicker;
 import uz.shift.colorpicker.OnColorChangedListener;
-
+import me.edgan.redditslide.Constants;
 
 /**
  * Created by ccrama on 8/17/2015.
@@ -296,7 +296,7 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
 
             {
                 //Get all possible accent colors (for day theme)
-                int[] arrs = new int[ColorPreferences.getNumColorsFromThemeType(0)];
+                int[] arrs = new int[ColorPreferences.getNumColorsFromThemeType(Constants.DEFAULT_THEME_TYPE)];
                 int i = 0;
                 for (ColorPreferences.Theme type : ColorPreferences.Theme.values()) {
                     if (type.getThemeType() == ColorPreferences.ColorThemeOptions.Dark.getValue()) {

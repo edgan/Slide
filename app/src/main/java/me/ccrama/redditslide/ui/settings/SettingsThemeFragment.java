@@ -47,6 +47,8 @@ import me.edgan.redditslide.databinding.ChoosethemesmallBinding;
 import me.edgan.redditslide.databinding.NightmodeBinding;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.OnSingleClickListener;
+import me.edgan.redditslide.Constants;
+
 import uz.shift.colorpicker.LineColorPicker;
 
 public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartActivity> {
@@ -265,7 +267,7 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
 
             final LineColorPicker colorPicker = chooseaccentBinding.picker3;
 
-            int[] arrs = new int[ColorPreferences.getNumColorsFromThemeType(0)];
+            int[] arrs = new int[ColorPreferences.getNumColorsFromThemeType(Constants.DEFAULT_THEME_TYPE)];
             int i = 0;
             for (ColorPreferences.Theme type : ColorPreferences.Theme.values()) {
                 if (type.getThemeType() == ColorPreferences.ColorThemeOptions.Dark.getValue()) {

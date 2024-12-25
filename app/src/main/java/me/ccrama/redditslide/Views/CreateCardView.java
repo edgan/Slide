@@ -364,7 +364,7 @@ public class CreateCardView {
     }
 
     public static boolean isMiddle() {
-        return SettingValues.prefs.getBoolean("middleCard", false);
+        return SettingValues.prefs.getBoolean("middleCard", true);
     }
 
     public static boolean isDesktop() {

@@ -293,9 +293,9 @@ public class SettingValues {
         redditClientIdOverride = settings.getString(PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
         defaultCardView = CreateCardView.CardEnum.valueOf(
                 settings.getString("defaultCardViewNew", "LARGE").toUpperCase());
-        middleImage = settings.getBoolean("middleCard", false);
+        middleImage = settings.getBoolean("middleCard", true);
 
-        bigPicCropped = settings.getBoolean("bigPicCropped", true);
+        bigPicCropped = settings.getBoolean("bigPicCropped", false);
         bigPicEnabled = settings.getBoolean("bigPicEnabled", true);
 
         alwaysShowFAB=settings.getBoolean("alwaysShowFAB",false);
@@ -456,7 +456,7 @@ public class SettingValues {
         actionbarTap = prefs.getBoolean(PREF_ACTIONBAR_TAP, false);
         colorIcon = prefs.getBoolean(PREF_COLOR_ICON, false);
         peek = prefs.getBoolean(PREF_PEEK, false);
-        noPreviewImageLongClick = prefs.getBoolean(PREF_NO_PREVIEW_IMAGE_LONGCLICK, false);
+        noPreviewImageLongClick = prefs.getBoolean(PREF_NO_PREVIEW_IMAGE_LONGCLICK, true);
         selectedBrowser = prefs.getString(PREF_SELECTED_BROWSER, "");
         selectedDrawerItems = prefs.getLong(PREF_SELECTED_DRAWER_ITEMS, -1);
 

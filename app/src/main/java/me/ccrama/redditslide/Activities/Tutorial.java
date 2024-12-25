@@ -31,6 +31,7 @@ import me.edgan.redditslide.databinding.ChoosethemesmallBinding;
 import me.edgan.redditslide.databinding.FragmentPersonalizeBinding;
 import me.edgan.redditslide.databinding.FragmentWelcomeBinding;
 import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.Constants;
 
 /**
  * Created by ccrama on 3/5/2015.
@@ -173,11 +174,11 @@ public class Tutorial extends AppCompatActivity {
 
                 accentBinding.title.setBackgroundColor(Palette.getDefaultColor());
 
-                final int[] arrs = new int[ColorPreferences.getNumColorsFromThemeType(0)];
+                final int[] arrs = new int[ColorPreferences.getNumColorsFromThemeType(Constants.DEFAULT_THEME_TYPE)];
                 int i = 0;
                 for (final ColorPreferences.Theme type : ColorPreferences.Theme.values()) {
                     if (type.getThemeType()
-                            == ColorPreferences.ColorThemeOptions.Dark.getValue()) {
+                            == ColorPreferences.ColorThemeOptions.AMOLED.getValue()) {
                         arrs[i] = ContextCompat.getColor(getActivity(), type.getColor());
 
                         i++;
