@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+import android.content.pm.ResolveInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -229,34 +230,42 @@ public class LinkUtil {
     }
 
     public static void overridePackage(Intent intent) {
-        String packageName = Reddit.getAppContext()
-                .getPackageManager()
-                .resolveActivity(intent, 0).activityInfo.packageName;
+        PackageManager pm = Reddit.getAppContext().getPackageManager();
 
-        // Gets the default app from a URL that is most likely never link handled by another app, hopefully guaranteeing a browser
-        String browserPackageName = Reddit.getAppContext()
-                .getPackageManager()
-                .resolveActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://ccrama.me/")),
-                        0).activityInfo.packageName;
+        // Get default handler for the intent
+        ResolveInfo resolveInfo = pm.resolveActivity(intent, 0);
+        String packageName = resolveInfo != null ? resolveInfo.activityInfo.packageName : null;
+
+        // Get default browser package
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://ccrama.me/"));
+        ResolveInfo browserResolveInfo = pm.resolveActivity(browserIntent, 0);
+        String browserPackageName = browserResolveInfo != null ? browserResolveInfo.activityInfo.packageName : null;
+
+        // If we couldn't resolve either, return without modifying the intent
+        if (packageName == null || browserPackageName == null) {
+            return;
+        }
 
         String packageToSet = packageName;
 
+        // If the default handler is our app, use the browser instead
         if (packageName.equals(Reddit.getAppContext().getPackageName())) {
             packageToSet = browserPackageName;
         }
 
-        if (packageToSet.equals(browserPackageName) && (SettingValues.selectedBrowser != null
-                && !SettingValues.selectedBrowser.isEmpty())) {
+        // Check if user has selected a specific browser
+        if (packageToSet.equals(browserPackageName) &&
+                SettingValues.selectedBrowser != null &&
+                !SettingValues.selectedBrowser.isEmpty()) {
             try {
-                Reddit.getAppContext()
-                        .getPackageManager()
-                        .getPackageInfo(SettingValues.selectedBrowser,
-                                PackageManager.GET_ACTIVITIES);
+                pm.getPackageInfo(SettingValues.selectedBrowser, PackageManager.GET_ACTIVITIES);
                 packageToSet = SettingValues.selectedBrowser;
             } catch (PackageManager.NameNotFoundException ignored) {
+                // Selected browser not found, stick with default browser
             }
         }
 
+        // Only set package if it's different from the original handler
         if (!packageToSet.equals(packageName)) {
             intent.setPackage(packageToSet);
         }
