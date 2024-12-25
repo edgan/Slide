@@ -280,21 +280,15 @@ public class Submit extends BaseActivity {
                 }.execute(((EditText) findViewById(R.id.urltext)).getText().toString());
             }
         });
-        findViewById(R.id.selImage).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                findViewById(R.id.selImage).setOnClickListener(v -> {
-                    TedImagePicker.with(Submit.this)
-                            .title("Choose a photo")
-                            .start(uri -> {
-                                List<Uri> uris = Collections.singletonList(uri);
-                                handleImageIntent(uris);
-                                KeyboardUtil.hideKeyboard(Submit.this, findViewById(R.id.bodytext).getWindowToken(), 0);
-                            });
+        findViewById(R.id.selImage).setOnClickListener(v -> {
+            TedImagePicker.with(Submit.this)
+                .title("Choose a photo")
+                .start(uri -> {
+                    List<Uri> uris = Collections.singletonList(uri);
+                    handleImageIntent(uris);
+                    KeyboardUtil.hideKeyboard(Submit.this, findViewById(R.id.bodytext).getWindowToken(), 0);
                 });
-            }
         });
-
         DoEditorActions.doActions(((EditText) findViewById(R.id.bodytext)),
                 findViewById(R.id.selftext), getSupportFragmentManager(), Submit.this, null, null);
         if (intent.hasExtra(Intent.EXTRA_TEXT) && !intent.getExtras()
