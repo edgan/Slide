@@ -378,20 +378,28 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
          */
         public static VideoType getVideoType(String url) {
             String realURL = url.toLowerCase(Locale.ENGLISH);
-            if (realURL.contains("i.redd.it")) {
+
+            if (realURL.contains("i.redd.it/gallery/")) {
                 return VideoType.REDDIT_GALLERY;
             }
+
             if (realURL.contains("v.redd.it")) {
                 return VideoType.VREDDIT;
             }
+
             if (realURL.contains(".mp4") || realURL.contains("webm") || realURL.contains("redditmedia.com")
                     || realURL.contains("preview.redd.it")) {
                 return VideoType.DIRECT;
             }
+
             if (realURL.contains("gfycat") && !realURL.contains("mp4")) return VideoType.GFYCAT;
+
             if (realURL.contains("redgifs") && !realURL.contains("mp4")) return VideoType.GFYCAT;
+
             if (realURL.contains("imgur.com")) return VideoType.IMGUR;
+
             if (realURL.contains("streamable.com")) return VideoType.STREAMABLE;
+
             return VideoType.OTHER;
         }
 
