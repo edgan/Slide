@@ -459,10 +459,32 @@
                 android:label="View content">
             <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
 
                 <category android:name="android.intent.category.DEFAULT"/>
                 <action android:name="android.nfc.action.TECH_DISCOVERED"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data android:scheme="http"/>
+                <data android:scheme="https"/>
+                <data android:host="*.reddit.com"/>
+                <data android:host="redd.it"/>
+                <data android:host="amp.reddit.com"/>
+
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="android.nfc.action.TECH_DISCOVERED"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                        android:host="www.google.com"
+                        android:pathPrefix="/amp/s/amp.reddit.com"
+                        android:scheme="https"/>
+
             </intent-filter>
         </activity>
         <activity

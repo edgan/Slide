@@ -59,7 +59,7 @@ android {
         minSdk 21
         //Change to 28 for F-Droid, need to add this to the scheme
         targetSdk 34
-        versionCode 688
+        versionCode 690
         versionName androidGitVersion.name()
 
         multiDexEnabled true
