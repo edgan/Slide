@@ -98,6 +98,7 @@
             android:paddingEnd="16dp"
             android:paddingTop="16dp"
             android:text="asdf"
+            android:autoLink="none"
             android:textColor="@android:color/white"
             android:textSize="?attr/font_cardtitle" />
         <TextView
