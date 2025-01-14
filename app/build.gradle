@@ -153,6 +153,8 @@ dependencies {
     withGPlayImplementation 'com.google.android.gms:play-services-drive:11.4.2'
 
 /** Custom **/
+    // Draggable sliding up panel
+    implementation 'com.github.edgan:AndroidSlidingUpPanel:8413b22a2a'
     implementation 'com.github.edgan:JRAW:ac8f33e1a7'
     implementation 'io.github.ParkSangGwon:tedimagepicker:1.6.1'
     def commonmarkVersion = '0ebc0749c7'
@@ -176,6 +178,7 @@ dependencies {
     implementation "androidx.concurrent:concurrent-futures:1.1.0"
     implementation "androidx.lifecycle:lifecycle-runtime:2.5.1"
     implementation "androidx.databinding:databinding-runtime:8.7.3"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 /** ExoPlayer **/
     // Application level media player
     // Cannot update beyond this point: extension's minimum SDK version is 21 in 2.15.0 and above
@@ -221,11 +224,11 @@ dependencies {
     // ImageView that supports rounded corners
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
+    // Draggable sliding up panel
+    //implementation 'com.sothree.slidinguppanel:library:3.4.0'
+
     // Floating action button menu implementation
     implementation 'com.nambimobile.widgets:expandable-fab:1.2.1'
-
-    // Draggable sliding up panel
-    implementation 'com.sothree.slidinguppanel:library:3.4.0'
 
     // ViewAnimationUtils.createCircularReveal for pre-Lollipop APIs
     implementation 'com.github.ozodrukh.CircularReveal:circualreveal:2.1.0'
