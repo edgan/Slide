@@ -120,7 +120,18 @@ public class RedditGalleryPager extends BaseSaveActivity {
                 if (images != null) {
                     int index = 0;
                     for (final GalleryImage elem : images) {
-                        doImageSave(false, elem.url, index);
+                        if (elem.isAnimated()) {
+                            // Handle videos/GIFs using GifUtils
+                            GifUtils.cacheSaveGif(
+                                Uri.parse(elem.url),
+                                this,
+                                subreddit != null ? subreddit : "",
+                                submissionTitle != null ? submissionTitle : "",
+                                true);
+                        } else {
+                            // Handle static images using existing image download
+                            doImageSave(false, elem.url, index);
+                        }
                         index++;
                     }
                 }
