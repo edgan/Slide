@@ -100,7 +100,7 @@ public class SubredditNames {
 
                 final int finalStart = start;
 
-                //update online
+                // update online
                 parent.updateSuccess(posts, finalStart);
 
             } else if (!nomore) {

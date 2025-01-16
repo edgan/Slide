@@ -85,7 +85,7 @@ public class CheckForMailSingle extends BroadcastReceiver {
 
                 PendingIntent intent = PendingIntent.getActivity(c, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
-                //Intent for mark as read notification action
+                // Intent for mark as read notification action
                 PendingIntent readPI = MarkAsReadService.getMarkAsReadIntent(2, c,
                         new String[]{message.getFullName()});
 

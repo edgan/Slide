@@ -21,7 +21,7 @@ import me.edgan.redditslide.handler.ToolbarScrollHideHandler;
 
 public class Related extends BaseActivityAnim {
 
-    //todo NFC support
+    // todo NFC support
 
     public static final String EXTRA_URL = "url";
 
@@ -70,7 +70,7 @@ public class Related extends BaseActivityAnim {
 
         setupAppBar(R.id.toolbar, "Related links", true, true);
 
-        assert mToolbar != null; //it won't be, trust me
+        assert mToolbar != null; // it won't be, trust me
         mToolbar.setPopupTheme(new ColorPreferences(this).getFontStyle().getBaseId());
 
         final RecyclerView rv = ((RecyclerView) findViewById(R.id.vertical_content));
@@ -105,8 +105,8 @@ public class Related extends BaseActivityAnim {
 
         mSwipeRefreshLayout.setColorSchemeColors(Palette.getColors("", this));
 
-        //If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
-        //So, we estimate the height of the header in dp.
+        // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
+        // So, we estimate the height of the header in dp.
         mSwipeRefreshLayout.setProgressViewOffset(false,
                 Constants.SINGLE_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.SINGLE_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);
@@ -123,13 +123,13 @@ public class Related extends BaseActivityAnim {
         rv.setAdapter(adapter);
 
         posts.bindAdapter(adapter, mSwipeRefreshLayout);
-        //TODO catch errors
+        // TODO catch errors
         mSwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
                         posts.loadMore(adapter, "", "url:" + url, true);
-                        //TODO catch errors
+                        // TODO catch errors
                     }
                 }
         );

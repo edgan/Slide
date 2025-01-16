@@ -42,8 +42,8 @@ public class ReadLaterView extends Fragment {
 
         mSwipeRefreshLayout.setColorSchemeColors(Palette.getColors("default", getActivity()));
 
-        //If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
-        //So, we estimate the height of the header in dp
+        // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
+        // So, we estimate the height of the header in dp
         mSwipeRefreshLayout.setProgressViewOffset(false,
                 Constants.SINGLE_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.SINGLE_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);
@@ -61,14 +61,14 @@ public class ReadLaterView extends Fragment {
 
         posts.bindAdapter(adapter, mSwipeRefreshLayout);
 
-        //TODO catch errors
+        // TODO catch errors
         mSwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
                         posts.loadMore(adapter, true);
 
-                        //TODO catch errors
+                        // TODO catch errors
                     }
                 }
         );

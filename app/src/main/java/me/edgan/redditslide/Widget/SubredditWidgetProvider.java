@@ -134,7 +134,7 @@ public class SubredditWidgetProvider extends AppWidgetProvider {
         String sub = getSubFromId(appWidgetId, context);
         Intent startActivityIntent = new Intent(context, SubredditView.class);
         startActivityIntent.putExtra(SubredditView.EXTRA_SUBREDDIT, sub);
-        //todo go to sub
+        // todo go to sub
         {
             Intent refreshIntent = new Intent(context, SubredditWidgetProvider.class);
             refreshIntent.setData(data);
@@ -201,7 +201,7 @@ public class SubredditWidgetProvider extends AppWidgetProvider {
         String sub = getSubFromId(appWidgetId, context);
         Intent startActivityIntent = new Intent(context, SubredditView.class);
         startActivityIntent.putExtra(SubredditView.EXTRA_SUBREDDIT, sub);
-        //todo go to sub
+        // todo go to sub
         {
             Intent refreshIntent = new Intent(context, SubredditWidgetProvider.class);
             refreshIntent.setAction(SUBMISSION);

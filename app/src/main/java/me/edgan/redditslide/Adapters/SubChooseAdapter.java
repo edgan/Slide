@@ -133,9 +133,6 @@ public class SubChooseAdapter extends ArrayAdapter<String> {
                         BlendModeUtil.tintPaintAsSrcAtop(paint, overlayColor);
                         c.drawBitmap(src, 0, 0, paint);
 
-                        //paint.setColorFilter(null);
-                        //paint.setXfermode(new AvoidXfermode(overlayColor, 0, AvoidXfermode.Mode.TARGET));
-                        //c.drawBitmap(bm1, 0, 0, paint);
                         ImageUtil.drawWithTargetColor(bm2, bm1, overlayColor, 0);
                     }
 

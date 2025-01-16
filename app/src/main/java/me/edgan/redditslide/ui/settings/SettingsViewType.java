@@ -26,7 +26,7 @@ public class SettingsViewType extends BaseActivityAnim {
 
 
 
-        //View type multi choice
+        // View type multi choice
         ((TextView) findViewById(R.id.currentViewType)).setText(SettingValues.single ? (SettingValues.commentPager ? getString(R.string.view_type_comments) : getString(R.string.view_type_none)) : getString(R.string.view_type_tabs));
 
         findViewById(R.id.viewtype).setOnClickListener(new View.OnClickListener() {

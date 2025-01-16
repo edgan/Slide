@@ -70,13 +70,13 @@ public class DoEditorActions {
             public void onClick(View v) {
                 if (editText.hasSelection()) {
                     wrapString("**",
-                            editText); //If the user has text selected, wrap that text in the symbols
+                            editText); // If the user has text selected, wrap that text in the symbols
                 } else {
-                    //If the user doesn't have text selected, put the symbols around the cursor's position
+                    // If the user doesn't have text selected, put the symbols around the cursor's position
                     int pos = editText.getSelectionStart();
                     editText.getText().insert(pos, "**");
                     editText.getText().insert(pos + 1, "**");
-                    editText.setSelection(pos + 2); //put the cursor between the symbols
+                    editText.setSelection(pos + 2); // put the cursor between the symbols
                 }
             }
         });
@@ -111,13 +111,13 @@ public class DoEditorActions {
             public void onClick(View v) {
                 if (editText.hasSelection()) {
                     wrapString("*",
-                            editText); //If the user has text selected, wrap that text in the symbols
+                            editText); // If the user has text selected, wrap that text in the symbols
                 } else {
-                    //If the user doesn't have text selected, put the symbols around the cursor's position
+                    // If the user doesn't have text selected, put the symbols around the cursor's position
                     int pos = editText.getSelectionStart();
                     editText.getText().insert(pos, "*");
                     editText.getText().insert(pos + 1, "*");
-                    editText.setSelection(pos + 1); //put the cursor between the symbols
+                    editText.setSelection(pos + 1); // put the cursor between the symbols
                 }
             }
         });
@@ -127,13 +127,13 @@ public class DoEditorActions {
             public void onClick(View v) {
                 if (editText.hasSelection()) {
                     wrapString("~~",
-                            editText); //If the user has text selected, wrap that text in the symbols
+                            editText); // If the user has text selected, wrap that text in the symbols
                 } else {
-                    //If the user doesn't have text selected, put the symbols around the cursor's position
+                    // If the user doesn't have text selected, put the symbols around the cursor's position
                     int pos = editText.getSelectionStart();
                     editText.getText().insert(pos, "~~");
                     editText.getText().insert(pos + 2, "~~");
-                    editText.setSelection(pos + 2); //put the cursor between the symbols
+                    editText.setSelection(pos + 2); // put the cursor between the symbols
                 }
             }
         });
@@ -142,13 +142,13 @@ public class DoEditorActions {
             @Override
             public void onClick(View v) {
                 if (editText.hasSelection()) {
-                    wrapString(">!", "!<", editText); //If the user has text selected, wrap that text in the symbols
+                    wrapString(">!", "!<", editText); // If the user has text selected, wrap that text in the symbols
                 } else {
-                    //If the user doesn't have text selected, put the symbols around the cursor's position
+                    // If the user doesn't have text selected, put the symbols around the cursor's position
                     int pos = editText.getSelectionStart();
                     editText.getText().insert(pos, ">!");
                     editText.getText().insert(pos + 2, "!<");
-                    editText.setSelection(pos + 2); //put the cursor between the symbols
+                    editText.setSelection(pos + 2); // put the cursor between the symbols
                 }
             }
         });
@@ -355,7 +355,7 @@ public class DoEditorActions {
                 ta.recycle();
 
                 String selectedText = "";
-                //if the user highlighted text before inputting a URL, use that text for the descriptionBox
+                // if the user highlighted text before inputting a URL, use that text for the descriptionBox
                 if (editText.hasSelection()) {
                     final int startSelection = editText.getSelectionStart();
                     final int endSelection = editText.getSelectionEnd();
@@ -392,7 +392,7 @@ public class DoEditorActions {
 
                                         editText.getText().insert(Math.max(start, end), s);
 
-                                        //delete the selected text to avoid duplication
+                                        // delete the selected text to avoid duplication
                                         if (selectedTextNotEmpty) {
                                             editText.getText().delete(start, end);
                                         }
@@ -400,7 +400,7 @@ public class DoEditorActions {
                                 })
                                 .build();
 
-                //Tint the hint text if the base theme is Sepia
+                // Tint the hint text if the base theme is Sepia
                 if (SettingValues.currentTheme == 5) {
                     ((EditText) dialog.findViewById(R.id.url_box)).setHintTextColor(
                             ContextCompat.getColor(dialog.getContext(), R.color.md_grey_600));
@@ -408,7 +408,7 @@ public class DoEditorActions {
                             ContextCompat.getColor(dialog.getContext(), R.color.md_grey_600));
                 }
 
-                //use the selected text as the text for the link
+                // use the selected text as the text for the link
                 if (!selectedText.isEmpty()) {
                     ((EditText) dialog.findViewById(R.id.text_box)).setText(selectedText);
                 }
@@ -432,7 +432,7 @@ public class DoEditorActions {
                         }
                     });
         } catch (Exception e) {
-            //if thrown, there is likely an issue implementing this on the user's version of Android. There shouldn't be an issue, but just in case
+            // if thrown, there is likely an issue implementing this on the user's version of Android. There shouldn't be an issue, but just in case
         }
     }
 
@@ -728,7 +728,7 @@ public class DoEditorActions {
                 e.printStackTrace();
             }
         } else {
-            //Multiple images
+            // Multiple images
             try {
                 new UploadImgurAlbumDEA(c).execute(uris.toArray(new Uri[0]));
             } catch (Exception e) {

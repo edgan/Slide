@@ -196,7 +196,7 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (user.isAnimated()) {
                 holder.body.setVisibility(View.VISIBLE);
                 holder.body.setSingleLine(false);
-                holder.body.setTextHtml(holder.text.getText() + main.getString(R.string.submission_tap_gif).toUpperCase()); //got rid of the \n thing, because it didnt parse and it was already a new line so...
+                holder.body.setTextHtml(holder.text.getText() + main.getString(R.string.submission_tap_gif).toUpperCase()); // got rid of the \n thing, because it didnt parse and it was already a new line so...
                 holder.body.setOnClickListener(onGifImageClickListener);
             }
 

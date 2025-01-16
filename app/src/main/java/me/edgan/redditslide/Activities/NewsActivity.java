@@ -63,19 +63,19 @@ public class NewsActivity extends BaseActivity
 
     public static Loader loader;
     public static Map<String, String> newsSubToMap            = new HashMap<>();
-    public final  long                ANIMATE_DURATION        = 250; //duration of animations
+    public final  long                ANIMATE_DURATION        = 250; // duration of animations
     private final long                ANIMATE_DURATION_OFFSET = 45;
-    //offset for smoothing out the exit animations
+    // offset for smoothing out the exit animations
     public ToggleSwipeViewPager     pager;
     public CaseInsensitiveArrayList usedArray;
     public NewsPagerAdapter adapter;
     public TabLayout                mTabLayout;
-    public String                   selectedSub; //currently selected subreddit
+    public String                   selectedSub; // currently selected subreddit
     public boolean                  inNightMode;
     boolean changed;
     boolean currentlySubbed;
     int     back;
-    private int headerHeight; //height of the header
+    private int headerHeight; // height of the header
     public int reloadItemNumber = -2;
 
     @Override
@@ -118,7 +118,7 @@ public class NewsActivity extends BaseActivity
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
-        //Upon leaving MainActivity--hide the toolbar search if it is visible
+        // Upon leaving MainActivity--hide the toolbar search if it is visible
         if (findViewById(R.id.toolbar_search).getVisibility() == View.VISIBLE) {
             findViewById(R.id.close_search_toolbar).performClick();
         }
@@ -319,7 +319,7 @@ public class NewsActivity extends BaseActivity
 
     public void updateSubs(ArrayList<String> subs) {
         if (subs.isEmpty() && !NetworkUtil.isConnected(this)) {
-            //todo this
+            // todo this
         } else {
 
             if (loader != null) {

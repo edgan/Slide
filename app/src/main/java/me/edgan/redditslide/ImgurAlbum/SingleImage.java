@@ -112,14 +112,6 @@ public class SingleImage {
     }
 
     /**
-     * @return The description
-     */
-    @JsonProperty("description")
-    public String getDescription() {
-        return description;
-    }
-
-    /**
      * @param description The description
      */
     @JsonProperty("description")

@@ -25,7 +25,7 @@ public abstract class OnSingleClickListener implements View.OnClickListener {
     @Override
     public final void onClick(View v) {
         final long lastClickTime = mLastClickTime;
-        final long now = SystemClock.uptimeMillis(); //guaranteed 100% monotonic
+        final long now = SystemClock.uptimeMillis(); // guaranteed 100% monotonic
 
         if (now - lastClickTime < MIN_DELAY_MS && !override) {
             // Too fast: ignore

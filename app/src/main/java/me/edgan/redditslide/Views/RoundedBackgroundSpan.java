@@ -58,7 +58,7 @@ public class RoundedBackgroundSpan extends ReplacementSpan {
         paint.setColor(textColor);
 
         final float baseLine = paint.descent();
-        canvas.drawText(oldText, start, end, x, rect.bottom - ((rect.bottom - rect.top) / 2) + (baseLine * 1.5f), paint); //center the text in the parent span
+        canvas.drawText(oldText, start, end, x, rect.bottom - ((rect.bottom - rect.top) / 2) + (baseLine * 1.5f), paint); // center the text in the parent span
     }
 
     @Override

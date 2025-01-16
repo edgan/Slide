@@ -306,7 +306,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             });
 
         } else if (firstHolder instanceof ProfileCommentViewHolder) {
-            //IS COMMENT
+            // IS COMMENT
             ProfileCommentViewHolder holder = (ProfileCommentViewHolder) firstHolder;
             final Comment comment = (Comment) dataSet.posts.get(i);
 
@@ -341,7 +341,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
             String timeAgo = TimeUtils.getTimeAgo(comment.getCreated().getTime(), mContext);
-            String time = ((timeAgo == null || timeAgo.isEmpty()) ? "just now" : timeAgo); //some users were crashing here
+            String time = ((timeAgo == null || timeAgo.isEmpty()) ? "just now" : timeAgo); // some users were crashing here
             time = time + (((comment.getEditDate() != null) ? " (edit " + TimeUtils.getTimeAgo(comment.getEditDate().getTime(), mContext) + ")" : ""));
             titleString.append(time);
             titleString.append(spacer);

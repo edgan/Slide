@@ -62,6 +62,8 @@ import java.nio.channels.WritableByteChannel;
 import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import me.edgan.redditslide.Activities.MediaView;
 import me.edgan.redditslide.Activities.Website;
@@ -73,6 +75,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import androidx.documentfile.provider.DocumentFile;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * GIF handling utilities
  */
@@ -80,33 +87,31 @@ public class GifUtils {
     /**
      * Create a notification that opens a newly-saved GIF
      *
-     * @param f File referencing the GIF
+     * @param docFile File referencing the GIF
      * @param c
      */
-    public static void doNotifGif(File f, Activity c) {
-        MediaScannerConnection.scanFile(c,
-                new String[]{f.getAbsolutePath()}, null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-                    public void onScanCompleted(String path, Uri uri) {
-                        final Intent shareIntent = FileUtil.getFileIntent(f, new Intent(Intent.ACTION_VIEW), c);
-                        PendingIntent contentIntent =
-                                PendingIntent.getActivity(c, 0, shareIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
+    public static void doNotifGif(DocumentFile docFile, Activity c) {
+        try {
+            final Intent shareIntent = new Intent(Intent.ACTION_VIEW);
+            shareIntent.setDataAndType(docFile.getUri(), "video/mp4");
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
+            PendingIntent contentIntent = PendingIntent.getActivity(c, 0, shareIntent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
 
-                        Notification notif =
-                                new NotificationCompat.Builder(c, Reddit.CHANNEL_IMG).setContentTitle(c.getString(R.string.gif_saved))
-                                        .setSmallIcon(R.drawable.ic_save)
-                                        .setContentIntent(contentIntent)
-                                        .build();
+            Notification notif = new NotificationCompat.Builder(c, Reddit.CHANNEL_IMG)
+                    .setContentTitle(c.getString(R.string.gif_saved))
+                    .setSmallIcon(R.drawable.ic_save)
+                    .setContentIntent(contentIntent)
+                    .build();
 
-                        NotificationManager mNotificationManager =
-                                ContextCompat.getSystemService(c, NotificationManager.class);
-                        if (mNotificationManager != null) {
-                            mNotificationManager.notify((int) System.currentTimeMillis(), notif);
-                        }
-                    }
-                }
-        );
+            NotificationManager mNotificationManager = ContextCompat.getSystemService(c, NotificationManager.class);
+            if (mNotificationManager != null) {
+                mNotificationManager.notify((int) System.currentTimeMillis(), notif);
+            }
+        } catch (Exception e) {
+            Log.e("GifUtils", "Error showing notification", e);
+        }
     }
 
     private static void showErrorDialog(final Activity a) {
@@ -117,145 +122,246 @@ public class GifUtils {
         DialogUtil.showFirstDialog((MediaView) a);
     }
 
-public static void downloadGif(String url, GifDownloadCallback callback, Context context) {
-    new DownloadGifTask(url, callback, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-}
-
-private static class DownloadGifTask extends AsyncTask<Void, Void, File> {
-    private String url;
-    private GifDownloadCallback callback;
-    private Context context;
-    private Exception exception;
-
-    DownloadGifTask(String url, GifDownloadCallback callback, Context context) {
-        this.url = url;
-        this.callback = callback;
-        this.context = context.getApplicationContext();
+    public static void downloadGif(String url, GifDownloadCallback callback, Context context, String submissionTitle) {
+        new DownloadGifTask(url, callback, context, submissionTitle).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    @Override
-    protected File doInBackground(Void... voids) {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(url).build();
-        Response response = null;
-        try {
-            response = client.newCall(request).execute();
-            if (!response.isSuccessful()) {
-                throw new Exception("Failed to download GIF: " + response);
+    public static void downloadGif(String url, GifDownloadCallback callback, Context context) {
+        new DownloadGifTask(url, callback, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private static class DownloadGifTask extends AsyncTask<Void, Void, File> {
+        private String url;
+        private GifDownloadCallback callback;
+        private Context context;
+        private Exception exception;
+        private String submissionTitle;
+
+        DownloadGifTask(String url, GifDownloadCallback callback, Context context) {
+            this.url = url;
+            this.callback = callback;
+            this.context = context.getApplicationContext();
+            this.submissionTitle = null;
+        }
+
+        DownloadGifTask(String url, GifDownloadCallback callback, Context context, String submissionTitle) {
+            this.url = url;
+            this.callback = callback;
+            this.context = context.getApplicationContext();
+            this.submissionTitle = submissionTitle;
+        }
+
+        @Override
+        protected File doInBackground(Void... voids) {
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url(url).build();
+            Response response = null;
+            try {
+                response = client.newCall(request).execute();
+                if (!response.isSuccessful()) {
+                    throw new Exception("Failed to download GIF: " + response);
+                }
+
+                // Create unique filename based on URL
+                String fileName;
+                if (submissionTitle != null && !submissionTitle.trim().isEmpty()) {
+                    fileName = FileUtil.getValidFileName(submissionTitle, "", ".gif");
+                } else {
+                    fileName = FileUtil.getValidFileName("redditslide", "gif_", ".gif");
+                }
+                File gifFile = new File(context.getCacheDir(), fileName);
+
+                InputStream inputStream = response.body().byteStream();
+                OutputStream outputStream = new FileOutputStream(gifFile);
+
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+
+                outputStream.close();
+                inputStream.close();
+
+                return gifFile;
+            } catch (Exception e) {
+                Log.e("EmoteDebug", "Error downloading GIF", e);
+                exception = e;
+                return null;
+            } finally {
+                if (response != null) {
+                    response.close();
+                }
             }
+        }
 
-            // Create unique filename based on URL
-            String fileName = "emote_" + url.hashCode() + "_" + System.nanoTime() + ".gif";
-            File gifFile = new File(context.getCacheDir(), fileName);
-
-            InputStream inputStream = response.body().byteStream();
-            OutputStream outputStream = new FileOutputStream(gifFile);
-
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-
-            outputStream.close();
-            inputStream.close();
-
-            return gifFile;
-        } catch (Exception e) {
-            Log.e("EmoteDebug", "Error downloading GIF", e);
-            exception = e;
-            return null;
-        } finally {
-            if (response != null) {
-                response.close();
+        @Override
+        protected void onPostExecute(File gifFile) {
+            if (gifFile != null) {
+                callback.onGifDownloaded(gifFile);
+            } else {
+                callback.onGifDownloadFailed(exception != null ? exception : new Exception("Unknown error"));
             }
         }
     }
 
-    @Override
-    protected void onPostExecute(File gifFile) {
-        if (gifFile != null) {
-            callback.onGifDownloaded(gifFile);
+    public interface GifDownloadCallback {
+        void onGifDownloaded(File gifFile);
+        void onGifDownloadFailed(Exception e);
+    }
+
+    public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, String submissionTitle, boolean save) {
+        if (save) {
+            try {
+                Toast.makeText(activity, activity.getString(R.string.mediaview_notif_video), Toast.LENGTH_SHORT).show();
+            } catch (Exception ignored) {
+            }
+        }
+
+        Uri storageUri = StorageUtil.getStorageUri(activity);
+        if (storageUri == null || !StorageUtil.hasStorageAccess(activity)) {
+            showFirstDialog(activity);
         } else {
-            callback.onGifDownloadFailed(exception != null ? exception : new Exception("Unknown error"));
+            new AsyncTask<Void, Integer, DocumentFile>() {
+                NotificationManager notifMgr = ContextCompat.getSystemService(activity, NotificationManager.class);
+                Exception saveError;
+
+                @Override
+                protected DocumentFile doInBackground(Void... voids) {
+                    InputStream in = null;
+                    OutputStream out = null;
+                    try {
+                        Log.d("GifUtils", "Starting save process for URI: " + uri);
+                        DocumentFile parentDir = DocumentFile.fromTreeUri(activity, storageUri);
+                        if (parentDir == null) {
+                            saveError = new Exception("Could not access storage directory");
+                            return null;
+                        }
+
+                        // Create subreddit subfolder if needed
+                        if (SettingValues.imageSubfolders && !subreddit.isEmpty()) {
+                            DocumentFile subFolder = parentDir.findFile(subreddit);
+                            if (subFolder == null) {
+                                subFolder = parentDir.createDirectory(subreddit);
+                            }
+                            if (subFolder == null) {
+                                saveError = new Exception("Could not create subreddit folder");
+                                return null;
+                            }
+                            parentDir = subFolder;
+                        }
+
+                        // Create output file with .mp4 extension
+                        String fileName = FileUtil.getValidFileName(submissionTitle, "", ".mp4");
+                        Log.d("GifUtils", "Creating output file: " + fileName);
+                        DocumentFile outDocFile = parentDir.createFile("video/mp4", fileName);
+                        if (outDocFile == null) {
+                            saveError = new Exception("Could not create output file");
+                            return null;
+                        }
+
+                        String urlStr = uri.toString();
+                        if (urlStr.contains("v.redd.it") && urlStr.contains("DASHPlaylist.mpd")) {
+                            // Extract the base URL (everything before DASHPlaylist.mpd)
+                            String baseUrl = urlStr.substring(0, urlStr.indexOf("DASHPlaylist.mpd"));
+
+                            // Download the manifest
+                            OkHttpClient client = Reddit.client;
+                            Request request = new Request.Builder().url(urlStr).build();
+                            Response response = client.newCall(request).execute();
+
+                            if (!response.isSuccessful()) {
+                                saveError = new Exception("Failed to download manifest");
+                                return null;
+                            }
+
+                            String manifestContent = response.body().string();
+                            response.close();
+
+                            // Find the highest quality video URL
+                            String highestQualityUrl = null;
+                            int maxQuality = 0;
+
+                            // Look for DASH_XXX.mp4 in the manifest where XXX is the quality
+                            Pattern pattern = Pattern.compile("DASH_(\\d+)\\.mp4");
+                            Matcher matcher = pattern.matcher(manifestContent);
+
+                            while (matcher.find()) {
+                                int quality = Integer.parseInt(matcher.group(1));
+                                if (quality > maxQuality) {
+                                    maxQuality = quality;
+                                    highestQualityUrl = baseUrl + "DASH_" + quality + ".mp4";
+                                }
+                            }
+
+                            if (highestQualityUrl == null) {
+                                saveError = new Exception("Could not find video URL in manifest");
+                                return null;
+                            }
+
+                            urlStr = highestQualityUrl;
+                        }
+
+                        // Download and save the video
+                        Request videoRequest = new Request.Builder().url(urlStr).build();
+                        Response videoResponse = Reddit.client.newCall(videoRequest).execute();
+
+                        if (!videoResponse.isSuccessful()) {
+                            saveError = new Exception("Failed to download video: " + videoResponse);
+                            return null;
+                        }
+
+                        in = videoResponse.body().byteStream();
+                        out = activity.getContentResolver().openOutputStream(outDocFile.getUri());
+
+                        byte[] buffer = new byte[8192];
+                        long total = 0;
+                        int read;
+                        while ((read = in.read(buffer)) != -1) {
+                            out.write(buffer, 0, read);
+                            total += read;
+                        }
+
+                        if (total == 0) {
+                            saveError = new Exception("Downloaded file is empty");
+                            return null;
+                        }
+
+                        return outDocFile;
+
+                    } catch (Exception e) {
+                        Log.e("GifUtils", "Error saving video", e);
+                        saveError = e;
+                        return null;
+                    } finally {
+                        try {
+                            if (in != null) in.close();
+                        } catch (IOException e) {
+                            Log.e("GifUtils", "Error closing input stream", e);
+                        }
+                        try {
+                            if (out != null) out.close();
+                        } catch (IOException e) {
+                            Log.e("GifUtils", "Error closing output stream", e);
+                        }
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(DocumentFile result) {
+                    if (save) {
+                        notifMgr.cancel(1);
+                        if (result != null) {
+                            doNotifGif(result, activity);
+                        } else {
+                            Log.e("GifUtils", "Save failed: " + (saveError != null ? saveError.getMessage() : "Unknown error"));
+                            showErrorDialog(activity);
+                        }
+                    }
+                }
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
-}
-
-public interface GifDownloadCallback {
-    void onGifDownloaded(File gifFile);
-    void onGifDownloadFailed(Exception e);
-}
-
-public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, String submissionTitle, boolean save) {
-    if (save) {
-        try {
-            Toast.makeText(activity, activity.getString(R.string.mediaview_notif_title), Toast.LENGTH_SHORT).show();
-        } catch (Exception ignored) {
-        }
-    }
-
-    if (Reddit.appRestart.getString("imagelocation", "").isEmpty()) {
-        showFirstDialog(activity);
-    } else if (!new File(Reddit.appRestart.getString("imagelocation", "")).exists()) {
-        showErrorDialog(activity);
-    } else {
-        new AsyncTask<Void, Integer, Boolean>() {
-            File outFile;
-            NotificationManager notifMgr = ContextCompat.getSystemService(activity, NotificationManager.class);
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                if (save) {
-                    Notification notif = new NotificationCompat.Builder(activity, Reddit.CHANNEL_IMG)
-                            .setContentTitle(activity.getString(R.string.mediaview_saving, uri.toString()))
-                            .setSmallIcon(R.drawable.ic_download)
-                            .setProgress(0, 0, true)
-                            .setOngoing(true)
-                            .build();
-                    notifMgr.notify(1, notif);
-                }
-            }
-
-            @Override
-            protected Boolean doInBackground(Void... voids) {
-                try {
-                    String folderPath = Reddit.appRestart.getString("imagelocation", "");
-                    String subFolderPath = "";
-                    if (SettingValues.imageSubfolders && !subreddit.isEmpty()) {
-                        subFolderPath = File.separator + subreddit;
-                    }
-
-                    outFile = FileUtil.getValidFile(folderPath, subFolderPath, submissionTitle, "", ".gif");
-
-                    InputStream in = activity.getContentResolver().openInputStream(uri);
-                    if (in != null) {
-                        FileUtils.copyInputStreamToFile(in, outFile);
-                        in.close();
-                        return true;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return false;
-            }
-
-            @Override
-            protected void onPostExecute(Boolean success) {
-                super.onPostExecute(success);
-                if (save) {
-                    notifMgr.cancel(1);
-                    if (success) {
-                        doNotifGif(outFile, activity);
-                    } else {
-                        showErrorDialog(activity);
-                    }
-                }
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-}
 
     public static class AsyncLoadGif extends AsyncTask<String, Void, Uri> {
 
@@ -466,8 +572,8 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
             if (result == null || result.get("gfyItem") == null || result.getAsJsonObject("gfyItem")
                     .get("mp4Url")
                     .isJsonNull()) {
-                //If the result null, the gfycat link may be redirecting to gifdeliverynetwork which is powered by redgifs.
-                //Try getting the redirected url from gfycat and check if redirected url is gifdeliverynetwork and if it is,
+                // If the result null, the gfycat link may be redirecting to gifdeliverynetwork which is powered by redgifs.
+                // Try getting the redirected url from gfycat and check if redirected url is gifdeliverynetwork and if it is,
                 // we fetch the actual .mp4/.webm url from the redgifs api
                 if (result == null) {
                     try {
@@ -514,40 +620,10 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
             return Uri.parse(getUrlFromApi(result));
         }
 
-        /*Loads a direct MP4, used for DASH mp4 or direct/imgur videos, currently unused
-        private void loadDirect(String url) {
-            try {
-                writeGif(new URL(url), progressBar, c, subreddit);
-            } catch (Exception e) {
-                LogUtil.e(e,
-                        "Error loading URL " + url); //Most likely is an image, not a gif!
-                if (c instanceof MediaView && url.contains("imgur.com") && url.endsWith(
-                        ".mp4")) {
-                    c.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            (c).startActivity(new Intent(c, MediaView.class).putExtra(
-                                    MediaView.EXTRA_URL, url.replace(".mp4",
-                                            ".png"))); //Link is likely an image and not a gif
-                            (c).finish();
-                        }
-                    });
-                } else {
-                    if (closeIfNull) {
-                        Intent web = new Intent(c, Website.class);
-                        web.putExtra(LinkUtil.EXTRA_URL, url);
-                        web.putExtra(LinkUtil.EXTRA_COLOR, Color.BLACK);
-                        c.startActivity(web);
-                        c.finish();
-                    }
-                }
-            }
-        }*/
-
-        //Handles failures of loading a DASH mp4 or muxing a Reddit video
+        // Handles failures of loading a DASH mp4 or muxing a Reddit video
         private void catchVRedditFailure(Exception e, String url) {
             LogUtil.e(e,
-                    "Error loading URL " + url); //Most likely is an image, not a gif!
+                    "Error loading URL " + url); // Most likely is an image, not a gif!
             if (c instanceof MediaView && url.contains("imgur.com") && url.endsWith(
                     ".mp4")) {
                 c.runOnUiThread(new Runnable() {
@@ -555,7 +631,7 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
                     public void run() {
                         (c).startActivity(new Intent(c, MediaView.class).putExtra(
                                 MediaView.EXTRA_URL, url.replace(".mp4",
-                                        ".png"))); //Link is likely an image and not a gif
+                                        ".png"))); // Link is likely an image and not a gif
                         (c).finish();
                     }
                 });
@@ -576,38 +652,12 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
             }
             switch (videoType) {
                 case VREDDIT:
-                    /* We may not need this after all, but keeping the code here in case we run into more DASH issues. This is implemented in the iOS app
-                    try {
-                        //If it's an HLSPlaylist, there is a good chance we can find a DASH mp4 url
-                        if (url.contains("HLSPlaylist")) {
-                            //Test these qualities
-                            getQualityURL(url, new String[]{"1080", "720", "480", "360", "240", "96"},
-                                    (didFindVideo, videoUrl) -> {
-                                        if (didFindVideo) {
-                                            //Load the MP4 directly
-                                            loadDirect(videoUrl);
-                                        } else {
-                                            try {
-                                                //Fall back to muxing code
-                                                WriteGifMuxed(new URL(url), progressBar, c, subreddit);
-                                            } catch (Exception e) {
-                                                catchVRedditFailure(e, url);
-                                            }
-                                        }
-                                    });
-                        } else {
-                            WriteGifMuxed(new URL(url), progressBar, c, subreddit);
-                        }
-                    } catch (Exception e) {
-                        catchVRedditFailure(e, url);
-                    }
-                    break;*/
                     return Uri.parse(url);
                 case GFYCAT:
                     String name = url.substring(url.lastIndexOf("/"));
                     String gfycatUrl = "https://api.gfycat.com/v1/gfycats" + name;
 
-                    //Check if resolved gfycat link is gifdeliverynetwork. If it is gifdeliverynetwork, open the link externally
+                    // Check if resolved gfycat link is gifdeliverynetwork. If it is gifdeliverynetwork, open the link externally
                     try {
                         Uri uri = loadGfycat(name, url, gson);
                         if(uri.toString().contains("gifdeliverynetwork")){
@@ -630,7 +680,7 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
                         return Uri.parse(url);
                     } catch (Exception e) {
                         LogUtil.e(e,
-                                "Error loading URL " + url); //Most likely is an image, not a gif!
+                                "Error loading URL " + url); // Most likely is an image, not a gif!
                         if (c instanceof MediaView && url.contains("imgur.com") && url.endsWith(
                                 ".mp4")) {
                             c.runOnUiThread(new Runnable() {
@@ -638,7 +688,7 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
                                 public void run() {
                                     (c).startActivity(new Intent(c, MediaView.class).putExtra(
                                             MediaView.EXTRA_URL, url.replace(".mp4",
-                                                    ".png"))); //Link is likely an image and not a gif
+                                                    ".png"))); // Link is likely an image and not a gif
                                     (c).finish();
                                 }
                             });
@@ -790,60 +840,6 @@ public static void cacheSaveGif(Uri uri, Activity activity, String subreddit, St
                 video.play();
             }
         }
-
-        /* Code currently unused, but could be used for future DASH issues
-                public interface VideoSuccessCallback {
-            void onVideoFound(Boolean didFindVideo, String videoUrl);
-        }
-
-        public interface VideoTestCallback {
-            void onTestComplete(Boolean testSuccess, String videoUrl);
-        }
-
-        //Find a Reddit video MP4 URL by replacing HLSPlaylist.m3u8 with tests of different qualities
-        public static void getQualityURL(String urlToLoad, String[] qualityList, VideoSuccessCallback callback) {
-            if (qualityList.length == 0) {
-                //Will fall back to muxing code if no URL was found
-                callback.onVideoFound(false, "");
-            } else {
-                //Test current first link in qualityList
-                VideoTestCallback testCallback = (testSuccess, videoUrl) -> {
-                    if (testSuccess) {
-                        //Success, load this video
-                        callback.onVideoFound(true, videoUrl);
-                    } else {
-                        //Failed, check next video URL
-                        String[] newList = Arrays.copyOfRange(qualityList, 1, qualityList.length);
-                        getQualityURL(urlToLoad, newList, callback);
-                    }
-                };
-                testQuality(urlToLoad, qualityList[0], testCallback);
-
-            }
-        }
-
-        //Test URL headers to see if this quality URL exists
-        private static void testQuality(String urlToLoad, String quality, AsyncLoadGif.VideoTestCallback callback) {
-            String newURL = urlToLoad.replace("HLSPlaylist.m3u8", "DASH_" + quality + ".mp4");
-            try {
-                URL url = new URL(newURL);
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod("HEAD");
-                con.connect();
-                if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    //Success, load this MP4
-                    callback.onTestComplete(true, newURL);
-                } else {
-                    //Failed, this callback will test a new URL
-                    callback.onTestComplete(false, newURL);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                //Failed, this callback will test a new URL
-                callback.onTestComplete(false, newURL);
-            }
-        }
-         */
 
         /**
          * Get a remote video's file size

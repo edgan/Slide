@@ -37,7 +37,7 @@ public class AutoMarkupTextView extends AppCompatTextView {
         int mask = Linkify.WEB_URLS;
         LinkifyCompat.addLinks(this, mask);
 
-        //todo this setMovementMethod(new CommentMovementMethod());
+        // todo this setMovementMethod(new CommentMovementMethod());
 
     }
 

@@ -92,7 +92,7 @@ public class NetworkUtil {
         if (wifiManager == null) {
             return Status.NONE;
         }
-        //nwCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+        // nwCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
         // isWifiEnabled() supports detecting Wi-Fi connections over VPN
         if (wifiManager.isWifiEnabled() ||
                 nwCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {

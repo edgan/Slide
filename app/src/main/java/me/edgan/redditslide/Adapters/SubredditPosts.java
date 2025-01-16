@@ -331,7 +331,7 @@ public class SubredditPosts implements PostLoader {
         if (all == null) {
             all = OfflineSubreddit.getAll(subreddit);
         }
-        Collections.rotate(all, -1); //Move 0, or "submission only", to the end
+        Collections.rotate(all, -1); // Move 0, or "submission only", to the end
         offline = true;
 
         final String[] titles = new String[all.size()];

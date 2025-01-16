@@ -117,7 +117,7 @@ public class ModLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             String timeAgo = TimeUtils.getTimeAgo(a.getCreated().getTime(), mContext);
             String time = ((timeAgo == null || timeAgo.isEmpty()) ? "just now"
-                    : timeAgo); //some users were crashing here
+                    : timeAgo); // some users were crashing here
             titleString.append(time);
             titleString.append(spacer);
 

@@ -140,7 +140,7 @@ public class SettingsBackup extends BaseActivityAnim
                                                                                 outputStream);
                                                                 String content = null;
                                                                 File file = new File(
-                                                                        copy); //for ex foo.txt
+                                                                        copy); // for ex foo.txt
                                                                 FileReader reader = null;
                                                                 try {
                                                                     try {
@@ -421,7 +421,7 @@ public class SettingsBackup extends BaseActivityAnim
                     new AlertDialog.Builder(SettingsBackup.this)
                             .setTitle(R.string.settings_google)
                             .setMessage(R.string.settings_google_msg)
-                            //avoid that the dialog can be closed
+                            // avoid that the dialog can be closed
                             .setOnCancelListener(null)
                             .setPositiveButton(R.string.btn_ok, null)
                             .setCancelable(false)
@@ -533,7 +533,7 @@ public class SettingsBackup extends BaseActivityAnim
                         return null;
                     } catch (Exception e) {
                         e.printStackTrace();
-                        //todo error
+                        // todo error
                     } finally {
                         close(fw);
                     }
@@ -680,7 +680,7 @@ public class SettingsBackup extends BaseActivityAnim
                         .show();
             }
             if (result == null) {
-                //showMessage("Error while reading from the file");
+                // showMessage("Error while reading from the file");
 
                 return;
             }

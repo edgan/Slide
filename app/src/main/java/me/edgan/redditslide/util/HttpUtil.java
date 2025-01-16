@@ -28,21 +28,21 @@ public class HttpUtil {
 
     /**
      * Gets a JsonObject by calling apiUrl and parsing the JSON response String. This method should
-     * be used when calling the Imgur Mashape API (https://imgur-apiv3.p.mashape.com/) since it
+     * be used when calling the Imgur API (https://api.imgur.com/) since it
      * requires special headers in the requests.
      *
      * @param client     The OkHTTP client to use to make the request
      * @param gson       The GSON instance to use to parse the response String
      * @param apiUrl     The URL to call to get the response from
-     * @param mashapeKey The Mashape API key to use when the request is made
+     * @param imgurKey The API key to use when the request is made
      * @return A JsonObject representation of the API response, null when there was an error or
      * Exception thrown by the HTTP call
      */
-    public static JsonObject getImgurMashapeJsonObject(final OkHttpClient client, final Gson gson,
-            final String apiUrl, final String mashapeKey) {
+    public static JsonObject getImgurJsonObject(final OkHttpClient client, final Gson gson,
+            final String apiUrl, final String imgurKey) {
         Map<String, String> imgurHeadersMap = new HashMap<>();
-        imgurHeadersMap.put("X-Mashape-Key", mashapeKey);
-        imgurHeadersMap.put("Authorization", "Client-ID " + Constants.IMGUR_MASHAPE_CLIENT_ID);
+        imgurHeadersMap.put("Authorization", "Client-ID " + Constants.IMGUR_CLIENT_ID);
+        imgurHeadersMap.put("Authorization", "Bearer" + imgurKey);
         return getJsonObject(client, gson, apiUrl, imgurHeadersMap);
     }
 

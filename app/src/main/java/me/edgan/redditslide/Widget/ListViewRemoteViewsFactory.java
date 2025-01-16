@@ -84,12 +84,12 @@ public class ListViewRemoteViewsFactory implements RemoteViewsService.RemoteView
                             final Set<String> accounts =
                                     Authentication.authentication.getStringSet("accounts",
                                             new HashSet<String>());
-                            if (accounts.contains(name)) { //convert to new system
+                            if (accounts.contains(name)) { // convert to new system
                                 accounts.remove(name);
                                 accounts.add(name + ":" + Authentication.refresh);
                                 Authentication.authentication.edit()
                                         .putStringSet("accounts", accounts)
-                                        .apply(); //force commit
+                                        .apply(); // force commit
                             }
                             Authentication.isLoggedIn = true;
                             Reddit.notFirst = true;

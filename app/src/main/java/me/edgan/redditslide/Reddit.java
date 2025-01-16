@@ -108,7 +108,7 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
     public static ArrayList<Integer> lastPosition;
     public static int                currentPosition;
     public static SharedPreferences  cachedData;
-    public static final boolean noGapps = true; //for testing
+    public static final boolean noGapps = true; // for testing
     public static boolean            overrideLanguage;
     public static boolean            isRestarting;
     public static AutoCacheScheduler autoCache;
@@ -221,7 +221,7 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
     }
 
     public static void setDefaultErrorHandler(Context base) {
-        //START code adapted from https://github.com/QuantumBadger/RedReader/
+        // START code adapted from https://github.com/QuantumBadger/RedReader/
         final Thread.UncaughtExceptionHandler androidHandler =
                 Thread.getDefaultUncaughtExceptionHandler();
         final WeakReference<Context> cont = new WeakReference<>(base);
@@ -236,7 +236,7 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
                     String stacktrace = writer.toString().replace(";", ",");
                     if (stacktrace.contains("UnknownHostException") || stacktrace.contains(
                             "SocketTimeoutException") || stacktrace.contains("ConnectException")) {
-                        //is offline
+                        // is offline
                         final Handler mHandler = new Handler(Looper.getMainLooper());
                         mHandler.post(new Runnable() {
                                           @Override
@@ -266,7 +266,7 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
                         );
                     } else if (stacktrace.contains("403 Forbidden") || stacktrace.contains(
                             "401 Unauthorized")) {
-                        //Un-authenticated
+                        // Un-authenticated
                         final Handler mHandler = new Handler(Looper.getMainLooper());
                         mHandler.post(new Runnable() {
                             @Override
@@ -327,7 +327,7 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
                     } else {
                         appRestart.edit()
                                 .putString("startScreen", "a")
-                                .apply(); //Force reload of data after crash incase state was not saved
+                                .apply(); // Force reload of data after crash incase state was not saved
 
 
                         try {
@@ -347,7 +347,7 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
                 }
             }
         });
-        //END adaptation
+        // END adaptation
 
     }
 
@@ -548,7 +548,7 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
             }
     }
 
-    //IPV6 workaround by /u/talklittle
+    // IPV6 workaround by /u/talklittle
     public static class GfycatIpv4Dns implements Dns {
         @Override
         public List<InetAddress> lookup(String hostname) throws UnknownHostException {

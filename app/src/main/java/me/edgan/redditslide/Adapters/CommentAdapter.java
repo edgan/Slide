@@ -334,7 +334,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             doScoreText(holder, comment, this);
 
-            //Long click listeners
+            // Long click listeners
             View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -364,7 +364,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
 
-            //Single click listeners
+            // Single click listeners
             OnSingleClickListener singleClick = new OnSingleClickListener() {
                 @Override
                 public void onSingleClick(View v) {
@@ -428,7 +428,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } else {
                 holder.imageFlair.setVisibility(View.GONE);
             }
-            //Set typeface for body
+            // Set typeface for body
             int type = new FontPreferences(mContext).getFontTypeComment().getTypeface();
             Typeface typeface;
             if (type >= 0) {
@@ -439,14 +439,14 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             holder.firstTextView.setTypeface(typeface);
 
 
-            //Show padding on top
+            // Show padding on top
             if (baseNode.isTopLevel()) {
                 holder.itemView.findViewById(R.id.next).setVisibility(View.VISIBLE);
             } else if (holder.itemView.findViewById(R.id.next).getVisibility() == View.VISIBLE) {
                 holder.itemView.findViewById(R.id.next).setVisibility(View.GONE);
             }
 
-            //Should be collapsed?
+            // Should be collapsed?
             if (hiddenPersons.contains(comment.getFullName()) || toCollapse.contains(
                     comment.getFullName())) {
                 int childnumber = getChildNumber(baseNode);
@@ -472,7 +472,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .getDisplayMetrics().density);
             int width = 0;
 
-            //Padding on the left, starting with the third comment
+            // Padding on the left, starting with the third comment
             for (int i = 2; i < baseNode.getDepth(); i++) {
                 width += dwidth;
             }
@@ -657,7 +657,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         }
         if (firstHolder instanceof SpacerViewHolder) {
-            //Make a space the size of the toolbar minus 1 so there isn't a gap
+            // Make a space the size of the toolbar minus 1 so there isn't a gap
             firstHolder.itemView.findViewById(R.id.height)
                     .setLayoutParams(
                             new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (
@@ -758,7 +758,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 currentlyEditing.setText("");
                                 currentlyEditing = null;
                                 editingPosition = -1;
-                                //Hide soft keyboard
+                                // Hide soft keyboard
                                 View view = ((Activity) mContext).findViewById(android.R.id.content);
                                 if (view != null) {
                                     KeyboardUtil.hideKeyboard(mContext, view.getWindowToken(), 0);
@@ -857,7 +857,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         mAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animator) {
-                //Height=0, but it set visibility to GONE
+                // Height=0, but it set visibility to GONE
                 v.setVisibility(View.GONE);
             }
 
@@ -877,7 +877,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         mAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animator) {
-                //Height=0, but it set visibility to GONE
+                // Height=0, but it set visibility to GONE
                 ((LinearLayout) v).removeAllViews();
             }
 
@@ -1094,7 +1094,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             try {
                 if (UserSubscriptions.modOf.contains(submission.getSubredditName())) {
-                    //todo
+                    // todo
                     mod.setVisibility(View.GONE);
                 } else {
                     mod.setVisibility(View.GONE);
@@ -1256,7 +1256,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     public void onSingleClick(View v) {
                         expandAndSetParams(baseView);
 
-                        //If the base theme is Light or Sepia, tint the Editor actions to be white
+                        // If the base theme is Light or Sepia, tint the Editor actions to be white
                         if (SettingValues.currentTheme == 1 || SettingValues.currentTheme == 5) {
                             final ImageView saveDraft = (ImageView) replyArea.findViewById(R.id.savedraft);
                             final ImageView draft = (ImageView) replyArea.findViewById(R.id.draft);
@@ -1370,7 +1370,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             currentlyEditing = null;
                             editingPosition = -1;
                         }
-                        //Hide soft keyboard
+                        // Hide soft keyboard
                         View view = ((Activity) mContext).findViewById(android.R.id.content);
                         if (view != null) {
                             KeyboardUtil.hideKeyboard(mContext, view.getWindowToken(), 0);
@@ -1528,7 +1528,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         int dwidth = (int) (3 * Resources.getSystem().getDisplayMetrics().density);
         int width = 0;
 
-        //Padding on the left, starting with the third comment
+        // Padding on the left, starting with the third comment
         for (int i = 2; i < baseNode.getDepth(); i++) {
             width += dwidth;
         }
@@ -1579,7 +1579,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             int dwidth = (int) (3 * Resources.getSystem().getDisplayMetrics().density);
             int width = 0;
 
-            //Padding on the left, starting with the third comment
+            // Padding on the left, starting with the third comment
             for (int i = 2; i < baseNode.getDepth(); i++) {
                 width += dwidth;
             }
@@ -1635,8 +1635,8 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void doOnClick(CommentViewHolder holder, Comment comment, CommentNode baseNode) {
         if (currentSelectedItem != null && currentSelectedItem.contains(comment.getFullName())) {
             if (SettingValues.swap) {
-                //If the comment is highlighted and the user is long pressing the comment,
-                //hide the comment.
+                // If the comment is highlighted and the user is long pressing the comment,
+                // hide the comment.
                 doOnClick(holder, baseNode, comment);
             }
             setCommentStateUnhighlighted(holder, comment, baseNode, true);
@@ -1930,7 +1930,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         bodies[index - 1] = submission.getAuthor();
 
-        //Reverse the array so Submission > Author > ... > Current OP
+        // Reverse the array so Submission > Author > ... > Current OP
         for (int i = 0; i < bodies.length / 2; i++) {
             String temp = bodies[i];
             bodies[i] = bodies[bodies.length - i - 1];
@@ -2074,7 +2074,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     String stacktrace = writer.toString().replace(";", ",");
                     if (stacktrace.contains("UnknownHostException") || stacktrace.contains(
                             "SocketTimeoutException") || stacktrace.contains("ConnectException")) {
-                        //is offline
+                        // is offline
                         final Handler mHandler = new Handler(Looper.getMainLooper());
                         mHandler.post(new Runnable() {
                                           @Override
@@ -2094,7 +2094,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         );
                     } else if (stacktrace.contains("403 Forbidden") || stacktrace.contains(
                             "401 Unauthorized")) {
-                        //Un-authenticated
+                        // Un-authenticated
                         final Handler mHandler = new Handler(Looper.getMainLooper());
                         mHandler.post(new Runnable() {
                             @Override
@@ -2165,7 +2165,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                 dataSet.refreshLayout.setRefreshing(false);
             } else {
-                //Comment could not be found, force a reload
+                // Comment could not be found, force a reload
                 Handler handler2 = new Handler();
                 handler2.postDelayed(new Runnable() {
                     public void run() {

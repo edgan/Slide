@@ -113,9 +113,9 @@ public class ModeratorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             position -= 1;
         }
 
-        if (dataSet.posts.get(position).getFullName().startsWith("t1"))//IS COMMENT
+        if (dataSet.posts.get(position).getFullName().startsWith("t1")) // IS COMMENT
             return COMMENT;
-        if (dataSet.posts.get(position).getFullName().startsWith("t4"))//IS MESSAGE
+        if (dataSet.posts.get(position).getFullName().startsWith("t4")) // IS MESSAGE
             return MESSAGE;
         return POST;
     }
@@ -302,7 +302,7 @@ public class ModeratorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
         } else if (firstHold instanceof ProfileCommentViewHolder) {
-            //IS COMMENT
+            // IS COMMENT
             final ProfileCommentViewHolder holder = (ProfileCommentViewHolder) firstHold;
             final Comment comment = (Comment) dataSet.posts.get(i);
 
@@ -358,7 +358,7 @@ public class ModeratorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
             String timeAgo = TimeUtils.getTimeAgo(comment.getCreated().getTime(), mContext);
-            String time = ((timeAgo == null || timeAgo.isEmpty()) ? "just now" : timeAgo); //some users were crashing here
+            String time = ((timeAgo == null || timeAgo.isEmpty()) ? "just now" : timeAgo); // some users were crashing here
             time = time + (((comment.getEditDate() != null) ? " (edit " + TimeUtils.getTimeAgo(comment.getEditDate().getTime(), mContext) + ")" : ""));
             titleString.append(time);
             titleString.append(spacer);
@@ -366,7 +366,7 @@ public class ModeratorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             final ImageView mod = holder.itemView.findViewById(R.id.mod);
             try {
                 if (UserSubscriptions.modOf.contains(comment.getSubredditName())) {
-                    //todo
+                    // todo
                     mod.setVisibility(View.GONE);
                 } else {
                     mod.setVisibility(View.GONE);
@@ -500,7 +500,7 @@ public class ModeratorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         int[] attrs = new int[]{R.attr.tintColor};
         TypedArray ta = mContext.obtainStyledAttributes(attrs);
 
-        //Initialize drawables
+        // Initialize drawables
         int color = ta.getColor(0, Color.WHITE);
         final Drawable profile = mContext.getResources().getDrawable(R.drawable.ic_account_circle);
         final Drawable report = mContext.getResources().getDrawable(R.drawable.ic_report);
@@ -515,7 +515,7 @@ public class ModeratorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final Drawable removeReason = mContext.getResources().getDrawable(R.drawable.ic_announcement);
         final Drawable lock = mContext.getResources().getDrawable(R.drawable.ic_lock);
 
-        //Tint drawables
+        // Tint drawables
         final List<Drawable> drawableSet = Arrays.asList(
                 profile, report, approve, nsfw, distinguish, remove,
                 pin, ban, spam, note, removeReason, lock);
@@ -523,7 +523,7 @@ public class ModeratorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         ta.recycle();
 
-        //Bottom sheet builder
+        // Bottom sheet builder
         BottomSheet.Builder b = new BottomSheet.Builder((Activity) mContext).title(
                 CompatUtil.fromHtml(comment.getBody()));
 

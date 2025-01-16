@@ -50,7 +50,7 @@ public class PhotoLoader {
                                 .get("images")
                                 .get(0)
                                 .get("source")
-                                .has("height")) { //Load the preview image which has probably already been cached in memory instead of the direct link
+                                .has("height")) { // Load the preview image which has probably already been cached in memory instead of the direct link
                             url = submission.getDataNode()
                                     .get("preview")
                                     .get("images")
@@ -89,7 +89,7 @@ public class PhotoLoader {
     }
 
     private static String getThumbnailUrl(final Thumbnails.Image thumbnail) {
-        return CompatUtil.fromHtml(thumbnail.getUrl()).toString(); //unescape url characters
+        return CompatUtil.fromHtml(thumbnail.getUrl()).toString(); // unescape url characters
     }
 
     private static void loadImage(final Context context, final String url) {

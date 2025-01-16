@@ -420,18 +420,18 @@ public class HeaderImageLinkView extends RelativeLayout {
                         if (SettingValues.lqLow && length >= 3) {
                             url = CompatUtil.fromHtml(
                                     submission.getThumbnails().getVariations()[2].getUrl())
-                                    .toString(); //unescape url characters
+                                    .toString(); // unescape url characters
                         } else if (SettingValues.lqMid && length >= 4) {
                             url = CompatUtil.fromHtml(
                                     submission.getThumbnails().getVariations()[3].getUrl())
-                                    .toString(); //unescape url characters
+                                    .toString(); // unescape url characters
                         } else if (length >= 5) {
                             url = CompatUtil.fromHtml(
                                     submission.getThumbnails().getVariations()[length - 1].getUrl())
-                                    .toString(); //unescape url characters
+                                    .toString(); // unescape url characters
                         } else {
                             url = CompatUtil.fromHtml(submission.getThumbnails().getSource().getUrl())
-                                    .toString(); //unescape url characters
+                                    .toString(); // unescape url characters
                         }
                     }
                     lq = true;
@@ -442,7 +442,7 @@ public class HeaderImageLinkView extends RelativeLayout {
                             .get("images")
                             .get(0)
                             .get("source")
-                            .has("height")) { //Load the preview image which has probably already been cached in memory instead of the direct link
+                            .has("height")) { // Load the preview image which has probably already been cached in memory instead of the direct link
                         url = submission.getDataNode()
                                 .get("preview")
                                 .get("images")
@@ -506,18 +506,18 @@ public class HeaderImageLinkView extends RelativeLayout {
                         if (SettingValues.lqLow && length >= 3) {
                             url = CompatUtil.fromHtml(
                                     submission.getThumbnails().getVariations()[2].getUrl())
-                                    .toString(); //unescape url characters
+                                    .toString(); // unescape url characters
                         } else if (SettingValues.lqMid && length >= 4) {
                             url = CompatUtil.fromHtml(
                                     submission.getThumbnails().getVariations()[3].getUrl())
-                                    .toString(); //unescape url characters
+                                    .toString(); // unescape url characters
                         } else if (length >= 5) {
                             url = CompatUtil.fromHtml(
                                     submission.getThumbnails().getVariations()[length - 1].getUrl())
-                                    .toString(); //unescape url characters
+                                    .toString(); // unescape url characters
                         } else {
                             url = CompatUtil.fromHtml(submission.getThumbnails().getSource().getUrl())
-                                    .toString(); //unescape url characters
+                                    .toString(); // unescape url characters
                         }
                     }
                     lq = true;
@@ -525,7 +525,7 @@ public class HeaderImageLinkView extends RelativeLayout {
                 } else {
                     url = CompatUtil.fromHtml(submission.getThumbnails().getSource().getUrl().isEmpty()
                             ? submission.getThumbnail()
-                            : submission.getThumbnails().getSource().getUrl()).toString(); //unescape url characters
+                            : submission.getThumbnails().getSource().getUrl()).toString(); // unescape url characters
                 }
                 if (!SettingValues.isPicsEnabled(baseSub) && !full || forceThumb || (news && submission.getScore() < 5000)) {
 
@@ -684,7 +684,7 @@ public class HeaderImageLinkView extends RelativeLayout {
                 Peek.into(R.layout.peek_view_submission, new SimpleOnPeek() {
                     @Override
                     public void onInflated(final PeekView peekView, final View rootView) {
-                        //do stuff
+                        // do stuff
                         TextView text = rootView.findViewById(R.id.title);
                         text.setText(url);
                         text.setTextColor(Color.WHITE);
@@ -783,7 +783,7 @@ public class HeaderImageLinkView extends RelativeLayout {
                 HeaderImageLinkView.this.event = event;
 
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    position = event.getY(); //used to see if the user scrolled or not
+                    position = event.getY(); // used to see if the user scrolled or not
                 }
                 if (!(event.getAction() == MotionEvent.ACTION_UP
                         || event.getAction() == MotionEvent.ACTION_DOWN)) {
@@ -844,7 +844,7 @@ public class HeaderImageLinkView extends RelativeLayout {
             lq = false;
             lastDone = submission.getFullName();
             backdrop.setImageResource(
-                    android.R.color.transparent); //reset the image view in case the placeholder is still visible
+                    android.R.color.transparent); // reset the image view in case the placeholder is still visible
             thumbImage2.setImageResource(android.R.color.transparent);
             doImageAndText(submission, full, baseSub, false);
         }
@@ -857,7 +857,7 @@ public class HeaderImageLinkView extends RelativeLayout {
             lq = false;
             lastDone = submission.getFullName();
             backdrop.setImageResource(
-                    android.R.color.transparent); //reset the image view in case the placeholder is still visible
+                    android.R.color.transparent); // reset the image view in case the placeholder is still visible
             thumbImage2.setImageResource(android.R.color.transparent);
             doImageAndText(submission, full, baseSub, true);
         }

@@ -38,7 +38,6 @@ import java.util.List;
 import me.edgan.redditslide.Activities.BaseActivity;
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.BuildConfig;
-import me.edgan.redditslide.Fragments.FolderChooserDialogCreate;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
@@ -51,14 +50,13 @@ import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
 /**
  * Created by ccrama on 3/5/2015.
  */
-public class SettingsActivity extends BaseActivity
-        implements FolderChooserDialogCreate.FolderCallback, RestartActivity {
+public class SettingsActivity extends BaseActivity implements RestartActivity {
 
     private final static int RESTART_SETTINGS_RESULT = 2;
     private       int                                                scrollY;
     private       SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
     private       String                                             prev_text;
-    public static boolean                                            changed;  //whether or not a Setting was changed
+    public static boolean                                            changed;  // whether or not a Setting was changed
 
     private SettingsGeneralFragment      mSettingsGeneralFragment      = new SettingsGeneralFragment(this);
     private ManageOfflineContentFragment mManageOfflineContentFragment = new ManageOfflineContentFragment(this);
@@ -453,10 +451,10 @@ public class SettingsActivity extends BaseActivity
 
                 dialoglayout.findViewById(R.id.title)
                         .setBackgroundColor(Palette.getDefaultColor());
-                //todo final Slider portrait = (Slider) dialoglayout.findViewById(R.id.portrait);
+                // todo final Slider portrait = (Slider) dialoglayout.findViewById(R.id.portrait);
                 final SeekBar landscape = dialoglayout.findViewById(R.id.landscape);
 
-                //todo  portrait.setBackgroundColor(Palette.getDefaultColor());
+                // todo  portrait.setBackgroundColor(Palette.getDefaultColor());
                 landscape.setProgress(Reddit.dpWidth - 1);
 
                 ((TextView) dialoglayout.findViewById(R.id.progressnumber)).setText(
@@ -564,16 +562,6 @@ public class SettingsActivity extends BaseActivity
                 }
             });
         }
-    }
-
-    @Override
-    public void onFolderSelection(@NonNull FolderChooserDialogCreate dialog,
-                                  @NonNull File folder, boolean isSaveToLocation) {
-        mSettingsGeneralFragment.onFolderSelection(dialog, folder, false);
-    }
-
-    @Override
-    public void onFolderChooserDismissed(@NonNull FolderChooserDialogCreate dialog) {
     }
 
     @Override

@@ -69,7 +69,6 @@ import java.util.Locale;
 
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Constants;
-import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.CommentPage;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.ImageFlairs;
@@ -255,7 +254,7 @@ public class SubredditView extends BaseActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        //Hide the "Submit" menu item if the currently viewed sub is the frontpage or /r/all.
+        // Hide the "Submit" menu item if the currently viewed sub is the frontpage or /r/all.
         if (subreddit.equals("frontpage") || subreddit.equals("all") || subreddit.equals("popular") || subreddit.equals("friends") || subreddit.equals("mod")) {
             menu.findItem(R.id.submit).setVisible(false);
             menu.findItem(R.id.sidebar).setVisible(false);
@@ -349,7 +348,7 @@ public class SubredditView extends BaseActivity {
                                     }
                                 });
 
-                //Add "search current sub" if it is not frontpage/all/random
+                // Add "search current sub" if it is not frontpage/all/random
                 if (!subreddit.equalsIgnoreCase("frontpage")
                         && !subreddit.equalsIgnoreCase("all")
                         && !subreddit.equalsIgnoreCase("random")
@@ -893,7 +892,7 @@ public class SubredditView extends BaseActivity {
             findViewById(R.id.header_sub).setBackgroundColor(Palette.getColor(subOverride));
             ((TextView) findViewById(R.id.sub_infotitle)).setText(subOverride);
 
-            //Sidebar buttons should use subOverride's accent color
+            // Sidebar buttons should use subOverride's accent color
             int subColor = new ColorPreferences(this).getColor(subOverride);
             ((TextView) findViewById(R.id.theme_text)).setTextColor(subColor);
             ((TextView) findViewById(R.id.wiki_text)).setTextColor(subColor);
@@ -1168,7 +1167,7 @@ public class SubredditView extends BaseActivity {
                 CommentOverflow overflow = (CommentOverflow) findViewById(R.id.commentOverflow);
                 setViews(text, subreddit.getDisplayName(), body, overflow);
 
-                //get all subs that have Notifications enabled
+                // get all subs that have Notifications enabled
                 ArrayList<String> rawSubs = StringUtil.stringToArray(
                         Reddit.appRestart.getString(CheckForMail.SUBS_TO_GET, ""));
                 HashMap<String, Integer> subThresholds = new HashMap<>();
@@ -1177,11 +1176,11 @@ public class SubredditView extends BaseActivity {
                         String[] split = s.split(":");
                         subThresholds.put(split[0].toLowerCase(Locale.ENGLISH), Integer.valueOf(split[1]));
                     } catch (Exception ignored) {
-                        //do nothing
+                        // do nothing
                     }
                 }
 
-                //whether or not this subreddit was in the keySet
+                // whether or not this subreddit was in the keySet
                 boolean isNotified =
                         subThresholds.containsKey(subreddit.getDisplayName().toLowerCase(Locale.ENGLISH));
                 ((AppCompatCheckBox) findViewById(R.id.notify_posts_state)).setChecked(isNotified);
@@ -1594,58 +1593,30 @@ public class SubredditView extends BaseActivity {
 
     public class SubredditPagerAdapter extends FragmentStatePagerAdapter {
         private SubmissionsView mCurrentFragment;
-        private BlankFragment   blankPage;
 
         public SubredditPagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             pager.clearOnPageChangeListeners();
-            pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset,
-                        int positionOffsetPixels) {
-                    if (position == 0) {
-                        CoordinatorLayout.LayoutParams params =
-                                (CoordinatorLayout.LayoutParams) header.getLayoutParams();
-                        params.setMargins(header.getWidth() - positionOffsetPixels, 0,
-                                -((header.getWidth() - positionOffsetPixels)), 0);
-                        header.setLayoutParams(params);
-                        if (positionOffsetPixels == 0) {
-                            finish();
-                            overridePendingTransition(0, R.anim.fade_out);
-                        }
-                    }
-
-                    if (position == 0) {
-                        ((SubredditPagerAdapter) pager.getAdapter()).blankPage.doOffset(
-                                positionOffset);
-                        pager.setBackgroundColor(Palette.adjustAlpha(positionOffset * 0.7f));
-                    }
-                }
-            });
+            pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {});
             if (pager.getAdapter() != null) {
-                pager.setCurrentItem(1);
+                pager.setCurrentItem(0);
             }
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 1;
         }
 
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (i == 1) {
-                SubmissionsView f = new SubmissionsView();
-                Bundle args = new Bundle();
-                args.putString("id", subreddit);
-                f.setArguments(args);
+            SubmissionsView f = new SubmissionsView();
+            Bundle args = new Bundle();
+            args.putString("id", subreddit);
+            f.setArguments(args);
 
-                return f;
-            } else {
-                blankPage = new BlankFragment();
-                return blankPage;
-            }
+            return f;
         }
 
         @Override
@@ -1679,7 +1650,6 @@ public class SubredditView extends BaseActivity {
     public class SubredditPagerAdapterComment extends SubredditPagerAdapter {
         public int size = 2;
         public Fragment storedFragment;
-        BlankFragment blankPage;
         private SubmissionsView mCurrentFragment;
 
         public SubredditPagerAdapterComment(FragmentManager fm) {
@@ -1689,26 +1659,12 @@ public class SubredditView extends BaseActivity {
                 @Override
                 public void onPageScrolled(int position, float positionOffset,
                         int positionOffsetPixels) {
-                    if (position == 0) {
-                        CoordinatorLayout.LayoutParams params =
-                                (CoordinatorLayout.LayoutParams) header.getLayoutParams();
-                        params.setMargins(header.getWidth() - positionOffsetPixels, 0,
-                                -((header.getWidth() - positionOffsetPixels)), 0);
-                        header.setLayoutParams(params);
-                        if (positionOffsetPixels == 0) {
-                            finish();
-                            overridePendingTransition(0, R.anim.fade_out);
-                        }
-
-                        blankPage.doOffset(positionOffset);
-                        pager.setBackgroundColor(Palette.adjustAlpha(positionOffset * 0.7f));
-
-                    } else if (positionOffset == 0) {
-                        if (position == 1) {
+                    if (positionOffset == 0) {
+                        if (position == 0) {
                             doPageSelectedComments(position);
                         } else {
-                            //todo if (mAsyncGetSubreddit != null) {
-                            //mAsyncGetSubreddit.cancel(true);
+                            // todo if (mAsyncGetSubreddit != null) {
+                            // mAsyncGetSubreddit.cancel(true);
                             //}
 
                             if (header.getTranslationY() == 0) {
@@ -1727,7 +1683,6 @@ public class SubredditView extends BaseActivity {
             });
             if (pager.getAdapter() != null) {
                 pager.getAdapter().notifyDataSetChanged();
-                pager.setCurrentItem(1);
                 pager.setCurrentItem(0);
             }
         }
@@ -1764,10 +1719,7 @@ public class SubredditView extends BaseActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (i == 0) {
-                blankPage = new BlankFragment();
-                return blankPage;
-            } else if (openingComments == null || i != 2) {
+            if (openingComments == null || i != 2) {
                 SubmissionsView f = new SubmissionsView();
                 Bundle args = new Bundle();
                 args.putString("id", subreddit);
@@ -1809,7 +1761,7 @@ public class SubredditView extends BaseActivity {
                     doSubSidebarNoLoad(sub.getDisplayName());
                     doSubSidebar(sub.getDisplayName());
                     doSubOnlyStuff(sub);
-                } catch (NullPointerException e) { //activity has been killed
+                } catch (NullPointerException e) { // activity has been killed
                     if (!isFinishing()) finish();
                 }
                 SubredditView.this.subreddit = sub.getDisplayName();

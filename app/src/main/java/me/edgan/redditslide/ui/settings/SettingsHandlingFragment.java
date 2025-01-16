@@ -39,7 +39,7 @@ public class SettingsHandlingFragment implements CompoundButton.OnCheckedChangeL
     }
 
     public void Bind() {
-        //todo web stuff
+        // todo web stuff
         SwitchCompat shortlink = context.findViewById(R.id.settings_handling_shortlink);
         SwitchCompat gif = context.findViewById(R.id.settings_handling_gif);
         SwitchCompat hqgif = context.findViewById(R.id.settings_handling_hqgif);

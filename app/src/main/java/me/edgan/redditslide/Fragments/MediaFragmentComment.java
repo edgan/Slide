@@ -79,7 +79,7 @@ public class MediaFragmentComment extends Fragment {
     private CommentUrlObject      s;
     private OkHttpClient          client;
     private Gson                  gson;
-    private String                mashapeKey;
+    private String                imgurKey;
 
     @Override
     public void onDestroy() {
@@ -201,7 +201,7 @@ public class MediaFragmentComment extends Fragment {
         contentUrl = bundle.getString("contentUrl");
         client = Reddit.client;
         gson = new Gson();
-        mashapeKey = SecretConstants.getImgurApiKey(getContext());
+        imgurKey = SecretConstants.getImgurApiKey(getContext());
     }
 
     public void doLoad(final String contentUrl) {
@@ -299,7 +299,7 @@ public class MediaFragmentComment extends Fragment {
                             myIntent.putExtra(MediaView.EXTRA_DISPLAY_URL, submission.getUrl());
                             myIntent.putExtra(MediaView.EXTRA_URL, url);
                             myIntent.putExtra(MediaView.SUBREDDIT, submission.getSubredditName());
-                            //May be a bug with downloading multiple comment albums off the same submission
+                            // May be a bug with downloading multiple comment albums off the same submission
                             myIntent.putExtra(EXTRA_SUBMISSION_TITLE, submission.comment.getComment().getSubmissionTitle());
                             myIntent.putExtra(MediaView.EXTRA_SHARE_URL, submission.getUrl());
 
@@ -368,13 +368,13 @@ public class MediaFragmentComment extends Fragment {
         if (NetworkUtil.isConnected(getActivity())) {
 
             if (hash.startsWith("/")) hash = hash.substring(1);
-            final String apiUrl = "https://imgur-apiv3.p.mashape.com/3/image/" + hash + ".json";
+            final String apiUrl = "https://api.imgur.com/3/image/" + hash;
             LogUtil.v(apiUrl);
 
             new AsyncTask<Void, Void, JsonObject>() {
                 @Override
                 protected JsonObject doInBackground(Void... params) {
-                    return HttpUtil.getImgurMashapeJsonObject(client, gson, apiUrl, mashapeKey);
+                    return HttpUtil.getImgurJsonObject(client, gson, apiUrl, imgurKey);
                 }
 
                 @Override
@@ -400,7 +400,7 @@ public class MediaFragmentComment extends Fragment {
 
                                 if (type.contains("gif")) {
                                     doLoadGif(urls);
-                                } else if (!imageShown) { //only load if there is no image
+                                } else if (!imageShown) { // only load if there is no image
                                     doLoadImage(urls);
                                 }
                             } else if (result != null && result.has("data")) {
@@ -422,7 +422,7 @@ public class MediaFragmentComment extends Fragment {
 
                                 if (type.contains("gif")) {
                                     doLoadGif(((mp4 == null || mp4.isEmpty()) ? urls : mp4));
-                                } else if (!imageShown) { //only load if there is no image
+                                } else if (!imageShown) { // only load if there is no image
                                     doLoadImage(urls);
                                 }
                             } else {
@@ -434,7 +434,7 @@ public class MediaFragmentComment extends Fragment {
                                     + "], apiUrl = ["
                                     + apiUrl
                                     + "]");
-                            //todo open it?
+                            // todo open it?
                         }
                     }
                 }
@@ -460,7 +460,7 @@ public class MediaFragmentComment extends Fragment {
                 && !contentUrl.startsWith("https://i.redditmedia.com")
                 && !contentUrl.startsWith("https://i.reddituploads.com")
                 && !contentUrl.contains(
-                "imgur.com"))) { //we can assume redditmedia and imgur links are to direct images and not websites
+                "imgur.com"))) { // we can assume redditmedia and imgur links are to direct images and not websites
             rootView.findViewById(R.id.progress).setVisibility(View.VISIBLE);
             ((ProgressBar) rootView.findViewById(R.id.progress)).setIndeterminate(true);
 
@@ -480,7 +480,7 @@ public class MediaFragmentComment extends Fragment {
                                             && type != null
                                             && !type.isEmpty()
                                             && type.startsWith("image/")) {
-                                        //is image
+                                        // is image
                                         if (type.contains("gif")) {
                                             doLoadGif(finalUrl2.replace(".jpg", ".gif")
                                                     .replace(".png", ".gif"));
@@ -549,7 +549,7 @@ public class MediaFragmentComment extends Fragment {
                 try {
                     i.setImage(ImageSource.uri(f.getAbsolutePath()));
                 } catch (Exception e) {
-                    //todo  i.setImage(ImageSource.bitmap(loadedImage));
+                    // todo  i.setImage(ImageSource.bitmap(loadedImage));
                 }
                 (rootView.findViewById(R.id.progress)).setVisibility(View.GONE);
                 handler.removeCallbacks(progressBarDelayRunner);
@@ -564,7 +564,7 @@ public class MediaFragmentComment extends Fragment {
                             final View base = rootView.findViewById(R.id.base);
 
                             ValueAnimator va = ValueAnimator.ofFloat(1.0f, 0.2f);
-                            int mDuration = 250; //in millis
+                            int mDuration = 250; // in millis
                             va.setDuration(mDuration);
                             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                 public void onAnimationUpdate(ValueAnimator animation) {
@@ -573,13 +573,13 @@ public class MediaFragmentComment extends Fragment {
                                 }
                             });
                             va.start();
-                            //hide
+                            // hide
                         } else if (newScale <= previous && hidden) {
                             hidden = false;
                             final View base = rootView.findViewById(R.id.base);
 
                             ValueAnimator va = ValueAnimator.ofFloat(0.2f, 1.0f);
-                            int mDuration = 250; //in millis
+                            int mDuration = 250; // in millis
                             va.setDuration(mDuration);
                             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                 public void onAnimationUpdate(ValueAnimator animation) {
@@ -588,7 +588,7 @@ public class MediaFragmentComment extends Fragment {
                                 }
                             });
                             va.start();
-                            //unhide
+                            // unhide
                         }
                         previous = newScale;
                     }
@@ -651,7 +651,7 @@ public class MediaFragmentComment extends Fragment {
                                                             ValueAnimator va =
                                                                     ValueAnimator.ofFloat(1.0f,
                                                                             0.2f);
-                                                            int mDuration = 250; //in millis
+                                                            int mDuration = 250; // in millis
                                                             va.setDuration(mDuration);
                                                             va.addUpdateListener(
                                                                     new ValueAnimator.AnimatorUpdateListener() {
@@ -664,7 +664,7 @@ public class MediaFragmentComment extends Fragment {
                                                                         }
                                                                     });
                                                             va.start();
-                                                            //hide
+                                                            // hide
                                                         } else if (newScale <= previous && hidden) {
                                                             hidden = false;
                                                             final View base = rootView.findViewById(
@@ -673,7 +673,7 @@ public class MediaFragmentComment extends Fragment {
                                                             ValueAnimator va =
                                                                     ValueAnimator.ofFloat(0.2f,
                                                                             1.0f);
-                                                            int mDuration = 250; //in millis
+                                                            int mDuration = 250; // in millis
                                                             va.setDuration(mDuration);
                                                             va.addUpdateListener(
                                                                     new ValueAnimator.AnimatorUpdateListener() {
@@ -686,7 +686,7 @@ public class MediaFragmentComment extends Fragment {
                                                                         }
                                                                     });
                                                             va.start();
-                                                            //unhide
+                                                            // unhide
                                                         }
                                                         previous = newScale;
                                                     }

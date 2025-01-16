@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.view.LayoutInflater;
@@ -49,8 +50,6 @@ import java.util.Locale;
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.CaseInsensitiveArrayList;
 import me.edgan.redditslide.Fragments.DrawerItemsDialog;
-import me.edgan.redditslide.Fragments.FolderChooserDialogCreate;
-import me.edgan.redditslide.Fragments.FolderChooserDialogCreate.FolderCallback;
 import me.edgan.redditslide.Notifications.CheckForMail;
 import me.edgan.redditslide.Notifications.NotificationJobScheduler;
 import me.edgan.redditslide.R;
@@ -64,6 +63,7 @@ import me.edgan.redditslide.util.OnSingleClickListener;
 import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.StringUtil;
 import me.edgan.redditslide.util.TimeUtils;
+import me.edgan.redditslide.util.StorageUtil;
 
 import static me.edgan.redditslide.Constants.getClientId;
 import static me.edgan.redditslide.Constants.BackButtonBehaviorOptions;
@@ -74,13 +74,14 @@ import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_BOTH;
 import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_DRAWER;
 import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR;
 
+import android.content.Context;
+
 /**
  * Created by ccrama on 3/5/2015.
  */
-public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & FolderCallback>
-        implements FolderCallback {
+public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
 
-    public static boolean searchChanged; //whether or not the subreddit search method changed
+    public static boolean searchChanged; // whether or not the subreddit search method changed
     private final ActivityType context;
     private String input;
 
@@ -148,9 +149,9 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
         });
 
         dialoglayout.findViewById(R.id.title).setBackgroundColor(Palette.getDefaultColor());
-        //todo final Slider portrait = (Slider) dialoglayout.findViewById(R.id.portrait);
+        // todo final Slider portrait = (Slider) dialoglayout.findViewById(R.id.portrait);
 
-        //todo  portrait.setBackgroundColor(Palette.getDefaultColor());
+        // todo  portrait.setBackgroundColor(Palette.getDefaultColor());
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context)
                 .setView(dialoglayout);
@@ -349,7 +350,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
             }
         }
 
-        //hide fab while scrolling
+        // hide fab while scrolling
         {
             SwitchCompat alwaysShowFabSwitch = context.findViewById(R.id.settings_general_always_show_fab);
 
@@ -371,18 +372,112 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
         // Show image download button
         {
             SwitchCompat showDownloadBtnSwitch = context.findViewById(R.id.settings_general_show_download_button);
+            TextView locationView = context.findViewById(R.id.settings_general_set_save_location_view);
+            RelativeLayout setSaveLocationLayout = context.findViewById(R.id.settings_general_set_save_location);
 
-            if (showDownloadBtnSwitch != null) {
+            if (showDownloadBtnSwitch != null && setSaveLocationLayout != null) {
+                // Remove any existing listener to prevent recursion
+                showDownloadBtnSwitch.setOnCheckedChangeListener(null);
+                setSaveLocationLayout.setOnClickListener(null);
+
+                // Get current state
+                Uri currentUri = StorageUtil.getStorageUri(context);
+                boolean hasValidPath = currentUri != null && StorageUtil.hasStorageAccess(context);
+
+                // Update location display first
+                if (locationView != null) {
+                    String displayPath;
+                    if (hasValidPath) {
+                        displayPath = StorageUtil.getDisplayPath(context, currentUri);
+                    } else {
+                        displayPath = context.getString(R.string.settings_image_location_unset);
+                    }
+
+                    locationView.post(() -> {
+                        locationView.setText(displayPath);
+                        locationView.invalidate();
+                    });
+                }
+
+                // Set initial switch state
                 showDownloadBtnSwitch.setChecked(SettingValues.imageDownloadButton);
-                showDownloadBtnSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                // Handle location layout clicks
+                setSaveLocationLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        SettingValues.imageDownloadButton = isChecked;
-                        SettingValues.prefs.edit()
-                                .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, isChecked)
-                                .apply();
+                    public void onClick(View v) {
+                        if (context instanceof StorageUtil.DirectoryChooserHost) {
+                            StorageUtil.showDirectoryChooser(context, uri -> {
+                                if (uri != null) {
+                                    String path = StorageUtil.getDisplayPath(context, uri);
+                                    if (locationView != null) {
+                                        locationView.post(() -> {
+                                            locationView.setText(path);
+                                            locationView.invalidate();
+                                        });
+                                    }
+
+                                    showDownloadBtnSwitch.setChecked(true);
+                                    SettingValues.imageDownloadButton = true;
+                                    SettingValues.prefs.edit()
+                                        .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, true)
+                                        .apply();
+
+                                    Toast.makeText(context,
+                                        context.getString(R.string.settings_set_image_location, path),
+                                        Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        } else {
+                            Toast.makeText(context, "Unable to select directory in this context",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
+
+                // Switch change listener
+                showDownloadBtnSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (isChecked) {
+                        if (context instanceof StorageUtil.DirectoryChooserHost) {
+                            // Set the switch back to its previous state until selection is made
+                            showDownloadBtnSwitch.setChecked(false);
+
+                            StorageUtil.showDirectoryChooser(context, uri -> {
+                                if (uri != null) {
+                                    // Save the URI and enable setting
+                                    StorageUtil.saveStorageUri(context, uri);
+                                    SettingValues.imageDownloadButton = true;
+                                    SettingValues.prefs.edit()
+                                        .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, true)
+                                        .apply();
+
+                                    // Update UI
+                                    showDownloadBtnSwitch.setChecked(true);
+                                    String path = StorageUtil.getDisplayPath(context, uri);
+                                    if (locationView != null) {
+                                        locationView.setText(path);
+                                    }
+                                } else {
+                                    showDownloadBtnSwitch.setChecked(false);
+                                    SettingValues.imageDownloadButton = false;
+                                    SettingValues.prefs.edit()
+                                        .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, false)
+                                        .apply();
+                                }
+                            });
+                        } else {
+                            showDownloadBtnSwitch.setChecked(false);
+                            Toast.makeText(context, "Unable to select directory in this context",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        SettingValues.imageDownloadButton = false;
+                        SettingValues.prefs.edit()
+                            .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, false)
+                            .apply();
+                    }
+                });
+
             }
         }
 
@@ -405,10 +500,21 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
 
         final RelativeLayout setSaveLocationLayout = context.findViewById(R.id.settings_general_set_save_location);
         if (setSaveLocationLayout != null) {
-            setSaveLocationLayout.setOnClickListener(v ->
-                    DialogUtil.showFolderChooserDialog(context));
+            setSaveLocationLayout.setOnClickListener(v -> {
+                Uri storageUri = StorageUtil.getStorageUri(context);
+                if (storageUri == null) {
+                    StorageUtil.showDirectoryChooser(context);
+                } else {
+                    // Show current location - cast context to Context
+                    String location = StorageUtil.getDisplayPath((Context)context, storageUri);
+                    ((TextView) context.findViewById(R.id.settings_general_set_save_location_view))
+                            .setText(location);
+                    Toast.makeText(context,
+                            context.getString(R.string.settings_set_image_location, location),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
         }
-
 
         TextView setSaveLocationView = context.findViewById(R.id.settings_general_set_save_location_view);
         if (setSaveLocationView != null) {
@@ -439,7 +545,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
             });
         }
 
-        //FAB multi choice//
+        // FAB multi choice//
         final RelativeLayout fabLayout = context.findViewById(R.id.settings_general_fab);
         final TextView currentFabView = context.findViewById(R.id.settings_general_fab_current);
         if (currentFabView != null && fabLayout != null) {
@@ -512,7 +618,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
             });
         }
 
-        //SettingValues.subredditSearchMethod == 1 for drawer, 2 for toolbar, 3 for both
+        // SettingValues.subredditSearchMethod == 1 for drawer, 2 for toolbar, 3 for both
         final TextView currentMethodTitle = context.findViewById(R.id.settings_general_subreddit_search_method_current);
         if (currentMethodTitle != null) {
             switch (SettingValues.subredditSearchMethod) {
@@ -993,13 +1099,13 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
 
         List<String> sorted = UserSubscriptions.sort(subs);
 
-        //Array of all subs
+        // Array of all subs
         String[] all = new String[sorted.size()];
-        //Contains which subreddits are checked
+        // Contains which subreddits are checked
         boolean[] checked = new boolean[all.length];
 
 
-        //Remove special subreddits from list and store it in "all"
+        // Remove special subreddits from list and store it in "all"
         int i = 0;
         for (String s : sorted) {
             if (!s.equals("all")
@@ -1012,7 +1118,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
             }
         }
 
-        //Remove empty entries & store which subreddits are checked
+        // Remove empty entries & store which subreddits are checked
         List<String> list = new ArrayList<>();
         i = 0;
         for (String s : all) {
@@ -1025,7 +1131,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
             }
         }
 
-        //Convert List back to Array
+        // Convert List back to Array
         all = list.toArray(new String[0]);
 
         final ArrayList<String> toCheck = new ArrayList<>(subThresholds.keySet());
@@ -1053,7 +1159,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
                                                                 CharSequence raw) {
                                                 input = raw.toString()
                                                         .replaceAll("\\s",
-                                                                ""); //remove whitespace from input
+                                                                ""); // remove whitespace from input
                                             }
                                         })
                                 .positiveText(R.string.btn_add)
@@ -1074,7 +1180,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
                 StringUtil.stringToArray(Reddit.appRestart.getString(CheckForMail.SUBS_TO_GET, ""));
 
         if (!search) {
-            //NOT a sub searched for, was instead a list of all subs
+            // NOT a sub searched for, was instead a list of all subs
             for (String raw : new ArrayList<>(subsRaw)) {
                 if (!strings.contains(raw.split(":")[0])) {
                     subsRaw.remove(raw);
@@ -1125,20 +1231,6 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity & Fo
                 .putString(CheckForMail.SUBS_TO_GET, StringUtil.arrayToString(subs))
                 .commit();
         setSubText();
-    }
-
-    @Override
-    public void onFolderSelection(@NonNull FolderChooserDialogCreate dialog,
-                                  @NonNull File folder, boolean isSaveToLocation) {
-        Reddit.appRestart.edit().putString("imagelocation", folder.getAbsolutePath()).apply();
-        Toast.makeText(context,
-                context.getString(R.string.settings_set_image_location, folder.getAbsolutePath()),
-                Toast.LENGTH_LONG).show();
-        ((TextView) context.findViewById(R.id.settings_general_set_save_location_view)).setText(folder.getAbsolutePath());
-    }
-
-    @Override
-    public void onFolderChooserDismissed(@NonNull FolderChooserDialogCreate dialog) {
     }
 
     private class AsyncGetSubreddit extends AsyncTask<String, Void, Subreddit> {

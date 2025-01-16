@@ -83,7 +83,7 @@ public class SideArrayAdapter extends ArrayAdapter<String> {
 
     private void hideSearchbarUI() {
         try {
-            //Hide the toolbar search UI without an animation because we're starting a new activity
+            // Hide the toolbar search UI without an animation because we're starting a new activity
             if ((SettingValues.subredditSearchMethod
                     == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR
                     || SettingValues.subredditSearchMethod
@@ -97,8 +97,8 @@ public class SideArrayAdapter extends ArrayAdapter<String> {
                 ((MainActivity) getContext()).findViewById(R.id.close_search_toolbar)
                         .setVisibility(View.GONE);
 
-                //Play the exit animations of the search toolbar UI to avoid the animations failing to animate upon the next time
-                //the search toolbar UI is called. Set animation to 0 because the UI is already hidden.
+                // Play the exit animations of the search toolbar UI to avoid the animations failing to animate upon the next time
+                // the search toolbar UI is called. Set animation to 0 because the UI is already hidden.
                 ((MainActivity) getContext()).exitAnimationsForToolbarSearch(0,
                         ((CardView) ((MainActivity) getContext()).findViewById(
                                 R.id.toolbar_search_suggestions)),
@@ -180,7 +180,7 @@ public class SideArrayAdapter extends ArrayAdapter<String> {
                             ((MainActivity) getContext()).reloadItemNumber = -2;
                         }
                         try {
-                            //Hide the toolbar search UI with an animation because we're just changing tabs
+                            // Hide the toolbar search UI with an animation because we're just changing tabs
                             if ((SettingValues.subredditSearchMethod
                                     == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR
                                     || SettingValues.subredditSearchMethod

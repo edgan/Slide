@@ -284,7 +284,7 @@ public class PopulateNewsViewHolder {
                     .get("source")
                     .has("height")
                     && type
-                    != ContentType.Type.XKCD) { //Load the preview image which has probably already been cached in memory instead of the direct link
+                    != ContentType.Type.XKCD) { // Load the preview image which has probably already been cached in memory instead of the direct link
                 previewUrl = StringEscapeUtils.escapeHtml4(submission.getDataNode()
                         .get("preview")
                         .get("images")
@@ -366,7 +366,7 @@ public class PopulateNewsViewHolder {
                     .get("images")
                     .get(0)
                     .get("source")
-                    .has("height")) { //Load the preview image which has probably already been cached in memory instead of the direct link
+                    .has("height")) { // Load the preview image which has probably already been cached in memory instead of the direct link
                 String previewUrl = StringEscapeUtils.escapeHtml4(submission.getDataNode()
                         .get("preview")
                         .get("images")
@@ -667,7 +667,7 @@ public class PopulateNewsViewHolder {
                     case 7:
                         LinkUtil.openExternally(submission.getUrl());
                         if (submission.isNsfw() && !SettingValues.storeNSFWHistory) {
-                            //Do nothing if the post is NSFW and storeNSFWHistory is not enabled
+                            // Do nothing if the post is NSFW and storeNSFWHistory is not enabled
                         } else if (SettingValues.storeHistory) {
                             HasSeen.addSeen(submission.getFullName());
                         }
@@ -973,7 +973,7 @@ public class PopulateNewsViewHolder {
             }
         });
 
-        //Use this to offset the submission score
+        // Use this to offset the submission score
         int submissionScore = submission.getScore();
 
         final int commentCount = submission.getCommentCount();
@@ -1009,7 +1009,7 @@ public class PopulateNewsViewHolder {
             }
         }
 
-        //Save the score so we can use it in the OnClickListeners for the vote buttons
+        // Save the score so we can use it in the OnClickListeners for the vote buttons
 
         ImageView thumbImage2 = holder.thumbnail;
 

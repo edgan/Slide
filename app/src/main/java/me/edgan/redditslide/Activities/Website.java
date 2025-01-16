@@ -156,7 +156,7 @@ public class Website extends BaseActivityAnim {
         return false;
     }
 
-    //Stop audio
+    // Stop audio
     @Override
     public void finish() {
         super.finish();
@@ -242,7 +242,7 @@ public class Website extends BaseActivityAnim {
         v.setDownloadListener(new DownloadListener() {
             public void onDownloadStart(String url, String userAgent, String contentDisposition,
                     String mimetype, long contentLength) {
-                //Downloads using download manager on default browser
+                // Downloads using download manager on default browser
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);
@@ -337,7 +337,7 @@ public class Website extends BaseActivityAnim {
     public String currentURL;
 
 
-    //Method adapted from http://www.hidroh.com/2016/05/19/hacking-up-ad-blocker-android/
+    // Method adapted from http://www.hidroh.com/2016/05/19/hacking-up-ad-blocker-android/
     public class AdBlockWebViewClient extends WebViewClientCompat {
         private Map<String, Boolean> loadedUrls = new HashMap<>();
 

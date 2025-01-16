@@ -108,7 +108,7 @@ public class RedditItemView extends RelativeLayout {
             case COMMENT_PERMALINK: {
                 String submission = parts.get(3);
                 if (parts.size() >= 6) {
-                    //is likely a comment
+                    // is likely a comment
                     String end = parts.get(5);
 
                     if (end.length() >= 3) {
@@ -384,7 +384,7 @@ public class RedditItemView extends RelativeLayout {
 
         String timeAgo = TimeUtils.getTimeAgo(comment.getCreated().getTime(), getContext());
         String time = ((timeAgo == null || timeAgo.isEmpty()) ? "just now"
-                : timeAgo); //some users were crashing here
+                : timeAgo); // some users were crashing here
         time = time + (((comment.getEditDate() != null) ? " (edit " + TimeUtils.getTimeAgo(
                 comment.getEditDate().getTime(), getContext()) + ")" : ""));
         titleString.append(time);

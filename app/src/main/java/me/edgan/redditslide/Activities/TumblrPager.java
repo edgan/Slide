@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,8 +55,6 @@ import java.util.List;
 
 import me.edgan.redditslide.Adapters.ImageGridAdapterTumblr;
 import me.edgan.redditslide.ContentType;
-import me.edgan.redditslide.Fragments.BlankFragment;
-import me.edgan.redditslide.Fragments.FolderChooserDialogCreate;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
@@ -78,6 +77,7 @@ import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.ShareUtil;
 import me.edgan.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.util.StorageUtil;
 
 
 /**
@@ -85,11 +85,19 @@ import me.edgan.redditslide.util.SubmissionParser;
  * ViewPager for Imgur content instead of a RecyclerView (horizontal vs vertical). It also supports
  * gifs and progress bars which Album.java doesn't.
  */
-public class TumblrPager extends FullScreenActivity
-        implements FolderChooserDialogCreate.FolderCallback {
+public class TumblrPager extends BaseSaveActivity {
 
     private static int adapterPosition;
     public static final String SUBREDDIT = "subreddit";
+
+    // Add fields to store last save attempt
+    private String lastContentUrl;
+    private int lastIndex = -1;
+
+    ViewPager p;
+
+    public List<Photo> images;
+    public String subreddit;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -124,8 +132,8 @@ public class TumblrPager extends FullScreenActivity
             int adapterPosition = getIntent().getIntExtra(MediaView.ADAPTER_POSITION, -1);
             finish();
             SubmissionsView.datachanged(adapterPosition);
-            //getIntent().getStringExtra(MediaView.SUBMISSION_SUBREDDIT));
-            //SubmissionAdapter.setOpen(this, getIntent().getStringExtra(MediaView.SUBMISSION_URL));
+            // getIntent().getStringExtra(MediaView.SUBMISSION_SUBREDDIT));
+            // SubmissionAdapter.setOpen(this, getIntent().getStringExtra(MediaView.SUBMISSION_URL));
         }
 
         if (id == R.id.download) {
@@ -155,7 +163,7 @@ public class TumblrPager extends FullScreenActivity
                 true);
         setContentView(R.layout.album_pager);
 
-        //Keep the screen on
+        // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -165,6 +173,10 @@ public class TumblrPager extends FullScreenActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if(getIntent().hasExtra(SUBREDDIT)){
             this.subreddit = getIntent().getStringExtra(SUBREDDIT);
+        }
+
+        if (getIntent().hasExtra(EXTRA_SUBMISSION_TITLE)) {
+            this.submissionTitle = getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE);
         }
 
         mToolbar.setPopupTheme(
@@ -239,13 +251,8 @@ public class TumblrPager extends FullScreenActivity
                 @Override
                 public void onPageScrolled(int position, float positionOffset,
                         int positionOffsetPixels) {
-                    if (position != 0) {
-                        if (getSupportActionBar() != null) {
-                            getSupportActionBar().setSubtitle((position) + "/" + images.size());
-                        }
-                    }
-                    if (position == 0 && positionOffset < 0.2) {
-                        finish();
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().setSubtitle((position + 1) + "/" + images.size());
                     }
                 }
             });
@@ -253,11 +260,6 @@ public class TumblrPager extends FullScreenActivity
 
         }
     }
-
-    ViewPager p;
-
-    public List<Photo> images;
-    public String subreddit;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -279,16 +281,11 @@ public class TumblrPager extends FullScreenActivity
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (i == 0) {
-                return new BlankFragment();
-            }
-
-            i--;
             Photo current = images.get(i);
 
             try {
                 if (ContentType.isGif(new URI(current.getOriginalSize().getUrl()))) {
-                    //do gif stuff
+                    // do gif stuff
                     Fragment f = new Gif();
                     Bundle args = new Bundle();
                     args.putInt("page", i);
@@ -318,7 +315,7 @@ public class TumblrPager extends FullScreenActivity
             if (images == null) {
                 return 0;
             }
-            return images.size() + 1;
+            return images.size();
         }
     }
 
@@ -445,19 +442,39 @@ public class TumblrPager extends FullScreenActivity
 
     public void doImageSave(boolean isGif, String contentUrl, int index) {
         if (!isGif) {
-            if (Reddit.appRestart.getString("imagelocation", "").isEmpty()) {
-                showFirstDialog();
-            } else if (!new File(Reddit.appRestart.getString("imagelocation", "")).exists()) {
-                showErrorDialog();
+            // Use StorageUtil to check for storage access
+            Uri storageUri = StorageUtil.getStorageUri(this);
+            if (storageUri == null) {
+                // Save details for retry after permission
+                lastContentUrl = contentUrl;
+                lastIndex = index;
+                // Launch system directory picker
+                StorageUtil.showDirectoryChooser(this);
             } else {
+                // Start download service with SAF URI
                 Intent i = new Intent(this, ImageDownloadNotificationService.class);
                 i.putExtra("actuallyLoaded", contentUrl);
-                if (subreddit != null && !subreddit.isEmpty()) i.putExtra("subreddit", subreddit);
+                i.putExtra("downloadUri", storageUri.toString());
+
+                // Pass along metadata
+                if (subreddit != null && !subreddit.isEmpty()) {
+                    i.putExtra("subreddit", subreddit);
+                }
                 i.putExtra("index", index);
                 startService(i);
             }
         } else {
             MediaView.doOnClick.run();
+        }
+    }
+
+    @Override
+    protected void onStoragePermissionGranted() {
+        // Retry last save attempt if available
+        if (lastContentUrl != null) {
+            doImageSave(false, lastContentUrl, lastIndex);
+            lastContentUrl = null;
+            lastIndex = -1;
         }
     }
 
@@ -651,28 +668,5 @@ public class TumblrPager extends FullScreenActivity
                                         Math.round(100.0f * current / total));
                             }
                         });
-    }
-
-    private void showFirstDialog() {
-        runOnUiThread(() ->
-                DialogUtil.showFirstDialog(TumblrPager.this));
-    }
-
-    private void showErrorDialog() {
-        runOnUiThread(() ->
-                DialogUtil.showErrorDialog(TumblrPager.this));
-    }
-
-    @Override
-    public void onFolderSelection(@NonNull FolderChooserDialogCreate dialog,
-                                  @NonNull File folder, boolean isSaveToLocation) {
-        Reddit.appRestart.edit().putString("imagelocation", folder.getAbsolutePath()).apply();
-        Toast.makeText(this,
-                getString(R.string.settings_set_image_location, folder.getAbsolutePath())
-                        + folder.getAbsolutePath(), Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onFolderChooserDismissed(@NonNull FolderChooserDialogCreate dialog) {
     }
 }

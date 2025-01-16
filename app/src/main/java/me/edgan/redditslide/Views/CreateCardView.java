@@ -43,7 +43,7 @@ public class CreateCardView {
             case LIST:
                 v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.submission_list, viewGroup, false);
 
-                //if the radius is set to 0 on KitKat--it crashes.
+                // if the radius is set to 0 on KitKat--it crashes.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     ((CardView) v.findViewById(R.id.card)).setRadius(0f);
                 }
@@ -51,7 +51,7 @@ public class CreateCardView {
             case DESKTOP:
                 v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.submission_list_desktop, viewGroup, false);
 
-                //if the radius is set to 0 on KitKat--it crashes.
+                // if the radius is set to 0 on KitKat--it crashes.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     ((CardView) v.findViewById(R.id.card)).setRadius(0f);
                 }

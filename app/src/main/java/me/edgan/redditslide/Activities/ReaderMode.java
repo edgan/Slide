@@ -56,8 +56,8 @@ public class ReaderMode extends BaseActivityAnim {
                 ((SwipeRefreshLayout) ReaderMode.this.findViewById(R.id.refresh));
         mSwipeRefreshLayout.setColorSchemeColors(Palette.getColors("", this));
 
-        //If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
-        //So, we estimate the height of the header in dp.
+        // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
+        // So, we estimate the height of the header in dp.
         mSwipeRefreshLayout.setProgressViewOffset(false,
                 Constants.SINGLE_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.SINGLE_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);

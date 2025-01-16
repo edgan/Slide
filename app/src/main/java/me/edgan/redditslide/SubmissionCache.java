@@ -97,7 +97,7 @@ public class SubmissionCache {
         JsonNode json = s.getDataNode();
         if (!json.has("crosspost_parent_list")
                 || json.get("crosspost_parent_list") == null
-                || json.get("crosspost_parent_list").get(0) == null) { //is not a crosspost
+                || json.get("crosspost_parent_list").get(0) == null) { // is not a crosspost
             return null;
         }
         json = json.get("crosspost_parent_list").get(0);

@@ -139,9 +139,9 @@ public class Authentication {
                                     .getTimeInMillis()) {
                                 finalData = oAuthHelper.refreshToken(credentials,
                                         authentication.getString("backedCreds",
-                                                "")); //does a request
+                                                "")); // does a request
                             } else {
-                                finalData = oAuthHelper.refreshToken(credentials); //does a request
+                                finalData = oAuthHelper.refreshToken(credentials); // does a request
                                 authentication.edit()
                                         .putLong("expires",
                                                 Calendar.getInstance().getTimeInMillis() + 3000000)
@@ -215,7 +215,7 @@ public class Authentication {
                                         Toast.LENGTH_SHORT).show();
                             }
 
-                            //TODO fail
+                            // TODO fail
                         }
                     }
 
@@ -271,7 +271,7 @@ public class Authentication {
                         finalData = oAuthHelper.refreshToken(credentials,
                                 authentication.getString("backedCreds", ""));
                     } else {
-                        finalData = oAuthHelper.refreshToken(credentials); //does a request
+                        finalData = oAuthHelper.refreshToken(credentials); // does a request
                         if (!single) {
                             authentication.edit()
                                     .putLong("expires",
@@ -343,7 +343,7 @@ public class Authentication {
             if (!single) authedOnce = true;
 
         } catch (Exception e) {
-            //TODO fail
+            // TODO fail
 
 
         }

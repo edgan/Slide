@@ -211,8 +211,8 @@ public class MainActivity extends BaseActivity
     public static String  shouldLoad;
     public static boolean isRestart;
     public static int     restartPage;
-    public final  long ANIMATE_DURATION        = 250; //duration of animations
-    private final long ANIMATE_DURATION_OFFSET = 45; //offset for smoothing out the exit animations
+    public final  long ANIMATE_DURATION        = 250; // duration of animations
+    private final long ANIMATE_DURATION_OFFSET = 45; // offset for smoothing out the exit animations
     public boolean                  singleMode;
     public ToggleSwipeViewPager     pager;
     public CaseInsensitiveArrayList usedArray;
@@ -226,13 +226,13 @@ public class MainActivity extends BaseActivity
     public boolean first  = true;
     public TabLayout mTabLayout;
     public ListView  drawerSubList;
-    public String    selectedSub; //currently selected subreddit
+    public String    selectedSub; // currently selected subreddit
     public Runnable  doImage;
     public Intent    data;
     public boolean commentPager = false;
     public Runnable   runAfterLoad;
     public boolean    canSubmit;
-    //if the view mode is set to Subreddit Tabs, save the title ("Slide" or "Slide (debug)")
+    // if the view mode is set to Subreddit Tabs, save the title ("Slide" or "Slide (debug)")
     public String     tabViewModeTitle;
     public int        currentComment;
     public Submission openingComments;
@@ -252,7 +252,7 @@ public class MainActivity extends BaseActivity
     boolean                     currentlySubbed;
     int                         back;
     private AsyncGetSubreddit mAsyncGetSubreddit = null;
-    private int headerHeight; //height of the header
+    private int headerHeight; // height of the header
     public int reloadItemNumber = -2;
 
     @Override
@@ -279,7 +279,7 @@ public class MainActivity extends BaseActivity
                 drawerSearch.setText("");
             }
 
-            //clear the text from the toolbar search field
+            // clear the text from the toolbar search field
             if (findViewById(R.id.toolbar_search) != null) {
                 ((AutoCompleteTextView) findViewById(R.id.toolbar_search)).setText("");
             }
@@ -289,7 +289,7 @@ public class MainActivity extends BaseActivity
                 KeyboardUtil.hideKeyboard(this, view.getWindowToken(), 0);
             }
         } else if (requestCode == 2002 && resultCode != RESULT_OK) {
-            mToolbar.performLongClick(); //search was init from the toolbar, so return focus to the toolbar
+            mToolbar.performLongClick(); // search was init from the toolbar, so return focus to the toolbar
         } else if (requestCode == 423 && resultCode == RESULT_OK) {
             ((MainPagerAdapterComment) adapter).mCurrentComments.doResult(data);
         } else if (requestCode == 940) {
@@ -314,7 +314,7 @@ public class MainActivity extends BaseActivity
         } else if (requestCode == TUTORIAL_RESULT) {
             UserSubscriptions.doMainActivitySubs(this);
         } else if (requestCode == INBOX_RESULT) {
-            //update notification badge
+            // update notification badge
             new AsyncNotificationBadge().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else if (requestCode == 3333) {
             this.data = data;
@@ -342,7 +342,7 @@ public class MainActivity extends BaseActivity
         } else if ((SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR
                 || SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_BOTH)
                 && findViewById(R.id.toolbar_search).getVisibility() == View.VISIBLE) {
-            findViewById(R.id.close_search_toolbar).performClick(); //close GO_TO_SUB_FIELD
+            findViewById(R.id.close_search_toolbar).performClick(); // close GO_TO_SUB_FIELD
         } else if (SettingValues.backButtonBehavior
                 == Constants.BackButtonBehaviorOptions.OpenDrawer.getValue()) {
             drawerLayout.openDrawer(GravityCompat.START);
@@ -375,7 +375,8 @@ public class MainActivity extends BaseActivity
         }
         if (Authentication.isLoggedIn
                 && Authentication.me != null
-                //This is causing a crash, might not be important since the storeVisits will just not do anything without gold && Authentication.me.hasGold()
+                // This is causing a crash, might not be important since the storeVisits will just not do anything
+                // without gold && Authentication.me.hasGold()
                 && !SynccitRead.newVisited.isEmpty()) {
             new AsyncTask<Void, Void, Void>() {
                 @Override
@@ -400,7 +401,7 @@ public class MainActivity extends BaseActivity
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
-        //Upon leaving MainActivity--hide the toolbar search if it is visible
+        // Upon leaving MainActivity--hide the toolbar search if it is visible
         if (findViewById(R.id.toolbar_search).getVisibility() == View.VISIBLE) {
             findViewById(R.id.close_search_toolbar).performClick();
         }
@@ -627,7 +628,7 @@ public class MainActivity extends BaseActivity
                                             }
                                         });
 
-                //Add "search current sub" if it is not frontpage/all/random
+                // Add "search current sub" if it is not frontpage/all/random
                 if (!subreddit.equalsIgnoreCase("frontpage")
                         && !subreddit.equalsIgnoreCase("all")
                         && !subreddit.contains(".")
@@ -860,7 +861,7 @@ public class MainActivity extends BaseActivity
                                 }
                             }
                         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        //todo this  new AsyncStartNotifSocket().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        // todo this  new AsyncStartNotifSocket().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 };
 
@@ -903,7 +904,7 @@ public class MainActivity extends BaseActivity
         mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         header = findViewById(R.id.header);
 
-        //Gets the height of the header
+        // Gets the height of the header
         if (header != null) {
             header.getViewTreeObserver()
                     .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -1128,7 +1129,7 @@ public class MainActivity extends BaseActivity
                 MainActivity.this) && headerMain != null && runAfterLoad == null) {
             new AsyncNotificationBadge().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else if(Authentication.isLoggedIn && Authentication.name.equalsIgnoreCase("loggedout")) {
-            restartTheme(); //force a restart because we should not be here
+            restartTheme(); // force a restart because we should not be here
         }
 
         if (inNightMode != SettingValues.isNight()) {
@@ -1153,34 +1154,23 @@ public class MainActivity extends BaseActivity
             sideArrayAdapter.updateHistory(UserSubscriptions.getHistory());
         }
 
-     /* remove   if (datasetChanged && UserSubscriptions.hasSubs() && !usedArray.isEmpty()) {
-            usedArray = new ArrayList<>(UserSubscriptions.getSubscriptions(this));
-            adapter.notifyDataSetChanged();
-            sideArrayAdapter.notifyDataSetChanged();
-            datasetChanged = false;
-            if (mTabLayout != null) {
-                mTabLayout.setupWithViewPager(pager);
-                LayoutUtils.scrollToTabAfterLayout(mTabLayout, pager.getCurrentItem());
-            }
-            setToolbarClick();
-        }*/
-        //Only refresh the view if a Setting was altered
+        // Only refresh the view if a Setting was altered
         if (SettingsActivity.changed || SettingsThemeFragment.changed) {
 
             reloadSubs();
-            //If the user changed a Setting regarding the app's theme, restartTheme()
-            if (SettingsThemeFragment.changed /* todo maybe later || (usedArray != null && usedArray.size() != UserSubscriptions.getSubscriptions(this).size())*/) {
+            // If the user changed a Setting regarding the app's theme, restartTheme()
+            if (SettingsThemeFragment.changed) {
                 restartTheme();
             }
 
-            //Need to change the subreddit search method
+            // Need to change the subreddit search method
             if (SettingsGeneralFragment.searchChanged) {
                 setDrawerSubList();
 
                 if (SettingValues.subredditSearchMethod
                         == Constants.SUBREDDIT_SEARCH_METHOD_DRAWER) {
                     mToolbar.setOnLongClickListener(
-                            null); //remove the long click listener from the toolbar
+                            null); // remove the long click listener from the toolbar
                     findViewById(R.id.drawer_divider).setVisibility(View.GONE);
                 } else if (SettingValues.subredditSearchMethod
                         == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR) {
@@ -1384,8 +1374,8 @@ public class MainActivity extends BaseActivity
             if (modOf != null && !modOf.isEmpty() && Authentication.mod) {
                 header.findViewById(R.id.mod).setVisibility(View.VISIBLE);
             }
-//update notification badge
 
+            // update notification badge
             final LinearLayout profStuff = header.findViewById(R.id.accountsarea);
             profStuff.setVisibility(View.GONE);
             findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
@@ -1905,7 +1895,7 @@ public class MainActivity extends BaseActivity
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                     Intent inte = new Intent(MainActivity.this, Profile.class);
-                                    //noinspection ConstantConditions
+                                    // noinspection ConstantConditions
                                     inte.putExtra(Profile.EXTRA_PROFILE,
                                             dialog.getInputEditText().getText().toString());
                                     MainActivity.this.startActivity(inte);
@@ -2120,7 +2110,7 @@ public class MainActivity extends BaseActivity
             final String text = subreddit.getDataNode().get("description_html").asText().trim();
             setViews(text, subreddit.getDisplayName(), sidebarBody, sidebarOverflow);
 
-            //get all subs that have Notifications enabled
+            // get all subs that have Notifications enabled
             ArrayList<String> rawSubs =
                     StringUtil.stringToArray(Reddit.appRestart.getString(CheckForMail.SUBS_TO_GET, ""));
             HashMap<String, Integer> subThresholds = new HashMap<>();
@@ -2129,11 +2119,11 @@ public class MainActivity extends BaseActivity
                     String[] split = s.split(":");
                     subThresholds.put(split[0].toLowerCase(Locale.ENGLISH), Integer.valueOf(split[1]));
                 } catch (Exception ignored) {
-                    //do nothing
+                    // do nothing
                 }
             }
 
-            //whether or not this subreddit was in the keySet
+            // whether or not this subreddit was in the keySet
             boolean isNotified =
                     subThresholds.containsKey(subreddit.getDisplayName().toLowerCase(Locale.ENGLISH));
             ((AppCompatCheckBox) findViewById(R.id.notify_posts_state)).setChecked(isNotified);
@@ -3028,7 +3018,7 @@ public class MainActivity extends BaseActivity
             findViewById(R.id.header_sub).setBackgroundColor(Palette.getColor(subreddit));
             ((TextView) findViewById(R.id.sub_infotitle)).setText(subreddit);
 
-            //Sidebar buttons should use subreddit's accent color
+            // Sidebar buttons should use subreddit's accent color
             int subColor = new ColorPreferences(this).getColor(subreddit);
             ((TextView) findViewById(R.id.theme_text)).setTextColor(subColor);
             ((TextView) findViewById(R.id.wiki_text)).setTextColor(subColor);
@@ -3105,12 +3095,12 @@ public class MainActivity extends BaseActivity
                 .setDuration(ANIMATION_DURATION)
                 .start();
 
-//Helps smooth the transition between the toolbar title being reset and the search elements
-//fading out.
+        // Helps smooth the transition between the toolbar title being reset and the search elements
+        // fading out.
         final long OFFSET_ANIM = (ANIMATION_DURATION == 0) ? 0 : ANIMATE_DURATION_OFFSET;
 
-        //Hide the various UI components after the animations are complete and
-        //reset the toolbar title
+        // Hide the various UI components after the animations are complete and
+        // reset the toolbar title
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -3140,7 +3130,7 @@ public class MainActivity extends BaseActivity
 
         final String currentSubredditName = usedArray.get(Reddit.currentPosition);
 
-        //Title of the filter dialog
+        // Title of the filter dialog
         String filterTitle;
         if (currentSubredditName.contains("/m/")) {
             filterTitle = getString(R.string.content_to_hide, currentSubredditName);
@@ -3565,7 +3555,7 @@ public class MainActivity extends BaseActivity
                 @Override
                 public boolean onEditorAction(TextView arg0, int arg1, KeyEvent arg2) {
                     if (arg1 == EditorInfo.IME_ACTION_SEARCH) {
-                        //If it the input text doesn't match a subreddit from the list exactly, openInSubView is true
+                        // If it the input text doesn't match a subreddit from the list exactly, openInSubView is true
                         if (sideArrayAdapter.fitems == null
                                 || sideArrayAdapter.openInSubView
                                 || !usedArray.contains(
@@ -3628,7 +3618,7 @@ public class MainActivity extends BaseActivity
         } else {
             if (drawerSearch != null) {
                 drawerSearch.setOnClickListener(
-                        null); //remove the touch listener on the drawer search field
+                        null); // remove the touch listener on the drawer search field
                 drawerSearch.setVisibility(View.GONE);
             }
         }
@@ -3849,7 +3839,7 @@ public class MainActivity extends BaseActivity
     }
 
     private void expand(LinearLayout v) {
-        //set Visible
+        // set Visible
         v.setVisibility(View.VISIBLE);
 
         final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -3945,13 +3935,13 @@ public class MainActivity extends BaseActivity
                             final CardView SUGGESTIONS_BACKGROUND =
                                     (CardView) findViewById(R.id.toolbar_search_suggestions);
 
-                            //if the view mode is set to Subreddit Tabs, save the title ("Slide" or "Slide (debug)")
+                            // if the view mode is set to Subreddit Tabs, save the title ("Slide" or "Slide (debug)")
                             tabViewModeTitle =
                                     (!SettingValues.single) ? getSupportActionBar().getTitle()
                                             .toString() : null;
 
                             getSupportActionBar().setTitle(
-                                    ""); //clear title to make room for search field
+                                    ""); // clear title to make room for search field
 
                             if (GO_TO_SUB_FIELD != null
                                     && CLOSE_BUTTON != null
@@ -3960,31 +3950,31 @@ public class MainActivity extends BaseActivity
                                 CLOSE_BUTTON.setVisibility(View.VISIBLE);
                                 SUGGESTIONS_BACKGROUND.setVisibility(View.VISIBLE);
 
-                                //run enter animations
+                                // run enter animations
                                 enterAnimationsForToolbarSearch(ANIMATE_DURATION,
                                         SUGGESTIONS_BACKGROUND, GO_TO_SUB_FIELD, CLOSE_BUTTON);
 
-                                //Get focus of the search field and show the keyboard
+                                // Get focus of the search field and show the keyboard
                                 GO_TO_SUB_FIELD.requestFocus();
                                 KeyboardUtil.toggleKeyboard(MainActivity.this,
                                         InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
-                                //Close the search UI and keyboard when clicking the close button
+                                // Close the search UI and keyboard when clicking the close button
                                 CLOSE_BUTTON.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         final View view = MainActivity.this.getCurrentFocus();
                                         if (view != null) {
-                                            //Hide the keyboard
+                                            // Hide the keyboard
                                             KeyboardUtil.hideKeyboard(MainActivity.this, view.getWindowToken(), 0);
                                         }
 
-                                        //run the exit animations
+                                        // run the exit animations
                                         exitAnimationsForToolbarSearch(ANIMATE_DURATION,
                                                 SUGGESTIONS_BACKGROUND, GO_TO_SUB_FIELD,
                                                 CLOSE_BUTTON);
 
-                                        //clear sub text when close button is clicked
+                                        // clear sub text when close button is clicked
                                         GO_TO_SUB_FIELD.setText("");
                                     }
                                 });
@@ -3995,7 +3985,7 @@ public class MainActivity extends BaseActivity
                                             public boolean onEditorAction(TextView arg0, int arg1,
                                                     KeyEvent arg2) {
                                                 if (arg1 == EditorInfo.IME_ACTION_SEARCH) {
-                                                    //If it the input text doesn't match a subreddit from the list exactly, openInSubView is true
+                                                    // If it the input text doesn't match a subreddit from the list exactly, openInSubView is true
                                                     if (sideArrayAdapter.fitems == null
                                                             || sideArrayAdapter.openInSubView
                                                             || !usedArray.contains(
@@ -4053,7 +4043,7 @@ public class MainActivity extends BaseActivity
 
                                                     View view = MainActivity.this.getCurrentFocus();
                                                     if (view != null) {
-                                                        //Hide the keyboard
+                                                        // Hide the keyboard
                                                         KeyboardUtil.hideKeyboard(
                                                                 MainActivity.this, view.getWindowToken(), 0);
                                                     }
@@ -4065,7 +4055,7 @@ public class MainActivity extends BaseActivity
                                                     if (SettingValues.single) {
                                                         getSupportActionBar().setTitle(selectedSub);
                                                     } else {
-                                                        //Set the title back to "Slide" or "Slide (debug)"
+                                                        // Set the title back to "Slide" or "Slide (debug)"
                                                         getSupportActionBar().setTitle(
                                                                 tabViewModeTitle);
                                                     }
@@ -4091,30 +4081,7 @@ public class MainActivity extends BaseActivity
             }
         }
     }
-/*
-    // Todo once API allows for getting the websocket URL
-    public class AsyncStartNotifSocket extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                String access = Authentication.authentication.getString("websocket_url", "");
 
-                LogUtil.v(access);
-                WebSocket ws = new WebSocketFactory().createSocket(access);
-                ws.addListener(new WebSocketAdapter() {
-                    @Override
-                    public void onTextMessage(WebSocket websocket, String s) {
-                        LogUtil.v("Received" + s);
-                    }
-                });
-                ws.connect();
-            } catch (IOException | WebSocketException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
-*/
     public class AsyncGetSubreddit extends AsyncTask<String, Void, Subreddit> {
 
         @Override
@@ -4173,12 +4140,12 @@ public class MainActivity extends BaseActivity
                         final Set<String> accounts =
                                 Authentication.authentication.getStringSet("accounts",
                                         new HashSet<String>());
-                        if (accounts.contains(name)) { //convert to new system
+                        if (accounts.contains(name)) { // convert to new system
                             accounts.remove(name);
                             accounts.add(name + ":" + Authentication.refresh);
                             Authentication.authentication.edit()
                                     .putStringSet("accounts", accounts)
-                                    .commit(); //force commit
+                                    .commit(); // force commit
                         }
                         Authentication.isLoggedIn = true;
                         Reddit.notFirst = true;
@@ -4186,7 +4153,7 @@ public class MainActivity extends BaseActivity
                 } else {
                     me = Authentication.reddit.me();
                 }
-                count = me.getInboxCount(); //Force reload of the LoggedInAccount object
+                count = me.getInboxCount(); // Force reload of the LoggedInAccount object
                 UserSubscriptions.doFriendsOfMain(MainActivity.this);
 
             } catch (Exception e) {
@@ -4336,7 +4303,7 @@ public class MainActivity extends BaseActivity
                     setRecentBar(selectedSub);
 
                     if (SettingValues.single || mTabLayout == null) {
-                        //Smooth out the fading animation for the toolbar subreddit search UI
+                        // Smooth out the fading animation for the toolbar subreddit search UI
                         if ((SettingValues.subredditSearchMethod
                                 == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR
                                 || SettingValues.subredditSearchMethod
@@ -4539,7 +4506,6 @@ public class MainActivity extends BaseActivity
                 Bundle args = new Bundle();
                 if (usedArray.size() > i) {
                     if (multiNameToSubsMap.containsKey(usedArray.get(i))) {
-                        //if (usedArray.get(i).co
                         args.putString("id", multiNameToSubsMap.get(usedArray.get(i)));
                     } else {
                         args.putString("id", usedArray.get(i));

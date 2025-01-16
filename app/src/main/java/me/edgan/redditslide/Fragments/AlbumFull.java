@@ -74,7 +74,7 @@ public class AlbumFull extends Fragment {
 
                     final View base = rootView.findViewById(R.id.base);
                     va = ValueAnimator.ofFloat(1.0f, 0.2f);
-                    int mDuration = 250; //in millis
+                    int mDuration = 250; // in millis
                     va.setDuration(mDuration);
                     va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                         public void onAnimationUpdate(ValueAnimator animation) {
@@ -92,7 +92,7 @@ public class AlbumFull extends Fragment {
 
                     hidden = false;
                     va = ValueAnimator.ofFloat(0.2f, 1.0f);
-                    int mDuration = 250; //in millis
+                    int mDuration = 250; // in millis
                     va.setDuration(mDuration);
                     va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                         public void onAnimationUpdate(ValueAnimator animation) {
@@ -166,7 +166,7 @@ public class AlbumFull extends Fragment {
 
         public LoadIntoRecycler(@NonNull String url, @NonNull Activity baseActivity) {
             super(url, baseActivity);
-            //todo htis dontClose = true;
+            // todo htis dontClose = true;
             this.url = url;
         }
 

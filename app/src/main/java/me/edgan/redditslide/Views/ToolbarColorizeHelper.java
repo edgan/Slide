@@ -51,9 +51,9 @@ public class ToolbarColorizeHelper {
         for (int i = 0; i < toolbarView.getChildCount(); i++) {
             final View v = toolbarView.getChildAt(i);
 
-            //Step 1 : Changing the color of back button (or open drawer button).
+            // Step 1 : Changing the color of back button (or open drawer button).
             if (v instanceof ImageButton) {
-                //Action Bar back button
+                // Action Bar back button
                 BlendModeUtil.tintDrawableAsModulate(((ImageButton) v).getDrawable(), toolbarIconsColor);
             }
 
@@ -61,16 +61,16 @@ public class ToolbarColorizeHelper {
             if (v instanceof ActionMenuView) {
                 for (int j = 0; j < ((ActionMenuView) v).getChildCount(); j++) {
 
-                    //Step 2: Changing the color of any ActionMenuViews - icons that are not back button, nor text, nor overflow menu icon.
-                    //Colorize the ActionViews -> all icons that are NOT: back button | overflow menu
+                    // Step 2: Changing the color of any ActionMenuViews - icons that are not back button, nor text, nor overflow menu icon.
+                    // Colorize the ActionViews -> all icons that are NOT: back button | overflow menu
                     final View innerView = ((ActionMenuView) v).getChildAt(j);
                     if (innerView instanceof ActionMenuItemView) {
                         for (int k = 0; k < ((ActionMenuItemView) innerView).getCompoundDrawables().length; k++) {
                             if (((ActionMenuItemView) innerView).getCompoundDrawables()[k] != null) {
                                 final int finalK = k;
 
-                                //Important to set the color filter in seperate thread, by adding it to the message queue
-                                //Won't work otherwise.
+                                // Important to set the color filter in seperate thread, by adding it to the message queue
+                                // Won't work otherwise.
                                 innerView.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -85,11 +85,11 @@ public class ToolbarColorizeHelper {
                 }
             }
 
-            //Step 3: Changing the color of title and subtitle.
+            // Step 3: Changing the color of title and subtitle.
             toolbarView.setTitleTextColor(toolbarIconsColor);
             toolbarView.setSubtitleTextColor(toolbarIconsColor);
 
-            //Step 4: Changing the color of the Overflow Menu icon.
+            // Step 4: Changing the color of the Overflow Menu icon.
             setOverflowButtonColor(activity, toolbarIconsColor);
         }
     }

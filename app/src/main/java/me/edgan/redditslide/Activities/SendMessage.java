@@ -51,8 +51,8 @@ public class SendMessage extends BaseActivity {
     private String totext;
     private EditText body;
 
-    private String messageSentStatus; //the String to show in the Toast for when the message is sent
-    private boolean messageSent = true; //whether or not the message was sent successfully
+    private String messageSentStatus; // the String to show in the Toast for when the message is sent
+    private boolean messageSent = true; // whether or not the message was sent successfully
 
     String author;
 
@@ -110,7 +110,7 @@ public class SendMessage extends BaseActivity {
                 subject.setText(getString(R.string.mail_re, previousMessage.getSubject()));
                 subject.setInputType(InputType.TYPE_NULL);
 
-                //Disable if replying to another user, as they are already set
+                // Disable if replying to another user, as they are already set
                 to.setEnabled(false);
                 subject.setEnabled(false);
 
@@ -216,21 +216,21 @@ public class SendMessage extends BaseActivity {
                     messageSent = false;
                     e.printStackTrace();
 
-                    //Display a Toast with an error if the user doesn't exist
+                    // Display a Toast with an error if the user doesn't exist
                     if (e.getReason().equals("USER_DOESNT_EXIST") || e.getReason().equals("NO_USER")) {
                         messageSentStatus = getString(R.string.msg_send_user_dne);
                     } else if (e.getReason().toLowerCase(Locale.ENGLISH).contains("captcha")) {
                         messageSentStatus = getString(R.string.misc_captcha_incorrect);
                     }
 
-                    //todo show captcha
+                    // todo show captcha
                 }
             }
         }
 
         @Override
         public void onPostExecute(Void voids) {
-            //If the error wasn't that the user doesn't exist, show a generic failure message
+            // If the error wasn't that the user doesn't exist, show a generic failure message
             if (messageSentStatus == null) {
                 messageSentStatus = getString(R.string.msg_sent_failure);
                 ((FloatingActionButton)findViewById(R.id.send)).show();
@@ -241,7 +241,7 @@ public class SendMessage extends BaseActivity {
 
             Toast.makeText(SendMessage.this, MESSAGE_SENT, Toast.LENGTH_SHORT).show();
 
-            //Only finish() this Activity if the message sent successfully
+            // Only finish() this Activity if the message sent successfully
             if (messageSent) {
                 finish();
             } else {

@@ -251,7 +251,7 @@ public class NestedWebView extends WebView implements NestedScrollingChild, Nest
     }
 
     int getScrollRange() {
-        //Using scroll range of webview instead of childs as NestedScrollView does.
+        // Using scroll range of webview instead of childs as NestedScrollView does.
         return computeVerticalScrollRange();
     }
 

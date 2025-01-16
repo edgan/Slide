@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.ComponentName;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -57,7 +58,6 @@ import java.util.List;
 import java.util.UUID;
 
 import me.edgan.redditslide.ContentType;
-import me.edgan.redditslide.Fragments.FolderChooserDialogCreate;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
@@ -80,6 +80,7 @@ import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.ShareUtil;
+import me.edgan.redditslide.util.StorageUtil;
 
 import static me.edgan.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
 
@@ -87,8 +88,7 @@ import static me.edgan.redditslide.Notifications.ImageDownloadNotificationServic
 /**
  * Created by ccrama on 3/5/2015.
  */
-public class MediaView extends FullScreenActivity
-        implements FolderChooserDialogCreate.FolderCallback {
+public class MediaView extends BaseSaveActivity {
     public static final String EXTRA_URL         = "url";
     public static final String SUBREDDIT         = "sub";
     public static final String ADAPTER_POSITION  = "adapter_position";
@@ -117,7 +117,10 @@ public class MediaView extends FullScreenActivity
     private String                     contentUrl;
     private ExoVideoView               videoView;
     private Gson                       gson;
-    private String                     mashapeKey;
+    private String                     imgurKey;
+    private String                     lastContentUrl;
+
+    private static final String TAG = "MediaView";
 
     private static boolean shouldTruncate(String url) {
         try {
@@ -167,7 +170,8 @@ public class MediaView extends FullScreenActivity
 
         if (!isGif) b.sheet(3, image, getString(R.string.share_image));
         b.sheet(4, save, "Save " + (isGif ? "MP4" : "image"));
-        b.sheet(16, collection, "Save " + (isGif ? "MP4" : "image") + " to");
+        Drawable folder = getResources().getDrawable(R.drawable.ic_folder);
+        b.sheet(16, folder, getString(R.string.settings_image_location));
         if (isGif
                 && !contentUrl.contains(".mp4")
                 && !contentUrl.contains("streamable.com")
@@ -179,7 +183,6 @@ public class MediaView extends FullScreenActivity
                 if (type.equals("GIFV") && new URL(contentUrl).getHost().equals("i.imgur.com")) {
                     type = "GIF";
                     contentUrl = contentUrl.replace(".gifv", ".gif");
-                    //todo possibly share gifs  b.sheet(9, ic_share, "Share GIF");
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -220,11 +223,13 @@ public class MediaView extends FullScreenActivity
                     }
                     break;
                     case (4): {
-                        doImageSave();
+                        String urlToSave = actuallyLoaded != null ? actuallyLoaded : contentUrl;
+                        doImageSave(urlToSave);
+                        break;
                     }
-                    break;
                     case (16): {
-                        doImageSaveForLocation();
+                        // Launch system directory picker for default save location
+                        StorageUtil.showDirectoryChooser(MediaView.this);
                         break;
                     }
                 }
@@ -233,122 +238,59 @@ public class MediaView extends FullScreenActivity
         b.show();
     }
 
-    public void doImageSave() {
+    public void doImageSave(String actuallyLoaded) {
         if (!isGif) {
-            if (Reddit.appRestart.getString("imagelocation", "").isEmpty()) {
+            Uri storageUri = StorageUtil.getStorageUri(this);
+            if (storageUri == null) {
+                Log.e(TAG, "No valid storage URI found.");
                 showFirstDialog();
-            } else if (!new File(Reddit.appRestart.getString("imagelocation", "")).exists()) {
-                showErrorDialog();
+                return;
+            }
+
+            Intent i = new Intent(this, ImageDownloadNotificationService.class);
+            i.putExtra("actuallyLoaded", contentUrl);
+            i.putExtra("downloadUri", storageUri.toString());
+            if (subreddit != null && !subreddit.isEmpty()) i.putExtra("subreddit", subreddit);
+            if (submissionTitle != null) i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
+            i.putExtra("index", index);
+
+            ComponentName component = startService(i);
+            if (component == null) {
+                Log.e(TAG, "Failed to start ImageDownloadNotificationService.");
+                DialogUtil.showErrorDialog(this);
             } else {
-                Intent i = new Intent(this, ImageDownloadNotificationService.class);
-                //always download the original file, or use the cached original if that is currently displayed
-                i.putExtra("actuallyLoaded", contentUrl);
-                if (subreddit != null && !subreddit.isEmpty()) i.putExtra("subreddit", subreddit);
-                if (submissionTitle != null) i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
-                i.putExtra("index", index);
-                startService(i);
+                Toast.makeText(this, getString(R.string.mediaview_downloading), Toast.LENGTH_SHORT).show();
             }
         } else {
             doOnClick.run();
         }
     }
 
-    public void doImageSaveForLocation() {
-        if (!isGif) {
-            new FolderChooserDialogCreate.Builder(MediaView.this)
-                    .chooseButton(R.string.btn_select) // changes label of the choose button
-                    .isSaveToLocation(true)
-                    .initialPath(Environment.getExternalStorageDirectory()
-                            .getPath()) // changes initial path, defaults to external storage directory
-                    .allowNewFolder(true, 0)
-                    .show(MediaView.this);
-        }
-    }
-
     public void saveFile(final String baseUrl) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                if (Reddit.appRestart.getString("imagelocation", "").isEmpty()) {
-                    showFirstDialog();
-                } else if (!new File(Reddit.appRestart.getString("imagelocation", "")).exists()) {
-                    showErrorDialog();
-                } else {
-                    final File f = new File(
-                            Reddit.appRestart.getString("imagelocation", "") + File.separator + UUID
-                                    .randomUUID()
-                                    .toString() + baseUrl.substring(baseUrl.lastIndexOf(".")));
-                    mNotifyManager =
-                            ContextCompat.getSystemService(MediaView.this, NotificationManager.class);
-                    mBuilder = new NotificationCompat.Builder(MediaView.this, Reddit.CHANNEL_IMG);
-                    mBuilder.setContentTitle(getString(R.string.mediaview_saving, baseUrl))
-                            .setSmallIcon(R.drawable.ic_download);
-                    try {
+        Uri storageUri = StorageUtil.getStorageUri(this);
 
-                        final URL url =
-                                new URL(baseUrl); //wont exist on server yet, just load the full version
-                        URLConnection ucon = url.openConnection();
-                        ucon.setReadTimeout(5000);
-                        ucon.setConnectTimeout(10000);
-                        InputStream is = ucon.getInputStream();
-                        BufferedInputStream inStream = new BufferedInputStream(is, 1024 * 5);
-                        int length = ucon.getContentLength();
-                        f.createNewFile();
-                        FileOutputStream outStream = new FileOutputStream(f);
-                        byte[] buff = new byte[5 * 1024];
+        if (storageUri == null) {
+            Log.e(TAG, "No storage URI available");
+            DialogUtil.showErrorDialog(this);
+            return;
+        }
 
-                        int len;
-                        int last = 0;
-                        while ((len = inStream.read(buff)) != -1) {
-                            outStream.write(buff, 0, len);
-                            int percent = Math.round(100.0f * f.length() / length);
-                            if (percent > last) {
-                                last = percent;
-                                mBuilder.setProgress(length, (int) f.length(), false);
-                                mNotifyManager.notify(1, mBuilder.build());
-                            }
-                        }
-                        outStream.flush();
-                        outStream.close();
-                        inStream.close();
-                        MediaScannerConnection.scanFile(MediaView.this,
-                                new String[]{f.getAbsolutePath()}, null,
-                                new MediaScannerConnection.OnScanCompletedListener() {
-                                    public void onScanCompleted(String path, Uri uri) {
-                                        Intent mediaScanIntent = FileUtil.getFileIntent(f,
-                                                new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE),
-                                                MediaView.this);
-                                        MediaView.this.sendBroadcast(mediaScanIntent);
+        Intent i = new Intent(this, ImageDownloadNotificationService.class);
+        // always download the original file, or use the cached original if that is currently displayed
+        i.putExtra("actuallyLoaded", contentUrl);
+        i.putExtra("downloadUri", storageUri.toString());
+        if (subreddit != null && !subreddit.isEmpty()) i.putExtra("subreddit", subreddit);
+        if (submissionTitle != null) i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
+        i.putExtra("index", index);
 
-                                        final Intent shareIntent = new Intent(Intent.ACTION_VIEW);
-                                        PendingIntent contentIntent =
-                                                PendingIntent.getActivity(MediaView.this, 0,
-                                                        shareIntent,
-                                                        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
+        ComponentName component = startService(i);
 
-
-                                        Notification notif = new NotificationCompat.Builder(
-                                                MediaView.this, Reddit.CHANNEL_IMG)
-                                                .setContentTitle(getString(R.string.gif_saved))
-                                                .setSmallIcon(R.drawable.ic_save)
-                                                .setContentIntent(contentIntent)
-                                                .build();
-
-                                        NotificationManager mNotificationManager =
-                                                ContextCompat.getSystemService(MediaView.this, NotificationManager.class);
-                                        if (mNotificationManager != null) {
-                                            mNotificationManager.notify(1, notif);
-                                        }
-                                    }
-                                });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                return null;
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
+        if (component == null) {
+            Log.e(TAG, "Failed to start download service");
+            DialogUtil.showErrorDialog(this);
+        } else {
+            Toast.makeText(this, getString(R.string.mediaview_downloading), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void shareGif(final String baseUrl) {
@@ -372,7 +314,7 @@ public class MediaView extends FullScreenActivity
                     try {
 
                         final URL url =
-                                new URL(baseUrl); //wont exist on server yet, just load the full version
+                                new URL(baseUrl); // wont exist on server yet, just load the full version
                         URLConnection ucon = url.openConnection();
                         ucon.setReadTimeout(5000);
                         ucon.setConnectTimeout(10000);
@@ -453,51 +395,6 @@ public class MediaView extends FullScreenActivity
         }
     }
 
-    /* Possible drag to exit implementation in the future
-     @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-
-        if(event.getF) {
-            // peekView.doScroll(event);
-
-            FrameLayout.LayoutParams params =
-                    (FrameLayout.LayoutParams) base.getLayoutParams();
-
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_MOVE:
-
-                    params.topMargin = (int) -((origY - event.getY()));
-                    if (event.getY() != origY) {
-                        params.leftMargin = twelve *2;
-                        params.rightMargin = twelve * 2;
-                    } else {
-                        params.leftMargin = 0;
-                        params.rightMargin = 0;
-                    }
-
-                    if (event.getY() != (origY)) {
-                        shouldClose = true;
-                    } else if (event.getY() == (origY)) {
-                        shouldClose = false;
-                    }
-                    base.setLayoutParams(params);
-                    break;
-                case MotionEvent.ACTION_DOWN:
-                    origY = event.getY();
-                    break;
-            }
-        }
-            // we don't want to pass along the touch event or else it will just scroll under the PeekView}
-
-        if (event.getAction() == MotionEvent.ACTION_UP && shouldClose) {
-            finish();
-            return false;
-        }
-
-        return super.dispatchTouchEvent(event);
-    }
-     */
-
     public void hideOnLongClick() {
         (findViewById(R.id.gifheader)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -536,7 +433,7 @@ public class MediaView extends FullScreenActivity
         getTheme().applyStyle(new ColorPreferences(this).getDarkThemeSubreddit(""), true);
 
         gson = new Gson();
-        mashapeKey = SecretConstants.getImgurApiKey(this);
+        imgurKey = SecretConstants.getImgurApiKey(this);
 
         if (savedInstanceState != null && savedInstanceState.containsKey("position")) {
             stopPosition = savedInstanceState.getLong("position");
@@ -550,7 +447,7 @@ public class MediaView extends FullScreenActivity
         };
         setContentView(R.layout.activity_media);
 
-        //Keep the screen on
+        // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         final String firstUrl = getIntent().getExtras().getString(EXTRA_DISPLAY_URL, "");
@@ -647,7 +544,8 @@ public class MediaView extends FullScreenActivity
         findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doImageSave();
+                String urlToSave = actuallyLoaded != null ? actuallyLoaded : contentUrl;
+                doImageSave(urlToSave);
             }
         });
         if (!SettingValues.imageDownloadButton) {
@@ -721,14 +619,14 @@ public class MediaView extends FullScreenActivity
 
         if (NetworkUtil.isConnected(this)) {
             if (hash.startsWith("/")) hash = hash.substring(1);
-            final String apiUrl = "https://imgur-apiv3.p.mashape.com/3/image/" + hash + ".json";
+            final String apiUrl = "https://api.imgur.com/3/image/" + hash;
             LogUtil.v(apiUrl);
 
             new AsyncTask<Void, Void, JsonObject>() {
                 @Override
                 protected JsonObject doInBackground(Void... params) {
-                    return HttpUtil.getImgurMashapeJsonObject(Reddit.client, gson, apiUrl,
-                            mashapeKey);
+                    return HttpUtil.getImgurJsonObject(Reddit.client, gson, apiUrl,
+                            imgurKey);
                 }
 
                 @Override
@@ -754,7 +652,7 @@ public class MediaView extends FullScreenActivity
 
                                 if (type.contains("gif")) {
                                     doLoadGif(urls);
-                                } else if (!imageShown) { //only load if there is no image
+                                } else if (!imageShown) { // only load if there is no image
                                     displayImage(urls);
                                 }
                             } else if (result != null && result.has("data")) {
@@ -776,7 +674,7 @@ public class MediaView extends FullScreenActivity
 
                                 if (type.contains("gif")) {
                                     doLoadGif(((mp4 == null || mp4.isEmpty()) ? urls : mp4));
-                                } else if (!imageShown) { //only load if there is no image
+                                } else if (!imageShown) { // only load if there is no image
                                     displayImage(urls);
                                 }
                             } else {
@@ -901,15 +799,13 @@ public class MediaView extends FullScreenActivity
         }
         if (contentUrl == null) {
             finish();
-            //todo maybe something better
-
         }
 
         if ((contentUrl != null
                 && !contentUrl.startsWith("https://i.redditmedia.com")
                 && !contentUrl.startsWith("https://i.reddituploads.com")
                 && !contentUrl.contains(
-                "imgur.com"))) { //we can assume redditmedia and imgur links are to direct images and not websites
+                "imgur.com"))) { // we can assume redditmedia and imgur links are to direct images and not websites
             findViewById(R.id.progress).setVisibility(View.VISIBLE);
             ((ProgressBar) findViewById(R.id.progress)).setIndeterminate(true);
 
@@ -928,7 +824,7 @@ public class MediaView extends FullScreenActivity
                                         && type != null
                                         && !type.isEmpty()
                                         && type.startsWith("image/")) {
-                                    //is image
+                                    // is image
                                     if (type.contains("gif")) {
                                         doLoadGif(finalUrl2.replace(".jpg", ".gif")
                                                 .replace(".png", ".gif"));
@@ -1014,7 +910,6 @@ public class MediaView extends FullScreenActivity
                     i.setImage(ImageSource.uri(f.getAbsolutePath()));
                 } catch (Exception e) {
                     imageShown = false;
-                    //todo  i.setImage(ImageSource.bitmap(loadedImage));
                 }
                 (findViewById(R.id.progress)).setVisibility(View.GONE);
                 handler.removeCallbacks(progressBarDelayRunner);
@@ -1033,7 +928,7 @@ public class MediaView extends FullScreenActivity
                                             final View base = findViewById(R.id.gifheader);
 
                                             ValueAnimator va = ValueAnimator.ofFloat(1.0f, 0.2f);
-                                            int mDuration = 250; //in millis
+                                            int mDuration = 250; // in millis
                                             va.setDuration(mDuration);
                                             va.addUpdateListener(
                                                     new ValueAnimator.AnimatorUpdateListener() {
@@ -1045,13 +940,13 @@ public class MediaView extends FullScreenActivity
                                                         }
                                                     });
                                             va.start();
-                                            //hide
+                                            // hide
                                         } else if (newScale <= previous && hidden) {
                                             hidden = false;
                                             final View base = findViewById(R.id.gifheader);
 
                                             ValueAnimator va = ValueAnimator.ofFloat(0.2f, 1.0f);
-                                            int mDuration = 250; //in millis
+                                            int mDuration = 250; // in millis
                                             va.setDuration(mDuration);
                                             va.addUpdateListener(
                                                     new ValueAnimator.AnimatorUpdateListener() {
@@ -1063,7 +958,7 @@ public class MediaView extends FullScreenActivity
                                                         }
                                                     });
                                             va.start();
-                                            //unhide
+                                            // unhide
                                         }
                                         previous = newScale;
                                     }
@@ -1128,7 +1023,7 @@ public class MediaView extends FullScreenActivity
                                                             ValueAnimator va =
                                                                     ValueAnimator.ofFloat(1.0f,
                                                                             0.2f);
-                                                            int mDuration = 250; //in millis
+                                                            int mDuration = 250; // in millis
                                                             va.setDuration(mDuration);
                                                             va.addUpdateListener(
                                                                     new ValueAnimator.AnimatorUpdateListener() {
@@ -1141,7 +1036,7 @@ public class MediaView extends FullScreenActivity
                                                                         }
                                                                     });
                                                             va.start();
-                                                            //hide
+                                                            // hide
                                                         } else if (newScale <= previous && hidden) {
                                                             hidden = false;
                                                             final View base =
@@ -1150,7 +1045,7 @@ public class MediaView extends FullScreenActivity
                                                             ValueAnimator va =
                                                                     ValueAnimator.ofFloat(0.2f,
                                                                             1.0f);
-                                                            int mDuration = 250; //in millis
+                                                            int mDuration = 250; // in millis
                                                             va.setDuration(mDuration);
                                                             va.addUpdateListener(
                                                                     new ValueAnimator.AnimatorUpdateListener() {
@@ -1163,7 +1058,7 @@ public class MediaView extends FullScreenActivity
                                                                         }
                                                                     });
                                                             va.start();
-                                                            //unhide
+                                                            // unhide
                                                         }
                                                         previous = newScale;
                                                     }
@@ -1200,26 +1095,27 @@ public class MediaView extends FullScreenActivity
     }
 
     @Override
-    public void onFolderSelection(@NonNull FolderChooserDialogCreate dialog,
-                                  @NonNull File folder, boolean isSaveToLocation) {
-        if (isSaveToLocation) {
+    protected void onStoragePermissionGranted() {
+        super.onStoragePermissionGranted();
+        // Retry the save operation with the new permissions
+        if (lastContentUrl != null) {
             Intent i = new Intent(this, ImageDownloadNotificationService.class);
-            //always download the original file, or use the cached original if that is currently displayed
-            i.putExtra("actuallyLoaded", contentUrl);
-            i.putExtra("saveToLocation", folder.getAbsolutePath());
+            // always download the original file, or use the cached original if that is currently displayed
+            i.putExtra("actuallyLoaded", lastContentUrl);
+            i.putExtra("downloadUri", StorageUtil.getStorageUri(this).toString());
             if (subreddit != null && !subreddit.isEmpty()) i.putExtra("subreddit", subreddit);
             if (submissionTitle != null) i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
             i.putExtra("index", index);
-            startService(i);
-        } else {
-            Reddit.appRestart.edit().putString("imagelocation", folder.getAbsolutePath()).apply();
-            Toast.makeText(this,
-                    getString(R.string.settings_set_image_location, folder.getAbsolutePath()),
-                    Toast.LENGTH_LONG).show();
-        }
-    }
 
-    @Override
-    public void onFolderChooserDismissed(@NonNull FolderChooserDialogCreate dialog) {
+            Log.d(TAG, "Starting download service with URI: " + StorageUtil.getStorageUri(this));
+            ComponentName component = startService(i);
+            if (component == null) {
+                Log.e(TAG, "Failed to start download service");
+                DialogUtil.showErrorDialog(this);
+            } else {
+                Toast.makeText(this, getString(R.string.mediaview_downloading), Toast.LENGTH_SHORT).show();
+            }
+            lastContentUrl = null;
+        }
     }
 }

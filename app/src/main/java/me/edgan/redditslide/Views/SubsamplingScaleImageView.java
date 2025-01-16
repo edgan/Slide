@@ -319,7 +319,7 @@ public class SubsamplingScaleImageView extends View {
     private final float[] srcArray = new float[8];
     private final float[] dstArray = new float[8];
 
-    //The logical density of the display
+    // The logical density of the display
     private final float density;
 
     // A global preference for bitmap format, available to decoder classes that respect it
@@ -466,7 +466,7 @@ public class SubsamplingScaleImageView extends View {
      * @param state         State to be restored. Nullable.
      */
     public final void setImage(@NonNull ImageSource imageSource, ImageSource previewSource, ImageViewState state) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         setAlpha(0);
         if (imageSource == null) {
             throw new NullPointerException("imageSource must not be null");
@@ -914,7 +914,7 @@ public class SubsamplingScaleImageView extends View {
                         float dx = Math.abs(event.getX() - vCenterStart.x);
                         float dy = Math.abs(event.getY() - vCenterStart.y);
 
-                        //On the Samsung S6 long click event does not work, because the dx > 5 usually true
+                        // On the Samsung S6 long click event does not work, because the dx > 5 usually true
                         float offset = density * 5;
                         if (dx > offset || dy > offset || isPanning) {
                             consumed = true;
@@ -1197,19 +1197,19 @@ public class SubsamplingScaleImageView extends View {
             canvas.drawText("Scale: " + String.format(Locale.ENGLISH, "%.2f", scale) + " (" + String.format(Locale.ENGLISH, "%.2f", minScale()) + " - " + String.format(Locale.ENGLISH, "%.2f", maxScale) + ")", px(5), px(15), debugTextPaint);
             canvas.drawText("Translate: " + String.format(Locale.ENGLISH, "%.2f", vTranslate.x) + ":" + String.format(Locale.ENGLISH, "%.2f", vTranslate.y), px(5), px(30), debugTextPaint);
             PointF center = getCenter();
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             canvas.drawText("Source center: " + String.format(Locale.ENGLISH, "%.2f", center.x) + ":" + String.format(Locale.ENGLISH, "%.2f", center.y), px(5), px(45), debugTextPaint);
             if (anim != null) {
                 PointF vCenterStart = sourceToViewCoord(anim.sCenterStart);
                 PointF vCenterEndRequested = sourceToViewCoord(anim.sCenterEndRequested);
                 PointF vCenterEnd = sourceToViewCoord(anim.sCenterEnd);
-                //noinspection ConstantConditions
+                // noinspection ConstantConditions
                 canvas.drawCircle(vCenterStart.x, vCenterStart.y, px(10), debugLinePaint);
                 debugLinePaint.setColor(Color.RED);
-                //noinspection ConstantConditions
+                // noinspection ConstantConditions
                 canvas.drawCircle(vCenterEndRequested.x, vCenterEndRequested.y, px(20), debugLinePaint);
                 debugLinePaint.setColor(Color.BLUE);
-                //noinspection ConstantConditions
+                // noinspection ConstantConditions
                 canvas.drawCircle(vCenterEnd.x, vCenterEnd.y, px(25), debugLinePaint);
                 debugLinePaint.setColor(Color.CYAN);
                 canvas.drawCircle(getWidth() / 2.0f, getHeight() / 2.0f, px(30), debugLinePaint);
@@ -1647,7 +1647,7 @@ public class SubsamplingScaleImageView extends View {
                         decoder = decoderFactory.make();
                         dimensions = decoder.init(context, source);
                     } catch (Exception e) {
-                        //switch to new decoder
+                        // switch to new decoder
                         cancel(true);
                         view.doLoader(true);
                         return null;
@@ -2480,7 +2480,7 @@ public class SubsamplingScaleImageView extends View {
      * @param regionDecoderClass The {@link ImageRegionDecoder} implementation to use.
      */
     public final void setRegionDecoderClass(@NonNull Class<? extends ImageRegionDecoder> regionDecoderClass) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         if (regionDecoderClass == null) {
             throw new IllegalArgumentException("Decoder class cannot be set to null");
         }
@@ -2495,7 +2495,7 @@ public class SubsamplingScaleImageView extends View {
      *                             instances.
      */
     public final void setRegionDecoderFactory(@NonNull DecoderFactory<? extends ImageRegionDecoder> regionDecoderFactory) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         if (regionDecoderFactory == null) {
             throw new IllegalArgumentException("Decoder factory cannot be set to null");
         }
@@ -2510,7 +2510,7 @@ public class SubsamplingScaleImageView extends View {
      * @param bitmapDecoderClass The {@link ImageDecoder} implementation to use.
      */
     public final void setBitmapDecoderClass(@NonNull Class<? extends ImageDecoder> bitmapDecoderClass) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         if (bitmapDecoderClass == null) {
             throw new IllegalArgumentException("Decoder class cannot be set to null");
         }
@@ -2524,7 +2524,7 @@ public class SubsamplingScaleImageView extends View {
      * @param bitmapDecoderFactory The {@link DecoderFactory} implementation that produces {@link ImageDecoder} instances.
      */
     public final void setBitmapDecoderFactory(@NonNull DecoderFactory<? extends ImageDecoder> bitmapDecoderFactory) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         if (bitmapDecoderFactory == null) {
             throw new IllegalArgumentException("Decoder factory cannot be set to null");
         }
@@ -2803,7 +2803,7 @@ public class SubsamplingScaleImageView extends View {
     @Nullable
     public final ImageViewState getState() {
         if (vTranslate != null && sWidth > 0 && sHeight > 0) {
-            //noinspection ConstantConditions
+            // noinspection ConstantConditions
             return new ImageViewState(getScale(), getCenter(), getOrientation());
         }
         return null;
@@ -2944,7 +2944,7 @@ public class SubsamplingScaleImageView extends View {
      * @param executor an {@link Executor} for image loading.
      */
     public void setExecutor(@NonNull Executor executor) {
-        //noinspection ConstantConditions
+        // noinspection ConstantConditions
         if (executor == null) {
             throw new NullPointerException("Executor must not be null");
         }

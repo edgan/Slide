@@ -108,7 +108,7 @@ public class UserSubscriptions {
         if (NetworkUtil.isConnected(c)) {
             String s = subscriptions.getString(Authentication.name, "");
             if (s.isEmpty()) {
-                //get online subs
+                // get online subs
                 c.updateSubs(syncSubscriptionsOverwrite(c));
             } else {
                 CaseInsensitiveArrayList subredditsForHome = new CaseInsensitiveArrayList();
@@ -148,7 +148,7 @@ public class UserSubscriptions {
         if (NetworkUtil.isConnected(c)) {
             String s = news.getString("subs", "news,android");
             if (s.isEmpty()) {
-                //get online subs
+                // get online subs
                 c.updateSubs(syncSubscriptionsOverwrite(c));
             } else {
                 CaseInsensitiveArrayList subredditsForHome = new CaseInsensitiveArrayList();
@@ -227,7 +227,7 @@ public class UserSubscriptions {
     public static CaseInsensitiveArrayList getSubscriptions(Context c) {
         String s = subscriptions.getString(Authentication.name, "");
         if (s.isEmpty()) {
-            //get online subs
+            // get online subs
             return syncSubscriptionsOverwrite(c);
         } else {
             CaseInsensitiveArrayList subredditsForHome = new CaseInsensitiveArrayList();
@@ -243,7 +243,7 @@ public class UserSubscriptions {
     public static CaseInsensitiveArrayList getPinned() {
         String s = pinned.getString(Authentication.name, "");
         if (s.isEmpty()) {
-            //get online subs
+            // get online subs
             return new CaseInsensitiveArrayList();
         } else if (pins == null) {
             pins = new CaseInsensitiveArrayList();
@@ -259,7 +259,7 @@ public class UserSubscriptions {
     public static CaseInsensitiveArrayList getSubscriptionsForShortcut(Context c) {
         String s = subscriptions.getString(Authentication.name, "");
         if (s.isEmpty()) {
-            //get online subs
+            // get online subs
             return syncSubscriptionsOverwrite(c);
         } else {
             CaseInsensitiveArrayList subredditsForHome = new CaseInsensitiveArrayList();
@@ -310,7 +310,7 @@ public class UserSubscriptions {
         }.execute();
 
         if (toreturn.isEmpty()) {
-            //failed, load defaults
+            // failed, load defaults
             toreturn.addAll(defaultSubs);
         }
 
@@ -334,7 +334,7 @@ public class UserSubscriptions {
                     toreturn.addAll(defaultSubs);
                 }
             } catch (Exception e) {
-                //failed;
+                // failed;
                 e.printStackTrace();
             }
             addSubsToHistory(toReturn);
@@ -478,7 +478,7 @@ public class UserSubscriptions {
             modOf = (finished);
             cacheModOf();
         } catch (Exception e) {
-            //failed;
+            // failed;
             e.printStackTrace();
         }
 
@@ -507,7 +507,7 @@ public class UserSubscriptions {
                 return friends;
 
             } catch (Exception e) {
-                //failed;
+                // failed;
                 e.printStackTrace();
             }
         }
@@ -541,7 +541,7 @@ public class UserSubscriptions {
         return null;
     }
 
-    //Gets user subscriptions + top 500 subs + subs in history
+    // Gets user subscriptions + top 500 subs + subs in history
     public static CaseInsensitiveArrayList getAllSubreddits(Context c) {
         CaseInsensitiveArrayList finalReturn = new CaseInsensitiveArrayList();
         CaseInsensitiveArrayList history = getHistory();
@@ -567,7 +567,7 @@ public class UserSubscriptions {
         return finalReturn;
     }
 
-    //Gets user subscriptions + top 500 subs + subs in history
+    // Gets user subscriptions + top 500 subs + subs in history
     public static CaseInsensitiveArrayList getAllUserSubreddits(Context c) {
         CaseInsensitiveArrayList finalReturn = new CaseInsensitiveArrayList();
         finalReturn.addAll(getSubscriptions(c));
@@ -617,7 +617,7 @@ public class UserSubscriptions {
         setPinned(subs);
     }
 
-    //Sets sub as "searched for", will apply to all accounts
+    // Sets sub as "searched for", will apply to all accounts
     public static void addSubToHistory(String s) {
         String history = subscriptions.getString("subhistory", "");
         if (!history.contains(s.toLowerCase(Locale.ENGLISH))) {
@@ -626,7 +626,7 @@ public class UserSubscriptions {
         }
     }
 
-    //Sets a list of subreddits as "searched for", will apply to all accounts
+    // Sets a list of subreddits as "searched for", will apply to all accounts
     public static void addSubsToHistory(ArrayList<Subreddit> s2) {
         StringBuilder history = new StringBuilder(subscriptions.getString("subhistory", "").toLowerCase(Locale.ENGLISH));
         for (Subreddit s : s2) {
@@ -662,7 +662,7 @@ public class UserSubscriptions {
 
 
             } catch (Exception e) {
-                //failed;
+                // failed;
                 e.printStackTrace();
             }
 
@@ -690,7 +690,7 @@ public class UserSubscriptions {
 
 
                     } catch (Exception e) {
-                        //failed;
+                        // failed;
                         e.printStackTrace();
                     }
                 }

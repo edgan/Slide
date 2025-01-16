@@ -144,6 +144,9 @@ public class SettingValues {
     public static final String PREF_HIGH_COLORSPACE_IMAGES     = "highMemoryImages";
     public static final String PREF_ALWAYS_BLACK_STATUSBAR     = "alwaysBlackStatusbar";
 
+    public static final String PREF_IMAGE_SAVE_LOCATION = "PREF_IMAGE_SAVE_LOCATION";
+    public static String imageSaveLocation;
+
     public static final String PREF_REDDIT_CLIENT_ID_OVERRIDE = "redditClientOverride";
     public static String redditClientIdOverride = "";
 
@@ -263,7 +266,7 @@ public class SettingValues {
     public static boolean lqMid  = true;
     public static boolean lqHigh = false;
     public static boolean lqVideos;
-    public static int     currentTheme; //current base theme (Light, Dark, Dark blue, etc.)
+    public static int     currentTheme; // current base theme (Light, Dark, Dark blue, etc.)
     public static int     nightTheme;
     public static boolean typeInText;
     public static boolean notifSound;
@@ -290,6 +293,7 @@ public class SettingValues {
     public static void setAllValues(SharedPreferences settings) {
         prefs = settings;
 
+        imageSaveLocation = prefs.getString(PREF_IMAGE_SAVE_LOCATION, "");
         redditClientIdOverride = settings.getString(PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
         defaultCardView = CreateCardView.CardEnum.valueOf(
                 settings.getString("defaultCardViewNew", "LARGE").toUpperCase());
@@ -439,7 +443,7 @@ public class SettingValues {
         bigThumbnails = prefs.getBoolean(PREF_BIG_THUMBS, false);
         noThumbnails = prefs.getBoolean(PREF_NO_THUMB, false);
 
-        swipeAnywhere = true; //override this always now
+        swipeAnywhere = true; // override this always now
         album = prefs.getBoolean(PREF_ALBUM, true);
         albumSwipe = prefs.getBoolean(PREF_ALBUM_SWIPE, true);
 

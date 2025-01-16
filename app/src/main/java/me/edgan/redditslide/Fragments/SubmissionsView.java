@@ -178,7 +178,7 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                                             }
                                         });
 
-                        //Add "search current sub" if it is not frontpage/all/random
+                        // Add "search current sub" if it is not frontpage/all/random
                         if (!id.equalsIgnoreCase("frontpage")
                                 && !id.equalsIgnoreCase("all")
                                 && !id.contains(".")
@@ -303,7 +303,7 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
 
         header = getActivity().findViewById(R.id.header);
 
-        //TODO, have it so that if the user clicks anywhere in the rv to hide and cancel GoToSubreddit?
+        // TODO, have it so that if the user clicks anywhere in the rv to hide and cancel GoToSubreddit?
 //        final TextInputEditText GO_TO_SUB_FIELD = (TextInputEditText) getActivity().findViewById(R.id.toolbar_search);
 //        final Toolbar TOOLBAR = ((Toolbar) getActivity().findViewById(R.id.toolbar));
 //        final String PREV_TITLE = TOOLBAR.getTitle().toString();
@@ -404,7 +404,7 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                         }
                     }
                 } catch (IndexOutOfBoundsException e) {
-                    //Let the loop reset itself
+                    // Let the loop reset itself
                 }
             }
             adapter.notifyItemRangeChanged(0, adapter.dataSet.posts.size());
@@ -543,7 +543,7 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                         adapter.notifyItemChanged(i + 1);
                     }
                 } catch (IndexOutOfBoundsException e) {
-                    //Let the loop reset itself
+                    // Let the loop reset itself
                 }
             }
         }
@@ -634,7 +634,7 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
 //                        break;
 //                }
                             super.onScrollStateChanged(recyclerView, newState);
-                            //If the toolbar search is open, and the user scrolls in the Main view--close the search UI
+                            // If the toolbar search is open, and the user scrolls in the Main view--close the search UI
                             if (getActivity() instanceof MainActivity
                                     && (SettingValues.subredditSearchMethod
                                     == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR

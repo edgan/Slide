@@ -7,7 +7,9 @@ import android.net.Uri;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
+import java.io.IOException;
 import java.io.File;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -15,6 +17,9 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.text.DecimalFormat;
 import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class FileUtil {
     private FileUtil() {
@@ -162,4 +167,54 @@ public class FileUtil {
         return new String(charBuffer.array(), 0, charBuffer.position()) + replacementChar;
     }
 
+    public static String getMimeType(String fileName) {
+        if (fileName.toLowerCase().endsWith(".png")) {
+            return "image/png";
+        } else if (fileName.toLowerCase().endsWith(".gif")) {
+            return "image/gif";
+        } else {
+            return "image/jpeg";
+        }
+    }
+
+    public static void copyFile(File sourceFile, OutputStream out) throws IOException {
+        byte[] buffer = new byte[8192];
+        java.io.FileInputStream in = new java.io.FileInputStream(sourceFile);
+        try {
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+        } finally {
+            try {
+                in.close();
+            } catch (IOException ignored) {}
+        }
+    }
+
+    public static String getValidFileName(String title, String prefix, String extension) {
+        if (title == null) {
+            title = "";
+        }
+        // Remove invalid characters
+        String cleanTitle = title.replaceAll("[^a-zA-Z0-9.-]", "_");
+
+        // Truncate if too long (max 100 chars)
+        if (cleanTitle.length() > 100) {
+            cleanTitle = cleanTitle.substring(0, 100);
+        }
+
+        // If title is empty or just special chars, use timestamp
+        if (cleanTitle.trim().isEmpty()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
+            cleanTitle = "image_" + sdf.format(new Date());
+        }
+
+        // Combine parts
+        return prefix + cleanTitle + extension;
+    }
+
+    public static String getValidFileName(String title) {
+        return getValidFileName(title, "", "");
+    }
 }

@@ -223,7 +223,7 @@ public class PopulateSubmissionViewHolder {
                                         JsonNode dataNode = submission.getDataNode();
                                         if (dataNode.has("gallery_data")) {
                                             JsonUtil.getGalleryData(dataNode, urls);
-                                        } else if (dataNode.has("crosspost_parent_list")) { //Else, try getting crosspost gallery data
+                                        } else if (dataNode.has("crosspost_parent_list")) { // Else, try getting crosspost gallery data
                                             JsonNode crosspost_parent = dataNode.get("crosspost_parent_list").get(0);
                                             if (crosspost_parent.has("gallery_data")) {
                                                 JsonUtil.getGalleryData(crosspost_parent, urls);
@@ -365,7 +365,7 @@ public class PopulateSubmissionViewHolder {
                     .get("source")
                     .has("height")
                     && type
-                    != ContentType.Type.XKCD) { //Load the preview image which has probably already been cached in memory instead of the direct link
+                    != ContentType.Type.XKCD) { // Load the preview image which has probably already been cached in memory instead of the direct link
                 previewUrl = submission.getDataNode()
                         .get("preview")
                         .get("images")
@@ -413,7 +413,7 @@ public class PopulateSubmissionViewHolder {
                             .getDataNode()
                             .get("media")
                             .get("reddit_video")
-                            .get("dash_url") //In the future, we could load the HLS url as well
+                            .get("dash_url") // In the future, we could load the HLS url as well
                             .asText()).replace("&amp;", "&"));
                 } else if (submission.getDataNode().has("media") && submission.getDataNode()
                             .get("media")
@@ -496,7 +496,7 @@ public class PopulateSubmissionViewHolder {
                     .get("images")
                     .get(0)
                     .get("source")
-                    .has("height")) { //Load the preview image which has probably already been cached in memory instead of the direct link
+                    .has("height")) { // Load the preview image which has probably already been cached in memory instead of the direct link
                 String previewUrl = submission.getDataNode()
                         .get("preview")
                         .get("images")
@@ -803,7 +803,7 @@ public class PopulateSubmissionViewHolder {
                     case 7:
                         LinkUtil.openExternally(submission.getUrl());
                         if (submission.isNsfw() && !SettingValues.storeNSFWHistory) {
-                            //Do nothing if the post is NSFW and storeNSFWHistory is not enabled
+                            // Do nothing if the post is NSFW and storeNSFWHistory is not enabled
                         } else if (SettingValues.storeHistory) {
                             HasSeen.addSeen(submission.getFullName());
                         }
@@ -1109,7 +1109,7 @@ public class PopulateSubmissionViewHolder {
                     return new ArrayList<String>() {{
                         add("New category");
                     }};
-                    //sub probably has no flairs?
+                    // sub probably has no flairs?
                 }
             }
 
@@ -1441,7 +1441,7 @@ public class PopulateSubmissionViewHolder {
                         }
                         break;
                     case 2:
-                        //todo this
+                        // todo this
                         break;
                     case 3:
                         if (isNsfw) {
@@ -1535,7 +1535,7 @@ public class PopulateSubmissionViewHolder {
                         doSetFlair(mContext, submission, holder);
                         break;
                     case 23:
-                        //ban a user
+                        // ban a user
                         showBan(mContext, holder.itemView, submission, "", "", "", "");
                         break;
                     case 24:
@@ -1712,7 +1712,7 @@ public class PopulateSubmissionViewHolder {
                     return finalFlairs;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    //sub probably has no flairs?
+                    // sub probably has no flairs?
                 }
                 return null;
             }
@@ -2087,7 +2087,7 @@ public class PopulateSubmissionViewHolder {
 
     private void unNsfwSubmission(final Context mContext, final Submission submission,
             final SubmissionViewHolder holder) {
-        //todo update view with NSFW tag
+        // todo update view with NSFW tag
         new AsyncTask<Void, Void, Boolean>() {
 
             @Override
@@ -2156,7 +2156,7 @@ public class PopulateSubmissionViewHolder {
 
     private void unSpoiler(final Context mContext, final Submission submission,
             final SubmissionViewHolder holder) {
-        //todo update view with NSFW tag
+        // todo update view with NSFW tag
         new AsyncTask<Void, Void, Boolean>() {
 
             @Override
@@ -2282,7 +2282,7 @@ public class PopulateSubmissionViewHolder {
                 .setTitle(mContext.getString(R.string.mod_ban_title, submission.getAuthor()))
                 .setCancelable(true)
                 .setPositiveButton(R.string.mod_btn_ban, (dialog, which) -> {
-                    //to ban
+                    // to ban
                     if (reason.getText().toString().isEmpty()) {
                         new AlertDialog.Builder(mContext)
                                 .setTitle(R.string.mod_ban_reason_required)
@@ -2430,7 +2430,7 @@ public class PopulateSubmissionViewHolder {
             }
         });
 
-        //Use this to offset the submission score
+        // Use this to offset the submission score
         int submissionScore = submission.getScore();
 
         final int commentCount = submission.getCommentCount();
@@ -2482,8 +2482,8 @@ public class PopulateSubmissionViewHolder {
             }
         }
 
-        //Set the colors and styles for the score text depending on what state it is in
-        //Also set content descriptions
+        // Set the colors and styles for the score text depending on what state it is in
+        // Also set content descriptions
         switch (ActionStates.getVoteDirection(submission)) {
             case UPVOTE: {
                 holder.score.setTextColor(ContextCompat.getColor(mContext, R.color.md_orange_500));
@@ -2497,7 +2497,7 @@ public class PopulateSubmissionViewHolder {
                 downvotebutton.setContentDescription(mContext.getString(R.string.btn_downvote));
                 if (submission.getVote() != VoteDirection.UPVOTE) {
                     if (submission.getVote() == VoteDirection.DOWNVOTE) ++submissionScore;
-                    ++submissionScore; //offset the score by +1
+                    ++submissionScore; // offset the score by +1
                 }
                 break;
             }
@@ -2513,7 +2513,7 @@ public class PopulateSubmissionViewHolder {
                 upvotebutton.setContentDescription(mContext.getString(R.string.btn_upvote));
                 if (submission.getVote() != VoteDirection.DOWNVOTE) {
                     if (submission.getVote() == VoteDirection.UPVOTE) --submissionScore;
-                    --submissionScore; //offset the score by +1
+                    --submissionScore; // offset the score by +1
                 }
                 break;
             }
@@ -2532,7 +2532,7 @@ public class PopulateSubmissionViewHolder {
         }
 
 
-        //if the submission is already at 0pts, keep it at 0pts
+        // if the submission is already at 0pts, keep it at 0pts
         submissionScore = Math.max(submissionScore, 0);
         if (submissionScore >= 10000 && SettingValues.abbreviateScores) {
             holder.score.setText(String.format(Locale.getDefault(), "%.1fk",
@@ -2541,7 +2541,7 @@ public class PopulateSubmissionViewHolder {
             holder.score.setText(String.format(Locale.getDefault(), "%d", submissionScore));
         }
 
-        //Save the score so we can use it in the OnClickListeners for the vote buttons
+        // Save the score so we can use it in the OnClickListeners for the vote buttons
         final int SUBMISSION_SCORE = submissionScore;
 
         final ImageView hideButton = (ImageView) holder.hide;
@@ -2732,7 +2732,7 @@ public class PopulateSubmissionViewHolder {
                                     && holder.itemView.getTag(holder.itemView.getId()).equals("none")
                                     || full ? Palette.getCurrentTintColor(mContext) : Palette.getWhiteTintColor();
                             if (ActionStates.getVoteDirection(submission)
-                                    != VoteDirection.DOWNVOTE) { //has not been downvoted
+                                    != VoteDirection.DOWNVOTE) { // has not been downvoted
                                 points.setTextColor(
                                         ContextCompat.getColor(mContext, R.color.md_blue_500));
                                 BlendModeUtil.tintImageViewAsSrcAtop(
@@ -2746,10 +2746,10 @@ public class PopulateSubmissionViewHolder {
                                 holder.score.setTypeface(null, Typeface.BOLD);
                                 final int DOWNVOTE_SCORE = (SUBMISSION_SCORE == 0) ? 0 :
                                         SUBMISSION_SCORE
-                                                - 1; //if a post is at 0 votes, keep it at 0 when downvoting
+                                                - 1; // if a post is at 0 votes, keep it at 0 when downvoting
                                 new Vote(false, points, mContext).execute(submission);
                                 ActionStates.setVoteDirection(submission, VoteDirection.DOWNVOTE);
-                            } else { //un-downvoted a post
+                            } else { // un-downvoted a post
                                 points.setTextColor(comments.getCurrentTextColor());
                                 new Vote(points, mContext).execute(submission);
                                 holder.score.setTypeface(null, Typeface.NORMAL);
@@ -2785,7 +2785,7 @@ public class PopulateSubmissionViewHolder {
                                     && holder.itemView.getTag(holder.itemView.getId()).equals("none")
                                     || full ? Palette.getCurrentTintColor(mContext) : Palette.getWhiteTintColor();
                             if (ActionStates.getVoteDirection(submission)
-                                    != VoteDirection.UPVOTE) { //has not been upvoted
+                                    != VoteDirection.UPVOTE) { // has not been upvoted
                                 points.setTextColor(
                                         ContextCompat.getColor(mContext, R.color.md_orange_500));
                                 BlendModeUtil.tintImageViewAsSrcAtop(
@@ -2802,7 +2802,7 @@ public class PopulateSubmissionViewHolder {
                                 new Vote(true, points, mContext).execute(submission);
                                 ActionStates.setVoteDirection(submission, VoteDirection.UPVOTE);
 
-                            } else { //un-upvoted a post
+                            } else { // un-upvoted a post
                                 points.setTextColor(comments.getCurrentTextColor());
                                 new Vote(points, mContext).execute(submission);
                                 holder.score.setTypeface(null, Typeface.NORMAL);
@@ -2854,7 +2854,7 @@ public class PopulateSubmissionViewHolder {
                                 return finalFlairs;
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                //sub probably has no flairs?
+                                // sub probably has no flairs?
                             }
 
 
@@ -3276,14 +3276,14 @@ public class PopulateSubmissionViewHolder {
             case UPVOTE: {
                 if (submission.getVote() != VoteDirection.UPVOTE) {
                     if (submission.getVote() == VoteDirection.DOWNVOTE) ++submissionScore;
-                    ++submissionScore; //offset the score by +1
+                    ++submissionScore; // offset the score by +1
                 }
                 break;
             }
             case DOWNVOTE: {
                 if (submission.getVote() != VoteDirection.DOWNVOTE) {
                     if (submission.getVote() == VoteDirection.UPVOTE) --submissionScore;
-                    --submissionScore; //offset the score by +1
+                    --submissionScore; // offset the score by +1
                 }
                 break;
             }
@@ -3296,7 +3296,7 @@ public class PopulateSubmissionViewHolder {
         }
 
 
-        //if the submission is already at 0pts, keep it at 0pts
+        // if the submission is already at 0pts, keep it at 0pts
         submissionScore = Math.max(submissionScore, 0);
         if (submissionScore >= 10000 && SettingValues.abbreviateScores) {
             holder.score.setText(String.format(Locale.getDefault(), "%.1fk",

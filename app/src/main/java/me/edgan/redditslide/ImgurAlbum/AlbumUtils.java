@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import androidx.annotation.NonNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -63,7 +65,7 @@ public class AlbumUtils {
 
         private OkHttpClient client;
         private Gson gson;
-        private String mashapeKey;
+        private String imgurKey;
 
         public void onError() {
 
@@ -91,7 +93,7 @@ public class AlbumUtils {
             hash = getHash(rawDat);
             client = Reddit.client;
             gson = new Gson();
-            mashapeKey = SecretConstants.getImgurApiKey(baseActivity);
+            imgurKey = SecretConstants.getImgurApiKey(baseActivity);
         }
 
         public void doWithData(List<Image> data) {
@@ -112,8 +114,7 @@ public class AlbumUtils {
             try {
                 final Image toDo = new Image();
                 toDo.setAnimated(data.getAnimated() || data.getLink().contains(".gif"));
-                toDo.setDescription(data.getDescription());
-                if(data.getAdditionalProperties().containsKey("mp4")){
+                if(data.getAdditionalProperties().containsKey("mp4") && !data.getAdditionalProperties().get("mp4").equals("")){
                     toDo.setHash(getHash(data.getAdditionalProperties().get("mp4").toString()));
                 } else {
                     toDo.setHash(getHash(data.getLink()));
@@ -124,7 +125,13 @@ public class AlbumUtils {
                 toDo.setWidth(data.getWidth());
                 return toDo;
             } catch (Exception e) {
-                LogUtil.e(e, "convertToSingle error, data [" + data + "]");
+                ObjectMapper objectMapper = new ObjectMapper();
+                try {
+                    String dataJson = data != null ? objectMapper.writeValueAsString(data) : "null";
+                    LogUtil.e(e, "convertToSingle error, data [" + dataJson + "]");
+                } catch (JsonProcessingException ex) {
+                    LogUtil.e(ex, "Error serializing data to JSON for logging");
+                }
                 onError();
                 return null;
             }
@@ -147,9 +154,9 @@ public class AlbumUtils {
                         }
                     });
                 } else {
-                    String apiUrl = "https://imgur-apiv3.p.mashape.com/3/image/" + hash + ".json";
+                    String apiUrl = "https://api.imgur.com/3/image/" + hash;
                     LogUtil.v(apiUrl);
-                    JsonObject result = HttpUtil.getImgurMashapeJsonObject(client, gson, apiUrl, mashapeKey);
+                    JsonObject result = HttpUtil.getImgurJsonObject(client, gson, apiUrl, imgurKey);
                     try {
                         if (result == null) {
                             onError();
@@ -188,9 +195,9 @@ public class AlbumUtils {
                 for (String s : hash.split(",")) {
                     final int pos = count;
                     count++;
-                    String apiUrl = "https://imgur-apiv3.p.mashape.com/3/image/" + s + ".json";
+                    String apiUrl = "https://api.imgur.com/3/image/" + s;
                     LogUtil.v(apiUrl);
-                    JsonObject result = HttpUtil.getImgurMashapeJsonObject(client, gson, apiUrl, mashapeKey);
+                    JsonObject result = HttpUtil.getImgurJsonObject(client, gson, apiUrl, imgurKey);
                     target[pos] = result;
                     done += 1;
                     if (done == target.length) {
@@ -225,7 +232,7 @@ public class AlbumUtils {
                         parseJson(JsonParser.parseString(albumRequests.getString(apiUrl, "")).getAsJsonObject());
                     } else {
                         LogUtil.v(apiUrl);
-                        // This call requires no mashape headers, don't pass in the headers Map
+                        // This call requires no imgur headers, don't pass in the headers Map
                         final JsonObject result = HttpUtil.getJsonObject(client, gson, apiUrl);
                         if (result != null && result.has("data")) {
                             albumRequests.edit().putString(apiUrl, result.toString()).apply();

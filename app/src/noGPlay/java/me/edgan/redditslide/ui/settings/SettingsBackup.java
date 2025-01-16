@@ -260,7 +260,7 @@ public class SettingsBackup extends BaseActivityAnim {
                         return null;
                     } catch (Exception e) {
                         e.printStackTrace();
-                        //todo error
+                        // todo error
                     } finally {
                         close(fw);
                     }

@@ -96,7 +96,6 @@ public class LiveThread extends BaseActivityAnim {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //todo finish
     }
 
 

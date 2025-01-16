@@ -38,24 +38,24 @@ public class ShareUtil {
      * @param bitmap image to share
      */
     public static void shareImage(final Bitmap bitmap, Context context) {
-        File image; //image to share
+        File image; // image to share
 
-        //check to see if the cache/shared_images directory is present
+        // check to see if the cache/shared_images directory is present
         final File imagesDir =
                 new File(context.getCacheDir().toString() + File.separator + "shared_image");
         if (!imagesDir.exists()) {
-            imagesDir.mkdir(); //create the folder if it doesn't exist
+            imagesDir.mkdir(); // create the folder if it doesn't exist
         } else {
             FileUtil.deleteFilesInDir(imagesDir);
         }
 
         try {
-            //creates a file in the cache; filename will be prefixed with "img" and end with ".png"
+            // creates a file in the cache; filename will be prefixed with "img" and end with ".png"
             image = File.createTempFile("img", ".png", imagesDir);
             FileOutputStream out = null;
 
             try {
-                //convert image to png
+                // convert image to png
                 out = new FileOutputStream(image);
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
             } finally {
@@ -69,7 +69,7 @@ public class ShareUtil {
                                         context);
                         shareImageIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
 
-                        //Select a share option
+                        // Select a share option
                         context.startActivity(Intent.createChooser(shareImageIntent,
                                 context.getString(R.string.misc_img_share)));
                     } else {

@@ -266,7 +266,7 @@ public class SubmissionComments {
 
                 return comments;
             } catch (Exception e) {
-                //Todo reauthenticate
+                // Todo reauthenticate
             }
             return null;
         }

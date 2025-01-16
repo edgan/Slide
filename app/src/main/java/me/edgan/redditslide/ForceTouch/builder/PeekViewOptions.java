@@ -78,7 +78,7 @@ public class PeekViewOptions {
         this.blurOverlayColor = color;
         return this;
     }
-    //endregion
+    // endregion
 
     // region getters
     public float getWidthPercent() {

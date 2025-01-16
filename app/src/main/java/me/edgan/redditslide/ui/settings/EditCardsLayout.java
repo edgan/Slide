@@ -40,8 +40,8 @@ public class EditCardsLayout extends BaseActivityAnim {
         layout.removeAllViews();
         layout.addView(CreateCardView.CreateView(layout));
 
-        //View type//
-        //Cards or List//
+        // View type//
+        // Cards or List//
         ((TextView) findViewById(R.id.view_current)).setText(CreateCardView.isCard() ? (CreateCardView.isMiddle() ? getString(R.string.mode_centered) : getString(R.string.mode_card)) : CreateCardView.isDesktop() ? getString(R.string.mode_desktop_compact) : getString(R.string.mode_list));
 
         findViewById(R.id.view).setOnClickListener(new View.OnClickListener() {
@@ -191,9 +191,9 @@ public class EditCardsLayout extends BaseActivityAnim {
                 }
             });
         }
-        //Pic modes//
+        // Pic modes//
         final TextView CURRENT_PICTURE = (TextView) findViewById(R.id.picture_current);
-        assert CURRENT_PICTURE != null; //it won't be
+        assert CURRENT_PICTURE != null; // it won't be
 
         if (SettingValues.bigPicCropped) {
             CURRENT_PICTURE.setText(R.string.mode_cropped);
@@ -221,7 +221,7 @@ public class EditCardsLayout extends BaseActivityAnim {
                                 SharedPreferences.Editor e = SettingValues.prefs.edit();
                                 for (Map.Entry<String, ?> map : SettingValues.prefs.getAll().entrySet()) {
                                     if (map.getKey().startsWith("picsenabled")) {
-                                        e.remove(map.getKey()); //reset all overridden values
+                                        e.remove(map.getKey()); // reset all overridden values
                                     }
                                 }
                                 e.apply();
@@ -238,7 +238,7 @@ public class EditCardsLayout extends BaseActivityAnim {
                                 SharedPreferences.Editor e = SettingValues.prefs.edit();
                                 for (Map.Entry<String, ?> map : SettingValues.prefs.getAll().entrySet()) {
                                     if (map.getKey().startsWith("picsenabled")) {
-                                        e.remove(map.getKey()); //reset all overridden values
+                                        e.remove(map.getKey()); // reset all overridden values
                                     }
                                 }
                                 e.apply();
@@ -251,7 +251,7 @@ public class EditCardsLayout extends BaseActivityAnim {
                                 SharedPreferences.Editor e = SettingValues.prefs.edit();
                                 for (Map.Entry<String, ?> map : SettingValues.prefs.getAll().entrySet()) {
                                     if (map.getKey().startsWith("picsenabled")) {
-                                        e.remove(map.getKey()); //reset all overridden values
+                                        e.remove(map.getKey()); // reset all overridden values
                                     }
                                 }
                                 e.apply();
@@ -277,7 +277,7 @@ public class EditCardsLayout extends BaseActivityAnim {
 
         if (!SettingValues.noThumbnails) {
             final SwitchCompat bigThumbnails = (SwitchCompat) findViewById(R.id.bigThumbnails);
-            assert bigThumbnails != null; //def won't be null
+            assert bigThumbnails != null; // def won't be null
 
             bigThumbnails.setChecked(SettingValues.bigThumbnails);
             bigThumbnails.setOnCheckedChangeListener(new SwitchCompat.OnCheckedChangeListener() {
@@ -294,7 +294,7 @@ public class EditCardsLayout extends BaseActivityAnim {
                             SharedPreferences.Editor e = SettingValues.prefs.edit();
                             for (Map.Entry<String, ?> map : SettingValues.prefs.getAll().entrySet()) {
                                 if (map.getKey().startsWith("picsenabled")) {
-                                    e.remove(map.getKey()); //reset all overridden values
+                                    e.remove(map.getKey()); // reset all overridden values
                                 }
                             }
                             e.apply();
@@ -304,7 +304,7 @@ public class EditCardsLayout extends BaseActivityAnim {
             });
         }
 
-        //Actionbar//
+        // Actionbar//
         ((TextView) findViewById(R.id.actionbar_current)).setText(!SettingValues.actionbarVisible ? (SettingValues.actionbarTap ? getString(R.string.tap_actionbar) : getString(R.string.press_actionbar)) : getString(R.string.always_actionbar));
 
         findViewById(R.id.actionbar).setOnClickListener(new View.OnClickListener() {
@@ -345,7 +345,7 @@ public class EditCardsLayout extends BaseActivityAnim {
         });
 
 
-        //Other buttons//
+        // Other buttons//
         final AppCompatCheckBox hidebutton = (AppCompatCheckBox) findViewById(R.id.hidebutton);
         layout.findViewById(R.id.hide).setVisibility(SettingValues.hideButton && SettingValues.actionbarVisible ? View.VISIBLE : View.GONE);
         layout.findViewById(R.id.save).setVisibility(SettingValues.saveButton && SettingValues.actionbarVisible ? View.VISIBLE : View.GONE);
@@ -376,7 +376,7 @@ public class EditCardsLayout extends BaseActivityAnim {
             }
         });
 
-        //Smaller tags//
+        // Smaller tags//
         final SwitchCompat smallTag = (SwitchCompat) findViewById(R.id.tagsetting);
 
         smallTag.setChecked(SettingValues.smallTag);
@@ -389,8 +389,8 @@ public class EditCardsLayout extends BaseActivityAnim {
         });
 
 
-        //Actionbar//
-        //Enable, collapse//
+        // Actionbar//
+        // Enable, collapse//
         final SwitchCompat switchThumb = (SwitchCompat) findViewById(R.id.action);
         switchThumb.setChecked(SettingValues.switchThumb);
         switchThumb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

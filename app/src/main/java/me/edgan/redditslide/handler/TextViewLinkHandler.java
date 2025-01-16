@@ -72,7 +72,7 @@ public class TextViewLinkHandler extends BaseMovementMethod {
             comm.setLongClickable(false);
 
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                position = event.getY(); //used to see if the user scrolled or not
+                position = event.getY(); // used to see if the user scrolled or not
             }
             if (!(event.getAction() == MotionEvent.ACTION_UP
                     || event.getAction() == MotionEvent.ACTION_DOWN)) {

@@ -206,14 +206,14 @@ public class PopulateShadowboxInfo {
                                             HasSeen.addSeen(s.getFullName());
                                         }
                                     }
-                                    if (ActionStates.getVoteDirection(s) != VoteDirection.DOWNVOTE) { //has not been downvoted
+                                    if (ActionStates.getVoteDirection(s) != VoteDirection.DOWNVOTE) { // has not been downvoted
                                         points.setTextColor(ContextCompat.getColor(c, R.color.md_blue_500));
                                         BlendModeUtil.tintImageViewAsSrcAtop(downvotebutton, ContextCompat.getColor(c, R.color.md_blue_500));
                                         BlendModeUtil.tintImageViewAsSrcAtop(upvotebutton, Color.WHITE);
 
                                         AnimatorUtil.setFlashAnimation(rootView, downvotebutton, ContextCompat.getColor(c, R.color.md_blue_500));
                                         ((TextView) rootView.findViewById(R.id.score)).setTypeface(null, Typeface.BOLD);
-                                        final int downvoteScore = (s.getScore() == 0) ? 0 : s.getScore() - 1; //if a post is at 0 votes, keep it at 0 when downvoting
+                                        final int downvoteScore = (s.getScore() == 0) ? 0 : s.getScore() - 1; // if a post is at 0 votes, keep it at 0 when downvoting
                                         ((TextView) rootView.findViewById(R.id.score)).setText(String.format(Locale.getDefault(), "%d", downvoteScore));
                                         new Vote(false, points, c).execute(s);
                                         ActionStates.setVoteDirection(s, VoteDirection.DOWNVOTE);
@@ -240,7 +240,7 @@ public class PopulateShadowboxInfo {
                                         }
                                     }
 
-                                    if (ActionStates.getVoteDirection(s) != VoteDirection.UPVOTE) { //has not been upvoted
+                                    if (ActionStates.getVoteDirection(s) != VoteDirection.UPVOTE) { // has not been upvoted
                                         points.setTextColor(ContextCompat.getColor(c, R.color.md_orange_500));
                                         BlendModeUtil.tintImageViewAsSrcAtop(upvotebutton, ContextCompat.getColor(c, R.color.md_orange_500));
                                         BlendModeUtil.tintImageViewAsSrcAtop(downvotebutton, Color.WHITE);
@@ -427,14 +427,14 @@ public class PopulateShadowboxInfo {
                                 public void onClick(View view) {
                                     ((SlidingUpPanelLayout) rootView.findViewById(R.id.sliding_layout)).setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
 
-                                    if (ActionStates.getVoteDirection(s) != VoteDirection.DOWNVOTE) { //has not been downvoted
+                                    if (ActionStates.getVoteDirection(s) != VoteDirection.DOWNVOTE) { // has not been downvoted
                                         points.setTextColor(ContextCompat.getColor(c, R.color.md_blue_500));
                                         BlendModeUtil.tintImageViewAsSrcAtop(downvotebutton, ContextCompat.getColor(c, R.color.md_blue_500));
                                         BlendModeUtil.tintImageViewAsSrcAtop(upvotebutton, Color.WHITE);
 
                                         AnimatorUtil.setFlashAnimation(rootView, downvotebutton, ContextCompat.getColor(c, R.color.md_blue_500));
                                         ((TextView) rootView.findViewById(R.id.score)).setTypeface(null, Typeface.BOLD);
-                                        final int downvoteScore = (s.getScore() == 0) ? 0 : s.getScore() - 1; //if a post is at 0 votes, keep it at 0 when downvoting
+                                        final int downvoteScore = (s.getScore() == 0) ? 0 : s.getScore() - 1; // if a post is at 0 votes, keep it at 0 when downvoting
                                         ((TextView) rootView.findViewById(R.id.score)).setText(String.format(Locale.getDefault(), "%d", downvoteScore));
                                         new Vote(false, points, c).execute(s);
                                         ActionStates.setVoteDirection(s, VoteDirection.DOWNVOTE);
@@ -454,7 +454,7 @@ public class PopulateShadowboxInfo {
                                 @Override
                                 public void onClick(View view) {
                                     ((SlidingUpPanelLayout) rootView.findViewById(R.id.sliding_layout)).setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-                                    if (ActionStates.getVoteDirection(s) != VoteDirection.UPVOTE) { //has not been upvoted
+                                    if (ActionStates.getVoteDirection(s) != VoteDirection.UPVOTE) { // has not been upvoted
                                         points.setTextColor(ContextCompat.getColor(c, R.color.md_orange_500));
                                         BlendModeUtil.tintImageViewAsSrcAtop(upvotebutton, ContextCompat.getColor(c, R.color.md_orange_500));
                                         BlendModeUtil.tintImageViewAsSrcAtop(downvotebutton, Color.WHITE);

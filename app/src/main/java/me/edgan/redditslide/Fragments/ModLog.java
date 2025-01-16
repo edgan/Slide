@@ -39,8 +39,8 @@ public class ModLog extends Fragment {
 
         mSwipeRefreshLayout.setColorSchemeColors(Palette.getColors("mod", getActivity()));
 
-        //If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
-        //So, we estimate the height of the header in dp
+        // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
+        // So, we estimate the height of the header in dp
         mSwipeRefreshLayout.setProgressViewOffset(false,
                 Constants.TAB_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.TAB_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);

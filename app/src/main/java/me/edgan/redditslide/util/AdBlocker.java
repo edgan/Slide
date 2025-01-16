@@ -24,7 +24,7 @@ import okio.Okio;
  */
 public class AdBlocker {
     private static final String      DOMAINS_FILE = "adblocksources.txt";
-    private static final Set<String> DOMAINS      = new HashSet<>(); //Use hash set for performance
+    private static final Set<String> DOMAINS      = new HashSet<>(); // Use hash set for performance
 
     public static void init(final Context context) {
         new AsyncTask<Void, Void, Void>() {

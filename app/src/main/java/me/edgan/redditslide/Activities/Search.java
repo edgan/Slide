@@ -41,7 +41,7 @@ import me.edgan.redditslide.util.TimeUtils;
 
 public class Search extends BaseActivityAnim {
 
-    //todo NFC support
+    // todo NFC support
 
     public static final String EXTRA_TERM = "term";
     public static final String EXTRA_SUBREDDIT = "subreddit";
@@ -110,8 +110,8 @@ public class Search extends BaseActivityAnim {
                 }
                 reloadSubs();
 
-                //When the .name() is returned for both of the ENUMs, it will be in all caps.
-                //So, make it lowercase, then capitalize the first letter of each.
+                // When the .name() is returned for both of the ENUMs, it will be in all caps.
+                // So, make it lowercase, then capitalize the first letter of each.
                 getSupportActionBar().setSubtitle(StringUtils.capitalize(
                         SortingUtil.search.name().toLowerCase(Locale.ENGLISH)) + " › " + StringUtils
                         .capitalize(time.name().toLowerCase(Locale.ENGLISH)));
@@ -147,8 +147,8 @@ public class Search extends BaseActivityAnim {
                 }
                 reloadSubs();
 
-                //When the .name() is returned for both of the ENUMs, it will be in all caps.
-                //So, make it lowercase, then capitalize the first letter of each.
+                // When the .name() is returned for both of the ENUMs, it will be in all caps.
+                // So, make it lowercase, then capitalize the first letter of each.
                 getSupportActionBar().setSubtitle(StringUtils.capitalize(
                         SortingUtil.search.name().toLowerCase(Locale.ENGLISH)) + " › " + StringUtils
                         .capitalize(time.name().toLowerCase(Locale.ENGLISH)));
@@ -184,7 +184,7 @@ public class Search extends BaseActivityAnim {
                             }
                         });
 
-                //Add "search current sub" if it is not frontpage/all/random
+                // Add "search current sub" if it is not frontpage/all/random
                 builder.positiveText("Search")
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
@@ -260,17 +260,17 @@ public class Search extends BaseActivityAnim {
 
         getSupportActionBar().setTitle(CompatUtil.fromHtml(where));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        assert mToolbar != null; //it won't be, trust me
+        assert mToolbar != null; // it won't be, trust me
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed(); //Simulate a system's "Back" button functionality.
+                onBackPressed(); // Simulate a system's "Back" button functionality.
             }
         });
         mToolbar.setPopupTheme(new ColorPreferences(this).getFontStyle().getBaseId());
 
-        //When the .name() is returned for both of the ENUMs, it will be in all caps.
-        //So, make it lowercase, then capitalize the first letter of each.
+        // When the .name() is returned for both of the ENUMs, it will be in all caps.
+        // So, make it lowercase, then capitalize the first letter of each.
         getSupportActionBar().setSubtitle(
                 StringUtils.capitalize(SortingUtil.search.name().toLowerCase(Locale.ENGLISH))
                         + " › "
@@ -309,8 +309,8 @@ public class Search extends BaseActivityAnim {
 
         mSwipeRefreshLayout.setColorSchemeColors(Palette.getColors(subreddit, this));
 
-        //If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
-        //So, we estimate the height of the header in dp.
+        // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
+        // So, we estimate the height of the header in dp.
         mSwipeRefreshLayout.setProgressViewOffset(false,
                 Constants.SINGLE_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.SINGLE_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);
@@ -327,13 +327,13 @@ public class Search extends BaseActivityAnim {
         rv.setAdapter(adapter);
 
         posts.bindAdapter(adapter, mSwipeRefreshLayout);
-        //TODO catch errors
+        // TODO catch errors
         mSwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
                         posts.loadMore(adapter, subreddit, where, true, multireddit, time);
-                        //TODO catch errors
+                        // TODO catch errors
                     }
                 }
         );

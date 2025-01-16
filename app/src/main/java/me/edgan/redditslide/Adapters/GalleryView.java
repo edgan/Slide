@@ -336,12 +336,6 @@ public class GalleryView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return posts == null ? 0 : posts.size();
     }
 
-    public static class SpacerViewHolder extends RecyclerView.ViewHolder {
-        public SpacerViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
     public static class AlbumViewHolder extends RecyclerView.ViewHolder {
         final ImageView image;
         final ImageView type;

@@ -85,7 +85,7 @@ public class SettingsSynccit extends BaseActivityAnim {
                 try {
                     new MySynccitReadTask().execute("16noez").get();
                     if (SynccitRead.visitedIds.contains("16noez")) {
-                                //success
+                                // success
                                 d.dismiss();
                                 SharedPreferences.Editor e = SettingValues.prefs.edit();
 

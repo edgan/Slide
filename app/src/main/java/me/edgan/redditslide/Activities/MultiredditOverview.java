@@ -179,7 +179,7 @@ public class MultiredditOverview extends BaseActivityAnim {
                                                         }
                                                     });
 
-                            //Add "search current sub" if it is not frontpage/all/random
+                            // Add "search current sub" if it is not frontpage/all/random
                             builder.positiveText(getString(R.string.search_subreddit,
                                     "/m/" + searchMulti.getDisplayName()))
                                     .onPositive(new MaterialDialog.SingleButtonCallback() {

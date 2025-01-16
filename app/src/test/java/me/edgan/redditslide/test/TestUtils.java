@@ -23,7 +23,7 @@ public class TestUtils {
             this.pinned = pinned;
         }
 
-        //Only method we care about
+        // Only method we care about
         @Nullable
         @Override
         public String getString(String key, @Nullable String defValue) {

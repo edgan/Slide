@@ -160,7 +160,7 @@ public class CommentAdapterSearch extends RecyclerView.Adapter<RecyclerView.View
         titleString.append(spacer);
         String timeAgo = TimeUtils.getTimeAgo(comment.getCreated().getTime(), mContext);
         titleString.append((timeAgo == null || timeAgo.isEmpty()) ? "just now"
-                : timeAgo); //some users were crashing here
+                : timeAgo); // some users were crashing here
 
         titleString.append(((comment.getEditDate() != null) ? " (edit " + TimeUtils.getTimeAgo(
                 comment.getEditDate().getTime(), mContext) + ")" : ""));

@@ -116,7 +116,7 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
             popup.show();
         });
 
-        //Color tinting mode
+        // Color tinting mode
         currentTintTextView.setText(
                 SettingValues.colorBack
                         ? SettingValues.colorSubName
@@ -356,7 +356,7 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
                 final Dialog dialog = builder.create();
                 dialog.show();
                 dialog.setOnDismissListener(dialog1 -> {
-                    //todo save
+                    // todo save
                 });
                 final Spinner startSpinner = nightmodeBinding.startSpinner;
                 final Spinner endSpinner = nightmodeBinding.endSpinner;
@@ -418,7 +418,7 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
                         android.R.layout.simple_spinner_dropdown_item);
                 startSpinner.setAdapter(startAdapter);
 
-                //set the currently selected pref
+                // set the currently selected pref
                 startSpinner.setSelection(startAdapter.getPosition(
                         SettingValues.nightStart + "pm"));
 
@@ -427,7 +427,7 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
                             @Override
                             public void onItemSelected(AdapterView<?> parent, View view,
                                                        int position, long id) {
-                                //get the time, but remove the "pm" from the string when parsing
+                                // get the time, but remove the "pm" from the string when parsing
                                 final int time = Integer.parseInt(
                                         ((String) startSpinner.getItemAtPosition(
                                                 position)).replaceAll("pm", ""));
@@ -464,7 +464,7 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
                         android.R.layout.simple_spinner_dropdown_item);
                 endSpinner.setAdapter(endAdapter);
 
-                //set the currently selected pref
+                // set the currently selected pref
                 endSpinner.setSelection(endAdapter.getPosition(
                         SettingValues.nightEnd + "am"));
 
@@ -473,7 +473,7 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
                             @Override
                             public void onItemSelected(AdapterView<?> parent, View view,
                                                        int position, long id) {
-                                //get the time, but remove the "am" from the string when parsing
+                                // get the time, but remove the "am" from the string when parsing
                                 final int time = Integer.parseInt(
                                         ((String) endSpinner.getItemAtPosition(
                                                 position)).replaceAll("am", ""));

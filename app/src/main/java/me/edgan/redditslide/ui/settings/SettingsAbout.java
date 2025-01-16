@@ -34,7 +34,7 @@ public class SettingsAbout extends BaseActivityAnim {
 
         version.setText("Slide v" + BuildConfig.VERSION_NAME);
 
-        //Copy the latest stacktrace with a long click on the version number
+        // Copy the latest stacktrace with a long click on the version number
         if (BuildConfig.DEBUG) {
             version.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override

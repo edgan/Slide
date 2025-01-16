@@ -62,9 +62,9 @@ public class WikiPage extends Fragment {
     private void setUpRefresh() {
         ref.setColorSchemeColors(Palette.getColors(subreddit, getActivity()));
 
-        //If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
-        //So, we estimate the height of the header in dp
-        //Something isn't right with the Wiki layout though, so use the SINGLE_HEADER instead.
+        // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
+        // So, we estimate the height of the header in dp
+        // Something isn't right with the Wiki layout though, so use the SINGLE_HEADER instead.
         ref.setProgressViewOffset(false,
                 Constants.SINGLE_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.SINGLE_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);

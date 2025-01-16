@@ -952,6 +952,7 @@
 
     <!-- Used when viewing media -->
     <string name="mediaview_notif_title">Downloading image…</string>
+    <string name="mediaview_notif_video">Downloading video…</string>
     <string name="mediaview_notif_text">Download in progress</string>
     <string name="mediaview_save">Save %1$s</string>
     <string name="mediaview_saving">Saving %1$s</string>
@@ -1111,6 +1112,7 @@
     <string name="open_externally">Open externally</string>
     <string name="vertical_album_view">Vertical album view</string>
     <string name="download_album">Download album</string>
+    <string name="download_gallery">Download gallery</string>
     <string name="compose_message">Compose message</string>
     <string name="mark_all_as_read">Mark all as read</string>
     <string name="clear_subreddit_history">Clear subreddit history</string>
@@ -1220,4 +1222,9 @@
     <string name="description_no_preview_image_longclick">Toggles if longclicks work on a preview image. It blocks the peek content feature.</string>
     <string name="editor_btn_select_flair">Select flair</string>
     <string name="submit_selected_flair">Selected flair: %s</string>
+    <string name="save_location_error">Failed to set save location. Please try again.</string>
+    <string name="mediaview_downloading">Downloading image&#8230;</string>
+    <string name="err_save_image">Error saving image</string>
+    <string name="error_no_storage_access">No storage access. Please select a directory to save the file.</string>
+    <string name="error_directory_not_selected">No directory selected. Please try again.</string>
 </resources>

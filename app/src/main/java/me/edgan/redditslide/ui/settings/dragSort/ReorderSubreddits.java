@@ -414,7 +414,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                                 CharSequence raw) {
                                             input = raw.toString()
                                                     .replaceAll("\\s",
-                                                            ""); //remove whitespace from input
+                                                            ""); // remove whitespace from input
                                             dialog.getActionButton(DialogAction.POSITIVE)
                                                     .setEnabled(input.contains("."));
                                         }
@@ -442,7 +442,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                         }
                                     } catch (Exception e) {
                                         e.printStackTrace();
-                                        //todo make this better
+                                        // todo make this better
                                         new AlertDialog.Builder(ReorderSubreddits.this)
                                                 .setTitle(R.string.reorder_url_err)
                                                 .setMessage(R.string.misc_please_try_again)
@@ -762,7 +762,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                             @Override
                             public void onCheckedChanged(CompoundButton buttonView,
                                     boolean isChecked) {
-                                //do nothing
+                                // do nothing
                             }
                         });
                 holder.check.setChecked(
@@ -810,7 +810,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                         } else if (chosen.contains(origPos)) {
                             holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
-                            //set the color of the text back to what it should be
+                            // set the color of the text back to what it should be
                             holder.text.setTextColor(textColor);
 
                             chosen.remove(origPos);
@@ -893,7 +893,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                             if (chosen.contains(origPos)) {
                                 holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
-                                //set the color of the text back to what it should be
+                                // set the color of the text back to what it should be
                                 int[] textColorAttr = new int[]{R.attr.fontColor};
                                 TypedArray ta = obtainStyledAttributes(textColorAttr);
                                 holder.text.setTextColor(ta.getColor(0, Color.BLACK));

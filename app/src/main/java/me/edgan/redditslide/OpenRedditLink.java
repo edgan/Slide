@@ -74,7 +74,7 @@ public class OpenRedditLink {
         }
     }
 
-    //Returns true if link was in fact handled by this method. If false, further action should be taken
+    // Returns true if link was in fact handled by this method. If false, further action should be taken
     public static boolean openUrl(Context context, String url, boolean openIfOther) {
         boolean np = false;
 
@@ -435,7 +435,7 @@ public class OpenRedditLink {
             // Reddit home link
             return RedditLinkType.HOME;
         } else {
-            //Open all links that we can't open in another app
+            // Open all links that we can't open in another app
             return RedditLinkType.OTHER;
         }
     }

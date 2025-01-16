@@ -77,23 +77,23 @@ public class Draw extends BaseActivity implements ColorChooserDialog.ColorCallba
             onBackPressed();
         }
         if (id == R.id.done && enabled) {
-            File image; //image to share
-            //check to see if the cache/shared_images directory is present
+            File image; // image to share
+            // check to see if the cache/shared_images directory is present
             final File imagesDir = new File(
                     Draw.this.getCacheDir().toString() + File.separator + "shared_image");
             if (!imagesDir.exists()) {
-                imagesDir.mkdir(); //create the folder if it doesn't exist
+                imagesDir.mkdir(); // create the folder if it doesn't exist
             } else {
                 FileUtil.deleteFilesInDir(imagesDir);
             }
 
             try {
-                //creates a file in the cache; filename will be prefixed with "img" and end with ".png"
+                // creates a file in the cache; filename will be prefixed with "img" and end with ".png"
                 image = File.createTempFile("img", ".png", imagesDir);
                 FileOutputStream out = null;
 
                 try {
-                    //convert image to png
+                    // convert image to png
                     out = new FileOutputStream(image);
                     Bitmap.createBitmap(drawView.getBitmap(), 0, (int) drawView.height,
                             (int) drawView.right, (int) (drawView.bottom - drawView.height))
@@ -107,14 +107,14 @@ public class Draw extends BaseActivity implements ColorChooserDialog.ColorCallba
                             Intent intent = FileUtil.getFileIntent(image, new Intent(), this);
                             setResult(RESULT_OK, intent);
                         } else {
-                            //todo error Toast.makeText(this, getString(R.string.err_share_image), Toast.LENGTH_LONG).show();
+                            // todo error Toast.makeText(this, getString(R.string.err_share_image), Toast.LENGTH_LONG).show();
                         }
                         finish();
                     }
                 }
             } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
-                //todo error Toast.makeText(this, getString(R.string.err_share_image), Toast.LENGTH_LONG).show();
+                // todo error Toast.makeText(this, getString(R.string.err_share_image), Toast.LENGTH_LONG).show();
             }
         }
         if (id == R.id.undo) {

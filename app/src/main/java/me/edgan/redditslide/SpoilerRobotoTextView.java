@@ -163,13 +163,13 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         SpannableStringBuilder builder = (SpannableStringBuilder) CompatUtil.fromHtml(text);
 
         replaceQuoteSpans(
-                builder); //replace the <blockquote> blue line with something more colorful
+                builder); // replace the <blockquote> blue line with something more colorful
 
         if (text.contains("free_emotes_pack") || text.contains("giphy")) {
             setEmoteText(text, this);
         }
         if (text.contains("<a")) {
-            setEmoteSpans(builder); //for emote enabled subreddits
+            setEmoteSpans(builder); // for emote enabled subreddits
         }
         if (text.contains("[")) {
             setCodeFont(builder);
@@ -214,7 +214,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
 
             spannable.removeSpan(quoteSpan);
 
-            //If the theme is Light or Sepia, use a darker blue; otherwise, use a lighter blue
+            // If the theme is Light or Sepia, use a darker blue; otherwise, use a lighter blue
             final int barColor = ContextCompat.getColor(getContext(),
                     SettingValues.currentTheme == 1 || SettingValues.currentTheme == 5
                             ? R.color.md_blue_600 : R.color.md_blue_400);
@@ -223,9 +223,9 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             final int GAP = 5;
 
             spannable.setSpan(new CustomQuoteSpan(
-                            barColor, //bar color
-                            BAR_WIDTH, //bar width
-                            GAP), //bar + text gap
+                            barColor, // bar color
+                            BAR_WIDTH, // bar width
+                            GAP), // bar + text gap
                     start, end, flags);
         }
     }
@@ -239,12 +239,12 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     }
 
     private String saveEmotesFromDestruction(String html) {
-        //Emotes often have no spoiler caption, and therefore are converted to empty anchors. Html.fromHtml removes anchors with zero length node text. Find zero length anchors that start with "/" and add "." to them.
+        // Emotes often have no spoiler caption, and therefore are converted to empty anchors. Html.fromHtml removes anchors with zero length node text. Find zero length anchors that start with "/" and add "." to them.
         Pattern htmlEmotePattern = Pattern.compile("<a href=\"/.*\"></a>");
         Matcher htmlEmoteMatcher = htmlEmotePattern.matcher(html);
         while (htmlEmoteMatcher.find()) {
             String newPiece = htmlEmoteMatcher.group();
-            //Ignore empty tags marked with sp.
+            // Ignore empty tags marked with sp.
             if (!htmlEmoteMatcher.group().contains("href=\"/sp\"")) {
                 newPiece = newPiece.replace("></a", ">.</a");
                 html = html.replace(htmlEmoteMatcher.group(), newPiece);
@@ -621,17 +621,17 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             }
             File emoteDir = new File(Environment.getExternalStorageDirectory(), "RedditEmotes");
             File emoteFile = new File(emoteDir, span.getURL().replace("/", "").replaceAll("-.*", "")
-                    + ".png"); //BPM uses "-" to add dynamics for emotes in browser. Fall back to original here if exists.
+                    + ".png"); // BPM uses "-" to add dynamics for emotes in browser. Fall back to original here if exists.
             boolean startsWithSlash = span.getURL().startsWith("/");
             boolean hasOnlyOneSlash = StringUtils.countMatches(span.getURL(), "/") == 1;
 
             if (emoteDir.exists() && startsWithSlash && hasOnlyOneSlash && emoteFile.exists()) {
-                //We've got an emote match
+                // We've got an emote match
                 int start = builder.getSpanStart(span);
                 int end = builder.getSpanEnd(span);
                 CharSequence textCovers = builder.subSequence(start, end);
 
-                //Make sure bitmap loaded works well with screen density.
+                // Make sure bitmap loaded works well with screen density.
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 DisplayMetrics metrics = new DisplayMetrics();
                 ContextCompat.getSystemService(getContext(), WindowManager.class).getDefaultDisplay().getMetrics(metrics);
@@ -639,7 +639,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 options.inScreenDensity = metrics.densityDpi;
                 options.inScaled = true;
 
-                //Since emotes are not directly attached to included text, add extra character to attach image to.
+                // Since emotes are not directly attached to included text, add extra character to attach image to.
                 builder.removeSpan(span);
                 if (builder.subSequence(start, end).charAt(0) != '.') {
                     builder.insert(start, ".");
@@ -647,14 +647,14 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 Bitmap emoteBitmap = BitmapFactory.decodeFile(emoteFile.getAbsolutePath(), options);
                 builder.setSpan(new ImageSpan(getContext(), emoteBitmap), start, start + 1,
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                //Check if url span has length. If it does, it's a spoiler/caption
+                // Check if url span has length. If it does, it's a spoiler/caption
                 if (textCovers.length() > 1) {
                     builder.setSpan(new URLSpan("/sp"), start + 1, end + 1,
                             Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                     builder.setSpan(new StyleSpan(Typeface.ITALIC), start + 1, end + 1,
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
-                builder.append("\n"); //Newline to fix text wrapping issues
+                builder.append("\n"); // Newline to fix text wrapping issues
             }
         }
     }
@@ -893,7 +893,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 Peek.into(R.layout.peek_view, new SimpleOnPeek() {
                     @Override
                     public void onInflated(final PeekView peekView, final View rootView) {
-                        //do stuff
+                        // do stuff
                         TextView text = rootView.findViewById(R.id.title);
                         text.setText(url);
                         text.setTextColor(Color.WHITE);
@@ -1007,7 +1007,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     }
 
     private void openStreamable(String url, String subreddit) {
-        if (SettingValues.video) { //todo maybe streamable here?
+        if (SettingValues.video) { // todo maybe streamable here?
             Intent myIntent = new Intent(getContext(), MediaView.class);
 
             myIntent.putExtra(MediaView.EXTRA_URL, url);
@@ -1053,7 +1053,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                                                     + offset : storedSpoilerEnds.get(i),
                                     Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                         } catch (Exception ignored) {
-                            //catch out of bounds
+                            // catch out of bounds
                             ignored.printStackTrace();
                         }
                     }

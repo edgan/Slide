@@ -229,8 +229,8 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
             refreshLayout.setColorSchemeColors(Palette.getColors(multireddits.get(id).getDisplayName(), getActivity()));
         }
 
-        //If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
-        //So, we estimate the height of the header in dp
+        // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
+        // So, we estimate the height of the header in dp
         refreshLayout.setProgressViewOffset(false,
                 Constants.TAB_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.TAB_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);
@@ -256,7 +256,7 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
                         public void onRefresh() {
                             posts.loadMore(getActivity(), MultiredditView.this, true, adapter);
 
-                            //TODO catch errors
+                            // TODO catch errors
                         }
                     }
             );
@@ -332,7 +332,7 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
                         }
                     }
                 } catch (IndexOutOfBoundsException e) {
-                    //Let the loop reset itself
+                    // Let the loop reset itself
                 }
             }
             o.writeToMemoryNoStorage();

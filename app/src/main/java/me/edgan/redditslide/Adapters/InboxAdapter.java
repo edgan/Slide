@@ -388,7 +388,7 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         }
                     }
                 }
-            });            //Set typeface for body
+            });            // Set typeface for body
 
 
             int type = new FontPreferences(mContext).getFontTypeComment().getTypeface();

@@ -202,7 +202,7 @@ public class Login extends BaseActivityAnim {
 
         @Override
         protected void onPreExecute() {
-            //Show a dialog to indicate progress
+            // Show a dialog to indicate progress
             MaterialDialog.Builder builder =
                     new MaterialDialog.Builder(Login.this).title(R.string.login_authenticating)
                             .progress(true, 0)
@@ -249,7 +249,7 @@ public class Login extends BaseActivityAnim {
 
         @Override
         protected void onPostExecute(OAuthData oAuthData) {
-            //Dismiss old progress dialog
+            // Dismiss old progress dialog
             mMaterialDialog.dismiss();
 
             if (oAuthData != null) {
@@ -265,7 +265,7 @@ public class Login extends BaseActivityAnim {
 
                 UserSubscriptions.syncSubredditsGetObjectAsync(Login.this);
             } else {
-                //Show a dialog if data is null
+                // Show a dialog if data is null
                 new AlertDialog.Builder(Login.this)
                         .setTitle(R.string.err_authentication)
                         .setMessage(R.string.login_failed_err_decline)

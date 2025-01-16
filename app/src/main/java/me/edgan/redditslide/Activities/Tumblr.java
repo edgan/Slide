@@ -3,6 +3,7 @@ package me.edgan.redditslide.Activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,8 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.edgan.redditslide.Adapters.TumblrView;
-import me.edgan.redditslide.Fragments.BlankFragment;
-import me.edgan.redditslide.Fragments.FolderChooserDialogCreate;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
@@ -41,31 +40,19 @@ import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.StorageUtil;
 
 /**
  * Created by ccrama on 9/7/2016. <p/> This class is responsible for accessing the Tumblr api to get
  * the image-related json data from a URL. It extends FullScreenActivity and supports swipe from
  * anywhere.
  */
-public class Tumblr extends FullScreenActivity implements FolderChooserDialogCreate.FolderCallback {
+public class Tumblr extends BaseSaveActivity {
     public static final String EXTRA_URL = "url";
     private List<Photo> images;
     public static final String SUBREDDIT = "subreddit";
     private int    adapterPosition;
     public  String subreddit;
-
-    @Override
-    public void onFolderSelection(@NonNull FolderChooserDialogCreate dialog,
-                                  @NonNull File folder, boolean isSaveToLocation) {
-        Reddit.appRestart.edit().putString("imagelocation", folder.getAbsolutePath()).apply();
-        Toast.makeText(this,
-                getString(R.string.settings_set_image_location, folder.getAbsolutePath()),
-                Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onFolderChooserDismissed(@NonNull FolderChooserDialogCreate dialog) {
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -87,6 +74,7 @@ public class Tumblr extends FullScreenActivity implements FolderChooserDialogCre
             if(getIntent().hasExtra(SUBREDDIT)){
                 i.putExtra(SUBREDDIT, getIntent().getStringExtra(SUBREDDIT));
             }
+
             i.putExtra("url", url);
             startActivity(i);
             finish();
@@ -108,23 +96,6 @@ public class Tumblr extends FullScreenActivity implements FolderChooserDialogCre
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void doImageSave(boolean isGif, String contentUrl) {
-        if (!isGif) {
-            if (Reddit.appRestart.getString("imagelocation", "").isEmpty()) {
-                DialogUtil.showFirstDialog(Tumblr.this);
-            } else if (!new File(Reddit.appRestart.getString("imagelocation", "")).exists()) {
-                DialogUtil.showErrorDialog(Tumblr.this);
-            } else {
-                Intent i = new Intent(this, ImageDownloadNotificationService.class);
-                i.putExtra("actuallyLoaded", contentUrl);
-                if (subreddit != null && !subreddit.isEmpty()) i.putExtra("subreddit", subreddit);
-                startService(i);
-            }
-        } else {
-            MediaView.doOnClick.run();
-        }
     }
 
     public String url;
@@ -150,7 +121,7 @@ public class Tumblr extends FullScreenActivity implements FolderChooserDialogCre
                 true);
         setContentView(R.layout.album);
 
-        //Keep the screen on
+        // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         final ViewPager pager = (ViewPager) findViewById(R.id.images);
@@ -161,26 +132,12 @@ public class Tumblr extends FullScreenActivity implements FolderChooserDialogCre
         if(getIntent().hasExtra(SUBREDDIT)){
             subreddit = getIntent().getStringExtra(SUBREDDIT);
         }
-        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                                          @Override
-                                          public void onPageScrolled(int position, float positionOffset,
-                                                  int positionOffsetPixels) {
-                                              if (position == 0 && positionOffsetPixels == 0) {
-                                                  finish();
-                                              }
-                                              if (position == 0
-                                                      && ((TumblrPagerAdapter) pager.getAdapter()).blankPage != null) {
-                                                  if (((TumblrPagerAdapter) pager.getAdapter()).blankPage != null) {
-                                                      ((TumblrPagerAdapter) pager.getAdapter()).blankPage.doOffset(
-                                                              positionOffset);
-                                                  }
-                                                  ((TumblrPagerAdapter) pager.getAdapter()).blankPage.realBack.setBackgroundColor(
-                                                          Palette.adjustAlpha(positionOffset * 0.7f));
-                                              }
-                                          }
-                                      }
 
-        );
+        if (getIntent().hasExtra(EXTRA_SUBMISSION_TITLE)) {
+            this.submissionTitle = getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE);
+        }
+
+        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {});
 
         if (!Reddit.appRestart.contains("tutorialSwipe")) {
             startActivityForResult(new Intent(this, SwipeTutorial.class), 3);
@@ -197,7 +154,6 @@ public class Tumblr extends FullScreenActivity implements FolderChooserDialogCre
     }
 
     public static class TumblrPagerAdapter extends FragmentStatePagerAdapter {
-        public BlankFragment blankPage;
         public AlbumFrag     album;
 
         public TumblrPagerAdapter(FragmentManager fm) {
@@ -207,18 +163,14 @@ public class Tumblr extends FullScreenActivity implements FolderChooserDialogCre
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (i == 0) {
-                blankPage = new BlankFragment();
-                return blankPage;
-            } else {
-                album = new AlbumFrag();
-                return album;
-            }
+            album = new AlbumFrag();
+
+            return album;
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 1;
         }
     }
 
@@ -284,4 +236,23 @@ public class Tumblr extends FullScreenActivity implements FolderChooserDialogCre
         }
     }
 
+    public void doImageSave(boolean isGif, String contentUrl) {
+        if (!isGif) {
+            Uri storageUri = StorageUtil.getStorageUri(this);
+            if (storageUri == null) {
+                StorageUtil.showDirectoryChooser(this);
+            } else {
+                Intent i = new Intent(this, ImageDownloadNotificationService.class);
+                i.putExtra("actuallyLoaded", contentUrl);
+                i.putExtra("downloadUri", storageUri.toString());
+
+                if (subreddit != null && !subreddit.isEmpty()) {
+                    i.putExtra("subreddit", subreddit);
+                }
+                startService(i);
+            }
+        } else {
+            MediaView.doOnClick.run();
+        }
+    }
 }

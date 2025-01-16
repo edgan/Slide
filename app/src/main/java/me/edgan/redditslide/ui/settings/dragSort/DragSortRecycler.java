@@ -129,14 +129,14 @@ class DragSortRecycler extends RecyclerView.ItemDecoration implements RecyclerVi
             if (itemPos == selectedDragItemPos) {
                 view.setVisibility(View.INVISIBLE);
             } else {
-                //Make view visible incase invisible
+                // Make view visible incase invisible
                 view.setVisibility(View.VISIBLE);
 
-                //Find middle of the floatingItem
+                // Find middle of the floatingItem
                 float floatMiddleY = floatingItemBounds.top + floatingItemBounds.height() / 2.0f;
 
-                //Moving down the list
-                //These will auto-animate if the device continually sends touch motion events
+                // Moving down the list
+                // These will auto-animate if the device continually sends touch motion events
                 // if (totalMovment>0)
                 {
                     if ((itemPos > selectedDragItemPos) && (view.getTop() < floatMiddleY)) {
@@ -166,7 +166,7 @@ class DragSortRecycler extends RecyclerView.ItemDecoration implements RecyclerVi
         } else {
             outRect.top = 0;
             outRect.bottom = 0;
-            //Make view visible incase invisible
+            // Make view visible incase invisible
             view.setVisibility(View.VISIBLE);
         }
     }
@@ -184,7 +184,7 @@ class DragSortRecycler extends RecyclerView.ItemDecoration implements RecyclerVi
 
         int above = 0;
         int below = Integer.MAX_VALUE;
-        for (int n = 0; n < itemsOnScreen; n++) //Scan though items on screen, however they may not
+        for (int n = 0; n < itemsOnScreen; n++) // Scan though items on screen, however they may not
         {                                   // be in order!
 
             View view = rv.getLayoutManager().getChildAt(n);
@@ -194,15 +194,15 @@ class DragSortRecycler extends RecyclerView.ItemDecoration implements RecyclerVi
 
             int itemPos = rv.getChildAdapterPosition(view);
 
-            if (itemPos == selectedDragItemPos) //Don't check against itself!
+            if (itemPos == selectedDragItemPos) // Don't check against itself!
                 continue;
 
             float viewMiddleY = view.getTop() + view.getHeight() / 2.0f;
-            if (floatMiddleY > viewMiddleY) //Is above this item
+            if (floatMiddleY > viewMiddleY) // Is above this item
             {
                 if (itemPos > above)
                     above = itemPos;
-            } else if (floatMiddleY <= viewMiddleY && itemPos < below) //Is below this item
+            } else if (floatMiddleY <= viewMiddleY && itemPos < below) // Is below this item
             {
                 below = itemPos;
             }
@@ -210,7 +210,7 @@ class DragSortRecycler extends RecyclerView.ItemDecoration implements RecyclerVi
         debugLog("above = " + above + " below = " + below);
 
         if (below != Integer.MAX_VALUE) {
-            if (below < selectedDragItemPos) //Need to count itself
+            if (below < selectedDragItemPos) // Need to count itself
                 below++;
             return below - 1;
         } else {
@@ -226,7 +226,6 @@ class DragSortRecycler extends RecyclerView.ItemDecoration implements RecyclerVi
     public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
         debugLog("onInterceptTouchEvent");
 
-        //if (e.getAction() == MotionEvent.ACTION_DOWN)
         {
             View itemView = rv.findChildViewUnder(e.getX(), e.getY());
 
@@ -238,7 +237,7 @@ class DragSortRecycler extends RecyclerView.ItemDecoration implements RecyclerVi
             if ((dragHandleWidth > 0) && (e.getX() < dragHandleWidth)) {
                 dragging = true;
             } else if (viewHandleId != -1) {
-                //Find the handle in the list item
+                // Find the handle in the list item
                 View handleView = itemView.findViewById(viewHandleId);
 
                 if (handleView == null) {
@@ -247,13 +246,13 @@ class DragSortRecycler extends RecyclerView.ItemDecoration implements RecyclerVi
                     return false;
                 }
 
-                //View should be visible to drag
+                // View should be visible to drag
                 if (handleView.getVisibility() != View.VISIBLE) {
                     return false;
                 }
 
-                //We need to find the relative position of the handle to the parent view
-                //Then we can work out if the touch is within the handle
+                // We need to find the relative position of the handle to the parent view
+                // Then we can work out if the touch is within the handle
                 int[] parentItemPos = new int[2];
                 itemView.getLocationInWindow(parentItemPos);
 
@@ -321,7 +320,7 @@ class DragSortRecycler extends RecyclerView.ItemDecoration implements RecyclerVi
         if (floatingItem != null) {
             floatingItemBounds.top = fingerY - fingerOffsetInViewY;
 
-            if (floatingItemBounds.top < -floatingItemStatingBounds.height() / 2) //Allow half the view out the top
+            if (floatingItemBounds.top < -floatingItemStatingBounds.height() / 2) // Allow half the view out the top
                 floatingItemBounds.top = -floatingItemStatingBounds.height() / 2;
 
             floatingItemBounds.bottom = floatingItemBounds.top + floatingItemStatingBounds.height();
@@ -329,7 +328,7 @@ class DragSortRecycler extends RecyclerView.ItemDecoration implements RecyclerVi
             floatingItem.setBounds(floatingItemBounds);
         }
 
-        //Do auto scrolling at end of list
+        // Do auto scrolling at end of list
         float scrollAmount = 0;
         if (fingerY > (rv.getHeight() * (1 - autoScrollWindow))) {
             scrollAmount = (fingerY - (rv.getHeight() * (1 - autoScrollWindow)));

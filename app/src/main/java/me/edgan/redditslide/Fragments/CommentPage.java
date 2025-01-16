@@ -246,7 +246,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
                         adapter.notifyItemChanged(0);
                     }
 
-                    //avoid crashes when load more is clicked before loading is finished
+                    // avoid crashes when load more is clicked before loading is finished
                     if (comments.mLoadData != null) {
                         comments.mLoadData.cancel(true);
                     }
@@ -296,8 +296,8 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
 
         headerHeight = headerV.getMeasuredHeight() + shownHeaders;
 
-        //If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
-        //So, we estimate the height of the header in dp. Account for show headers.
+        // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
+        // So, we estimate the height of the header in dp. Account for show headers.
         mSwipeRefreshLayout.setProgressViewOffset(false,
                 Constants.SINGLE_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.SINGLE_HEADER_VIEW_OFFSET + (Constants.PTR_OFFSET_BOTTOM + shownHeaders));
@@ -345,7 +345,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
 
                     final EditText e = replyView.findViewById(R.id.entry);
 
-                    //Tint the replyLine appropriately if the base theme is Light or Sepia
+                    // Tint the replyLine appropriately if the base theme is Light or Sepia
                     if (SettingValues.currentTheme == 1 || SettingValues.currentTheme == 5) {
                         final int TINT = ContextCompat.getColor(getContext(), R.color.md_grey_600);
 
@@ -600,7 +600,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
         v.findViewById(R.id.up).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                //Scroll to top
+                // Scroll to top
                 rv.getLayoutManager().scrollToPosition(1);
                 return true;
             }
@@ -687,7 +687,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
 
-                //TODO catch errors
+                // TODO catch errors
             }
         });
 
@@ -859,7 +859,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
                                         .get("source")
                                         .has("height")
                                         && type
-                                        != ContentType.Type.XKCD) { //Load the preview image which has probably already been cached in memory instead of the direct link
+                                        != ContentType.Type.XKCD) { // Load the preview image which has probably already been cached in memory instead of the direct link
                                     String previewUrl = adapter.submission.getDataNode()
                                             .get("preview")
                                             .get("images")
@@ -1046,7 +1046,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
                                 .setBackgroundColor(Palette.getColor(subreddit));
                         ((TextView) sidebar.findViewById(R.id.sub_infotitle)).setText(subreddit);
 
-                        //Sidebar buttons should use subreddit's accent color
+                        // Sidebar buttons should use subreddit's accent color
                         int subColor = new ColorPreferences(getContext()).getColor(subreddit);
                         ((TextView) sidebar.findViewById(R.id.theme_text)).setTextColor(subColor);
                         ((TextView) sidebar.findViewById(R.id.wiki_text)).setTextColor(subColor);
@@ -1523,7 +1523,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
                             .setPositiveButton(R.string.btn_close, null)
                             .setView(sidebar)
                             .show();
-                } catch (NullPointerException e) { //activity has been killed
+                } catch (NullPointerException e) { // activity has been killed
                 }
             }
         }
@@ -1801,7 +1801,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        //This is the filter
+        // This is the filter
         if (event.getAction() != KeyEvent.ACTION_DOWN) return true;
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             goDown();
@@ -2138,7 +2138,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
         textPaint.setTextSize(tv.getTextSize());
         textPaint.setColor(tv.getCurrentTextColor());
 
-        //Since these text views takes the whole width of the screen, we get the width of the screen and subtract right and left padding to get the actual width of the text view
+        // Since these text views takes the whole width of the screen, we get the width of the screen and subtract right and left padding to get the actual width of the text view
         int deviceWidth = getResources().getDisplayMetrics().widthPixels - tv.getPaddingLeft() - tv.getPaddingRight();
         Layout.Alignment alignment = Layout.Alignment.ALIGN_CENTER;
 
@@ -2147,7 +2147,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
 
         StaticLayout staticLayout = new StaticLayout(tv.getText(),textPaint,deviceWidth,alignment,spacingMultiplier,spacingAddition,false);
 
-        //Add top and bottom padding to the height and return the value
+        // Add top and bottom padding to the height and return the value
         return staticLayout.getHeight() + tv.getPaddingTop() + tv.getPaddingBottom();
     }
 }

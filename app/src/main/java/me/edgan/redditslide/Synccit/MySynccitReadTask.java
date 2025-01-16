@@ -28,7 +28,7 @@ public class MySynccitReadTask extends SynccitReadTask {
     protected void onVisited(HashSet<String> visitedThreadIds) {
         SynccitRead.visitedIds.addAll(visitedThreadIds);
 
-        //save the newly "seen" synccit posts to SEEN
+        // save the newly "seen" synccit posts to SEEN
         if (SettingValues.storeHistory) {
             for (String id : visitedThreadIds) {
                 HasSeen.addSeen(id);

@@ -32,7 +32,7 @@ public class SoftKeyboardStateWatcher implements ViewTreeObserver.OnGlobalLayout
     @Override
     public void onGlobalLayout() {
         final Rect r = new Rect();
-        //r will be populated with the coordinates of your view that area still visible.
+        // r will be populated with the coordinates of your view that area still visible.
         activityRootView.getWindowVisibleDisplayFrame(r);
 
         final int heightDiff = activityRootView.getRootView().getHeight() - (r.bottom - r.top);

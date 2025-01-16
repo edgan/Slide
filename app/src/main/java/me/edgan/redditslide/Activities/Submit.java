@@ -459,7 +459,7 @@ public class Submit extends BaseActivity {
                 e.printStackTrace();
             }
         } else {
-            //Multiple images
+            // Multiple images
             try {
                 new UploadImgurAlbumSubmit(this, uris.toArray(new Uri[0]));
             } catch (Exception e) {

@@ -46,14 +46,18 @@ public class ContentType {
             final String host = uri.getHost().toLowerCase(Locale.ENGLISH);
             final String path = uri.getPath().toLowerCase(Locale.ENGLISH);
 
+            // Special case for redgifs.com - exclude if path ends with jpg/jpeg
+            if (hostContains(host, "redgifs.com")) {
+                return !path.endsWith(".jpg") && !path.endsWith(".jpeg");
+            }
+
+            // Original conditions for other hosts
             return hostContains(host, "gfycat.com")
                     || hostContains(host, "v.redd.it")
-                    || hostContains(host, "redgifs.com")
                     || path.endsWith(".gif")
                     || path.endsWith(".gifv")
                     || path.endsWith(".webm")
                     || path.endsWith(".mp4");
-
         } catch (NullPointerException e) {
             return false;
         }
@@ -210,7 +214,7 @@ public class ContentType {
                     || e.getMessage().contains("Illegal character in query")
                     || e.getMessage()
                     .contains(
-                            "Illegal character in path"))) //a valid link but something un-encoded in the URL
+                            "Illegal character in path"))) // a valid link but something un-encoded in the URL
             {
                 return Type.LINK;
             }
@@ -228,7 +232,7 @@ public class ContentType {
      */
     public static Type getContentType(Submission submission) {
         if (submission == null) {
-            return Type.SELF; //hopefully shouldn't be null, but catch it in case
+            return Type.SELF; // hopefully shouldn't be null, but catch it in case
         }
 
         if (submission.isGallery()) {

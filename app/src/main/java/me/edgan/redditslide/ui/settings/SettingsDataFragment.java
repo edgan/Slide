@@ -68,7 +68,7 @@ public class SettingsDataFragment {
             datasavingDataSaveQualityLayout.setAlpha(0.25f);
             datasavingCurrentModeView.setText("Enable datasaving mode");
         }
-        //Datasaving type multi choice
+        // Datasaving type multi choice
         datasavingLowQualityView.setText(
                 SettingValues.lowResMobile ? SettingValues.lowResAlways ? context.getString(R.string.datasave_always)
                         : context.getString(R.string.datasave_mobile)
@@ -105,7 +105,7 @@ public class SettingsDataFragment {
                 popup.show();
             }
         });
-        //Image mode multi choice
+        // Image mode multi choice
         datasavingCurrentModeView.setText(SettingValues.noImages ? context.getString(R.string.never_load_images)
                 : SettingValues.lqLow ? context.getString(R.string.load_low_quality)
                 : SettingValues.lqMid ? context.getString(R.string.load_medium_quality)

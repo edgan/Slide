@@ -24,7 +24,6 @@ import java.util.Set;
 
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Autocache.AutoCacheScheduler;
-import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.CommentPage;
 import me.edgan.redditslide.HasSeen;
 import me.edgan.redditslide.LastComments;
@@ -144,12 +143,12 @@ public class CommentsScreenSingle extends BaseActivityAnim {
                             if (Authentication.reddit.isAuthenticated()) {
                                 final Set<String> accounts =
                                         Authentication.authentication.getStringSet("accounts", new HashSet<String>());
-                                if (accounts.contains(name)) { //convert to new system
+                                if (accounts.contains(name)) { // convert to new system
                                     accounts.remove(name);
                                     accounts.add(name + ":" + Authentication.refresh);
                                     Authentication.authentication.edit()
                                             .putStringSet("accounts", accounts)
-                                            .apply(); //force commit
+                                            .apply(); // force commit
                                 }
                                 Authentication.isLoggedIn = true;
                                 Reddit.notFirst = true;
@@ -174,19 +173,6 @@ public class CommentsScreenSingle extends BaseActivityAnim {
         pager.setBackgroundColor(Color.TRANSPARENT);
         pager.setCurrentItem(1);
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset,
-                    int positionOffsetPixels) {
-                if (position == 0 && positionOffsetPixels == 0) {
-                    finish();
-                }
-                if (position == 0
-                        && ((CommentsScreenSinglePagerAdapter) pager.getAdapter()).blankPage != null) {
-                    ((CommentsScreenSinglePagerAdapter) pager.getAdapter()).blankPage.doOffset(positionOffset);
-                    pager.setBackgroundColor(Palette.adjustAlpha(positionOffset * 0.7f));
-                }
-            }
-
             @Override
             public void onPageScrollStateChanged(int state) {
                 if(!doneTranslucent) {
@@ -259,7 +245,6 @@ public class CommentsScreenSingle extends BaseActivityAnim {
 
     private class CommentsScreenSinglePagerAdapter extends FragmentStatePagerAdapter {
         private Fragment      mCurrentFragment;
-        public  BlankFragment blankPage;
 
         CommentsScreenSinglePagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -280,41 +265,36 @@ public class CommentsScreenSingle extends BaseActivityAnim {
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (i == 0) {
-                blankPage = new BlankFragment();
-                return blankPage;
-            } else {
-                Fragment f = new CommentPage();
-                Bundle args = new Bundle();
-                if (name.contains("t3_")) name = name.substring(3);
+            Fragment f = new CommentPage();
+            Bundle args = new Bundle();
+            if (name.contains("t3_")) name = name.substring(3);
 
-                args.putString("id", name);
-                args.putString("context", context);
-                if (SettingValues.storeHistory) {
-                    if (context != null && !context.isEmpty() && !context.equals(
-                            Reddit.EMPTY_STRING)) {
-                        HasSeen.addSeen("t1_" + context);
-                    } else {
-                        HasSeen.addSeen(name);
-                    }
+            args.putString("id", name);
+            args.putString("context", context);
+            if (SettingValues.storeHistory) {
+                if (context != null && !context.isEmpty() && !context.equals(
+                        Reddit.EMPTY_STRING)) {
+                    HasSeen.addSeen("t1_" + context);
+                } else {
+                    HasSeen.addSeen(name);
                 }
-
-                args.putBoolean("archived", archived);
-                args.putBoolean("locked", locked);
-                args.putBoolean("contest", contest);
-                args.putInt("contextNumber", contextNumber);
-                args.putString("subreddit", subreddit);
-                args.putBoolean("single", getIntent().getBooleanExtra(EXTRA_LOADMORE, true));
-                args.putBoolean("np", np);
-                f.setArguments(args);
-
-                return f;
             }
+
+            args.putBoolean("archived", archived);
+            args.putBoolean("locked", locked);
+            args.putBoolean("contest", contest);
+            args.putInt("contextNumber", contextNumber);
+            args.putString("subreddit", subreddit);
+            args.putBoolean("single", getIntent().getBooleanExtra(EXTRA_LOADMORE, true));
+            args.putBoolean("np", np);
+            f.setArguments(args);
+
+            return f;
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 1;
         }
     }
 }

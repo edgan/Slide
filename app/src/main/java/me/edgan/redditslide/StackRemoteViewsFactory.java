@@ -60,7 +60,7 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
             }
             try {
 
-                //todo rv.setImageViewBitmap(R.id.thumbnail, Glide.with(mContext).load(url).asBitmap().);
+                // todo rv.setImageViewBitmap(R.id.thumbnail, Glide.with(mContext).load(url).asBitmap().);
                 rv.setTextViewText(R.id.title, CompatUtil.fromHtml(submission.getTitle()));
 
 
@@ -106,7 +106,7 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
         Log.v(LogUtil.getTag(), "MAKING POSTS");
         // }
         // posts.loadMore(mContext, null, true);
-        //TODO
+        // TODO
         submissions = posts.posts;
         Log.v(LogUtil.getTag(), "POSTS IS SIZE " + submissions.size());
     }

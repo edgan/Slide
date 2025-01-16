@@ -99,7 +99,7 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
                 count = subredditPosts.getPosts().size();
                 if (startIndex != -1) {
                     // TODO determine correct behaviour
-                    //comments.notifyItemRangeInserted(startIndex, posts.posts.size());
+                    // comments.notifyItemRangeInserted(startIndex, posts.posts.size());
                     submissionsPager.notifyDataSetChanged();
                 } else {
                     submissionsPager.notifyDataSetChanged();
@@ -178,7 +178,7 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
                             .get("images")
                             .get(0)
                             .get("source")
-                            .has("height")) { //Load the preview image which has probably already been cached in memory instead of the direct link
+                            .has("height")) { // Load the preview image which has probably already been cached in memory instead of the direct link
                         previewUrl = submission.getDataNode()
                                 .get("preview")
                                 .get("images")

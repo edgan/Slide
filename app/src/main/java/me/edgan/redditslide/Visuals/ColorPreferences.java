@@ -181,7 +181,7 @@ public class ColorPreferences {
         } else if (c == ContextCompat.getColor(context, R.color.md_yellow_500)) {
             return new int[]{
                     //  ContextCompat.getColor(context, R.color.md_yellow_100),
-                    //ContextCompat.getColor(context, R.color.md_yellow_200),
+                    // ContextCompat.getColor(context, R.color.md_yellow_200),
                     // ContextCompat.getColor(context, R.color.md_yellow_300),
                     ContextCompat.getColor(context, R.color.md_yellow_400),
                     ContextCompat.getColor(context, R.color.md_yellow_500),

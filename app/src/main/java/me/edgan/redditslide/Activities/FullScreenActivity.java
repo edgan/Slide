@@ -18,7 +18,7 @@ public class FullScreenActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        //TODO something like this getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+        // TODO something like this getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
              //   WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         if (Reddit.peek) {
             overridePendingTransition(R.anim.pop_in, 0);

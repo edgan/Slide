@@ -310,7 +310,7 @@ public class PeekMediaView extends RelativeLayout {
         website.setDownloadListener(new DownloadListener() {
             public void onDownloadStart(String url, String userAgent, String contentDisposition,
                     String mimetype, long contentLength) {
-                //Downloads using download manager on default browser
+                // Downloads using download manager on default browser
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 getContext().startActivity(i);
@@ -346,7 +346,7 @@ public class PeekMediaView extends RelativeLayout {
                     }
                     doLoadImage(url);
                 } else {
-                    //todo error out
+                    // todo error out
                 }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -361,13 +361,13 @@ public class PeekMediaView extends RelativeLayout {
 
         if (NetworkUtil.isConnected(getContext())) {
             if (hash.startsWith("/")) hash = hash.substring(1);
-            final String apiUrl = "https://imgur-apiv3.p.mashape.com/3/image/" + hash + ".json";
+            final String apiUrl = "https://api.imgur.com/3/image/" + hash;
             LogUtil.v(apiUrl);
 
             new AsyncTask<Void, Void, JsonObject>() {
                 @Override
                 protected JsonObject doInBackground(Void... params) {
-                    return HttpUtil.getImgurMashapeJsonObject(Reddit.client, new Gson(), apiUrl,
+                    return HttpUtil.getImgurJsonObject(Reddit.client, new Gson(), apiUrl,
                             SecretConstants.getImgurApiKey(getContext()));
                 }
 
@@ -393,7 +393,7 @@ public class PeekMediaView extends RelativeLayout {
 
                                 if (type.contains("gif")) {
                                     doLoadGif(urls);
-                                } else if (!imageShown) { //only load if there is no image
+                                } else if (!imageShown) { // only load if there is no image
                                     displayImage(urls);
                                 }
                             } else if (result != null && result.has("data")) {
@@ -415,14 +415,14 @@ public class PeekMediaView extends RelativeLayout {
 
                                 if (type.contains("gif")) {
                                     doLoadGif(((mp4 == null || mp4.isEmpty()) ? urls : mp4));
-                                } else if (!imageShown) { //only load if there is no image
+                                } else if (!imageShown) { // only load if there is no image
                                     displayImage(urls);
                                 }
                             } else {
                                 if (!imageShown) doLoadImage(finalUrl);
                             }
                         } catch (Exception e2) {
-                            //todo error out
+                            // todo error out
                         }
                     }
 
@@ -444,14 +444,14 @@ public class PeekMediaView extends RelativeLayout {
             contentUrl = contentUrl.replace("m.imgur.com", "i.imgur.com");
         }
         if (contentUrl == null) {
-            //todo error out
+            // todo error out
         }
 
         if ((contentUrl != null
                 && !contentUrl.startsWith("https://i.redditmedia.com")
                 && !contentUrl.startsWith("https://i.reddituploads.com")
                 && !contentUrl.contains(
-                "imgur.com"))) { //we can assume redditmedia and imgur links are to direct images and not websites
+                "imgur.com"))) { // we can assume redditmedia and imgur links are to direct images and not websites
             progress.setVisibility(View.VISIBLE);
             progress.setIndeterminate(true);
 
@@ -470,7 +470,7 @@ public class PeekMediaView extends RelativeLayout {
                                         && type != null
                                         && !type.isEmpty()
                                         && type.startsWith("image/")) {
-                                    //is image
+                                    // is image
                                     if (type.contains("gif")) {
                                         doLoadGif(finalUrl2.replace(".jpg", ".gif")
                                                 .replace(".png", ".gif"));
@@ -479,7 +479,7 @@ public class PeekMediaView extends RelativeLayout {
                                     }
                                     actuallyLoaded = finalUrl2;
                                 } else if (!imageShown) {
-                                    //todo error out
+                                    // todo error out
                                 }
                             }
                         });
@@ -563,7 +563,7 @@ public class PeekMediaView extends RelativeLayout {
                     i.setZoomEnabled(false);
                 } catch (Exception e) {
                     imageShown = false;
-                    //todo  i.setImage(ImageSource.bitmap(loadedImage));
+                    // todo  i.setImage(ImageSource.bitmap(loadedImage));
                 }
                 (progress).setVisibility(View.GONE);
                 handler.removeCallbacks(progressBarDelayRunner);

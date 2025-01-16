@@ -145,18 +145,18 @@ public class CommentAdapterHelper {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case 1: {
-                        //Go to author
+                        // Go to author
                         Intent i = new Intent(mContext, Profile.class);
                         i.putExtra(Profile.EXTRA_PROFILE, n.getAuthor());
                         mContext.startActivity(i);
                     }
                     break;
                     case 3:
-                        //Save comment
+                        // Save comment
                         saveComment(n, mContext, holder);
                         break;
                     case 23: {
-                        //Go to comment permalink
+                        // Go to comment permalink
                         String s = "https://reddit.com"
                                 + adapter.submission.getPermalink()
                                 + n.getFullName().substring(3)
@@ -169,7 +169,7 @@ public class CommentAdapterHelper {
                     }
                     break;
                     case 5: {
-                        //Gild comment
+                        // Gild comment
                         Intent i = new Intent(mContext, Website.class);
                         i.putExtra(LinkUtil.EXTRA_URL, "https://reddit.com"
                                 + adapter.submission.getPermalink()
@@ -180,7 +180,7 @@ public class CommentAdapterHelper {
                     }
                     break;
                     case 16:
-                        //report
+                        // report
                         final MaterialDialog reportDialog = new MaterialDialog.Builder(mContext)
                                 .customView(R.layout.report_dialog, true)
                                 .title(R.string.report_comment)
@@ -262,11 +262,11 @@ public class CommentAdapterHelper {
                         reportDialog.show();
                         break;
                     case 10:
-                        //View comment parent
+                        // View comment parent
                         viewCommentParent(adapter, holder, mContext, baseNode);
                         break;
                     case 7:
-                        //Show select and copy text to clipboard
+                        // Show select and copy text to clipboard
                         final TextView showText = new TextView(mContext);
                         showText.setText(StringEscapeUtils.unescapeHtml4(n.getBody()));
                         showText.setTextIsSelectable(true);
@@ -300,7 +300,7 @@ public class CommentAdapterHelper {
                                 .show();
                         break;
                     case 4:
-                        //Share comment
+                        // Share comment
                         Reddit.defaultShareText(adapter.submission.getTitle(), "https://reddit.com"
                                 + adapter.submission.getPermalink()
                                 + n.getFullName().substring(3)
@@ -577,7 +577,7 @@ public class CommentAdapterHelper {
         int[] attrs = new int[]{R.attr.tintColor};
         TypedArray ta = mContext.obtainStyledAttributes(attrs);
 
-        //Initialize drawables
+        // Initialize drawables
         int color = ta.getColor(0, Color.WHITE);
         Drawable profile = mContext.getResources().getDrawable(R.drawable.ic_account_circle);
         final Drawable report = mContext.getResources().getDrawable(R.drawable.ic_report);
@@ -592,7 +592,7 @@ public class CommentAdapterHelper {
         final Drawable removeReason = mContext.getResources().getDrawable(R.drawable.ic_announcement);
         final Drawable lock = mContext.getResources().getDrawable(R.drawable.ic_lock);
 
-        //Tint drawables
+        // Tint drawables
         final List<Drawable> drawableSet = Arrays.asList(
                 profile, report, approve, nsfw, distinguish, remove,
                 pin, ban, spam, note, removeReason, lock);
@@ -600,7 +600,7 @@ public class CommentAdapterHelper {
 
         ta.recycle();
 
-        //Bottom sheet builder
+        // Bottom sheet builder
         BottomSheet.Builder b = new BottomSheet.Builder((Activity) mContext).title(
                 CompatUtil.fromHtml(comment.getBody()));
 
@@ -768,7 +768,7 @@ public class CommentAdapterHelper {
                 .setTitle(mContext.getString(R.string.mod_ban_title, submission.getAuthor()))
                 .setCancelable(true)
                 .setPositiveButton(R.string.mod_btn_ban, (dialog, which) -> {
-                    //to ban
+                    // to ban
                     if (reason.getText().toString().isEmpty()) {
                         new AlertDialog.Builder(mContext)
                                 .setTitle(R.string.mod_ban_reason_required)
@@ -1452,14 +1452,14 @@ public class CommentAdapterHelper {
             case UPVOTE: {
                 if (comment.getVote() != VoteDirection.UPVOTE) {
                     if (comment.getVote() == VoteDirection.DOWNVOTE) ++submissionScore;
-                    ++submissionScore; //offset the score by +1
+                    ++submissionScore; // offset the score by +1
                 }
                 break;
             }
             case DOWNVOTE: {
                 if (comment.getVote() != VoteDirection.DOWNVOTE) {
                     if (comment.getVote() == VoteDirection.UPVOTE) --submissionScore;
-                    --submissionScore; //offset the score by +1
+                    --submissionScore; // offset the score by +1
                 }
                 break;
             }

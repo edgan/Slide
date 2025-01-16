@@ -125,9 +125,9 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
         final SwitchCompat bigPics = dialoglayout.findViewById(R.id.bigpics);
         final SwitchCompat selftext = dialoglayout.findViewById(R.id.selftext);
 
-        //Selected multiple subreddits
+        // Selected multiple subreddits
         if (multipleSubs) {
-            //Check if all selected subs have the same settings
+            // Check if all selected subs have the same settings
             int previousSubColor = 0;
             int previousSubAccent = 0;
             bigPics.setChecked(SettingValues.bigPicEnabled);
@@ -158,14 +158,14 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
             currentAccentColor = colorPrefs.getColor("");
             isAlternateLayout = false;
 
-            //If all selected subs have the same settings, display them
+            // If all selected subs have the same settings, display them
             if (sameMainColor) {
                 currentColor = previousSubColor;
             }
             if (sameAccentColor) {
                 currentAccentColor = previousSubAccent;
             }
-        } else {  //Is only one selected sub
+        } else {  // Is only one selected sub
             currentColor = Palette.getColor(subreddit);
             isAlternateLayout = SettingValues.prefs.contains(Reddit.PREF_LAYOUT + subreddit);
             currentAccentColor = colorPrefs.getColor(subreddit);
@@ -181,7 +181,7 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
 
             StringBuilder titleStringBuilder = new StringBuilder();
             for (String sub : subreddits) {
-                //if the subreddit is the frontpage, don't put "/r/" in front of it
+                // if the subreddit is the frontpage, don't put "/r/" in front of it
                 if (sub.equals("frontpage")) {
                     titleStringBuilder.append(sub).append(", ");
                 } else {
@@ -200,21 +200,21 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
             if (subreddit.contains("/m/")) {
                 title.setText(subreddit);
             } else {
-                //if the subreddit is the frontpage, don't put "/r/" in front of it
+                // if the subreddit is the frontpage, don't put "/r/" in front of it
                 title.setText(((subreddit.equals("frontpage")) ? "frontpage" : "/r/" + subreddit));
             }
         }
 
         {
-            //Primary color pickers
+            // Primary color pickers
             final LineColorPicker colorPickerPrimary = dialoglayout.findViewById(R.id.picker);
-            //shades of primary colors
+            // shades of primary colors
             final LineColorPicker colorPickerPrimaryShades =
                     dialoglayout.findViewById(R.id.picker2);
 
             colorPickerPrimary.setColors(ColorPreferences.getBaseColors(context));
 
-            //Iterate through all colors and check if it matches the current color of the sub, then select it
+            // Iterate through all colors and check if it matches the current color of the sub, then select it
             for (int i : colorPickerPrimary.getColors()) {
                 for (int i2 : ColorPreferences.getColors(context, i)) {
                     if (i2 == currentColor) {
@@ -226,11 +226,11 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
                 }
             }
 
-            //Base color changed
+            // Base color changed
             colorPickerPrimary.setOnColorChangedListener(new OnColorChangedListener() {
                 @Override
                 public void onColorChanged(int c) {
-                    //Show variations of the base color
+                    // Show variations of the base color
                     colorPickerPrimaryShades.setColors(ColorPreferences.getColors(context, c));
                     colorPickerPrimaryShades.setSelectedColor(c);
                 }
@@ -291,11 +291,11 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
                             });*/
             }
 
-            //Accent color picker
+            // Accent color picker
             final LineColorPicker colorPickerAcc = dialoglayout.findViewById(R.id.picker3);
 
             {
-                //Get all possible accent colors (for day theme)
+                // Get all possible accent colors (for day theme)
                 int[] arrs = new int[ColorPreferences.getNumColorsFromThemeType(Constants.DEFAULT_THEME_TYPE)];
                 int i = 0;
                 for (ColorPreferences.Theme type : ColorPreferences.Theme.values()) {
@@ -322,7 +322,7 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
                         if (multipleSubs) {
                             StringBuilder subTitlesBuilder = new StringBuilder();
                             for (String sub : subreddits) {
-                                //if the subreddit is the frontpage, don't put "/r/" in front of it
+                                // if the subreddit is the frontpage, don't put "/r/" in front of it
                                 if (sub.equals("frontpage")) {
                                     subTitlesBuilder.append(sub).append(", ");
                                 } else {
@@ -332,7 +332,7 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
                             subTitles = subTitlesBuilder.toString();
                             subTitles = subTitles.substring(0, subTitles.length() - 2);
                         } else {
-                            //if the subreddit is the frontpage, don't put "/r/" in front of it
+                            // if the subreddit is the frontpage, don't put "/r/" in front of it
                             subTitles = (subreddit.equals("frontpage") ? "frontpage" : "/r/" + subreddit);
                         }
                         String titleStart = context.getString(R.string.settings_delete_sub_settings, subTitles);
@@ -378,7 +378,7 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
                             if (selftext.isChecked() != SettingValues.isSelftextEnabled(sub)) {
                                 SettingValues.setSelftextEnabled(sub, selftext.isChecked());
                             }
-                            //Only do set colors if either subreddit theme color has changed
+                            // Only do set colors if either subreddit theme color has changed
                             if (Palette.getColor(sub) != newPrimaryColor || Palette.getDarkerColor(sub) != newAccentColor) {
 
                                 if (newPrimaryColor != Palette.getDefaultColor()) {
@@ -390,7 +390,7 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
                                 // Set accent color
                                 ColorPreferences.Theme t = null;
 
-                                //Do not save accent color if it matches the default accent color
+                                // Do not save accent color if it matches the default accent color
                                 if (newAccentColor != ContextCompat.getColor(context, colorPrefs.getFontStyle().getColor()) || newAccentColor != ContextCompat.getColor(context, colorPrefs.getFontStyleSubreddit(sub).getColor())) {
                                     LogUtil.v("Accent colors not equal");
                                     int back = new ColorPreferences(context).getFontStyle().getThemeType();
@@ -414,7 +414,7 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
                             SettingValues.prefs.edit().putBoolean(Reddit.PREF_LAYOUT + sub, true).apply();
                         }
 
-                        //Only refresh stuff if the user changed something
+                        // Only refresh stuff if the user changed something
                         if (Palette.getColor(subreddit) != newPrimaryColor || Palette.getDarkerColor(subreddit) != newAccentColor) {
                             if (context instanceof MainActivity) {
                                 ((MainActivity) context).reloadSubs();

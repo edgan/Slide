@@ -98,7 +98,7 @@ public class SettingsFontFragment {
             getPopupMenu.add(0, R.string.font_size_small, 0, R.string.font_size_small);
             getPopupMenu.add(0, R.string.font_size_smaller, 0, R.string.font_size_smaller);
 
-            //registering popup with OnMenuItemClickListener
+            // registering popup with OnMenuItemClickListener
             popup.setOnMenuItemClickListener(item -> {
                 newFontPrefs.setCommentFontStyle(
                         FontPreferences.FontStyleComment.valueOf(getFontName(item.getItemId())));
@@ -145,7 +145,7 @@ public class SettingsFontFragment {
             getPopupMenu.add(0, R.string.font_size_smaller, 0, R.string.font_size_smaller);
             getPopupMenu.add(0, R.string.font_size_tiny, 0, R.string.font_size_tiny);
 
-            //registering popup with OnMenuItemClickListener
+            // registering popup with OnMenuItemClickListener
             popup.setOnMenuItemClickListener(item -> {
                 newFontPrefs.setPostFontStyle(
                         FontPreferences.FontStyle.valueOf(getFontName(item.getItemId())));

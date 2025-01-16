@@ -97,7 +97,7 @@ public class Reauthenticate extends BaseActivityAnim {
 
         @Override
         protected void onPreExecute() {
-            //Show a dialog to indicate progress
+            // Show a dialog to indicate progress
             MaterialDialog.Builder builder = new MaterialDialog.Builder(Reauthenticate.this)
                     .title(R.string.login_authenticating)
                     .progress(true, 0)
@@ -152,7 +152,7 @@ public class Reauthenticate extends BaseActivityAnim {
 
         @Override
         protected void onPostExecute(OAuthData oAuthData) {
-            //Dismiss old progress dialog
+            // Dismiss old progress dialog
             mMaterialDialog.dismiss();
 
             new AlertDialog.Builder(Reauthenticate.this)

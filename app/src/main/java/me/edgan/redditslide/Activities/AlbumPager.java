@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,8 +53,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import me.edgan.redditslide.Adapters.ImageGridAdapter;
-import me.edgan.redditslide.Fragments.BlankFragment;
-import me.edgan.redditslide.Fragments.FolderChooserDialogCreate;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.ImgurAlbum.AlbumUtils;
 import me.edgan.redditslide.ImgurAlbum.Image;
@@ -76,6 +75,7 @@ import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.ShareUtil;
 import me.edgan.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.util.StorageUtil;
 
 import static me.edgan.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
 
@@ -85,11 +85,15 @@ import static me.edgan.redditslide.Notifications.ImageDownloadNotificationServic
  * ViewPager for Imgur content instead of a RecyclerView (horizontal vs vertical). It also supports
  * gifs and progress bars which Album.java doesn't.
  */
-public class AlbumPager extends FullScreenActivity
-        implements FolderChooserDialogCreate.FolderCallback {
-
+public class AlbumPager extends BaseSaveActivity {
     private static int adapterPosition;
     public static final String SUBREDDIT = "subreddit";
+
+    ViewPager p;
+    public List<Image> images;
+
+    private String lastContentUrl;
+    private int lastIndex = -1;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -127,8 +131,8 @@ public class AlbumPager extends FullScreenActivity
             int adapterPosition = getIntent().getIntExtra(MediaView.ADAPTER_POSITION, -1);
             finish();
             SubmissionsView.datachanged(adapterPosition);
-            //getIntent().getStringExtra(MediaView.SUBMISSION_SUBREDDIT));
-            //SubmissionAdapter.setOpen(this, getIntent().getStringExtra(MediaView.SUBMISSION_URL));
+            // getIntent().getStringExtra(MediaView.SUBMISSION_SUBREDDIT));
+            // SubmissionAdapter.setOpen(this, getIntent().getStringExtra(MediaView.SUBMISSION_URL));
         }
 
         if (id == R.id.download && images != null) {
@@ -142,14 +146,6 @@ public class AlbumPager extends FullScreenActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 3) {
-            Reddit.appRestart.edit().putBoolean("tutorialSwipe", true).apply();
-        }
-    }
-
     public String subreddit;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -160,11 +156,15 @@ public class AlbumPager extends FullScreenActivity
                 true);
         setContentView(R.layout.album_pager);
 
-        //Keep the screen on
+        // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         if(getIntent().hasExtra(SUBREDDIT)){
             this.subreddit = getIntent().getStringExtra(SUBREDDIT);
+        }
+
+        if (getIntent().hasExtra(EXTRA_SUBMISSION_TITLE)) {
+            this.submissionTitle = getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE);
         }
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -274,13 +274,8 @@ public class AlbumPager extends FullScreenActivity
                         @Override
                         public void onPageScrolled(int position, float positionOffset,
                                 int positionOffsetPixels) {
-                            if (position != 0) {
-                                if (getSupportActionBar() != null) {
-                                    getSupportActionBar().setSubtitle((position) + "/" + images.size());
-                                }
-                            }
-                            if (position == 0 && positionOffset < 0.2) {
-                                finish();
+                            if (getSupportActionBar() != null) {
+                                getSupportActionBar().setSubtitle((position + 1) + "/" + images.size());
                             }
                         }
                     });
@@ -290,10 +285,6 @@ public class AlbumPager extends FullScreenActivity
             });
         }
     }
-
-    ViewPager p;
-
-    public List<Image> images;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -307,7 +298,6 @@ public class AlbumPager extends FullScreenActivity
     }
 
     private class AlbumViewPagerAdapter extends FragmentStatePagerAdapter {
-
         AlbumViewPagerAdapter(FragmentManager m) {
             super(m, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
@@ -315,30 +305,21 @@ public class AlbumPager extends FullScreenActivity
         @NonNull
         @Override
         public Fragment getItem(int i) {
-
-            if (i == 0) {
-                return new BlankFragment();
-            }
-
-            i--;
             Image current = images.get(i);
 
+            Fragment f;
+
             if (current.isAnimated()) {
-                //do gif stuff
-                Fragment f = new Gif();
-                Bundle args = new Bundle();
-                args.putInt("page", i);
-                f.setArguments(args);
-
-                return f;
+                f = new Gif();
             } else {
-                Fragment f = new ImageFullNoSubmission();
-                Bundle args = new Bundle();
-                args.putInt("page", i);
-                f.setArguments(args);
-
-                return f;
+                f = new ImageFullNoSubmission();
             }
+
+            Bundle args = new Bundle();
+            args.putInt("page", i);
+            f.setArguments(args);
+
+            return f;
         }
 
         @Override
@@ -346,12 +327,11 @@ public class AlbumPager extends FullScreenActivity
             if (images == null) {
                 return 0;
             }
-            return images.size() + 1;
+            return images.size();
         }
     }
 
     public static class Gif extends Fragment {
-
         private int i = 0;
         private View gif;
         ViewGroup   rootView;
@@ -476,22 +456,74 @@ public class AlbumPager extends FullScreenActivity
 
     public void doImageSave(boolean isGif, String contentUrl, int index) {
         if (!isGif) {
-            if (Reddit.appRestart.getString("imagelocation", "").isEmpty()) {
-                showFirstDialog();
-            } else if (!new File(Reddit.appRestart.getString("imagelocation", "")).exists()) {
-                showErrorDialog();
+            // StorageUtil checks for a saved directory URI and valid permissions
+            if (!StorageUtil.hasStorageAccess(this)) {
+                // No storage access yet - save the content details for later
+                lastContentUrl = contentUrl;
+                lastIndex = index;
+                // Launch the system directory picker
+                StorageUtil.showDirectoryChooser(this);
             } else {
+                // We have storage access - get the saved URI
+                Uri storageUri = StorageUtil.getStorageUri(this);
+                if (storageUri == null) {
+                    Log.e("AlbumPager", "Unexpected null URI despite valid access.");
+                    Toast.makeText(this, R.string.error_no_storage_access, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Start the download service
                 Intent i = new Intent(this, ImageDownloadNotificationService.class);
                 i.putExtra("actuallyLoaded", contentUrl);
-                if (subreddit != null && !subreddit.isEmpty()) i.putExtra("subreddit", subreddit);
-                if (getIntent().hasExtra(EXTRA_SUBMISSION_TITLE)) {
-                    i.putExtra(EXTRA_SUBMISSION_TITLE, getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE));
+                i.putExtra("downloadUri", storageUri.toString());
+
+                // Pass along the metadata
+                if (subreddit != null && !subreddit.isEmpty()) {
+                    i.putExtra("subreddit", subreddit);
+                }
+                if (submissionTitle != null) {
+                    i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
                 }
                 i.putExtra("index", index);
+
                 startService(i);
             }
         } else {
             MediaView.doOnClick.run();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Handle directory selection
+        if (requestCode == StorageUtil.REQUEST_STORAGE_ACCESS && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                Uri selectedUri = data.getData();
+
+                if (selectedUri != null) {
+                    // Persist the selected URI
+                    StorageUtil.saveStorageUri(this, selectedUri);
+
+                    // Retry the last attempted save if applicable
+                    if (lastContentUrl != null) {
+                        doImageSave(false, lastContentUrl, lastIndex);
+                        lastContentUrl = null; // Clear after retry
+                    }
+                } else {
+                    Toast.makeText(this, R.string.error_directory_not_selected, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onStoragePermissionGranted() {
+        // After getting SAF permission, retry the last attempted save if available
+        if (lastContentUrl != null) {
+            doImageSave(false, lastContentUrl, lastIndex);
+            lastContentUrl = null;  // Clear after retry
         }
     }
 
@@ -669,28 +701,5 @@ public class AlbumPager extends FullScreenActivity
                     rootView.findViewById(R.id.progress).setVisibility(View.GONE);
                 }
             });
-    }
-
-    private void showFirstDialog() {
-        runOnUiThread(() ->
-                DialogUtil.showFirstDialog(AlbumPager.this));
-    }
-
-    private void showErrorDialog() {
-        runOnUiThread(() ->
-                DialogUtil.showErrorDialog(AlbumPager.this));
-    }
-
-    @Override
-    public void onFolderSelection(@NonNull FolderChooserDialogCreate dialog,
-                                  @NonNull File folder, boolean isSaveToLocation) {
-        Reddit.appRestart.edit().putString("imagelocation", folder.getAbsolutePath()).apply();
-        Toast.makeText(this,
-                getString(R.string.settings_set_image_location, folder.getAbsolutePath())
-                        + folder.getAbsolutePath(), Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onFolderChooserDismissed(@NonNull FolderChooserDialogCreate dialog) {
     }
 }

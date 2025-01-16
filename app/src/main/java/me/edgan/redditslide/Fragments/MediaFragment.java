@@ -96,7 +96,7 @@ public class MediaFragment extends Fragment {
     private Submission s;
     private OkHttpClient client;
     private Gson gson;
-    private String mashapeKey;
+    private String imgurKey;
 
     @Override
     public void onDestroy() {
@@ -300,7 +300,7 @@ public class MediaFragment extends Fragment {
 
         client = Reddit.client;
         gson = new Gson();
-        mashapeKey = SecretConstants.getImgurApiKey(getContext());
+        imgurKey = SecretConstants.getImgurApiKey(getContext());
     }
 
     public void doLoad(final String contentUrl, ContentType.Type type) {
@@ -506,7 +506,7 @@ public class MediaFragment extends Fragment {
                         .get("dash_url")
                         .asText()).replace("&amp;", "&");
             } else {
-                //We shouldn't get here, will be caught in initializer
+                // We shouldn't get here, will be caught in initializer
                 return;
 
             }
@@ -610,13 +610,13 @@ public class MediaFragment extends Fragment {
         if (NetworkUtil.isConnected(getActivity())) {
 
             if (hash.startsWith("/")) hash = hash.substring(1);
-            final String apiUrl = "https://imgur-apiv3.p.mashape.com/3/image/" + hash + ".json";
+            final String apiUrl = "https://api.imgur.com/3/image/" + hash;
             LogUtil.v(apiUrl);
 
             new AsyncTask<Void, Void, JsonObject>() {
                 @Override
                 protected JsonObject doInBackground(Void... params) {
-                    return HttpUtil.getImgurMashapeJsonObject(client, gson, apiUrl, mashapeKey);
+                    return HttpUtil.getImgurJsonObject(client, gson, apiUrl, imgurKey);
                 }
 
                 @Override
@@ -642,7 +642,7 @@ public class MediaFragment extends Fragment {
 
                                 if (type.contains("gif")) {
                                     doLoadGifDirect(urls);
-                                } else if (!imageShown) { //only load if there is no image
+                                } else if (!imageShown) { // only load if there is no image
                                     doLoadImage(urls);
                                 }
                             } else if (result != null && result.has("data")) {
@@ -664,7 +664,7 @@ public class MediaFragment extends Fragment {
 
                                 if (type.contains("gif")) {
                                     doLoadGifDirect((Strings.isNullOrEmpty(mp4) ? urls : mp4));
-                                } else if (!imageShown) { //only load if there is no image
+                                } else if (!imageShown) { // only load if there is no image
                                     doLoadImage(urls);
                                 }
                             } else {
@@ -766,7 +766,7 @@ public class MediaFragment extends Fragment {
                 && !contentUrl.startsWith("https://i.redditmedia.com")
                 && !contentUrl.startsWith("https://i.reddituploads.com")
                 && !contentUrl.contains(
-                "imgur.com"))) { //we can assume redditmedia and imgur links are to direct images and not websites
+                "imgur.com"))) { // we can assume redditmedia and imgur links are to direct images and not websites
             rootView.findViewById(R.id.progress).setVisibility(View.VISIBLE);
             ((ProgressBar) rootView.findViewById(R.id.progress)).setIndeterminate(true);
 
@@ -785,7 +785,7 @@ public class MediaFragment extends Fragment {
                                     if (!imageShown
                                             && !Strings.isNullOrEmpty(type)
                                             && type.startsWith("image/")) {
-                                        //is image
+                                        // is image
                                         if (type.contains("gif")) {
                                             doLoadGifDirect(finalUrl2.replace(".jpg", ".gif")
                                                     .replace(".png", ".gif"));
@@ -857,7 +857,7 @@ public class MediaFragment extends Fragment {
                 try {
                     i.setImage(ImageSource.uri(f.getAbsolutePath()));
                 } catch (Exception e) {
-                    //todo  i.setImage(ImageSource.bitmap(loadedImage));
+                    // todo  i.setImage(ImageSource.bitmap(loadedImage));
                 }
                 (rootView.findViewById(R.id.progress)).setVisibility(View.GONE);
                 handler.removeCallbacks(progressBarDelayRunner);
@@ -872,7 +872,7 @@ public class MediaFragment extends Fragment {
                             final View base = rootView.findViewById(R.id.base);
 
                             ValueAnimator va = ValueAnimator.ofFloat(1.0f, 0.2f);
-                            int mDuration = 250; //in millis
+                            int mDuration = 250; // in millis
                             va.setDuration(mDuration);
                             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                 public void onAnimationUpdate(ValueAnimator animation) {
@@ -881,13 +881,13 @@ public class MediaFragment extends Fragment {
                                 }
                             });
                             va.start();
-                            //hide
+                            // hide
                         } else if (newScale <= previous && hidden) {
                             hidden = false;
                             final View base = rootView.findViewById(R.id.base);
 
                             ValueAnimator va = ValueAnimator.ofFloat(0.2f, 1.0f);
-                            int mDuration = 250; //in millis
+                            int mDuration = 250; // in millis
                             va.setDuration(mDuration);
                             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                 public void onAnimationUpdate(ValueAnimator animation) {
@@ -896,7 +896,7 @@ public class MediaFragment extends Fragment {
                                 }
                             });
                             va.start();
-                            //unhide
+                            // unhide
                         }
                         previous = newScale;
                     }
@@ -959,7 +959,7 @@ public class MediaFragment extends Fragment {
                                                             ValueAnimator va =
                                                                     ValueAnimator.ofFloat(1.0f,
                                                                             0.2f);
-                                                            int mDuration = 250; //in millis
+                                                            int mDuration = 250; // in millis
                                                             va.setDuration(mDuration);
                                                             va.addUpdateListener(
                                                                     new ValueAnimator.AnimatorUpdateListener() {
@@ -972,7 +972,7 @@ public class MediaFragment extends Fragment {
                                                                         }
                                                                     });
                                                             va.start();
-                                                            //hide
+                                                            // hide
                                                         } else if (newScale <= previous && hidden) {
                                                             hidden = false;
                                                             final View base = rootView.findViewById(
@@ -981,7 +981,7 @@ public class MediaFragment extends Fragment {
                                                             ValueAnimator va =
                                                                     ValueAnimator.ofFloat(0.2f,
                                                                             1.0f);
-                                                            int mDuration = 250; //in millis
+                                                            int mDuration = 250; // in millis
                                                             va.setDuration(mDuration);
                                                             va.addUpdateListener(
                                                                     new ValueAnimator.AnimatorUpdateListener() {
@@ -994,7 +994,7 @@ public class MediaFragment extends Fragment {
                                                                         }
                                                                     });
                                                             va.start();
-                                                            //unhide
+                                                            // unhide
                                                         }
                                                         previous = newScale;
                                                     }

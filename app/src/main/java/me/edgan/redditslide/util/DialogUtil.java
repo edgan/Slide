@@ -1,19 +1,36 @@
 package me.edgan.redditslide.util;
 
-import android.os.Environment;
-
+import android.net.Uri;
+import android.util.Log;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.documentfile.provider.DocumentFile;
 
-import me.edgan.redditslide.Fragments.FolderChooserDialogCreate;
 import me.edgan.redditslide.R;
 
 /**
  * Created by TacoTheDank on 07/14/2021.
+ * Updated to use Storage Access Framework
  */
 public class DialogUtil {
+    private static final String TAG = "DialogUtil";
+
     public static void showErrorDialog(final AppCompatActivity activity) {
+        Log.d(TAG, "showErrorDialog called from: " + Log.getStackTraceString(new Exception()));
+
+        Uri currentUri = StorageUtil.getStorageUri(activity);
+        Log.d(TAG, "Current storage URI: " + currentUri);
+
+        if (currentUri != null) {
+            DocumentFile file = DocumentFile.fromTreeUri(activity, currentUri);
+            Log.d(TAG, "Current DocumentFile exists: " + (file != null));
+            if (file != null) {
+                Log.d(TAG, "DocumentFile canWrite: " + file.canWrite());
+                Log.d(TAG, "DocumentFile name: " + file.getName());
+            }
+        }
+
         showBaseChooserDialog(activity,
                 R.string.err_something_wrong, R.string.err_couldnt_save_choose_new);
     }
@@ -28,24 +45,18 @@ public class DialogUtil {
             final @StringRes int titleId,
             final @StringRes int messageId
     ) {
-        new AlertDialog.Builder(activity)
+        AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setTitle(titleId)
                 .setMessage(messageId)
-                .setPositiveButton(android.R.string.ok, (dialog, which) ->
-                        showFolderChooserDialog(activity)
-                )
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
-    }
+                .setPositiveButton(android.R.string.ok, (dialogInterface, which) -> {
+                    try {
+                        StorageUtil.showDirectoryChooser(activity);
+                    } catch (Exception e) {
+                        LogUtil.e(e, TAG + "Error launching directory chooser");
+                    }
+                })
+                .create();
 
-    public static void showFolderChooserDialog(final AppCompatActivity activity) {
-        new FolderChooserDialogCreate.Builder(activity)
-                // changes label of the choose button
-                .chooseButton(R.string.btn_select)
-                .initialPath(Environment.getExternalStorageDirectory()
-                        // changes initial path, defaults to external storage directory
-                        .getPath())
-                .allowNewFolder(true, 0)
-                .show(activity);
+        dialog.show();
     }
 }

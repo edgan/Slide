@@ -427,7 +427,7 @@ public class Profile extends BaseActivityAnim {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_profile, menu);
-        //used to hide the sort item on certain Profile tabs
+        // used to hide the sort item on certain Profile tabs
         sortItem = menu.findItem(R.id.sort);
         categoryItem = menu.findItem(R.id.category);
         categoryItem.setVisible(false);
@@ -470,7 +470,7 @@ public class Profile extends BaseActivityAnim {
                             return categories;
                         } catch (Exception e) {
                             e.printStackTrace();
-                            //probably has no categories?
+                            // probably has no categories?
                             return new ArrayList<String>() {{
                                 add(0, "No category");
                             }};
@@ -643,7 +643,7 @@ public class Profile extends BaseActivityAnim {
                                             try {
                                                 new AccountManager(Authentication.reddit).deleteFriend(name);
                                             } catch (Exception ignored) {
-                                                //Will throw java.lang.IllegalStateException: No Content-Type header was found, but it still works.
+                                                // Will throw java.lang.IllegalStateException: No Content-Type header was found, but it still works.
                                             }
                                             friend = false;
 

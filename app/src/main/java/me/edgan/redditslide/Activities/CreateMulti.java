@@ -72,7 +72,7 @@ public class CreateMulti extends BaseActivityAnim {
     private String old;
     public static final String EXTRA_MULTI = "multi";
 
-    //Shows a dialog with all Subscribed subreddits and allows the user to select which ones to include in the Multireddit
+    // Shows a dialog with all Subscribed subreddits and allows the user to select which ones to include in the Multireddit
     private String[] all;
 
     @Override
@@ -134,22 +134,22 @@ public class CreateMulti extends BaseActivityAnim {
     }
 
     public void showSelectDialog() {
-        //List of all subreddits of the multi
+        // List of all subreddits of the multi
         List<String> multiSubs = new ArrayList<>(subs);
         List<String> sorted = new ArrayList<>(subs);
 
-        //Add all user subs that aren't already on the list
+        // Add all user subs that aren't already on the list
         for (String s : UserSubscriptions.sort(UserSubscriptions.getSubscriptions(this))) {
             if (!sorted.contains(s)) sorted.add(s);
         }
 
-        //Array of all subs
+        // Array of all subs
         all = new String[sorted.size()];
-        //Contains which subreddits are checked
+        // Contains which subreddits are checked
         boolean[] checked = new boolean[all.length];
 
 
-        //Remove special subreddits from list and store it in "all"
+        // Remove special subreddits from list and store it in "all"
         int i = 0;
         for (String s : sorted) {
             if (!s.equals("all") && !s.equals("frontpage") && !s.contains("+") && !s.contains(".") && !s.contains("/m/")) {
@@ -158,7 +158,7 @@ public class CreateMulti extends BaseActivityAnim {
             }
         }
 
-        //Remove empty entries & store which subreddits are checked
+        // Remove empty entries & store which subreddits are checked
         List<String> list = new ArrayList<>();
         i = 0;
         for (String s : all) {
@@ -171,7 +171,7 @@ public class CreateMulti extends BaseActivityAnim {
             }
         }
 
-        //Convert List back to Array
+        // Convert List back to Array
         all = list.toArray(new String[0]);
 
         final ArrayList<String> toCheck = new ArrayList<>(subs);
@@ -199,7 +199,7 @@ public class CreateMulti extends BaseActivityAnim {
                                         new MaterialDialog.InputCallback() {
                                             @Override
                                             public void onInput(@NonNull MaterialDialog dialog, CharSequence raw) {
-                                                input = raw.toString().replaceAll("\\s", ""); //remove whitespace from input
+                                                input = raw.toString().replaceAll("\\s", ""); // remove whitespace from input
                                             }
                                         })
                                 .positiveText(R.string.btn_add)
@@ -357,14 +357,14 @@ public class CreateMulti extends BaseActivityAnim {
                     @Override
                     public void run() {
                         String errorMsg = getString(R.string.misc_err);
-                        //Creating correct error message if the multireddit has more than 100 subs or its name already exists
+                        // Creating correct error message if the multireddit has more than 100 subs or its name already exists
                         if (e instanceof ApiException) {
                             errorMsg = getString(R.string.misc_err) + ": " + ((ApiException) e).getExplanation() +
                                     "\n" + getString(R.string.misc_retry);
 
                         } else if (((NetworkException) e).getResponse().getStatusCode() == 409){
-                            //The HTTP status code returned when the name of the multireddit already exists or
-                            //has more than 100 subs is 409
+                            // The HTTP status code returned when the name of the multireddit already exists or
+                            // has more than 100 subs is 409
                             errorMsg = getString(R.string.multireddit_save_err);
                         }
 

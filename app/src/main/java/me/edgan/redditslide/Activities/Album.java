@@ -3,6 +3,7 @@ package me.edgan.redditslide.Activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,8 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.edgan.redditslide.Adapters.AlbumView;
-import me.edgan.redditslide.Fragments.BlankFragment;
-import me.edgan.redditslide.Fragments.FolderChooserDialogCreate;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.ImgurAlbum.AlbumUtils;
 import me.edgan.redditslide.ImgurAlbum.Image;
@@ -42,6 +41,7 @@ import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.StorageUtil;
 
 import static me.edgan.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
 
@@ -50,24 +50,11 @@ import static me.edgan.redditslide.Notifications.ImageDownloadNotificationServic
  * the album json data from a URL or Imgur hash. It extends FullScreenActivity and supports swipe
  * from anywhere.
  */
-public class Album extends FullScreenActivity implements FolderChooserDialogCreate.FolderCallback {
+public class Album extends BaseSaveActivity {
     public static final String EXTRA_URL = "url";
     public static final String SUBREDDIT = "subreddit";
     private List<Image> images;
     private int adapterPosition;
-
-    @Override
-    public void onFolderSelection(@NonNull FolderChooserDialogCreate dialog,
-                                  @NonNull File folder, boolean isSaveToLocation) {
-        Reddit.appRestart.edit().putString("imagelocation", folder.getAbsolutePath()).apply();
-        Toast.makeText(this,
-                getString(R.string.settings_set_image_location, folder.getAbsolutePath()),
-                Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onFolderChooserDismissed(@NonNull FolderChooserDialogCreate dialog) {
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -114,14 +101,21 @@ public class Album extends FullScreenActivity implements FolderChooserDialogCrea
 
     public void doImageSave(boolean isGif, String contentUrl) {
         if (!isGif) {
-            if (Reddit.appRestart.getString("imagelocation", "").isEmpty()) {
-                DialogUtil.showFirstDialog(Album.this);
-            } else if (!new File(Reddit.appRestart.getString("imagelocation", "")).exists()) {
-                DialogUtil.showErrorDialog(Album.this);
+            // StorageUtil checks for a saved directory URI and valid permissions
+            Uri storageUri = StorageUtil.getStorageUri(this);
+            if (storageUri == null) {
+                // Launch the system directory picker
+                StorageUtil.showDirectoryChooser(this);
             } else {
+                // We have storage access - start the download service
                 Intent i = new Intent(this, ImageDownloadNotificationService.class);
                 i.putExtra("actuallyLoaded", contentUrl);
-                if (subreddit != null && !subreddit.isEmpty()) i.putExtra("subreddit", subreddit);
+                i.putExtra("downloadUri", storageUri.toString());
+
+                // Pass along the metadata
+                if (subreddit != null && !subreddit.isEmpty()) {
+                    i.putExtra("subreddit", subreddit);
+                }
                 if (submissionTitle != null) {
                     i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
                 }
@@ -157,7 +151,7 @@ public class Album extends FullScreenActivity implements FolderChooserDialogCrea
                 true);
         setContentView(R.layout.album);
 
-        //Keep the screen on
+        // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         if (getIntent().hasExtra(SUBREDDIT)) {
@@ -172,27 +166,7 @@ public class Album extends FullScreenActivity implements FolderChooserDialogCrea
         album = new AlbumPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(album);
         pager.setCurrentItem(1);
-        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                                          @Override
-                                          public void onPageScrolled(int position, float positionOffset,
-                                                                     int positionOffsetPixels) {
-                                              if (position == 0 && positionOffsetPixels == 0) {
-                                                  finish();
-                                              }
-                                              if (position == 0
-                                                      && ((AlbumPagerAdapter) pager.getAdapter()).blankPage != null) {
-                                                  if (((AlbumPagerAdapter) pager.getAdapter()).blankPage
-                                                          != null) {
-                                                      ((AlbumPagerAdapter) pager.getAdapter()).blankPage
-                                                              .doOffset(positionOffset);
-                                                  }
-                                                  ((AlbumPagerAdapter) pager.getAdapter()).blankPage.realBack.setBackgroundColor(
-                                                          Palette.adjustAlpha(positionOffset * 0.7f));
-                                              }
-                                          }
-                                      }
-
-        );
+        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {});
 
         if (!Reddit.appRestart.contains("tutorialSwipe")) {
             startActivityForResult(new Intent(this, SwipeTutorial.class), 3);
@@ -209,7 +183,6 @@ public class Album extends FullScreenActivity implements FolderChooserDialogCrea
     }
 
     public static class AlbumPagerAdapter extends FragmentStatePagerAdapter {
-        public BlankFragment blankPage;
         public AlbumFrag album;
 
         public AlbumPagerAdapter(FragmentManager fm) {
@@ -219,18 +192,14 @@ public class Album extends FullScreenActivity implements FolderChooserDialogCrea
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (i == 0) {
-                blankPage = new BlankFragment();
-                return blankPage;
-            } else {
-                album = new AlbumFrag();
-                return album;
-            }
+            album = new AlbumFrag();
+
+            return album;
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 1;
         }
     }
 

@@ -300,7 +300,7 @@ public class ImageFlairs {
             }
         }
 
-        //Attempts to get a real integer value instead of "auto", if possible
+        // Attempts to get a real integer value instead of "auto", if possible
         String getPropertyTryNoAuto(String classDefinitionsString, String property) {
             Pattern propertyDefinition = Pattern.compile("(?<!-)" + property + "\\s*:\\s*(.+?)(;|$)");
             Matcher matches = propertyDefinition.matcher(classDefinitionsString);

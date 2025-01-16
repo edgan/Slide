@@ -104,7 +104,7 @@ public class SettingsCommentsFragment {
             SettingValues.fastscroll = isChecked;
             editSharedBooleanPreference(SettingValues.PREF_FASTSCROLL, isChecked);
 
-            //Disable autohidenav and showcollapseexpand if commentNav isn't checked
+            // Disable autohidenav and showcollapseexpand if commentNav isn't checked
             if (!isChecked) {
                 commentsAutohideNavbarSwitch.setEnabled(false);
                 commentsAutohideNavbarSwitch.setChecked(SettingValues.commentAutoHide);

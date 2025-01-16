@@ -96,7 +96,7 @@ public class CheckForMail extends BroadcastReceiver {
                         ex.printStackTrace();
                     }
                 }
-                //create arraylist of the messages fullName for markasread action
+                // create arraylist of the messages fullName for markasread action
                 String[] messageNames = new String[messages.size()];
                 int counter = 0;
                 for (Message x : messages) {
@@ -111,7 +111,7 @@ public class CheckForMail extends BroadcastReceiver {
                 notificationIntent.putExtra(Inbox.EXTRA_UNREAD, true);
                 PendingIntent intent = PendingIntent.getActivity(c, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
-                //Intent for mark as read notification action
+                // Intent for mark as read notification action
                 PendingIntent readPI = MarkAsReadService.getMarkAsReadIntent(2, c, messageNames);
 
                 {

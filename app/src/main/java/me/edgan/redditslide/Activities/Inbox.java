@@ -94,7 +94,7 @@ public class Inbox extends BaseActivityAnim {
 
                     @Override
                     protected void onPostExecute(Void aVoid) {
-                        if (changed) { //restart the fragment
+                        if (changed) { // restart the fragment
                             adapter.notifyDataSetChanged();
 
                             try {
@@ -155,12 +155,12 @@ public class Inbox extends BaseActivityAnim {
                         if (Authentication.reddit.isAuthenticated()) {
                             final Set<String> accounts =
                                     Authentication.authentication.getStringSet("accounts", new HashSet<String>());
-                            if (accounts.contains(name)) { //convert to new system
+                            if (accounts.contains(name)) { // convert to new system
                                 accounts.remove(name);
                                 accounts.add(name + ":" + Authentication.refresh);
                                 Authentication.authentication.edit()
                                         .putStringSet("accounts", accounts)
-                                        .apply(); //force commit
+                                        .apply(); // force commit
                             }
                             Authentication.isLoggedIn = true;
                             Reddit.notFirst = true;

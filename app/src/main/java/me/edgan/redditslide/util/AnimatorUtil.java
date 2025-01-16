@@ -27,7 +27,7 @@ public class AnimatorUtil {
     public static ValueAnimator flipAnimator(final boolean isFlipped, final View view) {
         final ValueAnimator animator = ValueAnimator.ofFloat(isFlipped ? -1f : 1f, isFlipped ? 1f : -1f);
         animator.setInterpolator(new FastOutSlowInInterpolator());
-        //Update height
+        // Update height
         animator.addUpdateListener(valueAnimator ->
                 view.setScaleY((Float) valueAnimator.getAnimatedValue()));
         return animator;
@@ -37,7 +37,7 @@ public class AnimatorUtil {
         final ValueAnimator animator = ValueAnimator.ofInt(start, end);
         animator.setInterpolator(new FastOutSlowInInterpolator());
         animator.addUpdateListener(valueAnimator -> {
-            //Update height
+            // Update height
             final int value = (Integer) valueAnimator.getAnimatedValue();
             final ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
             layoutParams.height = value;
@@ -76,7 +76,7 @@ public class AnimatorUtil {
     public static ValueAnimator fadeAnimator(final float start, final float end, final View view) {
         final ValueAnimator animator = ValueAnimator.ofFloat(start, end);
         animator.setInterpolator(new FastOutSlowInInterpolator());
-        //Update height
+        // Update height
         animator.addUpdateListener(valueAnimator ->
                 view.setAlpha((Float) valueAnimator.getAnimatedValue()));
         return animator;
@@ -92,7 +92,7 @@ public class AnimatorUtil {
 
             final int cx = (from.getLeft() + from.getRight()) / 2;
             final int cy = vBig.getHeight() - from.getHeight() / 2;
-            //from.getRight() - ( from.getWidth()/ 2);
+            // from.getRight() - ( from.getWidth()/ 2);
 
             // get the final radius for the clipping circle
             final int dx = Math.max(cx, vBig.getWidth() - cx);

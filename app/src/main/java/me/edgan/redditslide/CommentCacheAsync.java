@@ -91,10 +91,10 @@ public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
                     if (Authentication.reddit.isAuthenticated()) {
                         final Set<String> accounts =
                                 Authentication.authentication.getStringSet("accounts", new HashSet<String>());
-                        if (accounts.contains(name)) { //convert to new system
+                        if (accounts.contains(name)) { // convert to new system
                             accounts.remove(name);
                             accounts.add(name + ":" + Authentication.refresh);
-                            Authentication.authentication.edit().putStringSet("accounts", accounts).apply(); //force commit
+                            Authentication.authentication.edit().putStringSet("accounts", accounts).apply(); // force commit
                         }
                         Authentication.isLoggedIn = true;
                         Reddit.notFirst = true;
@@ -193,7 +193,7 @@ public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
                                 break;
                             case ALBUM:
                                 if (otherChoices[1])
-                                //todo this AlbumUtils.saveAlbumToCache(context, s.getUrl());
+                                // todo this AlbumUtils.saveAlbumToCache(context, s.getUrl());
                                 {
                                     break;
                                 }
