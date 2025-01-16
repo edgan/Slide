@@ -3,14 +3,12 @@ package me.edgan.redditslide.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 
 import androidx.documentfile.provider.DocumentFile;
 
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.util.LogUtil;
 
 public class StorageUtil {
     private static final String TAG = "SlideStorage";
@@ -26,8 +24,8 @@ public class StorageUtil {
         }
 
         try {
-            final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+            final int takeFlags =
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
             context.getContentResolver().takePersistableUriPermission(uri, takeFlags);
             DocumentFile dir = DocumentFile.fromTreeUri(context, uri);
             boolean hasAccess = dir != null && dir.exists() && dir.canWrite();
@@ -46,8 +44,9 @@ public class StorageUtil {
     }
 
     public static Uri getStorageUri(Context context) {
-        String uriStr = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-                .getString(PREF_STORAGE_URI, null);
+        String uriStr =
+                context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+                        .getString(PREF_STORAGE_URI, null);
 
         if (uriStr != null) {
             Uri uri = Uri.parse(uriStr);
@@ -57,7 +56,8 @@ public class StorageUtil {
         return null;
     }
 
-    public static void showDirectoryChooser(Activity activity, OnDirectorySelectedListener listener) {
+    public static void showDirectoryChooser(
+            Activity activity, OnDirectorySelectedListener listener) {
         if (activity instanceof DirectoryChooserHost) {
             ((DirectoryChooserHost) activity).setDirectorySelectedListener(listener);
         } else {
@@ -66,7 +66,8 @@ public class StorageUtil {
 
         try {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            intent.addFlags(
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             activity.startActivityForResult(intent, REQUEST_STORAGE_ACCESS);
         } catch (Exception e) {
             LogUtil.e(e, TAG + "Error showing directory chooser: " + e.getMessage());
@@ -81,6 +82,7 @@ public class StorageUtil {
     // Host interface for activities that use directory chooser
     public interface DirectoryChooserHost {
         void setDirectorySelectedListener(OnDirectorySelectedListener listener);
+
         OnDirectorySelectedListener getDirectorySelectedListener();
     }
 

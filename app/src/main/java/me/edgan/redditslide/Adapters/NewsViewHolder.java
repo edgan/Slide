@@ -10,16 +10,14 @@ import me.edgan.redditslide.R;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.SubmissionViews.HeaderImageLinkView;
 
-/**
- * Created by ccrama on 11/19/2017.
- */
+/** Created by ccrama on 11/19/2017. */
 public class NewsViewHolder extends RecyclerView.ViewHolder {
     public final SpoilerRobotoTextView title;
-    public final View                  menu;
-    public final View                  comment;
-    public final HeaderImageLinkView   leadImage;
-    public final RelativeLayout        innerRelative;
-    public final ImageView             thumbnail;
+    public final View menu;
+    public final View comment;
+    public final HeaderImageLinkView leadImage;
+    public final RelativeLayout innerRelative;
+    public final ImageView thumbnail;
 
     public NewsViewHolder(View v) {
         super(v);

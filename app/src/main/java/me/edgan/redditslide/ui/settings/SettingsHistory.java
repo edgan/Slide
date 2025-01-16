@@ -17,10 +17,11 @@ public class SettingsHistory extends BaseActivityAnim {
         setContentView(R.layout.activity_settings_history);
         setupAppBar(R.id.toolbar, R.string.settings_title_history, true, true);
 
-        ((ViewGroup) findViewById(R.id.settings_history)).addView(
-                getLayoutInflater().inflate(R.layout.activity_settings_history_child, null));
+        ((ViewGroup) findViewById(R.id.settings_history))
+                .addView(
+                        getLayoutInflater()
+                                .inflate(R.layout.activity_settings_history_child, null));
 
         fragment.Bind();
     }
-
 }

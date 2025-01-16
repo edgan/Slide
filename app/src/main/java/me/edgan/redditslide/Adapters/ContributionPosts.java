@@ -4,6 +4,11 @@ import android.os.AsyncTask;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.PostMatch;
+import me.edgan.redditslide.util.SortingUtil;
+
 import net.dean.jraw.models.Contribution;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.paginators.Sorting;
@@ -12,14 +17,7 @@ import net.dean.jraw.paginators.UserContributionPaginator;
 
 import java.util.ArrayList;
 
-import me.edgan.redditslide.Authentication;
-import me.edgan.redditslide.HasSeen;
-import me.edgan.redditslide.PostMatch;
-import me.edgan.redditslide.util.SortingUtil;
-
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class ContributionPosts extends GeneralPosts {
     protected final String where;
     protected final String subreddit;
@@ -62,7 +60,6 @@ public class ContributionPosts extends GeneralPosts {
                     start = posts.size() + 1;
                 }
 
-
                 if (reset || posts == null) {
                     posts = submissions;
                     start = -1;
@@ -99,7 +96,8 @@ public class ContributionPosts extends GeneralPosts {
             ArrayList<Contribution> newData = new ArrayList<>();
             try {
                 if (reset || paginator == null) {
-                    paginator = new UserContributionPaginator(Authentication.reddit, where, subreddit);
+                    paginator =
+                            new UserContributionPaginator(Authentication.reddit, where, subreddit);
 
                     paginator.setSorting(SortingUtil.getSorting(subreddit, Sorting.NEW));
                     paginator.setTimePeriod(SortingUtil.getTime(subreddit, TimePeriod.ALL));
@@ -127,7 +125,5 @@ public class ContributionPosts extends GeneralPosts {
                 return null;
             }
         }
-
     }
-
 }

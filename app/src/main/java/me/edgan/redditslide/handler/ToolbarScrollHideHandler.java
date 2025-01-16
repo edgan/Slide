@@ -8,8 +8,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * Created by ccrama on 2/18/2016.
- * Adapted from http://rylexr.tinbytes.com/2015/04/27/how-to-hideshow-android-toolbar-when-scrolling-google-play-musics-behavior/
+ * Created by ccrama on 2/18/2016. Adapted from
+ * http://rylexr.tinbytes.com/2015/04/27/how-to-hideshow-android-toolbar-when-scrolling-google-play-musics-behavior/
  */
 public class ToolbarScrollHideHandler extends RecyclerView.OnScrollListener {
 
@@ -53,13 +53,15 @@ public class ToolbarScrollHideHandler extends RecyclerView.OnScrollListener {
                         oppositeAnimateShow();
                     }
             } else {
-                if (mAppBar.getTranslationY() < tToolbar.getHeight() * -0.6 && verticalOffset > tToolbar.getHeight()) {
+                if (mAppBar.getTranslationY() < tToolbar.getHeight() * -0.6
+                        && verticalOffset > tToolbar.getHeight()) {
                     toolbarAnimateHide();
                 } else {
                     toolbarAnimateShow();
                 }
                 if (opposite != null)
-                    if (opposite.getTranslationY() < opposite.getHeight() * -0.6 && verticalOffset > opposite.getHeight()) {
+                    if (opposite.getTranslationY() < opposite.getHeight() * -0.6
+                            && verticalOffset > opposite.getHeight()) {
                         oppositeAnimateHide();
                     } else {
                         oppositeAnimateShow();
@@ -70,7 +72,10 @@ public class ToolbarScrollHideHandler extends RecyclerView.OnScrollListener {
 
     @Override
     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-        if (verticalOffset == 0 && dy < 0) { // if scrolling begins halfway through an adapter, don't treat it like going negative and instead reset the start position to 0
+        if (verticalOffset == 0
+                && dy
+                        < 0) { // if scrolling begins halfway through an adapter, don't treat it
+                               // like going negative and instead reset the start position to 0
             dy = 0;
         }
         verticalOffset += dy;
@@ -80,22 +85,18 @@ public class ToolbarScrollHideHandler extends RecyclerView.OnScrollListener {
         if (scrollingUp) {
             if (toolbarYOffset < tToolbar.getHeight()) {
                 mAppBar.setTranslationY(-toolbarYOffset);
-                if (extra != null)
-                    extra.setTranslationY(-toolbarYOffset);
+                if (extra != null) extra.setTranslationY(-toolbarYOffset);
             } else {
                 mAppBar.setTranslationY(-tToolbar.getHeight());
-                if (extra != null)
-                    extra.setTranslationY(-tToolbar.getHeight());
+                if (extra != null) extra.setTranslationY(-tToolbar.getHeight());
             }
         } else {
             if (toolbarYOffset < 0) {
                 toolbarShow();
-                if (extra != null)
-                    extra.setTranslationY(0);
+                if (extra != null) extra.setTranslationY(0);
             } else {
                 mAppBar.setTranslationY(-toolbarYOffset);
-                if (extra != null)
-                    extra.setTranslationY(-toolbarYOffset);
+                if (extra != null) extra.setTranslationY(-toolbarYOffset);
             }
         }
         if (opposite != null) {
@@ -123,8 +124,7 @@ public class ToolbarScrollHideHandler extends RecyclerView.OnScrollListener {
 
     private void toolbarAnimate(final int i) {
         animate(mAppBar, i);
-        if (extra != null)
-            animate(extra, i);
+        if (extra != null) animate(extra, i);
     }
 
     private void oppositeAnimateShow() {
@@ -140,9 +140,6 @@ public class ToolbarScrollHideHandler extends RecyclerView.OnScrollListener {
     }
 
     private void animate(final View v, final int i) {
-        v.animate()
-                .translationY(i)
-                .setInterpolator(new LinearInterpolator())
-                .setDuration(180);
+        v.animate().translationY(i).setInterpolator(new LinearInterpolator()).setDuration(180);
     }
 }

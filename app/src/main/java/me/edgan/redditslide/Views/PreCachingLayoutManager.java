@@ -7,9 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import me.edgan.redditslide.util.LogUtil;
 
-/**
- * Created by carlo_000 on 10/12/2015.
- */
+/** Created by carlo_000 on 10/12/2015. */
 public class PreCachingLayoutManager extends LinearLayoutManager {
     private static final int DEFAULT_EXTRA_LAYOUT_SPACE = 200;
     private final Context context;
@@ -20,6 +18,7 @@ public class PreCachingLayoutManager extends LinearLayoutManager {
 
         this.context = context;
     }
+
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
         try {
@@ -28,11 +27,11 @@ public class PreCachingLayoutManager extends LinearLayoutManager {
             LogUtil.v("Met a IOOBE in RecyclerView");
         }
     }
+
     public PreCachingLayoutManager(Context context, int extraLayoutSpace) {
         super(context);
         this.context = context;
         this.extraLayoutSpace = extraLayoutSpace;
-
     }
 
     public PreCachingLayoutManager(Context context, int orientation, boolean reverseLayout) {

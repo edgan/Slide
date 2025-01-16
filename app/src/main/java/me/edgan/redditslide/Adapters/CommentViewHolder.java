@@ -12,9 +12,7 @@ import me.edgan.redditslide.R;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.Views.CommentOverflow;
 
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class CommentViewHolder extends RecyclerView.ViewHolder {
     public final TextView childrenNumber;
     public final View dot;
@@ -39,7 +37,7 @@ public class CommentViewHolder extends RecyclerView.ViewHolder {
         textColorRegular = firstTextView.getCurrentTextColor();
         textColorUp = ContextCompat.getColor(v.getContext(), R.color.md_orange_500);
         content = v.findViewById(R.id.content);
-        imageFlair= v.findViewById(R.id.flair);
+        imageFlair = v.findViewById(R.id.flair);
         commentOverflow = v.findViewById(R.id.commentOverflow);
     }
 }

@@ -42,27 +42,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.google.android.material.snackbar.Snackbar;
 
-import net.dean.jraw.ApiException;
-import net.dean.jraw.http.NetworkException;
-import net.dean.jraw.http.oauth.InvalidScopeException;
-import net.dean.jraw.managers.AccountManager;
-import net.dean.jraw.managers.ModerationManager;
-import net.dean.jraw.models.Comment;
-import net.dean.jraw.models.CommentNode;
-import net.dean.jraw.models.DistinguishedStatus;
-import net.dean.jraw.models.Ruleset;
-import net.dean.jraw.models.Submission;
-import net.dean.jraw.models.SubredditRule;
-import net.dean.jraw.models.VoteDirection;
-
-import org.apache.commons.text.StringEscapeUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import me.edgan.redditslide.ActionStates;
 import me.edgan.redditslide.Activities.Profile;
 import me.edgan.redditslide.Activities.Reauthenticate;
@@ -88,14 +67,36 @@ import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.MiscUtil;
 import me.edgan.redditslide.util.TimeUtils;
 
-/**
- * Created by Carlos on 8/4/2016.
- */
-public class CommentAdapterHelper {
-    public static void showOverflowBottomSheet(final CommentAdapter adapter, final Context mContext,
-            final CommentViewHolder holder, final CommentNode baseNode) {
+import net.dean.jraw.ApiException;
+import net.dean.jraw.http.NetworkException;
+import net.dean.jraw.http.oauth.InvalidScopeException;
+import net.dean.jraw.managers.AccountManager;
+import net.dean.jraw.managers.ModerationManager;
+import net.dean.jraw.models.Comment;
+import net.dean.jraw.models.CommentNode;
+import net.dean.jraw.models.DistinguishedStatus;
+import net.dean.jraw.models.Ruleset;
+import net.dean.jraw.models.Submission;
+import net.dean.jraw.models.SubredditRule;
+import net.dean.jraw.models.VoteDirection;
 
-        int[] attrs = new int[]{R.attr.tintColor};
+import org.apache.commons.text.StringEscapeUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+/** Created by Carlos on 8/4/2016. */
+public class CommentAdapterHelper {
+    public static void showOverflowBottomSheet(
+            final CommentAdapter adapter,
+            final Context mContext,
+            final CommentViewHolder holder,
+            final CommentNode baseNode) {
+
+        int[] attrs = new int[] {R.attr.tintColor};
         final Comment n = baseNode.getComment();
         TypedArray ta = mContext.obtainStyledAttributes(attrs);
 
@@ -110,14 +111,16 @@ public class CommentAdapterHelper {
         Drawable permalink = mContext.getResources().getDrawable(R.drawable.ic_link);
         Drawable report = mContext.getResources().getDrawable(R.drawable.ic_report);
 
-        final List<Drawable> drawableSet = Arrays.asList(
-                profile, saved, gild, report, copy, share, parent, permalink, replies);
+        final List<Drawable> drawableSet =
+                Arrays.asList(
+                        profile, saved, gild, report, copy, share, parent, permalink, replies);
         BlendModeUtil.tintDrawablesAsSrcAtop(drawableSet, color);
 
         ta.recycle();
 
         BottomSheet.Builder b =
-                new BottomSheet.Builder((Activity) mContext).title(CompatUtil.fromHtml(n.getBody()));
+                new BottomSheet.Builder((Activity) mContext)
+                        .title(CompatUtil.fromHtml(n.getBody()));
 
         if (Authentication.didOnline) {
             b.sheet(1, profile, "/u/" + n.getAuthor());
@@ -140,184 +143,272 @@ public class CommentAdapterHelper {
         if (!adapter.currentBaseNode.isTopLevel()) {
             b.sheet(10, parent, mContext.getString(R.string.comment_parent));
         }
-        b.listener(new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 1: {
-                        // Go to author
-                        Intent i = new Intent(mContext, Profile.class);
-                        i.putExtra(Profile.EXTRA_PROFILE, n.getAuthor());
-                        mContext.startActivity(i);
-                    }
-                    break;
-                    case 3:
-                        // Save comment
-                        saveComment(n, mContext, holder);
-                        break;
-                    case 23: {
-                        // Go to comment permalink
-                        String s = "https://reddit.com"
-                                + adapter.submission.getPermalink()
-                                + n.getFullName().substring(3)
-                                + "?context=3";
-                        OpenRedditLink.openUrl(mContext, s, true);
-                    }
-                    break;
-                    case 50: {
-                        setReplies(baseNode.getComment(), holder, !baseNode.getComment().getDataNode().get("send_replies").asBoolean());
-                    }
-                    break;
-                    case 5: {
-                        // Gild comment
-                        Intent i = new Intent(mContext, Website.class);
-                        i.putExtra(LinkUtil.EXTRA_URL, "https://reddit.com"
-                                + adapter.submission.getPermalink()
-                                + n.getFullName().substring(3)
-                                + "?context=3&inapp=false");
-                        i.putExtra(LinkUtil.EXTRA_COLOR, Palette.getColor(n.getSubredditName()));
-                        mContext.startActivity(i);
-                    }
-                    break;
-                    case 16:
-                        // report
-                        final MaterialDialog reportDialog = new MaterialDialog.Builder(mContext)
-                                .customView(R.layout.report_dialog, true)
-                                .title(R.string.report_comment)
-                                .positiveText(R.string.btn_report)
-                                .negativeText(R.string.btn_cancel)
-                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(MaterialDialog dialog, DialogAction which) {
-                                        RadioGroup reasonGroup = dialog.getCustomView()
+        b.listener(
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 1:
+                                {
+                                    // Go to author
+                                    Intent i = new Intent(mContext, Profile.class);
+                                    i.putExtra(Profile.EXTRA_PROFILE, n.getAuthor());
+                                    mContext.startActivity(i);
+                                }
+                                break;
+                            case 3:
+                                // Save comment
+                                saveComment(n, mContext, holder);
+                                break;
+                            case 23:
+                                {
+                                    // Go to comment permalink
+                                    String s =
+                                            "https://reddit.com"
+                                                    + adapter.submission.getPermalink()
+                                                    + n.getFullName().substring(3)
+                                                    + "?context=3";
+                                    OpenRedditLink.openUrl(mContext, s, true);
+                                }
+                                break;
+                            case 50:
+                                {
+                                    setReplies(
+                                            baseNode.getComment(),
+                                            holder,
+                                            !baseNode.getComment()
+                                                    .getDataNode()
+                                                    .get("send_replies")
+                                                    .asBoolean());
+                                }
+                                break;
+                            case 5:
+                                {
+                                    // Gild comment
+                                    Intent i = new Intent(mContext, Website.class);
+                                    i.putExtra(
+                                            LinkUtil.EXTRA_URL,
+                                            "https://reddit.com"
+                                                    + adapter.submission.getPermalink()
+                                                    + n.getFullName().substring(3)
+                                                    + "?context=3&inapp=false");
+                                    i.putExtra(
+                                            LinkUtil.EXTRA_COLOR,
+                                            Palette.getColor(n.getSubredditName()));
+                                    mContext.startActivity(i);
+                                }
+                                break;
+                            case 16:
+                                // report
+                                final MaterialDialog reportDialog =
+                                        new MaterialDialog.Builder(mContext)
+                                                .customView(R.layout.report_dialog, true)
+                                                .title(R.string.report_comment)
+                                                .positiveText(R.string.btn_report)
+                                                .negativeText(R.string.btn_cancel)
+                                                .onPositive(
+                                                        new MaterialDialog.SingleButtonCallback() {
+                                                            @Override
+                                                            public void onClick(
+                                                                    MaterialDialog dialog,
+                                                                    DialogAction which) {
+                                                                RadioGroup reasonGroup =
+                                                                        dialog.getCustomView()
+                                                                                .findViewById(
+                                                                                        R.id
+                                                                                                .report_reasons);
+                                                                String reportReason;
+                                                                if (reasonGroup
+                                                                                .getCheckedRadioButtonId()
+                                                                        == R.id.report_other) {
+                                                                    reportReason =
+                                                                            ((EditText)
+                                                                                            dialog.getCustomView()
+                                                                                                    .findViewById(
+                                                                                                            R
+                                                                                                                    .id
+                                                                                                                    .input_report_reason))
+                                                                                    .getText()
+                                                                                    .toString();
+                                                                } else {
+                                                                    reportReason =
+                                                                            ((RadioButton)
+                                                                                            reasonGroup
+                                                                                                    .findViewById(
+                                                                                                            reasonGroup
+                                                                                                                    .getCheckedRadioButtonId()))
+                                                                                    .getText()
+                                                                                    .toString();
+                                                                }
+                                                                new AsyncReportTask(
+                                                                                adapter.currentBaseNode,
+                                                                                adapter.listView)
+                                                                        .execute(reportReason);
+                                                            }
+                                                        })
+                                                .build();
+
+                                final RadioGroup reasonGroup =
+                                        reportDialog
+                                                .getCustomView()
                                                 .findViewById(R.id.report_reasons);
-                                        String reportReason;
-                                        if (reasonGroup.getCheckedRadioButtonId() == R.id.report_other) {
-                                            reportReason = ((EditText) dialog.getCustomView()
-                                                    .findViewById(R.id.input_report_reason)).getText().toString();
-                                        } else {
-                                            reportReason = ((RadioButton) reasonGroup
-                                                    .findViewById(reasonGroup.getCheckedRadioButtonId()))
-                                                    .getText().toString();
+
+                                reasonGroup.setOnCheckedChangeListener(
+                                        new RadioGroup.OnCheckedChangeListener() {
+                                            @Override
+                                            public void onCheckedChanged(
+                                                    RadioGroup group, int checkedId) {
+                                                if (checkedId == R.id.report_other)
+                                                    reportDialog
+                                                            .getCustomView()
+                                                            .findViewById(R.id.input_report_reason)
+                                                            .setVisibility(View.VISIBLE);
+                                                else
+                                                    reportDialog
+                                                            .getCustomView()
+                                                            .findViewById(R.id.input_report_reason)
+                                                            .setVisibility(View.GONE);
+                                            }
+                                        });
+
+                                // Load sub's report reasons and show the appropriate ones
+                                new AsyncTask<Void, Void, Ruleset>() {
+                                    @Override
+                                    protected Ruleset doInBackground(Void... voids) {
+                                        return Authentication.reddit.getRules(
+                                                adapter.currentBaseNode
+                                                        .getComment()
+                                                        .getSubredditName());
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(Ruleset rules) {
+                                        reportDialog
+                                                .getCustomView()
+                                                .findViewById(R.id.report_loading)
+                                                .setVisibility(View.GONE);
+                                        if (rules.getSubredditRules().size() > 0) {
+                                            TextView subHeader = new TextView(mContext);
+                                            subHeader.setText(
+                                                    mContext.getString(
+                                                            R.string.report_sub_rules,
+                                                            adapter.currentBaseNode
+                                                                    .getComment()
+                                                                    .getSubredditName()));
+                                            reasonGroup.addView(
+                                                    subHeader, reasonGroup.getChildCount() - 2);
                                         }
-                                        new AsyncReportTask(adapter.currentBaseNode, adapter.listView)
-                                                .execute(reportReason);
+                                        for (SubredditRule rule : rules.getSubredditRules()) {
+                                            if (rule.getKind() == SubredditRule.RuleKind.COMMENT
+                                                    || rule.getKind()
+                                                            == SubredditRule.RuleKind.ALL) {
+                                                RadioButton btn = new RadioButton(mContext);
+                                                btn.setText(rule.getViolationReason());
+                                                reasonGroup.addView(
+                                                        btn, reasonGroup.getChildCount() - 2);
+                                                btn.getLayoutParams().width =
+                                                        WindowManager.LayoutParams.MATCH_PARENT;
+                                            }
+                                        }
+                                        if (rules.getSiteRules().size() > 0) {
+                                            TextView siteHeader = new TextView(mContext);
+                                            siteHeader.setText(R.string.report_site_rules);
+                                            reasonGroup.addView(
+                                                    siteHeader, reasonGroup.getChildCount() - 2);
+                                        }
+                                        for (String rule : rules.getSiteRules()) {
+                                            RadioButton btn = new RadioButton(mContext);
+                                            btn.setText(rule);
+                                            reasonGroup.addView(
+                                                    btn, reasonGroup.getChildCount() - 2);
+                                            btn.getLayoutParams().width =
+                                                    WindowManager.LayoutParams.MATCH_PARENT;
+                                        }
                                     }
-                                }).build();
+                                }.execute();
 
-                        final RadioGroup reasonGroup = reportDialog.getCustomView().findViewById(R.id.report_reasons);
+                                reportDialog.show();
+                                break;
+                            case 10:
+                                // View comment parent
+                                viewCommentParent(adapter, holder, mContext, baseNode);
+                                break;
+                            case 7:
+                                // Show select and copy text to clipboard
+                                final TextView showText = new TextView(mContext);
+                                showText.setText(StringEscapeUtils.unescapeHtml4(n.getBody()));
+                                showText.setTextIsSelectable(true);
+                                int sixteen = DisplayUtil.dpToPxVertical(24);
+                                showText.setPadding(sixteen, 0, sixteen, 0);
 
-                        reasonGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                                if (checkedId == R.id.report_other)
-                                    reportDialog.getCustomView().findViewById(R.id.input_report_reason)
-                                            .setVisibility(View.VISIBLE);
-                                else
-                                    reportDialog.getCustomView().findViewById(R.id.input_report_reason)
-                                            .setVisibility(View.GONE);
-                            }
-                        });
+                                new AlertDialog.Builder(mContext)
+                                        .setView(showText)
+                                        .setTitle("Select text to copy")
+                                        .setCancelable(true)
+                                        .setPositiveButton(
+                                                "COPY",
+                                                (dialog1, which1) -> {
+                                                    String selected =
+                                                            showText.getText()
+                                                                    .toString()
+                                                                    .substring(
+                                                                            showText
+                                                                                    .getSelectionStart(),
+                                                                            showText
+                                                                                    .getSelectionEnd());
+                                                    ClipboardUtil.copyToClipboard(
+                                                            mContext, "Comment text", selected);
 
-                        // Load sub's report reasons and show the appropriate ones
-                        new AsyncTask<Void, Void, Ruleset>() {
-                            @Override
-                            protected Ruleset doInBackground(Void... voids) {
-                                return Authentication.reddit.getRules(adapter.currentBaseNode.getComment()
-                                        .getSubredditName());
-                            }
+                                                    Toast.makeText(
+                                                                    mContext,
+                                                                    R.string
+                                                                            .submission_comment_copied,
+                                                                    Toast.LENGTH_SHORT)
+                                                            .show();
+                                                })
+                                        .setNegativeButton(R.string.btn_cancel, null)
+                                        .setNeutralButton(
+                                                "COPY ALL",
+                                                (dialog12, which12) -> {
+                                                    ClipboardUtil.copyToClipboard(
+                                                            mContext,
+                                                            "Comment text",
+                                                            StringEscapeUtils.unescapeHtml4(
+                                                                    n.getBody()));
 
-                            @Override
-                            protected void onPostExecute(Ruleset rules) {
-                                reportDialog.getCustomView().findViewById(R.id.report_loading).setVisibility(View.GONE);
-                                if (rules.getSubredditRules().size() > 0) {
-                                    TextView subHeader = new TextView(mContext);
-                                    subHeader.setText(mContext.getString(R.string.report_sub_rules,
-                                            adapter.currentBaseNode.getComment().getSubredditName()));
-                                    reasonGroup.addView(subHeader, reasonGroup.getChildCount() - 2);
-                                }
-                                for (SubredditRule rule : rules.getSubredditRules()) {
-                                    if (rule.getKind() == SubredditRule.RuleKind.COMMENT
-                                            || rule.getKind() == SubredditRule.RuleKind.ALL) {
-                                        RadioButton btn = new RadioButton(mContext);
-                                        btn.setText(rule.getViolationReason());
-                                        reasonGroup.addView(btn, reasonGroup.getChildCount() - 2);
-                                        btn.getLayoutParams().width = WindowManager.LayoutParams.MATCH_PARENT;
-                                    }
-                                }
-                                if (rules.getSiteRules().size() > 0) {
-                                    TextView siteHeader = new TextView(mContext);
-                                    siteHeader.setText(R.string.report_site_rules);
-                                    reasonGroup.addView(siteHeader, reasonGroup.getChildCount() - 2);
-                                }
-                                for (String rule : rules.getSiteRules()) {
-                                    RadioButton btn = new RadioButton(mContext);
-                                    btn.setText(rule);
-                                    reasonGroup.addView(btn, reasonGroup.getChildCount() - 2);
-                                    btn.getLayoutParams().width = WindowManager.LayoutParams.MATCH_PARENT;
-                                }
-                            }
-                        }.execute();
-
-                        reportDialog.show();
-                        break;
-                    case 10:
-                        // View comment parent
-                        viewCommentParent(adapter, holder, mContext, baseNode);
-                        break;
-                    case 7:
-                        // Show select and copy text to clipboard
-                        final TextView showText = new TextView(mContext);
-                        showText.setText(StringEscapeUtils.unescapeHtml4(n.getBody()));
-                        showText.setTextIsSelectable(true);
-                        int sixteen = DisplayUtil.dpToPxVertical(24);
-                        showText.setPadding(sixteen, 0, sixteen, 0);
-
-                        new AlertDialog.Builder(mContext)
-                                .setView(showText)
-                                .setTitle("Select text to copy")
-                                .setCancelable(true)
-                                .setPositiveButton("COPY", (dialog1, which1) -> {
-                                    String selected = showText.getText()
-                                            .toString()
-                                            .substring(showText.getSelectionStart(),
-                                                    showText.getSelectionEnd());
-                                    ClipboardUtil.copyToClipboard(mContext, "Comment text", selected);
-
-                                    Toast.makeText(mContext, R.string.submission_comment_copied,
-                                            Toast.LENGTH_SHORT).show();
-
-                                })
-                                .setNegativeButton(R.string.btn_cancel, null)
-                                .setNeutralButton("COPY ALL", (dialog12, which12) -> {
-                                    ClipboardUtil.copyToClipboard(mContext, "Comment text",
-                                            StringEscapeUtils.unescapeHtml4(n.getBody()));
-
-                                    Toast.makeText(mContext,
-                                            R.string.submission_comment_copied,
-                                            Toast.LENGTH_SHORT).show();
-                                })
-                                .show();
-                        break;
-                    case 4:
-                        // Share comment
-                        Reddit.defaultShareText(adapter.submission.getTitle(), "https://reddit.com"
-                                + adapter.submission.getPermalink()
-                                + n.getFullName().substring(3)
-                                + "?context=3", mContext);
-                        break;
-                }
-            }
-        });
+                                                    Toast.makeText(
+                                                                    mContext,
+                                                                    R.string
+                                                                            .submission_comment_copied,
+                                                                    Toast.LENGTH_SHORT)
+                                                            .show();
+                                                })
+                                        .show();
+                                break;
+                            case 4:
+                                // Share comment
+                                Reddit.defaultShareText(
+                                        adapter.submission.getTitle(),
+                                        "https://reddit.com"
+                                                + adapter.submission.getPermalink()
+                                                + n.getFullName().substring(3)
+                                                + "?context=3",
+                                        mContext);
+                                break;
+                        }
+                    }
+                });
         b.show();
     }
 
-    private static void setReplies(final Comment comment, final CommentViewHolder holder, final boolean showReplies) {
+    private static void setReplies(
+            final Comment comment, final CommentViewHolder holder, final boolean showReplies) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    new AccountManager(Authentication.reddit).sendRepliesToInbox(comment, showReplies);
+                    new AccountManager(Authentication.reddit)
+                            .sendRepliesToInbox(comment, showReplies);
 
                 } catch (ApiException e) {
                     e.printStackTrace();
@@ -332,11 +423,17 @@ public class CommentAdapterHelper {
                 try {
                     if (holder.itemView != null) {
                         if (!showReplies) {
-                            s = Snackbar.make(holder.itemView, R.string.replies_disabled_comment,
-                                    Snackbar.LENGTH_LONG);
+                            s =
+                                    Snackbar.make(
+                                            holder.itemView,
+                                            R.string.replies_disabled_comment,
+                                            Snackbar.LENGTH_LONG);
                         } else {
-                            s = Snackbar.make(holder.itemView, R.string.replies_enabled_comment,
-                                    Snackbar.LENGTH_SHORT);
+                            s =
+                                    Snackbar.make(
+                                            holder.itemView,
+                                            R.string.replies_enabled_comment,
+                                            Snackbar.LENGTH_SHORT);
                         }
                         LayoutUtils.showSnackbar(s);
                     }
@@ -347,8 +444,11 @@ public class CommentAdapterHelper {
         }.execute();
     }
 
-    private static void viewCommentParent(CommentAdapter adapter, CommentViewHolder holder,
-            Context mContext, CommentNode baseNode) {
+    private static void viewCommentParent(
+            CommentAdapter adapter,
+            CommentViewHolder holder,
+            Context mContext,
+            CommentNode baseNode) {
         int old = holder.getBindingAdapterPosition();
         int pos = (old < 2) ? 0 : old - 1;
         for (int i = pos - 1; i >= 0; i--) {
@@ -359,21 +459,20 @@ public class CommentAdapterHelper {
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
                 final View dialoglayout = inflater.inflate(R.layout.parent_comment_dialog, null);
                 Comment parent = o.comment.getComment();
-                adapter.setViews(parent.getDataNode().get("body_html").asText(),
+                adapter.setViews(
+                        parent.getDataNode().get("body_html").asText(),
                         adapter.submission.getSubredditName(),
                         dialoglayout.findViewById(R.id.firstTextView),
                         dialoglayout.findViewById(R.id.commentOverflow));
 
-                new AlertDialog.Builder(mContext)
-                        .setView(dialoglayout)
-                        .show();
+                new AlertDialog.Builder(mContext).setView(dialoglayout).show();
                 break;
             }
         }
     }
 
-    private static void saveComment(final Comment comment, final Context mContext,
-            final CommentViewHolder holder) {
+    private static void saveComment(
+            final Comment comment, final Context mContext, final CommentViewHolder holder) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -399,10 +498,14 @@ public class CommentAdapterHelper {
                 try {
                     if (holder.itemView != null) {
                         if (ActionStates.isSaved(comment)) {
-                            s = Snackbar.make(holder.itemView, R.string.submission_comment_saved,
-                                    Snackbar.LENGTH_LONG);
+                            s =
+                                    Snackbar.make(
+                                            holder.itemView,
+                                            R.string.submission_comment_saved,
+                                            Snackbar.LENGTH_LONG);
                             if (Authentication.me != null && Authentication.me.hasGold()) {
-                                s.setAction(R.string.category_categorize,
+                                s.setAction(
+                                        R.string.category_categorize,
                                         new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
@@ -411,8 +514,11 @@ public class CommentAdapterHelper {
                                         });
                             }
                         } else {
-                            s = Snackbar.make(holder.itemView, R.string.submission_comment_unsaved,
-                                    Snackbar.LENGTH_SHORT);
+                            s =
+                                    Snackbar.make(
+                                            holder.itemView,
+                                            R.string.submission_comment_unsaved,
+                                            Snackbar.LENGTH_SHORT);
                         }
                         LayoutUtils.showSnackbar(s);
                     }
@@ -430,135 +536,187 @@ public class CommentAdapterHelper {
 
             @Override
             public void onPreExecute() {
-                d = new MaterialDialog.Builder(mContext).progress(true, 100)
-                        .content(R.string.misc_please_wait)
-                        .title(R.string.profile_category_loading)
-                        .show();
+                d =
+                        new MaterialDialog.Builder(mContext)
+                                .progress(true, 100)
+                                .content(R.string.misc_please_wait)
+                                .title(R.string.profile_category_loading)
+                                .show();
             }
 
             @Override
             protected List<String> doInBackground(Void... params) {
                 try {
-                    List<String> categories = new ArrayList<String>(
-                            new AccountManager(Authentication.reddit).getSavedCategories());
+                    List<String> categories =
+                            new ArrayList<String>(
+                                    new AccountManager(Authentication.reddit).getSavedCategories());
                     categories.add("New category");
                     return categories;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return new ArrayList<String>() {{
-                        add("New category");
-                    }};
+                    return new ArrayList<String>() {
+                        {
+                            add("New category");
+                        }
+                    };
                 }
             }
 
             @Override
             public void onPostExecute(final List<String> data) {
                 try {
-                    new MaterialDialog.Builder(mContext).items(data)
+                    new MaterialDialog.Builder(mContext)
+                            .items(data)
                             .title(R.string.sidebar_select_flair)
-                            .itemsCallback(new MaterialDialog.ListCallback() {
-                                @Override
-                                public void onSelection(MaterialDialog dialog, final View itemView,
-                                        int which, CharSequence text) {
-                                    final String t = data.get(which);
-                                    if (which == data.size() - 1) {
-                                        new MaterialDialog.Builder(mContext).title(
-                                                R.string.category_set_name)
-                                                .input(mContext.getString(
-                                                        R.string.category_set_name_hint), null,
-                                                        false, (dialog1, input) -> {})
-                                                .positiveText(R.string.btn_set)
-                                                .onPositive(
-                                                        new MaterialDialog.SingleButtonCallback() {
-                                                            @Override
-                                                            public void onClick(
-                                                                    MaterialDialog dialog,
-                                                                    DialogAction which) {
-                                                                final String flair =
-                                                                        dialog.getInputEditText()
-                                                                                .getText()
-                                                                                .toString();
-                                                                new AsyncTask<Void, Void, Boolean>() {
+                            .itemsCallback(
+                                    new MaterialDialog.ListCallback() {
+                                        @Override
+                                        public void onSelection(
+                                                MaterialDialog dialog,
+                                                final View itemView,
+                                                int which,
+                                                CharSequence text) {
+                                            final String t = data.get(which);
+                                            if (which == data.size() - 1) {
+                                                new MaterialDialog.Builder(mContext)
+                                                        .title(R.string.category_set_name)
+                                                        .input(
+                                                                mContext.getString(
+                                                                        R.string
+                                                                                .category_set_name_hint),
+                                                                null,
+                                                                false,
+                                                                (dialog1, input) -> {})
+                                                        .positiveText(R.string.btn_set)
+                                                        .onPositive(
+                                                                new MaterialDialog
+                                                                        .SingleButtonCallback() {
                                                                     @Override
-                                                                    protected Boolean doInBackground(
-                                                                            Void... params) {
-                                                                        try {
-                                                                            new AccountManager(
-                                                                                    Authentication.reddit)
-                                                                                    .save(comment,
-                                                                                            flair);
-                                                                            return true;
-                                                                        } catch (ApiException e) {
-                                                                            e.printStackTrace();
-                                                                            return false;
-                                                                        }
-                                                                    }
-
-                                                                    @Override
-                                                                    protected void onPostExecute(
-                                                                            Boolean done) {
-                                                                        Snackbar s;
-                                                                        if (done) {
-                                                                            if (itemView != null) {
-                                                                                s = Snackbar.make(
-                                                                                        itemView,
-                                                                                        R.string.submission_info_saved,
-                                                                                        Snackbar.LENGTH_SHORT);
-                                                                                LayoutUtils.showSnackbar(s);
+                                                                    public void onClick(
+                                                                            MaterialDialog dialog,
+                                                                            DialogAction which) {
+                                                                        final String flair =
+                                                                                dialog.getInputEditText()
+                                                                                        .getText()
+                                                                                        .toString();
+                                                                        new AsyncTask<
+                                                                                Void,
+                                                                                Void,
+                                                                                Boolean>() {
+                                                                            @Override
+                                                                            protected Boolean
+                                                                                    doInBackground(
+                                                                                            Void...
+                                                                                                    params) {
+                                                                                try {
+                                                                                    new AccountManager(
+                                                                                                    Authentication
+                                                                                                            .reddit)
+                                                                                            .save(
+                                                                                                    comment,
+                                                                                                    flair);
+                                                                                    return true;
+                                                                                } catch (
+                                                                                        ApiException
+                                                                                                e) {
+                                                                                    e
+                                                                                            .printStackTrace();
+                                                                                    return false;
+                                                                                }
                                                                             }
-                                                                        } else {
-                                                                            if (itemView != null) {
-                                                                                s = Snackbar.make(
-                                                                                        itemView,
-                                                                                        R.string.category_set_error,
-                                                                                        Snackbar.LENGTH_SHORT);
-                                                                                LayoutUtils.showSnackbar(s);
-                                                                            }
-                                                                        }
 
+                                                                            @Override
+                                                                            protected void
+                                                                                    onPostExecute(
+                                                                                            Boolean
+                                                                                                    done) {
+                                                                                Snackbar s;
+                                                                                if (done) {
+                                                                                    if (itemView
+                                                                                            != null) {
+                                                                                        s =
+                                                                                                Snackbar
+                                                                                                        .make(
+                                                                                                                itemView,
+                                                                                                                R
+                                                                                                                        .string
+                                                                                                                        .submission_info_saved,
+                                                                                                                Snackbar
+                                                                                                                        .LENGTH_SHORT);
+                                                                                        LayoutUtils
+                                                                                                .showSnackbar(
+                                                                                                        s);
+                                                                                    }
+                                                                                } else {
+                                                                                    if (itemView
+                                                                                            != null) {
+                                                                                        s =
+                                                                                                Snackbar
+                                                                                                        .make(
+                                                                                                                itemView,
+                                                                                                                R
+                                                                                                                        .string
+                                                                                                                        .category_set_error,
+                                                                                                                Snackbar
+                                                                                                                        .LENGTH_SHORT);
+                                                                                        LayoutUtils
+                                                                                                .showSnackbar(
+                                                                                                        s);
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }.execute();
                                                                     }
-                                                                }.execute();
+                                                                })
+                                                        .negativeText(R.string.btn_cancel)
+                                                        .show();
+                                            } else {
+                                                new AsyncTask<Void, Void, Boolean>() {
+                                                    @Override
+                                                    protected Boolean doInBackground(
+                                                            Void... params) {
+                                                        try {
+                                                            new AccountManager(
+                                                                            Authentication.reddit)
+                                                                    .save(comment, t);
+                                                            return true;
+                                                        } catch (ApiException e) {
+                                                            e.printStackTrace();
+                                                            return false;
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    protected void onPostExecute(Boolean done) {
+                                                        Snackbar s;
+                                                        if (done) {
+                                                            if (itemView != null) {
+                                                                s =
+                                                                        Snackbar.make(
+                                                                                itemView,
+                                                                                R.string
+                                                                                        .submission_info_saved,
+                                                                                Snackbar
+                                                                                        .LENGTH_SHORT);
+                                                                LayoutUtils.showSnackbar(s);
                                                             }
-                                                        })
-                                                .negativeText(R.string.btn_cancel)
-                                                .show();
-                                    } else {
-                                        new AsyncTask<Void, Void, Boolean>() {
-                                            @Override
-                                            protected Boolean doInBackground(Void... params) {
-                                                try {
-                                                    new AccountManager(Authentication.reddit).save(
-                                                            comment, t);
-                                                    return true;
-                                                } catch (ApiException e) {
-                                                    e.printStackTrace();
-                                                    return false;
-                                                }
-                                            }
-
-                                            @Override
-                                            protected void onPostExecute(Boolean done) {
-                                                Snackbar s;
-                                                if (done) {
-                                                    if (itemView != null) {
-                                                        s = Snackbar.make(itemView,
-                                                                R.string.submission_info_saved,
-                                                                Snackbar.LENGTH_SHORT);
-                                                        LayoutUtils.showSnackbar(s);
+                                                        } else {
+                                                            if (itemView != null) {
+                                                                s =
+                                                                        Snackbar.make(
+                                                                                itemView,
+                                                                                R.string
+                                                                                        .category_set_error,
+                                                                                Snackbar
+                                                                                        .LENGTH_SHORT);
+                                                                LayoutUtils.showSnackbar(s);
+                                                            }
+                                                        }
                                                     }
-                                                } else {
-                                                    if (itemView != null) {
-                                                        s = Snackbar.make(itemView,
-                                                                R.string.category_set_error,
-                                                                Snackbar.LENGTH_SHORT);
-                                                        LayoutUtils.showSnackbar(s);
-                                                    }
-                                                }
+                                                }.execute();
                                             }
-                                        }.execute();
-                                    }
-                                }
-                            })
+                                        }
+                                    })
                             .show();
                     if (d != null) {
                         d.dismiss();
@@ -570,11 +728,16 @@ public class CommentAdapterHelper {
         }.execute();
     }
 
-    public static void showModBottomSheet(final CommentAdapter adapter, final Context mContext,
-            final CommentNode baseNode, final Comment comment, final CommentViewHolder holder,
-            final Map<String, Integer> reports, final Map<String, String> reports2) {
+    public static void showModBottomSheet(
+            final CommentAdapter adapter,
+            final Context mContext,
+            final CommentNode baseNode,
+            final Comment comment,
+            final CommentViewHolder holder,
+            final Map<String, Integer> reports,
+            final Map<String, String> reports2) {
 
-        int[] attrs = new int[]{R.attr.tintColor};
+        int[] attrs = new int[] {R.attr.tintColor};
         TypedArray ta = mContext.obtainStyledAttributes(attrs);
 
         // Initialize drawables
@@ -589,28 +752,45 @@ public class CommentAdapterHelper {
         final Drawable ban = mContext.getResources().getDrawable(R.drawable.ic_gavel);
         final Drawable spam = mContext.getResources().getDrawable(R.drawable.ic_flag);
         final Drawable note = mContext.getResources().getDrawable(R.drawable.ic_note);
-        final Drawable removeReason = mContext.getResources().getDrawable(R.drawable.ic_announcement);
+        final Drawable removeReason =
+                mContext.getResources().getDrawable(R.drawable.ic_announcement);
         final Drawable lock = mContext.getResources().getDrawable(R.drawable.ic_lock);
 
         // Tint drawables
-        final List<Drawable> drawableSet = Arrays.asList(
-                profile, report, approve, nsfw, distinguish, remove,
-                pin, ban, spam, note, removeReason, lock);
+        final List<Drawable> drawableSet =
+                Arrays.asList(
+                        profile,
+                        report,
+                        approve,
+                        nsfw,
+                        distinguish,
+                        remove,
+                        pin,
+                        ban,
+                        spam,
+                        note,
+                        removeReason,
+                        lock);
         BlendModeUtil.tintDrawablesAsSrcAtop(drawableSet, color);
 
         ta.recycle();
 
         // Bottom sheet builder
-        BottomSheet.Builder b = new BottomSheet.Builder((Activity) mContext).title(
-                CompatUtil.fromHtml(comment.getBody()));
+        BottomSheet.Builder b =
+                new BottomSheet.Builder((Activity) mContext)
+                        .title(CompatUtil.fromHtml(comment.getBody()));
 
         int reportCount = reports.size() + reports2.size();
 
         if (reportCount == 0) {
             b.sheet(0, report, mContext.getString(R.string.mod_no_reports));
         } else {
-            b.sheet(0, report, mContext.getResources()
-                    .getQuantityString(R.plurals.mod_btn_reports, reportCount, reportCount));
+            b.sheet(
+                    0,
+                    report,
+                    mContext.getResources()
+                            .getQuantityString(
+                                    R.plurals.mod_btn_reports, reportCount, reportCount));
         }
 
         if (SettingValues.toolboxEnabled) {
@@ -622,17 +802,18 @@ public class CommentAdapterHelper {
         b.sheet(7, removeReason, mContext.getString(R.string.mod_btn_remove_reason));
         b.sheet(10, spam, mContext.getString(R.string.mod_btn_spam));
 
-        final boolean locked = comment.getDataNode().has("locked")
-                && comment.getDataNode().get("locked").asBoolean();
+        final boolean locked =
+                comment.getDataNode().has("locked")
+                        && comment.getDataNode().get("locked").asBoolean();
         if (locked) {
             b.sheet(25, lock, mContext.getString(R.string.mod_btn_unlock_comment));
         } else {
             b.sheet(25, lock, mContext.getString(R.string.mod_btn_lock_comment));
         }
 
-        final boolean stickied = comment.getDataNode().has("stickied") && comment.getDataNode()
-                .get("stickied")
-                .asBoolean();
+        final boolean stickied =
+                comment.getDataNode().has("stickied")
+                        && comment.getDataNode().get("stickied").asBoolean();
         if (baseNode.isTopLevel() && comment.getAuthor().equalsIgnoreCase(Authentication.name)) {
             if (!stickied) {
                 b.sheet(4, pin, mContext.getString(R.string.mod_sticky));
@@ -653,86 +834,111 @@ public class CommentAdapterHelper {
         b.sheet(8, profile, mContext.getString(R.string.mod_btn_author));
         b.sheet(23, ban, mContext.getString(R.string.mod_ban_user));
 
-        b.listener(new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        viewReports(mContext, reports, reports2);
-                        break;
-                    case 1:
-                        doApproval(mContext, holder, comment, adapter);
-                        break;
-                    case 4:
-                        if (stickied) {
-                            unStickyComment(mContext, holder, comment);
-                        } else {
-                            stickyComment(mContext, holder, comment);
-                        }
-                        break;
-                    case 9:
-                        if (distinguished) {
-                            unDistinguishComment(mContext, holder, comment);
-                        } else {
-                            distinguishComment(mContext, holder, comment);
-                        }
-                        break;
-                    case 6:
-                        removeComment(mContext, holder, comment, adapter, false);
-                        break;
-                    case 7:
-                        if (SettingValues.removalReasonType == SettingValues.RemovalReasonType.TOOLBOX.ordinal()
-                                && ToolboxUI.canShowRemoval(comment.getSubredditName())) {
-                            ToolboxUI.showRemoval(mContext, comment, new ToolboxUI.CompletedRemovalCallback() {
-                                @Override
-                                public void onComplete(boolean success) {
-                                    if (success) {
-                                        Snackbar s = Snackbar.make(holder.itemView, R.string.comment_removed,
-                                                Snackbar.LENGTH_LONG);
-                                        LayoutUtils.showSnackbar(s);
-
-                                        adapter.removed.add(comment.getFullName());
-                                        adapter.approved.remove(comment.getFullName());
-                                        holder.content.setText(CommentAdapterHelper.getScoreString(
-                                                comment, mContext, holder, adapter.submission, adapter));
-                                    } else {
-                                        new AlertDialog.Builder(mContext)
-                                                .setTitle(R.string.err_general)
-                                                .setMessage(R.string.err_retry_later)
-                                                .show();
-                                    }
+        b.listener(
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                viewReports(mContext, reports, reports2);
+                                break;
+                            case 1:
+                                doApproval(mContext, holder, comment, adapter);
+                                break;
+                            case 4:
+                                if (stickied) {
+                                    unStickyComment(mContext, holder, comment);
+                                } else {
+                                    stickyComment(mContext, holder, comment);
                                 }
-                            });
-                        } else { // Show a Slide reason dialog if we can't show a toolbox or reddit one
-                            doRemoveCommentReason(mContext, holder, comment, adapter);
+                                break;
+                            case 9:
+                                if (distinguished) {
+                                    unDistinguishComment(mContext, holder, comment);
+                                } else {
+                                    distinguishComment(mContext, holder, comment);
+                                }
+                                break;
+                            case 6:
+                                removeComment(mContext, holder, comment, adapter, false);
+                                break;
+                            case 7:
+                                if (SettingValues.removalReasonType
+                                                == SettingValues.RemovalReasonType.TOOLBOX.ordinal()
+                                        && ToolboxUI.canShowRemoval(comment.getSubredditName())) {
+                                    ToolboxUI.showRemoval(
+                                            mContext,
+                                            comment,
+                                            new ToolboxUI.CompletedRemovalCallback() {
+                                                @Override
+                                                public void onComplete(boolean success) {
+                                                    if (success) {
+                                                        Snackbar s =
+                                                                Snackbar.make(
+                                                                        holder.itemView,
+                                                                        R.string.comment_removed,
+                                                                        Snackbar.LENGTH_LONG);
+                                                        LayoutUtils.showSnackbar(s);
+
+                                                        adapter.removed.add(comment.getFullName());
+                                                        adapter.approved.remove(
+                                                                comment.getFullName());
+                                                        holder.content.setText(
+                                                                CommentAdapterHelper.getScoreString(
+                                                                        comment,
+                                                                        mContext,
+                                                                        holder,
+                                                                        adapter.submission,
+                                                                        adapter));
+                                                    } else {
+                                                        new AlertDialog.Builder(mContext)
+                                                                .setTitle(R.string.err_general)
+                                                                .setMessage(
+                                                                        R.string.err_retry_later)
+                                                                .show();
+                                                    }
+                                                }
+                                            });
+                                } else { // Show a Slide reason dialog if we can't show a toolbox or
+                                         // reddit one
+                                    doRemoveCommentReason(mContext, holder, comment, adapter);
+                                }
+                                break;
+                            case 10:
+                                removeComment(mContext, holder, comment, adapter, true);
+                                break;
+                            case 8:
+                                Intent i = new Intent(mContext, Profile.class);
+                                i.putExtra(Profile.EXTRA_PROFILE, comment.getAuthor());
+                                mContext.startActivity(i);
+                                break;
+                            case 23:
+                                showBan(mContext, adapter.listView, comment, "", "", "", "");
+                                break;
+                            case 24:
+                                ToolboxUI.showUsernotes(
+                                        mContext,
+                                        comment.getAuthor(),
+                                        comment.getSubredditName(),
+                                        "l," + comment.getParentId() + "," + comment.getId());
+                                break;
+                            case 25:
+                                lockUnlockComment(mContext, holder, comment, !locked);
+                                break;
                         }
-                        break;
-                    case 10:
-                        removeComment(mContext, holder, comment, adapter, true);
-                        break;
-                    case 8:
-                        Intent i = new Intent(mContext, Profile.class);
-                        i.putExtra(Profile.EXTRA_PROFILE, comment.getAuthor());
-                        mContext.startActivity(i);
-                        break;
-                    case 23:
-                        showBan(mContext, adapter.listView, comment, "", "", "", "");
-                        break;
-                    case 24:
-                        ToolboxUI.showUsernotes(mContext, comment.getAuthor(), comment.getSubredditName(),
-                                "l," + comment.getParentId() + "," + comment.getId());
-                        break;
-                    case 25:
-                        lockUnlockComment(mContext, holder, comment, !locked);
-                        break;
-                }
-            }
-        });
+                    }
+                });
         b.show();
     }
 
-    public static void showBan(final Context mContext, final View mToolbar,
-            final Comment submission, String rs, String nt, String msg, String t) {
+    public static void showBan(
+            final Context mContext,
+            final View mToolbar,
+            final Comment submission,
+            String rs,
+            String nt,
+            String msg,
+            String t) {
         LinearLayout l = new LinearLayout(mContext);
         l.setOrientation(LinearLayout.VERTICAL);
         int sixteen = DisplayUtil.dpToPxVertical(16);
@@ -743,7 +949,6 @@ public class CommentAdapterHelper {
         reason.setText(rs);
         reason.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         l.addView(reason);
-
 
         final EditText note = new EditText(mContext);
         note.setHint(R.string.mod_ban_note_mod);
@@ -767,117 +972,152 @@ public class CommentAdapterHelper {
                 .setView(l)
                 .setTitle(mContext.getString(R.string.mod_ban_title, submission.getAuthor()))
                 .setCancelable(true)
-                .setPositiveButton(R.string.mod_btn_ban, (dialog, which) -> {
-                    // to ban
-                    if (reason.getText().toString().isEmpty()) {
-                        new AlertDialog.Builder(mContext)
-                                .setTitle(R.string.mod_ban_reason_required)
-                                .setMessage(R.string.misc_please_try_again)
-                                .setPositiveButton(R.string.btn_ok, (dialog1, which1) ->
-                                        showBan(mContext, mToolbar, submission,
-                                                reason.getText().toString(),
-                                                note.getText().toString(),
-                                                message.getText().toString(),
-                                                time.getText().toString()))
-                                .setCancelable(false)
-                                .show();
-                    } else {
-                        new AsyncTask<Void, Void, Boolean>() {
-                            @Override
-                            protected Boolean doInBackground(Void... params) {
-                                try {
-                                    String n = note.getText().toString();
-                                    String m = message.getText().toString();
+                .setPositiveButton(
+                        R.string.mod_btn_ban,
+                        (dialog, which) -> {
+                            // to ban
+                            if (reason.getText().toString().isEmpty()) {
+                                new AlertDialog.Builder(mContext)
+                                        .setTitle(R.string.mod_ban_reason_required)
+                                        .setMessage(R.string.misc_please_try_again)
+                                        .setPositiveButton(
+                                                R.string.btn_ok,
+                                                (dialog1, which1) ->
+                                                        showBan(
+                                                                mContext,
+                                                                mToolbar,
+                                                                submission,
+                                                                reason.getText().toString(),
+                                                                note.getText().toString(),
+                                                                message.getText().toString(),
+                                                                time.getText().toString()))
+                                        .setCancelable(false)
+                                        .show();
+                            } else {
+                                new AsyncTask<Void, Void, Boolean>() {
+                                    @Override
+                                    protected Boolean doInBackground(Void... params) {
+                                        try {
+                                            String n = note.getText().toString();
+                                            String m = message.getText().toString();
 
-                                    if (n.isEmpty()) {
-                                        n = null;
+                                            if (n.isEmpty()) {
+                                                n = null;
+                                            }
+                                            if (m.isEmpty()) {
+                                                m = null;
+                                            }
+                                            if (time.getText().toString().isEmpty()) {
+                                                new ModerationManager(Authentication.reddit)
+                                                        .banUserPermanently(
+                                                                submission.getSubredditName(),
+                                                                submission.getAuthor(),
+                                                                reason.getText().toString(),
+                                                                n,
+                                                                m);
+                                            } else {
+                                                new ModerationManager(Authentication.reddit)
+                                                        .banUser(
+                                                                submission.getSubredditName(),
+                                                                submission.getAuthor(),
+                                                                reason.getText().toString(),
+                                                                n,
+                                                                m,
+                                                                Integer.parseInt(
+                                                                        time.getText().toString()));
+                                            }
+                                            return true;
+                                        } catch (Exception e) {
+                                            if (e instanceof InvalidScopeException) {
+                                                scope = true;
+                                            }
+                                            e.printStackTrace();
+                                            return false;
+                                        }
                                     }
-                                    if (m.isEmpty()) {
-                                        m = null;
+
+                                    boolean scope;
+
+                                    @Override
+                                    protected void onPostExecute(Boolean done) {
+                                        Snackbar s;
+                                        if (done) {
+                                            s =
+                                                    Snackbar.make(
+                                                            mToolbar,
+                                                            R.string.mod_ban_success,
+                                                            Snackbar.LENGTH_SHORT);
+                                        } else {
+                                            if (scope) {
+                                                new AlertDialog.Builder(mContext)
+                                                        .setTitle(R.string.mod_ban_reauth)
+                                                        .setMessage(
+                                                                R.string.mod_ban_reauth_question)
+                                                        .setPositiveButton(
+                                                                R.string.btn_ok,
+                                                                (dialog12, which12) -> {
+                                                                    Intent i =
+                                                                            new Intent(
+                                                                                    mContext,
+                                                                                    Reauthenticate
+                                                                                            .class);
+                                                                    mContext.startActivity(i);
+                                                                })
+                                                        .setNegativeButton(
+                                                                R.string.misc_maybe_later, null)
+                                                        .setCancelable(false)
+                                                        .show();
+                                            }
+                                            s =
+                                                    Snackbar.make(
+                                                                    mToolbar,
+                                                                    R.string.mod_ban_fail,
+                                                                    Snackbar.LENGTH_INDEFINITE)
+                                                            .setAction(
+                                                                    R.string.misc_try_again,
+                                                                    new View.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(
+                                                                                View v) {
+                                                                            showBan(
+                                                                                    mContext,
+                                                                                    mToolbar,
+                                                                                    submission,
+                                                                                    reason.getText()
+                                                                                            .toString(),
+                                                                                    note.getText()
+                                                                                            .toString(),
+                                                                                    message.getText()
+                                                                                            .toString(),
+                                                                                    time.getText()
+                                                                                            .toString());
+                                                                        }
+                                                                    });
+                                        }
+
+                                        if (s != null) {
+                                            LayoutUtils.showSnackbar(s);
+                                        }
                                     }
-                                    if (time.getText().toString().isEmpty()) {
-                                        new ModerationManager(Authentication.reddit).banUserPermanently(
-                                                submission.getSubredditName(),
-                                                submission.getAuthor(),
-                                                reason.getText().toString(),
-                                                n,
-                                                m);
-                                    } else {
-                                        new ModerationManager(Authentication.reddit).banUser(
-                                                submission.getSubredditName(),
-                                                submission.getAuthor(), reason.getText().toString(),
-                                                n, m, Integer.parseInt(time.getText().toString()));
-                                    }
-                                    return true;
-                                } catch (Exception e) {
-                                    if (e instanceof InvalidScopeException) {
-                                        scope = true;
-                                    }
-                                    e.printStackTrace();
-                                    return false;
-                                }
+                                }.execute();
                             }
-
-                            boolean scope;
-
-                            @Override
-                            protected void onPostExecute(Boolean done) {
-                                Snackbar s;
-                                if (done) {
-                                    s = Snackbar.make(mToolbar, R.string.mod_ban_success,
-                                            Snackbar.LENGTH_SHORT);
-                                } else {
-                                    if (scope) {
-                                        new AlertDialog.Builder(mContext)
-                                                .setTitle(R.string.mod_ban_reauth)
-                                                .setMessage(R.string.mod_ban_reauth_question)
-                                                .setPositiveButton(R.string.btn_ok, (dialog12, which12) -> {
-                                                    Intent i = new Intent(mContext, Reauthenticate.class);
-                                                    mContext.startActivity(i);
-                                                })
-                                                .setNegativeButton(R.string.misc_maybe_later, null)
-                                                .setCancelable(false)
-                                                .show();
-                                    }
-                                    s = Snackbar.make(mToolbar, R.string.mod_ban_fail,
-                                            Snackbar.LENGTH_INDEFINITE)
-                                            .setAction(R.string.misc_try_again,
-                                                    new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View v) {
-                                                            showBan(mContext, mToolbar,
-                                                                    submission,
-                                                                    reason.getText().toString(),
-                                                                    note.getText().toString(),
-                                                                    message.getText()
-                                                                            .toString(),
-                                                                    time.getText().toString());
-                                                        }
-                                                    });
-
-                                }
-
-                                if (s != null) {
-                                    LayoutUtils.showSnackbar(s);
-                                }
-                            }
-                        }.execute();
-                    }
-                })
+                        })
                 .setNegativeButton(R.string.btn_cancel, null)
                 .show();
-
     }
 
-    public static void distinguishComment(final Context mContext, final CommentViewHolder holder,
-            final Comment comment) {
+    public static void distinguishComment(
+            final Context mContext, final CommentViewHolder holder, final Comment comment) {
         new AsyncTask<Void, Void, Boolean>() {
 
             @Override
             public void onPostExecute(Boolean b) {
                 if (b) {
-                    Snackbar s = Snackbar.make(holder.itemView, R.string.comment_distinguished,
-                            Snackbar.LENGTH_LONG);
+                    Snackbar s =
+                            Snackbar.make(
+                                    holder.itemView,
+                                    R.string.comment_distinguished,
+                                    Snackbar.LENGTH_LONG);
                     LayoutUtils.showSnackbar(s);
                 } else {
                     new AlertDialog.Builder(mContext)
@@ -890,27 +1130,29 @@ public class CommentAdapterHelper {
             @Override
             protected Boolean doInBackground(Void... params) {
                 try {
-                    new ModerationManager(Authentication.reddit).setDistinguishedStatus(comment,
-                            DistinguishedStatus.MODERATOR);
+                    new ModerationManager(Authentication.reddit)
+                            .setDistinguishedStatus(comment, DistinguishedStatus.MODERATOR);
                 } catch (ApiException e) {
                     e.printStackTrace();
                     return false;
-
                 }
                 return true;
             }
         }.execute();
     }
 
-    public static void unDistinguishComment(final Context mContext, final CommentViewHolder holder,
-            final Comment comment) {
+    public static void unDistinguishComment(
+            final Context mContext, final CommentViewHolder holder, final Comment comment) {
         new AsyncTask<Void, Void, Boolean>() {
 
             @Override
             public void onPostExecute(Boolean b) {
                 if (b) {
-                    Snackbar s = Snackbar.make(holder.itemView, R.string.comment_undistinguished,
-                            Snackbar.LENGTH_LONG);
+                    Snackbar s =
+                            Snackbar.make(
+                                    holder.itemView,
+                                    R.string.comment_undistinguished,
+                                    Snackbar.LENGTH_LONG);
                     LayoutUtils.showSnackbar(s);
                 } else {
                     new AlertDialog.Builder(mContext)
@@ -923,27 +1165,29 @@ public class CommentAdapterHelper {
             @Override
             protected Boolean doInBackground(Void... params) {
                 try {
-                    new ModerationManager(Authentication.reddit).setDistinguishedStatus(comment,
-                            DistinguishedStatus.NORMAL);
+                    new ModerationManager(Authentication.reddit)
+                            .setDistinguishedStatus(comment, DistinguishedStatus.NORMAL);
                 } catch (ApiException e) {
                     e.printStackTrace();
                     return false;
-
                 }
                 return true;
             }
         }.execute();
     }
 
-    public static void stickyComment(final Context mContext, final CommentViewHolder holder,
-            final Comment comment) {
+    public static void stickyComment(
+            final Context mContext, final CommentViewHolder holder, final Comment comment) {
         new AsyncTask<Void, Void, Boolean>() {
 
             @Override
             public void onPostExecute(Boolean b) {
                 if (b) {
-                    Snackbar s = Snackbar.make(holder.itemView, R.string.comment_stickied,
-                            Snackbar.LENGTH_LONG);
+                    Snackbar s =
+                            Snackbar.make(
+                                    holder.itemView,
+                                    R.string.comment_stickied,
+                                    Snackbar.LENGTH_LONG);
                     LayoutUtils.showSnackbar(s);
                 } else {
                     new AlertDialog.Builder(mContext)
@@ -960,14 +1204,15 @@ public class CommentAdapterHelper {
                 } catch (ApiException e) {
                     e.printStackTrace();
                     return false;
-
                 }
                 return true;
             }
         }.execute();
     }
 
-    public static void viewReports(final Context mContext, final Map<String, Integer> reports,
+    public static void viewReports(
+            final Context mContext,
+            final Map<String, Integer> reports,
             final Map<String, String> reports2) {
         new AsyncTask<Void, Void, ArrayList<String>>() {
             @Override
@@ -996,8 +1241,11 @@ public class CommentAdapterHelper {
         }.execute();
     }
 
-    public static void doApproval(final Context mContext, final CommentViewHolder holder,
-            final Comment comment, final CommentAdapter adapter) {
+    public static void doApproval(
+            final Context mContext,
+            final CommentViewHolder holder,
+            final Comment comment,
+            final CommentAdapter adapter) {
         new AsyncTask<Void, Void, Boolean>() {
 
             @Override
@@ -1006,8 +1254,8 @@ public class CommentAdapterHelper {
                     adapter.approved.add(comment.getFullName());
                     adapter.removed.remove(comment.getFullName());
                     holder.content.setText(
-                            CommentAdapterHelper.getScoreString(comment, mContext, holder,
-                                    adapter.submission, adapter));
+                            CommentAdapterHelper.getScoreString(
+                                    comment, mContext, holder, adapter.submission, adapter));
                     Snackbar.make(holder.itemView, R.string.mod_approved, Snackbar.LENGTH_LONG)
                             .show();
 
@@ -1026,22 +1274,24 @@ public class CommentAdapterHelper {
                 } catch (ApiException e) {
                     e.printStackTrace();
                     return false;
-
                 }
                 return true;
             }
         }.execute();
     }
 
-    public static void unStickyComment(final Context mContext, final CommentViewHolder holder,
-            final Comment comment) {
+    public static void unStickyComment(
+            final Context mContext, final CommentViewHolder holder, final Comment comment) {
         new AsyncTask<Void, Void, Boolean>() {
 
             @Override
             public void onPostExecute(Boolean b) {
                 if (b) {
-                    Snackbar s = Snackbar.make(holder.itemView, R.string.comment_unstickied,
-                            Snackbar.LENGTH_LONG);
+                    Snackbar s =
+                            Snackbar.make(
+                                    holder.itemView,
+                                    R.string.comment_unstickied,
+                                    Snackbar.LENGTH_LONG);
                     LayoutUtils.showSnackbar(s);
                 } else {
                     new AlertDialog.Builder(mContext)
@@ -1058,29 +1308,35 @@ public class CommentAdapterHelper {
                 } catch (ApiException e) {
                     e.printStackTrace();
                     return false;
-
                 }
                 return true;
             }
         }.execute();
     }
 
-    public static void removeComment(final Context mContext, final CommentViewHolder holder,
-            final Comment comment, final CommentAdapter adapter, final boolean spam) {
+    public static void removeComment(
+            final Context mContext,
+            final CommentViewHolder holder,
+            final Comment comment,
+            final CommentAdapter adapter,
+            final boolean spam) {
         new AsyncTask<Void, Void, Boolean>() {
 
             @Override
             public void onPostExecute(Boolean b) {
                 if (b) {
-                    Snackbar s = Snackbar.make(holder.itemView, R.string.comment_removed,
-                            Snackbar.LENGTH_LONG);
+                    Snackbar s =
+                            Snackbar.make(
+                                    holder.itemView,
+                                    R.string.comment_removed,
+                                    Snackbar.LENGTH_LONG);
                     LayoutUtils.showSnackbar(s);
 
                     adapter.removed.add(comment.getFullName());
                     adapter.approved.remove(comment.getFullName());
                     holder.content.setText(
-                            CommentAdapterHelper.getScoreString(comment, mContext, holder,
-                                    adapter.submission, adapter));
+                            CommentAdapterHelper.getScoreString(
+                                    comment, mContext, holder, adapter.submission, adapter));
                 } else {
                     new AlertDialog.Builder(mContext)
                             .setTitle(R.string.err_general)
@@ -1096,7 +1352,6 @@ public class CommentAdapterHelper {
                 } catch (ApiException | NetworkException e) {
                     e.printStackTrace();
                     return false;
-
                 }
                 return true;
             }
@@ -1105,54 +1360,76 @@ public class CommentAdapterHelper {
 
     /**
      * Show a removal dialog to input a reason, then remove comment and post reason
+     *
      * @param mContext context
      * @param holder commentviewholder
      * @param comment comment
      * @param adapter commentadapter
      */
-    public static void doRemoveCommentReason(final Context mContext,
-            final CommentViewHolder holder, final Comment comment, final CommentAdapter adapter) {
-        new MaterialDialog.Builder(mContext).title(R.string.mod_remove_title)
+    public static void doRemoveCommentReason(
+            final Context mContext,
+            final CommentViewHolder holder,
+            final Comment comment,
+            final CommentAdapter adapter) {
+        new MaterialDialog.Builder(mContext)
+                .title(R.string.mod_remove_title)
                 .positiveText(R.string.btn_remove)
                 .alwaysCallInputCallback()
-                .input(mContext.getString(R.string.mod_remove_hint),
-                        mContext.getString(R.string.mod_remove_template), false,
+                .input(
+                        mContext.getString(R.string.mod_remove_hint),
+                        mContext.getString(R.string.mod_remove_template),
+                        false,
                         (dialog, input) -> {})
                 .inputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES)
                 .neutralText(R.string.mod_remove_insert_draft)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(final MaterialDialog dialog, DialogAction which) {
-                        removeCommentReason(comment, mContext, holder, adapter,
-                                dialog.getInputEditText().getText().toString());
-                    }
-                })
+                .onPositive(
+                        new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(final MaterialDialog dialog, DialogAction which) {
+                                removeCommentReason(
+                                        comment,
+                                        mContext,
+                                        holder,
+                                        adapter,
+                                        dialog.getInputEditText().getText().toString());
+                            }
+                        })
                 .negativeText(R.string.btn_cancel)
                 .show();
     }
 
     /**
      * Remove a comment and post a reason
+     *
      * @param comment comment
      * @param mContext context
      * @param holder commentviewholder
      * @param adapter commentadapter
      * @param reason reason
      */
-    public static void removeCommentReason(final Comment comment, final Context mContext, CommentViewHolder holder,
-            final CommentAdapter adapter, final String reason) {
+    public static void removeCommentReason(
+            final Comment comment,
+            final Context mContext,
+            CommentViewHolder holder,
+            final CommentAdapter adapter,
+            final String reason) {
         new AsyncTask<Void, Void, Boolean>() {
 
             @Override
             public void onPostExecute(Boolean b) {
                 if (b) {
-                    Snackbar s = Snackbar.make(holder.itemView, R.string.comment_removed, Snackbar.LENGTH_LONG);
+                    Snackbar s =
+                            Snackbar.make(
+                                    holder.itemView,
+                                    R.string.comment_removed,
+                                    Snackbar.LENGTH_LONG);
                     LayoutUtils.showSnackbar(s);
 
                     adapter.removed.add(comment.getFullName());
                     adapter.approved.remove(comment.getFullName());
-                    holder.content.setText(CommentAdapterHelper.getScoreString(comment, mContext, holder,
-                            adapter.submission, adapter));
+                    holder.content.setText(
+                            CommentAdapterHelper.getScoreString(
+                                    comment, mContext, holder, adapter.submission, adapter));
                 } else {
                     new AlertDialog.Builder(mContext)
                             .setTitle(R.string.err_general)
@@ -1166,9 +1443,10 @@ public class CommentAdapterHelper {
                 try {
                     new AccountManager(Authentication.reddit).reply(comment, reason);
                     new ModerationManager(Authentication.reddit).remove(comment, false);
-                    new ModerationManager(Authentication.reddit).setDistinguishedStatus(
-                            Authentication.reddit.get(comment.getFullName()).get(0),
-                            DistinguishedStatus.MODERATOR);
+                    new ModerationManager(Authentication.reddit)
+                            .setDistinguishedStatus(
+                                    Authentication.reddit.get(comment.getFullName()).get(0),
+                                    DistinguishedStatus.MODERATOR);
                 } catch (ApiException | NetworkException e) {
                     e.printStackTrace();
                     return false;
@@ -1178,15 +1456,21 @@ public class CommentAdapterHelper {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public static void lockUnlockComment(final Context mContext, final CommentViewHolder holder,
-            final Comment comment, final boolean lock) {
+    public static void lockUnlockComment(
+            final Context mContext,
+            final CommentViewHolder holder,
+            final Comment comment,
+            final boolean lock) {
         new AsyncTask<Void, Void, Boolean>() {
 
             @Override
             public void onPostExecute(Boolean b) {
                 if (b) {
-                    Snackbar s = Snackbar.make(holder.itemView, lock ? R.string.mod_locked : R.string.mod_unlocked,
-                            Snackbar.LENGTH_LONG);
+                    Snackbar s =
+                            Snackbar.make(
+                                    holder.itemView,
+                                    lock ? R.string.mod_locked : R.string.mod_unlocked,
+                                    Snackbar.LENGTH_LONG);
                     LayoutUtils.showSnackbar(s);
                 } else {
                     new AlertDialog.Builder(mContext)
@@ -1207,7 +1491,6 @@ public class CommentAdapterHelper {
                 } catch (ApiException e) {
                     e.printStackTrace();
                     return false;
-
                 }
                 return true;
             }
@@ -1218,12 +1501,15 @@ public class CommentAdapterHelper {
         SpannableStringBuilder removedString = new SpannableStringBuilder("\n");
         SpannableStringBuilder mod = new SpannableStringBuilder("Approved by ");
         mod.append(approvedBy);
-        mod.setSpan(new StyleSpan(Typeface.BOLD), 0, mod.length(),
+        mod.setSpan(
+                new StyleSpan(Typeface.BOLD), 0, mod.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mod.setSpan(
+                new RelativeSizeSpan(0.8f), 0, mod.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mod.setSpan(
+                new ForegroundColorSpan(c.getResources().getColor(R.color.md_green_300)),
+                0,
+                mod.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        mod.setSpan(new RelativeSizeSpan(0.8f), 0, mod.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        mod.setSpan(new ForegroundColorSpan(c.getResources().getColor(R.color.md_green_300)), 0,
-                mod.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         removedString.append(mod);
         return removedString;
     }
@@ -1232,66 +1518,99 @@ public class CommentAdapterHelper {
         SpannableStringBuilder removedString = new SpannableStringBuilder("\n");
         SpannableStringBuilder mod = new SpannableStringBuilder("Removed by ");
         if (removedBy.equalsIgnoreCase(
-                "true")) {//Probably shadowbanned or removed not by mod action
+                "true")) { // Probably shadowbanned or removed not by mod action
             mod = new SpannableStringBuilder("Removed by Reddit");
         } else {
             mod.append(removedBy);
         }
-        mod.setSpan(new StyleSpan(Typeface.BOLD), 0, mod.length(),
+        mod.setSpan(
+                new StyleSpan(Typeface.BOLD), 0, mod.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mod.setSpan(
+                new RelativeSizeSpan(0.8f), 0, mod.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mod.setSpan(
+                new ForegroundColorSpan(c.getResources().getColor(R.color.md_red_300)),
+                0,
+                mod.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        mod.setSpan(new RelativeSizeSpan(0.8f), 0, mod.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        mod.setSpan(new ForegroundColorSpan(c.getResources().getColor(R.color.md_red_300)), 0,
-                mod.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         removedString.append(mod);
         return removedString;
     }
 
-    public static Spannable getScoreString(Comment comment, Context mContext,
-            CommentViewHolder holder, Submission submission, CommentAdapter adapter) {
+    public static Spannable getScoreString(
+            Comment comment,
+            Context mContext,
+            CommentViewHolder holder,
+            Submission submission,
+            CommentAdapter adapter) {
         final String spacer =
                 " " + mContext.getString(R.string.submission_properties_seperator_comments) + " ";
         SpannableStringBuilder titleString =
-                new SpannableStringBuilder("\u200B");//zero width space to fix first span height
+                new SpannableStringBuilder("\u200B"); // zero width space to fix first span height
         SpannableStringBuilder author = new SpannableStringBuilder(comment.getAuthor());
         final int authorcolor = Palette.getFontColorUser(comment.getAuthor());
 
-        author.setSpan(new TypefaceSpan("sans-serif-condensed"), 0, author.length(),
+        author.setSpan(
+                new TypefaceSpan("sans-serif-condensed"),
+                0,
+                author.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        author.setSpan(new StyleSpan(Typeface.BOLD), 0, author.length(),
+        author.setSpan(
+                new StyleSpan(Typeface.BOLD),
+                0,
+                author.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         if (comment.getDistinguishedStatus() == DistinguishedStatus.ADMIN) {
             author.replace(0, author.length(), " " + comment.getAuthor() + " ");
             author.setSpan(
-                    new RoundedBackgroundSpan(mContext, android.R.color.white, R.color.md_red_300, false),
-                    0, author.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    new RoundedBackgroundSpan(
+                            mContext, android.R.color.white, R.color.md_red_300, false),
+                    0,
+                    author.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         } else if (comment.getDistinguishedStatus() == DistinguishedStatus.SPECIAL) {
             author.replace(0, author.length(), " " + comment.getAuthor() + " ");
             author.setSpan(
-                    new RoundedBackgroundSpan(mContext, android.R.color.white, R.color.md_red_500, false),
-                    0, author.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    new RoundedBackgroundSpan(
+                            mContext, android.R.color.white, R.color.md_red_500, false),
+                    0,
+                    author.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         } else if (comment.getDistinguishedStatus() == DistinguishedStatus.MODERATOR) {
             author.replace(0, author.length(), " " + comment.getAuthor() + " ");
             author.setSpan(
-                    new RoundedBackgroundSpan(mContext, android.R.color.white, R.color.md_green_300, false),
-                    0, author.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        } else if (Authentication.name != null && comment.getAuthor()
-                .toLowerCase(Locale.ENGLISH)
-                .equals(Authentication.name.toLowerCase(Locale.ENGLISH))) {
+                    new RoundedBackgroundSpan(
+                            mContext, android.R.color.white, R.color.md_green_300, false),
+                    0,
+                    author.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else if (Authentication.name != null
+                && comment.getAuthor()
+                        .toLowerCase(Locale.ENGLISH)
+                        .equals(Authentication.name.toLowerCase(Locale.ENGLISH))) {
             author.replace(0, author.length(), " " + comment.getAuthor() + " ");
             author.setSpan(
-                    new RoundedBackgroundSpan(mContext, android.R.color.white, R.color.md_deep_orange_300,
-                            false), 0, author.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        } else if (submission != null && comment.getAuthor()
-                .toLowerCase(Locale.ENGLISH)
-                .equals(submission.getAuthor().toLowerCase(Locale.ENGLISH)) && !comment.getAuthor()
-                .equals("[deleted]")) {
+                    new RoundedBackgroundSpan(
+                            mContext, android.R.color.white, R.color.md_deep_orange_300, false),
+                    0,
+                    author.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        } else if (submission != null
+                && comment.getAuthor()
+                        .toLowerCase(Locale.ENGLISH)
+                        .equals(submission.getAuthor().toLowerCase(Locale.ENGLISH))
+                && !comment.getAuthor().equals("[deleted]")) {
             author.replace(0, author.length(), " " + comment.getAuthor() + " ");
             author.setSpan(
-                    new RoundedBackgroundSpan(mContext, android.R.color.white, R.color.md_blue_300, false),
-                    0, author.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    new RoundedBackgroundSpan(
+                            mContext, android.R.color.white, R.color.md_blue_300, false),
+                    0,
+                    author.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         } else if (authorcolor != 0) {
-            author.setSpan(new ForegroundColorSpan(authorcolor), 0, author.length(),
+            author.setSpan(
+                    new ForegroundColorSpan(authorcolor),
+                    0,
+                    author.length(),
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
@@ -1324,10 +1643,17 @@ public class CommentAdapterHelper {
             score = new SpannableStringBuilder("0");
         }
         if (!scoreText.contains("[")) {
-            score.append(String.format(Locale.getDefault(), " %s", mContext.getResources()
-                    .getQuantityString(R.plurals.points, comment.getScore())));
+            score.append(
+                    String.format(
+                            Locale.getDefault(),
+                            " %s",
+                            mContext.getResources()
+                                    .getQuantityString(R.plurals.points, comment.getScore())));
         }
-        score.setSpan(new ForegroundColorSpan(scoreColor), 0, score.length(),
+        score.setSpan(
+                new ForegroundColorSpan(scoreColor),
+                0,
+                score.length(),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         titleString.append(score);
@@ -1338,78 +1664,121 @@ public class CommentAdapterHelper {
         long time = comment.getCreated().getTime();
         String timeAgo = TimeUtils.getTimeAgo(time, mContext);
 
-        SpannableStringBuilder timeSpan = new SpannableStringBuilder().append(
-                (timeAgo == null || timeAgo.isEmpty()) ? "just now" : timeAgo);
+        SpannableStringBuilder timeSpan =
+                new SpannableStringBuilder()
+                        .append((timeAgo == null || timeAgo.isEmpty()) ? "just now" : timeAgo);
 
         if (SettingValues.highlightTime
                 && adapter.lastSeen != 0
                 && adapter.lastSeen < time
                 && !adapter.dataSet.single
                 && SettingValues.commentLastVisit) {
-            timeSpan.setSpan(new RoundedBackgroundSpan(Color.WHITE,
-                            Palette.getColor(comment.getSubredditName()), false, mContext), 0,
-                    timeSpan.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
+            timeSpan.setSpan(
+                    new RoundedBackgroundSpan(
+                            Color.WHITE,
+                            Palette.getColor(comment.getSubredditName()),
+                            false,
+                            mContext),
+                    0,
+                    timeSpan.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         titleString.append(timeSpan);
 
-        titleString.append(((comment.getEditDate() != null) ? " (edit " + TimeUtils.getTimeAgo(
-                comment.getEditDate().getTime(), mContext) + ")" : ""));
+        titleString.append(
+                ((comment.getEditDate() != null)
+                        ? " (edit "
+                                + TimeUtils.getTimeAgo(comment.getEditDate().getTime(), mContext)
+                                + ")"
+                        : ""));
         titleString.append("  ");
 
         if (comment.getDataNode().get("stickied").asBoolean()) {
-            SpannableStringBuilder pinned = new SpannableStringBuilder("\u00A0"
-                    + mContext.getString(R.string.submission_stickied).toUpperCase()
-                    + "\u00A0");
+            SpannableStringBuilder pinned =
+                    new SpannableStringBuilder(
+                            "\u00A0"
+                                    + mContext.getString(R.string.submission_stickied).toUpperCase()
+                                    + "\u00A0");
             pinned.setSpan(
-                    new RoundedBackgroundSpan(mContext, android.R.color.white, R.color.md_green_300, false),
-                    0, pinned.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    new RoundedBackgroundSpan(
+                            mContext, android.R.color.white, R.color.md_green_300, false),
+                    0,
+                    pinned.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             titleString.append(pinned);
             titleString.append(" ");
         }
-        if (!SettingValues.hideCommentAwards && (comment.getTimesSilvered() > 0 || comment.getTimesGilded() > 0  || comment.getTimesPlatinized() > 0)) {
-            TypedArray a = mContext.obtainStyledAttributes(
-                    new FontPreferences(mContext).getPostFontStyle().getResId(),
-                    R.styleable.FontStyle);
+        if (!SettingValues.hideCommentAwards
+                && (comment.getTimesSilvered() > 0
+                        || comment.getTimesGilded() > 0
+                        || comment.getTimesPlatinized() > 0)) {
+            TypedArray a =
+                    mContext.obtainStyledAttributes(
+                            new FontPreferences(mContext).getPostFontStyle().getResId(),
+                            R.styleable.FontStyle);
             int fontsize =
                     (int) (a.getDimensionPixelSize(R.styleable.FontStyle_font_cardtitle, -1) * .75);
             a.recycle();
             // Add silver, gold, platinum icons and counts in that order
-            MiscUtil.addCommentAwards(mContext, fontsize, titleString, comment.getTimesSilvered(), adapter.awardIcons[0]);
-            MiscUtil.addCommentAwards(mContext, fontsize, titleString, comment.getTimesGilded(), adapter.awardIcons[1]);
-            MiscUtil.addCommentAwards(mContext, fontsize, titleString, comment.getTimesPlatinized(), adapter.awardIcons[2]);
+            MiscUtil.addCommentAwards(
+                    mContext,
+                    fontsize,
+                    titleString,
+                    comment.getTimesSilvered(),
+                    adapter.awardIcons[0]);
+            MiscUtil.addCommentAwards(
+                    mContext,
+                    fontsize,
+                    titleString,
+                    comment.getTimesGilded(),
+                    adapter.awardIcons[1]);
+            MiscUtil.addCommentAwards(
+                    mContext,
+                    fontsize,
+                    titleString,
+                    comment.getTimesPlatinized(),
+                    adapter.awardIcons[2]);
         }
         if (UserTags.isUserTagged(comment.getAuthor())) {
-            SpannableStringBuilder pinned = new SpannableStringBuilder(
-                    "\u00A0" + UserTags.getUserTag(comment.getAuthor()) + "\u00A0");
+            SpannableStringBuilder pinned =
+                    new SpannableStringBuilder(
+                            "\u00A0" + UserTags.getUserTag(comment.getAuthor()) + "\u00A0");
             pinned.setSpan(
-                    new RoundedBackgroundSpan(mContext, android.R.color.white, R.color.md_blue_500, false),
-                    0, pinned.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    new RoundedBackgroundSpan(
+                            mContext, android.R.color.white, R.color.md_blue_500, false),
+                    0,
+                    pinned.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             titleString.append(pinned);
             titleString.append(" ");
         }
         if (UserSubscriptions.friends.contains(comment.getAuthor())) {
-            SpannableStringBuilder pinned = new SpannableStringBuilder(
-                    "\u00A0" + mContext.getString(R.string.profile_friend) + "\u00A0");
+            SpannableStringBuilder pinned =
+                    new SpannableStringBuilder(
+                            "\u00A0" + mContext.getString(R.string.profile_friend) + "\u00A0");
             pinned.setSpan(
-                    new RoundedBackgroundSpan(mContext, android.R.color.white, R.color.md_deep_orange_500,
-                            false), 0, pinned.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    new RoundedBackgroundSpan(
+                            mContext, android.R.color.white, R.color.md_deep_orange_500, false),
+                    0,
+                    pinned.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             titleString.append(pinned);
             titleString.append(" ");
         }
-        if (comment.getAuthorFlair() != null && (comment.getAuthorFlair().getText() != null
-                || comment.getAuthorFlair().getCssClass() != null)) {
+        if (comment.getAuthorFlair() != null
+                && (comment.getAuthorFlair().getText() != null
+                        || comment.getAuthorFlair().getCssClass() != null)) {
 
             String flairText = null;
-            if (comment.getAuthorFlair() != null &&
-                    comment.getAuthorFlair().getText() != null &&
-                    !comment.getAuthorFlair().getText().isEmpty()) {
+            if (comment.getAuthorFlair() != null
+                    && comment.getAuthorFlair().getText() != null
+                    && !comment.getAuthorFlair().getText().isEmpty()) {
 
                 flairText = comment.getAuthorFlair().getText();
 
-            } else if (comment.getAuthorFlair() != null &&
-                    comment.getAuthorFlair().getCssClass() != null &&
-                    !comment.getAuthorFlair().getCssClass().isEmpty()) {
+            } else if (comment.getAuthorFlair() != null
+                    && comment.getAuthorFlair().getCssClass() != null
+                    && !comment.getAuthorFlair().getCssClass().isEmpty()) {
 
                 flairText = comment.getAuthorFlair().getCssClass();
             }
@@ -1420,28 +1789,40 @@ public class CommentAdapterHelper {
                 theme.resolveAttribute(R.attr.activity_background, typedValue, true);
                 int color = typedValue.data;
                 SpannableStringBuilder pinned =
-                        new SpannableStringBuilder("\u00A0" + CompatUtil.fromHtml(flairText) + "\u00A0");
+                        new SpannableStringBuilder(
+                                "\u00A0" + CompatUtil.fromHtml(flairText) + "\u00A0");
                 pinned.setSpan(
-                        new RoundedBackgroundSpan(holder.firstTextView.getCurrentTextColor(), color,
-                                false, mContext), 0, pinned.length(),
+                        new RoundedBackgroundSpan(
+                                holder.firstTextView.getCurrentTextColor(), color, false, mContext),
+                        0,
+                        pinned.length(),
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 titleString.append(pinned);
                 titleString.append(" ");
             }
         }
 
-        ToolboxUI.appendToolboxNote(mContext, titleString, comment.getSubredditName(), comment.getAuthor());
+        ToolboxUI.appendToolboxNote(
+                mContext, titleString, comment.getSubredditName(), comment.getAuthor());
 
-        if (adapter.removed.contains(comment.getFullName()) || (comment.getBannedBy() != null
-                && !adapter.approved.contains(comment.getFullName()))) {
-            titleString.append(CommentAdapterHelper.createRemovedLine(
-                    (comment.getBannedBy() == null) ? Authentication.name : comment.getBannedBy(),
-                    mContext));
-        } else if (adapter.approved.contains(comment.getFullName()) || (comment.getApprovedBy()
-                != null && !adapter.removed.contains(comment.getFullName()))) {
-            titleString.append(CommentAdapterHelper.createApprovedLine(
-                    (comment.getApprovedBy() == null) ? Authentication.name
-                            : comment.getApprovedBy(), mContext));
+        if (adapter.removed.contains(comment.getFullName())
+                || (comment.getBannedBy() != null
+                        && !adapter.approved.contains(comment.getFullName()))) {
+            titleString.append(
+                    CommentAdapterHelper.createRemovedLine(
+                            (comment.getBannedBy() == null)
+                                    ? Authentication.name
+                                    : comment.getBannedBy(),
+                            mContext));
+        } else if (adapter.approved.contains(comment.getFullName())
+                || (comment.getApprovedBy() != null
+                        && !adapter.removed.contains(comment.getFullName()))) {
+            titleString.append(
+                    CommentAdapterHelper.createApprovedLine(
+                            (comment.getApprovedBy() == null)
+                                    ? Authentication.name
+                                    : comment.getApprovedBy(),
+                            mContext));
         }
         return titleString;
     }
@@ -1449,23 +1830,25 @@ public class CommentAdapterHelper {
     public static int getScoreText(Comment comment) {
         int submissionScore = comment.getScore();
         switch (ActionStates.getVoteDirection(comment)) {
-            case UPVOTE: {
-                if (comment.getVote() != VoteDirection.UPVOTE) {
-                    if (comment.getVote() == VoteDirection.DOWNVOTE) ++submissionScore;
-                    ++submissionScore; // offset the score by +1
+            case UPVOTE:
+                {
+                    if (comment.getVote() != VoteDirection.UPVOTE) {
+                        if (comment.getVote() == VoteDirection.DOWNVOTE) ++submissionScore;
+                        ++submissionScore; // offset the score by +1
+                    }
+                    break;
                 }
-                break;
-            }
-            case DOWNVOTE: {
-                if (comment.getVote() != VoteDirection.DOWNVOTE) {
-                    if (comment.getVote() == VoteDirection.UPVOTE) --submissionScore;
-                    --submissionScore; // offset the score by +1
+            case DOWNVOTE:
+                {
+                    if (comment.getVote() != VoteDirection.DOWNVOTE) {
+                        if (comment.getVote() == VoteDirection.UPVOTE) --submissionScore;
+                        --submissionScore; // offset the score by +1
+                    }
+                    break;
                 }
-                break;
-            }
             case NO_VOTE:
-                if (comment.getVote() == VoteDirection.UPVOTE && comment.getAuthor()
-                        .equalsIgnoreCase(Authentication.name)) {
+                if (comment.getVote() == VoteDirection.UPVOTE
+                        && comment.getAuthor().equalsIgnoreCase(Authentication.name)) {
                     submissionScore--;
                 }
                 break;
@@ -1473,67 +1856,88 @@ public class CommentAdapterHelper {
         return submissionScore;
     }
 
-    public static void doCommentEdit(final CommentAdapter adapter, final Context mContext,
-            FragmentManager fm, final CommentNode baseNode, String replyText,
+    public static void doCommentEdit(
+            final CommentAdapter adapter,
+            final Context mContext,
+            FragmentManager fm,
+            final CommentNode baseNode,
+            String replyText,
             final CommentViewHolder holder) {
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
 
         final View dialoglayout = inflater.inflate(R.layout.edit_comment, null);
 
-
         final EditText e = dialoglayout.findViewById(R.id.entry);
         e.setText(StringEscapeUtils.unescapeHtml4(baseNode.getComment().getBody()));
 
-        DoEditorActions.doActions(e, dialoglayout, fm, (Activity) mContext,
-                StringEscapeUtils.unescapeHtml4(replyText), null);
+        DoEditorActions.doActions(
+                e,
+                dialoglayout,
+                fm,
+                (Activity) mContext,
+                StringEscapeUtils.unescapeHtml4(replyText),
+                null);
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
-                .setCancelable(false)
-                .setView(dialoglayout);
+        final AlertDialog.Builder builder =
+                new AlertDialog.Builder(mContext).setCancelable(false).setView(dialoglayout);
         final Dialog d = builder.create();
         d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         d.show();
-        dialoglayout.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                d.dismiss();
-            }
-        });
-        dialoglayout.findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String text = e.getText().toString();
-                new AsyncEditTask(adapter, baseNode, text, mContext, d, holder).executeOnExecutor(
-                        AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-        });
-
+        dialoglayout
+                .findViewById(R.id.cancel)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                d.dismiss();
+                            }
+                        });
+        dialoglayout
+                .findViewById(R.id.submit)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final String text = e.getText().toString();
+                                new AsyncEditTask(adapter, baseNode, text, mContext, d, holder)
+                                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            }
+                        });
     }
 
-    public static void deleteComment(final CommentAdapter adapter, final Context mContext,
-            final CommentNode baseNode, final CommentViewHolder holder) {
+    public static void deleteComment(
+            final CommentAdapter adapter,
+            final Context mContext,
+            final CommentNode baseNode,
+            final CommentViewHolder holder) {
         new AlertDialog.Builder(mContext)
                 .setTitle(R.string.comment_delete)
                 .setMessage(R.string.comment_delete_msg)
-                .setPositiveButton(R.string.btn_yes, (dialog, which) ->
-                        new AsyncDeleteTask(adapter, baseNode, holder, mContext)
-                                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR))
-                .setNegativeButton(R.string.btn_no, (dialog, which) ->
-                        dialog.dismiss())
+                .setPositiveButton(
+                        R.string.btn_yes,
+                        (dialog, which) ->
+                                new AsyncDeleteTask(adapter, baseNode, holder, mContext)
+                                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR))
+                .setNegativeButton(R.string.btn_no, (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
     public static class AsyncEditTask extends AsyncTask<Void, Void, Void> {
-        CommentAdapter    adapter;
-        CommentNode       baseNode;
-        String            text;
-        Context           mContext;
-        Dialog            dialog;
+        CommentAdapter adapter;
+        CommentNode baseNode;
+        String text;
+        Context mContext;
+        Dialog dialog;
         CommentViewHolder holder;
 
-        public AsyncEditTask(CommentAdapter adapter, CommentNode baseNode, String text,
-                Context mContext, Dialog dialog, CommentViewHolder holder) {
+        public AsyncEditTask(
+                CommentAdapter adapter,
+                CommentNode baseNode,
+                String text,
+                Context mContext,
+                Dialog dialog,
+                CommentViewHolder holder) {
             this.adapter = adapter;
             this.baseNode = baseNode;
             this.text = text;
@@ -1545,44 +1949,58 @@ public class CommentAdapterHelper {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                new AccountManager(Authentication.reddit).updateContribution(baseNode.getComment(),
-                        text);
+                new AccountManager(Authentication.reddit)
+                        .updateContribution(baseNode.getComment(), text);
                 adapter.currentSelectedItem = baseNode.getComment().getFullName();
                 CommentNode n = baseNode.notifyCommentChanged(Authentication.reddit);
                 adapter.editComment(n, holder);
                 dialog.dismiss();
             } catch (Exception e) {
                 e.printStackTrace();
-                ((Activity) mContext).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        new AlertDialog.Builder(mContext)
-                                .setTitle(R.string.comment_delete_err)
-                                .setMessage(R.string.comment_delete_err_msg)
-                                .setPositiveButton(R.string.btn_yes, (dialog, which) -> {
-                                    dialog.dismiss();
-                                    new AsyncEditTask(adapter, baseNode, text, mContext,
-                                            AsyncEditTask.this.dialog, holder)
-                                            .execute();
-                                })
-                                .setNegativeButton(R.string.btn_no, (dialog, which) ->
-                                        dialog.dismiss())
-                                .show();
-                    }
-                });
+                ((Activity) mContext)
+                        .runOnUiThread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        new AlertDialog.Builder(mContext)
+                                                .setTitle(R.string.comment_delete_err)
+                                                .setMessage(R.string.comment_delete_err_msg)
+                                                .setPositiveButton(
+                                                        R.string.btn_yes,
+                                                        (dialog, which) -> {
+                                                            dialog.dismiss();
+                                                            new AsyncEditTask(
+                                                                            adapter,
+                                                                            baseNode,
+                                                                            text,
+                                                                            mContext,
+                                                                            AsyncEditTask.this
+                                                                                    .dialog,
+                                                                            holder)
+                                                                    .execute();
+                                                        })
+                                                .setNegativeButton(
+                                                        R.string.btn_no,
+                                                        (dialog, which) -> dialog.dismiss())
+                                                .show();
+                                    }
+                                });
             }
             return null;
         }
     }
 
     public static class AsyncDeleteTask extends AsyncTask<Void, Void, Boolean> {
-        CommentAdapter    adapter;
-        CommentNode       baseNode;
+        CommentAdapter adapter;
+        CommentNode baseNode;
         CommentViewHolder holder;
-        Context           mContext;
+        Context mContext;
 
-        public AsyncDeleteTask(CommentAdapter adapter, CommentNode baseNode,
-                CommentViewHolder holder, Context mContext) {
+        public AsyncDeleteTask(
+                CommentAdapter adapter,
+                CommentNode baseNode,
+                CommentViewHolder holder,
+                Context mContext) {
             this.adapter = adapter;
             this.baseNode = baseNode;
             this.holder = holder;
@@ -1598,12 +2016,13 @@ public class CommentAdapterHelper {
                 new AlertDialog.Builder(mContext)
                         .setTitle(R.string.comment_delete_err)
                         .setMessage(R.string.comment_delete_err_msg)
-                        .setPositiveButton(R.string.btn_yes, (dialog, which) -> {
-                            dialog.dismiss();
-                            doInBackground();
-                        })
-                        .setNegativeButton(R.string.btn_no, (dialog, which) ->
-                                dialog.dismiss())
+                        .setPositiveButton(
+                                R.string.btn_yes,
+                                (dialog, which) -> {
+                                    dialog.dismiss();
+                                    doInBackground();
+                                })
+                        .setNegativeButton(R.string.btn_no, (dialog, which) -> dialog.dismiss())
                         .show();
             }
         }
@@ -1623,7 +2042,7 @@ public class CommentAdapterHelper {
 
     public static class AsyncReportTask extends AsyncTask<String, Void, Void> {
         private CommentNode baseNode;
-        private View        contextView;
+        private View contextView;
 
         public AsyncReportTask(CommentNode baseNode, View contextView) {
             this.baseNode = baseNode;
@@ -1653,16 +2072,17 @@ public class CommentAdapterHelper {
         ValueAnimator animator = ValueAnimator.ofFloat(0, 1f);
         animator.setDuration(250);
         animator.setInterpolator(new FastOutSlowInInterpolator());
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        animator.addUpdateListener(
+                new ValueAnimator.AnimatorUpdateListener() {
 
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (Float) animation.getAnimatedValue();
-                v.setAlpha(value);
-                v.setScaleX(value);
-                v.setScaleY(value);
-            }
-        });
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        float value = (Float) animation.getAnimatedValue();
+                        v.setAlpha(value);
+                        v.setScaleX(value);
+                        v.setScaleY(value);
+                    }
+                });
 
         animator.start();
     }
@@ -1671,32 +2091,31 @@ public class CommentAdapterHelper {
         ValueAnimator animator = ValueAnimator.ofFloat(1f, 0);
         animator.setDuration(250);
         animator.setInterpolator(new FastOutSlowInInterpolator());
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        animator.addUpdateListener(
+                new ValueAnimator.AnimatorUpdateListener() {
 
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        float value = (Float) animation.getAnimatedValue();
+                        v.setAlpha(value);
+                        v.setScaleX(value);
+                        v.setScaleY(value);
+                    }
+                });
 
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (Float) animation.getAnimatedValue();
-                v.setAlpha(value);
-                v.setScaleX(value);
-                v.setScaleY(value);
+        animator.addListener(
+                new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator arg0) {
+                        v.setVisibility(View.GONE);
+                    }
 
-            }
-        });
-
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator arg0) {
-                v.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator arg0) {
-                v.setVisibility(View.GONE);
-            }
-        });
+                    @Override
+                    public void onAnimationCancel(Animator arg0) {
+                        v.setVisibility(View.GONE);
+                    }
+                });
 
         animator.start();
     }
-
 }

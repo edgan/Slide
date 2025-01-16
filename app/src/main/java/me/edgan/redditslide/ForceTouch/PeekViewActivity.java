@@ -11,7 +11,6 @@ import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.util.DisplayUtil;
 
-
 public class PeekViewActivity extends AppCompatActivity {
 
     private PeekView peekView;
@@ -29,7 +28,7 @@ public class PeekViewActivity extends AppCompatActivity {
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (peekView != null && event.getAction() == MotionEvent.ACTION_UP) {
 
-            if(Reddit.peek){
+            if (Reddit.peek) {
                 peekView.pop();
                 peekView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                 Reddit.peek = false;
@@ -47,9 +46,9 @@ public class PeekViewActivity extends AppCompatActivity {
 
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 params.topMargin = (int) -((origY - event.getY()) / 5);
-                if( false && event.getY() < (2* origY) / 3) {
+                if (false && event.getY() < (2 * origY) / 3) {
                     params.leftMargin = twelve - (int) ((origY - event.getY())) / 2;
-                    params.rightMargin =  twelve -(int)((origY - event.getY()) )  / 2;
+                    params.rightMargin = twelve - (int) ((origY - event.getY())) / 2;
                 } else {
                     params.leftMargin = twelve;
                     params.rightMargin = twelve;
@@ -58,12 +57,13 @@ public class PeekViewActivity extends AppCompatActivity {
                 if (event.getY() < (origY) / 2 && !Reddit.peek) {
                     peekView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                     Reddit.peek = true;
-                } else if(event.getY() > (origY) / 2){
+                } else if (event.getY() > (origY) / 2) {
                     Reddit.peek = false;
                 }
                 peek.setLayoutParams(params);
             }
-            // we don't want to pass along the touch event or else it will just scroll under the PeekView
+            // we don't want to pass along the touch event or else it will just scroll under the
+            // PeekView
             return false;
         } else if (event.getAction() == MotionEvent.ACTION_MOVE && Reddit.peek) {
             return false;
@@ -71,7 +71,7 @@ public class PeekViewActivity extends AppCompatActivity {
 
         try {
             return super.dispatchTouchEvent(event);
-        } catch(Exception e){
+        } catch (Exception e) {
             return false;
         }
     }

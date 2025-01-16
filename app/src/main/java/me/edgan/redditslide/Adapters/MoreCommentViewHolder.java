@@ -7,9 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import me.edgan.redditslide.R;
 
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class MoreCommentViewHolder extends RecyclerView.ViewHolder {
     public final TextView content;
     public final View loading;

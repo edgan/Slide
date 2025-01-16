@@ -16,12 +16,6 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import net.dean.jraw.models.Submission;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import me.edgan.redditslide.Adapters.MultiredditPosts;
 import me.edgan.redditslide.Adapters.SubmissionDisplay;
 import me.edgan.redditslide.Adapters.SubredditPosts;
@@ -33,24 +27,29 @@ import me.edgan.redditslide.PostLoader;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
-import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.KeyboardUtil;
+
+import net.dean.jraw.models.Submission;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * This activity is responsible for the view when clicking on a post, showing the post and its
  * comments underneath with the slide left/right for the next post.
- * <p/>
- * When the end of the currently loaded posts is being reached, more posts are loaded asynchronously
- * in {@link CommentsScreenPagerAdapter}.
- * <p/>
- * Comments are displayed in the {@link CommentPage} fragment.
- * <p/>
- * Created by ccrama on 9/17/2015.
+ *
+ * <p>When the end of the currently loaded posts is being reached, more posts are loaded
+ * asynchronously in {@link CommentsScreenPagerAdapter}.
+ *
+ * <p>Comments are displayed in the {@link CommentPage} fragment.
+ *
+ * <p>Created by ccrama on 9/17/2015.
  */
 public class CommentsScreen extends BaseActivityAnim implements SubmissionDisplay {
-    public static final String EXTRA_PROFILE     = "profile";
-    public static final String EXTRA_PAGE        = "page";
-    public static final String EXTRA_SUBREDDIT   = "subreddit";
+    public static final String EXTRA_PROFILE = "profile";
+    public static final String EXTRA_PAGE = "page";
+    public static final String EXTRA_SUBREDDIT = "subreddit";
     public static final String EXTRA_MULTIREDDIT = "multireddit";
 
     public ArrayList<Submission> currentPosts;
@@ -96,9 +95,7 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
             Reddit.appRestart.edit().putBoolean("tutorialSwipeComment", true).apply();
         } else if (!Reddit.appRestart.contains("tutorial_comm")) {
             Reddit.appRestart.edit().putBoolean("tutorial_comm", true).apply();
-
         }
-
     }
 
     @Override
@@ -110,20 +107,19 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
         }
         if (requestCode == 333) {
             Reddit.appRestart.edit().putBoolean("tutorialSwipeComments", true).apply();
-
         }
     }
 
-    public int                currentPage;
+    public int currentPage;
     public ArrayList<Integer> seen;
 
     public boolean popup;
 
     @Override
     public void onCreate(Bundle savedInstance) {
-        popup = getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE
-                && !SettingValues.fullCommentOverride;
+        popup =
+                getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
+                        && !SettingValues.fullCommentOverride;
         seen = new ArrayList<>();
         if (popup) {
             disableSwipeBackLayout();
@@ -161,13 +157,15 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
             firstPage = 0;
             // IS SINGLE POST
         } else {
-            OfflineSubreddit o = OfflineSubreddit.getSubreddit(
-                    multireddit == null ? baseSubreddit : "multi" + multireddit,
-                    OfflineSubreddit.currentid, !Authentication.didOnline, CommentsScreen.this);
+            OfflineSubreddit o =
+                    OfflineSubreddit.getSubreddit(
+                            multireddit == null ? baseSubreddit : "multi" + multireddit,
+                            OfflineSubreddit.currentid,
+                            !Authentication.didOnline,
+                            CommentsScreen.this);
             subredditPosts.getPosts().addAll(o.submissions);
             currentPosts.addAll(subredditPosts.getPosts());
         }
-
 
         if (getIntent().hasExtra("fullname")) {
             String fullname = getIntent().getStringExtra("fullname");
@@ -178,7 +176,6 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
                 }
             }
         }
-
 
         if (currentPosts.isEmpty()
                 || currentPosts.size() < firstPage
@@ -196,97 +193,94 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
 
             pager.setCurrentItem(0);
 
-            pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                @Override
-                public void onPageSelected(int position) {
-                    if (position != firstPage && position < currentPosts.size()) {
-                        position = position - 1;
-                        if (position < 0) position = 0;
-                        updateSubredditAndSubmission(currentPosts.get(position));
+            pager.addOnPageChangeListener(
+                    new ViewPager.SimpleOnPageChangeListener() {
+                        @Override
+                        public void onPageSelected(int position) {
+                            if (position != firstPage && position < currentPosts.size()) {
+                                position = position - 1;
+                                if (position < 0) position = 0;
+                                updateSubredditAndSubmission(currentPosts.get(position));
 
-                        if (currentPosts.size() - 2 <= position && subredditPosts.hasMore()) {
-                            subredditPosts.loadMore(CommentsScreen.this.getApplicationContext(),
-                                    CommentsScreen.this, false);
+                                if (currentPosts.size() - 2 <= position
+                                        && subredditPosts.hasMore()) {
+                                    subredditPosts.loadMore(
+                                            CommentsScreen.this.getApplicationContext(),
+                                            CommentsScreen.this,
+                                            false);
+                                }
+
+                                currentPage = position;
+                                seen.add(position);
+
+                                Bundle conData = new Bundle();
+                                conData.putIntegerArrayList("seen", seen);
+                                conData.putInt("lastPage", position);
+                                Intent intent = new Intent();
+                                intent.putExtras(conData);
+                                setResult(RESULT_OK, intent);
+                            }
                         }
-
-                        currentPage = position;
-                        seen.add(position);
-
-                        Bundle conData = new Bundle();
-                        conData.putIntegerArrayList("seen", seen);
-                        conData.putInt("lastPage", position);
-                        Intent intent = new Intent();
-                        intent.putExtras(conData);
-                        setResult(RESULT_OK, intent);
-                    }
-                }
-            }
-
-            );
-
+                    });
         }
         if (!Reddit.appRestart.contains("tutorialSwipeComments")) {
             Intent i = new Intent(this, SwipeTutorial.class);
-            i.putExtra("subtitle",
-                    "Swipe from the left edge to exit comments.\n\n" +
-                    "You can swipe in the middle to get to the previous/next submission.");
+            i.putExtra(
+                    "subtitle",
+                    "Swipe from the left edge to exit comments.\n\n"
+                        + "You can swipe in the middle to get to the previous/next submission.");
             startActivityForResult(i, 333);
         }
     }
 
-
     private void updateSubredditAndSubmission(Submission post) {
         subreddit = post.getSubredditName();
-        if(post.getSubredditName() == null){
+        if (post.getSubredditName() == null) {
             subreddit = "Promoted";
         }
         themeSystemBars(subreddit);
         setRecentBar(subreddit);
     }
 
-
     @Override
     public void updateSuccess(final List<Submission> submissions, final int startIndex) {
         if (SettingValues.storeHistory) LastComments.setCommentsSince(submissions);
         currentPosts.clear();
         currentPosts.addAll(submissions);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (startIndex != -1) {
-                    // TODO determine correct behaviour
-                    // comments.notifyItemRangeInserted(startIndex, posts.posts.size());
-                    comments.notifyDataSetChanged();
-                } else {
-                    comments.notifyDataSetChanged();
-                }
-
-            }
-        });
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if (startIndex != -1) {
+                            // TODO determine correct behaviour
+                            // comments.notifyItemRangeInserted(startIndex, posts.posts.size());
+                            comments.notifyDataSetChanged();
+                        } else {
+                            comments.notifyDataSetChanged();
+                        }
+                    }
+                });
     }
 
     @Override
     public void updateOffline(List<Submission> submissions, final long cacheTime) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                comments.notifyDataSetChanged();
-            }
-        });
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        comments.notifyDataSetChanged();
+                    }
+                });
     }
 
     @Override
-    public void updateOfflineError() {
-    }
+    public void updateOfflineError() {}
 
     @Override
-    public void updateError() {
-    }
+    public void updateError() {}
 
     @Override
-    public void updateViews() {
-
-    }
+    public void updateViews() {}
 
     @Override
     public void onAdapterUpdated() {
@@ -294,7 +288,7 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
     }
 
     private class CommentsScreenPagerAdapter extends FragmentStatePagerAdapter {
-        private CommentPage   mCurrentFragment;
+        private CommentPage mCurrentFragment;
 
         CommentsScreenPagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -305,7 +299,8 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
         }
 
         @Override
-        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        public void setPrimaryItem(
+                @NonNull ViewGroup container, int position, @NonNull Object object) {
             super.setPrimaryItem(container, position, object);
             if (getCurrentFragment() != object && object instanceof CommentPage) {
                 mCurrentFragment = (CommentPage) object;
@@ -323,13 +318,13 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
             String name = currentPosts.get(i).getFullName();
             args.putString("id", name.substring(3));
             args.putBoolean("archived", currentPosts.get(i).isArchived());
-            args.putBoolean("contest",
-                    currentPosts.get(i).getDataNode().get("contest_mode").asBoolean());
+            args.putBoolean(
+                    "contest", currentPosts.get(i).getDataNode().get("contest_mode").asBoolean());
             args.putBoolean("locked", currentPosts.get(i).isLocked());
             args.putInt("page", i);
             args.putString("subreddit", currentPosts.get(i).getSubredditName());
-            args.putString("baseSubreddit",
-                    multireddit == null ? baseSubreddit : "multi" + multireddit);
+            args.putString(
+                    "baseSubreddit", multireddit == null ? baseSubreddit : "multi" + multireddit);
 
             f.setArguments(args);
             return f;

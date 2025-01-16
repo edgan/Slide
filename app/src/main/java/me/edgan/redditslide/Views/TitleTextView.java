@@ -9,9 +9,7 @@ import com.devspark.robototextview.RobotoTypefaces;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.Visuals.FontPreferences;
 
-/**
- * Created by carlo_000 on 1/10/2016.
- */
+/** Created by carlo_000 on 1/10/2016. */
 public class TitleTextView extends SpoilerRobotoTextView {
     public TitleTextView(Context c) {
         super(c);
@@ -40,5 +38,4 @@ public class TitleTextView extends SpoilerRobotoTextView {
             setTypeface(typeface);
         }
     }
-
 }

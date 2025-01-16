@@ -9,15 +9,13 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.Set;
 
-/**
- * Created by carlo_000 on 1/13/2016.
- */
+/** Created by carlo_000 on 1/13/2016. */
 public class PostMatch {
     /**
      * Checks if a string is totally or partially contained in a set of strings
      *
-     * @param target     string to check
-     * @param strings    set of strings to check in
+     * @param target string to check
+     * @param strings set of strings to check in
      * @param totalMatch only allow total match, no partial matches
      * @return if the string is contained in the set of strings
      */
@@ -41,12 +39,13 @@ public class PostMatch {
      * Checks if a domain should be filtered or not: returns true if the target domain ends with the
      * comparison domain and if supplied, target path begins with the comparison path
      *
-     * @param target  URL to check
+     * @param target URL to check
      * @param strings The URLs to check against
      * @return If the target is covered by any strings
      * @throws MalformedURLException
      */
-    public static boolean isDomain(String target, Set<String> strings) throws MalformedURLException {
+    public static boolean isDomain(String target, Set<String> strings)
+            throws MalformedURLException {
         URL domain = new URL(target);
         for (String s : strings) {
             if (!s.contains("/")) {
@@ -85,13 +84,15 @@ public class PostMatch {
     public static SharedPreferences filters;
 
     public static boolean doesMatch(Submission s, String baseSubreddit, boolean ignore18) {
-        if (Hidden.id.contains(s.getFullName())) return true; // if it's hidden we're not going to show it regardless
+        if (Hidden.id.contains(s.getFullName()))
+            return true; // if it's hidden we're not going to show it regardless
 
         String title = s.getTitle();
         String body = s.getSelftext();
         String domain = s.getUrl();
         String subreddit = s.getSubredditName();
-        String flair = s.getSubmissionFlair().getText() != null ? s.getSubmissionFlair().getText() : "";
+        String flair =
+                s.getSubmissionFlair().getText() != null ? s.getSubmissionFlair().getText() : "";
 
         if (contains(title, SettingValues.titleFilters, false)) return true;
 
@@ -100,11 +101,13 @@ public class PostMatch {
         if (contains(s.getAuthor(), SettingValues.userFilters, false)) return true;
 
         try {
-            if (isDomain(domain.toLowerCase(Locale.ENGLISH), SettingValues.domainFilters)) return true;
+            if (isDomain(domain.toLowerCase(Locale.ENGLISH), SettingValues.domainFilters))
+                return true;
         } catch (MalformedURLException ignored) {
         }
 
-        if (!subreddit.equalsIgnoreCase(baseSubreddit) && contains(subreddit, SettingValues.subredditFilters, true)) {
+        if (!subreddit.equalsIgnoreCase(baseSubreddit)
+                && contains(subreddit, SettingValues.subredditFilters, true)) {
             return true;
         }
 
@@ -122,7 +125,6 @@ public class PostMatch {
         boolean urls = isUrls(baseSubreddit);
         boolean selftext = isSelftext(baseSubreddit);
         boolean videos = isVideo(baseSubreddit);
-
 
         if (s.isNsfw()) {
             if (!SettingValues.showNSFWContent) {
@@ -210,7 +212,10 @@ public class PostMatch {
         } catch (MalformedURLException ignored) {
         }
 
-        boolean subredditc = subreddit != null && !subreddit.isEmpty() && contains(subreddit, SettingValues.subredditFilters, true);
+        boolean subredditc =
+                subreddit != null
+                        && !subreddit.isEmpty()
+                        && contains(subreddit, SettingValues.subredditFilters, true);
 
         return (titlec || bodyc || domainc || subredditc);
     }

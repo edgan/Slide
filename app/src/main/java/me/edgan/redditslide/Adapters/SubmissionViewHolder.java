@@ -11,9 +11,7 @@ import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.SubmissionViews.HeaderImageLinkView;
 import me.edgan.redditslide.Views.CommentOverflow;
 
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class SubmissionViewHolder extends RecyclerView.ViewHolder {
     public final SpoilerRobotoTextView title;
     public final TextView contentTitle;

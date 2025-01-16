@@ -23,14 +23,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.mikepenz.itemanimators.AlphaInAnimator;
 import com.mikepenz.itemanimators.SlideUpAlphaAnimator;
 
-import net.dean.jraw.models.MultiReddit;
-import net.dean.jraw.models.MultiSubreddit;
-import net.dean.jraw.models.Submission;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import me.edgan.redditslide.Activities.Search;
 import me.edgan.redditslide.Activities.Submit;
 import me.edgan.redditslide.Adapters.MultiredditAdapter;
@@ -50,6 +42,14 @@ import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.handler.ToolbarScrollHideHandler;
 import me.edgan.redditslide.util.LayoutUtils;
 
+import net.dean.jraw.models.MultiReddit;
+import net.dean.jraw.models.MultiSubreddit;
+import net.dean.jraw.models.Submission;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 public class MultiredditView extends Fragment implements SubmissionDisplay {
 
     private static final String EXTRA_PROFILE = "profile";
@@ -68,137 +68,185 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
 
     @NonNull
     private RecyclerView.LayoutManager createLayoutManager(final int numColumns) {
-        return new CatchStaggeredGridLayoutManager(numColumns, CatchStaggeredGridLayoutManager.VERTICAL);
+        return new CatchStaggeredGridLayoutManager(
+                numColumns, CatchStaggeredGridLayoutManager.VERTICAL);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_verticalcontent, container, false);
 
         rv = v.findViewById(R.id.vertical_content);
         final RecyclerView.LayoutManager mLayoutManager =
-                createLayoutManager(LayoutUtils.getNumColumns(getResources().getConfiguration().orientation, getActivity()));
+                createLayoutManager(
+                        LayoutUtils.getNumColumns(
+                                getResources().getConfiguration().orientation, getActivity()));
 
         rv.setLayoutManager(mLayoutManager);
         if (SettingValues.fab) {
             fab = v.findViewById(R.id.post_floating_action_button);
 
             if (SettingValues.fabType == Constants.FAB_POST) {
-                fab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final ArrayList<String> subs = new ArrayList<>();
-                        for (MultiSubreddit s : posts.multiReddit.getSubreddits()) {
-                            subs.add(s.getDisplayName());
-                        }
-                        new MaterialDialog.Builder(getActivity())
-                                .title(R.string.multi_submit_which_sub)
-                                .items(subs)
-                                .itemsCallback(new MaterialDialog.ListCallback() {
-                                    @Override
-                                    public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                        Intent i = new Intent(getActivity(), Submit.class);
-                                        i.putExtra(Submit.EXTRA_SUBREDDIT, subs.get(which));
-                                        startActivity(i);
-                                    }
-                                }).show();
-                    }
-                });
-            } else if (SettingValues.fabType == Constants.FAB_SEARCH) {
-                fab.setImageResource(R.drawable.ic_search);
-                fab.setOnClickListener(new View.OnClickListener() {
-                    String term;
-                    @Override
-                    public void onClick(View v) {
-                        MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity())
-                                .title(R.string.search_title)
-                                .alwaysCallInputCallback()
-                                .input(getString(R.string.search_msg), "",
-                                        new MaterialDialog.InputCallback() {
-                                            @Override
-                                            public void onInput(
-                                                    MaterialDialog materialDialog,
-                                                    CharSequence charSequence) {
-                                                term = charSequence.toString();
-                                            }
-                                        });
-
-                        builder.positiveText(getString(R.string.search_subreddit,
-                                "/m/" + posts.multiReddit.getDisplayName()))
-                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog materialDialog,
-                                                        @NonNull DialogAction dialogAction) {
-                                        Intent i = new Intent(getActivity(), Search.class);
-                                        i.putExtra(Search.EXTRA_TERM, term);
-                                        i.putExtra(Search.EXTRA_MULTIREDDIT, posts.multiReddit.getDisplayName());
-                                        startActivity(i);
-                                    }
-                                });
-
-                        builder.show();
-                    }
-                });
-            } else {
-                fab.setImageResource(R.drawable.ic_visibility_off);
-                fab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (!Reddit.fabClear) {
-                            new AlertDialog.Builder(getActivity())
-                                    .setTitle(R.string.settings_fabclear)
-                                    .setMessage(R.string.settings_fabclear_msg)
-                                    .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
-                                        Reddit.colors.edit()
-                                                .putBoolean(SettingValues.PREF_FAB_CLEAR, true)
-                                                .apply();
-                                        Reddit.fabClear = true;
-                                        clearSeenPosts(false);
-                                    })
-                                    .show();
-                        } else {
-                            clearSeenPosts(false);
-                        }
-                    }
-                });
-                fab.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        if (!Reddit.fabClear) {
-                            new AlertDialog.Builder(getActivity())
-                                    .setTitle(R.string.settings_fabclear)
-                                    .setMessage(R.string.settings_fabclear_msg)
-                                    .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
-                                        Reddit.colors.edit()
-                                                .putBoolean(SettingValues.PREF_FAB_CLEAR, true)
-                                                .apply();
-                                        Reddit.fabClear = true;
-                                        clearSeenPosts(true);
-                                    })
-                                    .show();
-                        } else {
-                            clearSeenPosts(true);
-
-                        }
-                        /*
-                        ToDo Make a sncakbar with an undo option of the clear all
-                        View.OnClickListener undoAction = new View.OnClickListener() {
+                fab.setOnClickListener(
+                        new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                adapter.dataSet.posts = original;
-                                for(Submission post : adapter.dataSet.posts){
-                                    if(HasSeen.getSeen(post.getFullName()))
-                                        Hidden.undoHidden(post);
+                                final ArrayList<String> subs = new ArrayList<>();
+                                for (MultiSubreddit s : posts.multiReddit.getSubreddits()) {
+                                    subs.add(s.getDisplayName());
+                                }
+                                new MaterialDialog.Builder(getActivity())
+                                        .title(R.string.multi_submit_which_sub)
+                                        .items(subs)
+                                        .itemsCallback(
+                                                new MaterialDialog.ListCallback() {
+                                                    @Override
+                                                    public void onSelection(
+                                                            MaterialDialog dialog,
+                                                            View itemView,
+                                                            int which,
+                                                            CharSequence text) {
+                                                        Intent i =
+                                                                new Intent(
+                                                                        getActivity(),
+                                                                        Submit.class);
+                                                        i.putExtra(
+                                                                Submit.EXTRA_SUBREDDIT,
+                                                                subs.get(which));
+                                                        startActivity(i);
+                                                    }
+                                                })
+                                        .show();
+                            }
+                        });
+            } else if (SettingValues.fabType == Constants.FAB_SEARCH) {
+                fab.setImageResource(R.drawable.ic_search);
+                fab.setOnClickListener(
+                        new View.OnClickListener() {
+                            String term;
+
+                            @Override
+                            public void onClick(View v) {
+                                MaterialDialog.Builder builder =
+                                        new MaterialDialog.Builder(getActivity())
+                                                .title(R.string.search_title)
+                                                .alwaysCallInputCallback()
+                                                .input(
+                                                        getString(R.string.search_msg),
+                                                        "",
+                                                        new MaterialDialog.InputCallback() {
+                                                            @Override
+                                                            public void onInput(
+                                                                    MaterialDialog materialDialog,
+                                                                    CharSequence charSequence) {
+                                                                term = charSequence.toString();
+                                                            }
+                                                        });
+
+                                builder.positiveText(
+                                                getString(
+                                                        R.string.search_subreddit,
+                                                        "/m/" + posts.multiReddit.getDisplayName()))
+                                        .onPositive(
+                                                new MaterialDialog.SingleButtonCallback() {
+                                                    @Override
+                                                    public void onClick(
+                                                            @NonNull MaterialDialog materialDialog,
+                                                            @NonNull DialogAction dialogAction) {
+                                                        Intent i =
+                                                                new Intent(
+                                                                        getActivity(),
+                                                                        Search.class);
+                                                        i.putExtra(Search.EXTRA_TERM, term);
+                                                        i.putExtra(
+                                                                Search.EXTRA_MULTIREDDIT,
+                                                                posts.multiReddit.getDisplayName());
+                                                        startActivity(i);
+                                                    }
+                                                });
+
+                                builder.show();
+                            }
+                        });
+            } else {
+                fab.setImageResource(R.drawable.ic_visibility_off);
+                fab.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (!Reddit.fabClear) {
+                                    new AlertDialog.Builder(getActivity())
+                                            .setTitle(R.string.settings_fabclear)
+                                            .setMessage(R.string.settings_fabclear_msg)
+                                            .setPositiveButton(
+                                                    R.string.btn_ok,
+                                                    (dialog, which) -> {
+                                                        Reddit.colors
+                                                                .edit()
+                                                                .putBoolean(
+                                                                        SettingValues
+                                                                                .PREF_FAB_CLEAR,
+                                                                        true)
+                                                                .apply();
+                                                        Reddit.fabClear = true;
+                                                        clearSeenPosts(false);
+                                                    })
+                                            .show();
+                                } else {
+                                    clearSeenPosts(false);
                                 }
                             }
-                        };*/
-                        Snackbar s = Snackbar.make(rv, getResources().getString(R.string.posts_hidden_forever), Snackbar.LENGTH_LONG);
-                        LayoutUtils.showSnackbar(s);
+                        });
+                fab.setOnLongClickListener(
+                        new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                if (!Reddit.fabClear) {
+                                    new AlertDialog.Builder(getActivity())
+                                            .setTitle(R.string.settings_fabclear)
+                                            .setMessage(R.string.settings_fabclear_msg)
+                                            .setPositiveButton(
+                                                    R.string.btn_ok,
+                                                    (dialog, which) -> {
+                                                        Reddit.colors
+                                                                .edit()
+                                                                .putBoolean(
+                                                                        SettingValues
+                                                                                .PREF_FAB_CLEAR,
+                                                                        true)
+                                                                .apply();
+                                                        Reddit.fabClear = true;
+                                                        clearSeenPosts(true);
+                                                    })
+                                            .show();
+                                } else {
+                                    clearSeenPosts(true);
+                                }
+                                /*
+                                ToDo Make a sncakbar with an undo option of the clear all
+                                View.OnClickListener undoAction = new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        adapter.dataSet.posts = original;
+                                        for(Submission post : adapter.dataSet.posts){
+                                            if(HasSeen.getSeen(post.getFullName()))
+                                                Hidden.undoHidden(post);
+                                        }
+                                    }
+                                };*/
+                                Snackbar s =
+                                        Snackbar.make(
+                                                rv,
+                                                getResources()
+                                                        .getString(R.string.posts_hidden_forever),
+                                                Snackbar.LENGTH_LONG);
+                                LayoutUtils.showSnackbar(s);
 
-                        return false;
-                    }
-                });
+                                return false;
+                            }
+                        });
             }
         } else {
             v.findViewById(R.id.post_floating_action_button).setVisibility(View.GONE);
@@ -208,11 +256,14 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
         /**
          * If using List view mode, we need to remove the start margin from the SwipeRefreshLayout.
          * The scrollbar style of "outsideInset" creates a 4dp padding around it. To counter this,
-         * change the scrollbar style to "insideOverlay" when list view is enabled.
-         * To recap: this removes the margins from the start/end so list view is full-width.
+         * change the scrollbar style to "insideOverlay" when list view is enabled. To recap: this
+         * removes the margins from the start/end so list view is full-width.
          */
         if (SettingValues.defaultCardView == CreateCardView.CardEnum.LIST) {
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            RelativeLayout.LayoutParams params =
+                    new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT);
             MarginLayoutParamsCompat.setMarginStart(params, 0);
             rv.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
             refreshLayout.setLayoutParams(params);
@@ -226,28 +277,32 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
         }
 
         if ((multireddits != null) && !multireddits.isEmpty()) {
-            refreshLayout.setColorSchemeColors(Palette.getColors(multireddits.get(id).getDisplayName(), getActivity()));
+            refreshLayout.setColorSchemeColors(
+                    Palette.getColors(multireddits.get(id).getDisplayName(), getActivity()));
         }
 
         // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
         // So, we estimate the height of the header in dp
-        refreshLayout.setProgressViewOffset(false,
+        refreshLayout.setProgressViewOffset(
+                false,
                 Constants.TAB_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.TAB_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);
 
-        refreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                refreshLayout.setRefreshing(true);
-            }
-        });
+        refreshLayout.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.setRefreshing(true);
+                    }
+                });
 
         if ((multireddits != null) && !multireddits.isEmpty()) {
             posts = new MultiredditPosts(multireddits.get(id).getDisplayName(), profile);
 
             adapter = new MultiredditAdapter(getActivity(), posts, rv, refreshLayout, this);
             rv.setAdapter(adapter);
-            rv.setItemAnimator(new SlideUpAlphaAnimator().withInterpolator(new LinearOutSlowInInterpolator()));
+            rv.setItemAnimator(
+                    new SlideUpAlphaAnimator().withInterpolator(new LinearOutSlowInInterpolator()));
             posts.loadMore(getActivity(), this, true, adapter);
 
             refreshLayout.setOnRefreshListener(
@@ -258,53 +313,65 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
 
                             // TODO catch errors
                         }
-                    }
-            );
+                    });
 
             if (fab != null) {
                 fab.show();
             }
 
-            rv.addOnScrollListener(new ToolbarScrollHideHandler((getActivity()).findViewById(R.id.toolbar), getActivity().findViewById(R.id.header)) {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
+            rv.addOnScrollListener(
+                    new ToolbarScrollHideHandler(
+                            (getActivity()).findViewById(R.id.toolbar),
+                            getActivity().findViewById(R.id.header)) {
+                        @Override
+                        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                            super.onScrolled(recyclerView, dx, dy);
 
-                    visibleItemCount = rv.getLayoutManager().getChildCount();
-                    totalItemCount = rv.getLayoutManager().getItemCount();
+                            visibleItemCount = rv.getLayoutManager().getChildCount();
+                            totalItemCount = rv.getLayoutManager().getItemCount();
 
-                    int[] firstVisibleItems = ((CatchStaggeredGridLayoutManager) rv.getLayoutManager()).findFirstVisibleItemPositions(null);
-                    if (firstVisibleItems != null && firstVisibleItems.length > 0) {
-                        for (int firstVisibleItem : firstVisibleItems) {
-                            pastVisiblesItems = firstVisibleItem;
-                            if (SettingValues.scrollSeen && pastVisiblesItems > 0 && SettingValues.storeHistory) {
-                                HasSeen.addSeenScrolling(posts.posts.get(pastVisiblesItems - 1).getFullName());
+                            int[] firstVisibleItems =
+                                    ((CatchStaggeredGridLayoutManager) rv.getLayoutManager())
+                                            .findFirstVisibleItemPositions(null);
+                            if (firstVisibleItems != null && firstVisibleItems.length > 0) {
+                                for (int firstVisibleItem : firstVisibleItems) {
+                                    pastVisiblesItems = firstVisibleItem;
+                                    if (SettingValues.scrollSeen
+                                            && pastVisiblesItems > 0
+                                            && SettingValues.storeHistory) {
+                                        HasSeen.addSeenScrolling(
+                                                posts.posts
+                                                        .get(pastVisiblesItems - 1)
+                                                        .getFullName());
+                                    }
+                                }
+                            }
+
+                            if (!posts.loading) {
+                                if ((visibleItemCount + pastVisiblesItems) + 5 >= totalItemCount
+                                        && !posts.nomore) {
+                                    posts.loading = true;
+                                    posts.loadMore(
+                                            getActivity(), MultiredditView.this, false, adapter);
+                                }
+                            }
+                            if (recyclerView.getScrollState()
+                                    == RecyclerView.SCROLL_STATE_DRAGGING) {
+                                diff += dy;
+                            } else {
+                                diff = 0;
+                            }
+                            if (fab != null) {
+                                if (dy <= 0 && fab.getId() != 0 && SettingValues.fab) {
+                                    if (recyclerView.getScrollState()
+                                                    != RecyclerView.SCROLL_STATE_DRAGGING
+                                            || diff < -fab.getHeight() * 2) fab.show();
+                                } else {
+                                    fab.hide();
+                                }
                             }
                         }
-                    }
-
-
-                    if (!posts.loading) {
-                        if ((visibleItemCount + pastVisiblesItems) + 5 >= totalItemCount && !posts.nomore) {
-                            posts.loading = true;
-                            posts.loadMore(getActivity(), MultiredditView.this, false, adapter);
-                        }
-                    }
-                    if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING) {
-                        diff += dy;
-                    } else {
-                        diff = 0;
-                    }
-                    if (fab != null) {
-                        if (dy <= 0 && fab.getId() != 0 && SettingValues.fab) {
-                            if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_DRAGGING || diff < -fab.getHeight() * 2)
-                                fab.show();
-                        } else {
-                            fab.hide();
-                        }
-                    }
-                }
-            });
+                    });
         }
         return v;
     }
@@ -314,8 +381,14 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
 
             List<Submission> originalDataSetPosts = posts.posts;
 
-            OfflineSubreddit o = OfflineSubreddit.getSubreddit("multi" + posts.multiReddit.getDisplayName().toLowerCase(
-                    Locale.ENGLISH), false, getActivity());
+            OfflineSubreddit o =
+                    OfflineSubreddit.getSubreddit(
+                            "multi"
+                                    + posts.multiReddit
+                                            .getDisplayName()
+                                            .toLowerCase(Locale.ENGLISH),
+                            false,
+                            getActivity());
             for (int i = posts.posts.size(); i > -1; i--) {
                 try {
                     if (HasSeen.getSeen(posts.posts.get(i))) {
@@ -336,7 +409,8 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
                 }
             }
             o.writeToMemoryNoStorage();
-            rv.setItemAnimator(new SlideUpAlphaAnimator().withInterpolator(new LinearOutSlowInInterpolator()));
+            rv.setItemAnimator(
+                    new SlideUpAlphaAnimator().withInterpolator(new LinearOutSlowInInterpolator()));
             return originalDataSetPosts;
         }
 
@@ -365,18 +439,19 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
 
     @Override
     public void updateSuccess(List<Submission> submissions, final int startIndex) {
-        adapter.context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                refreshLayout.setRefreshing(false);
+        adapter.context.runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.setRefreshing(false);
 
-                if (startIndex != -1) {
-                    adapter.notifyItemRangeInserted(startIndex + 1, posts.posts.size());
-                } else {
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        });
+                        if (startIndex != -1) {
+                            adapter.notifyItemRangeInserted(startIndex + 1, posts.posts.size());
+                        } else {
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                });
     }
 
     @Override
@@ -386,20 +461,16 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
     }
 
     @Override
-    public void updateOfflineError() {
-
-    }
+    public void updateOfflineError() {}
 
     @Override
-    public void updateError() {
-
-    }
+    public void updateError() {}
 
     @Override
     public void updateViews() {
         try {
             adapter.notifyItemRangeChanged(0, adapter.dataSet.getPosts().size());
-        } catch(Exception e){
+        } catch (Exception e) {
 
         }
     }

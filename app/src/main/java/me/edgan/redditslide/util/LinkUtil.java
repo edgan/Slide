@@ -1,16 +1,18 @@
 package me.edgan.redditslide.util;
 
+import static me.edgan.redditslide.ui.settings.SettingsHandlingFragment.LinkHandlingMode;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-import android.content.pm.ResolveInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,15 +25,6 @@ import androidx.browser.customtabs.CustomTabsServiceConnection;
 import androidx.browser.customtabs.CustomTabsSession;
 import androidx.core.content.ContextCompat;
 
-import net.dean.jraw.models.Submission;
-
-import org.apache.commons.text.StringEscapeUtils;
-
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-
 import me.edgan.redditslide.Activities.Crosspost;
 import me.edgan.redditslide.Activities.MakeExternal;
 import me.edgan.redditslide.Activities.ReaderMode;
@@ -42,70 +35,87 @@ import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.SubmissionViews.PopulateBase;
 
-import static me.edgan.redditslide.ui.settings.SettingsHandlingFragment.LinkHandlingMode;
+import net.dean.jraw.models.Submission;
+
+import org.apache.commons.text.StringEscapeUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 
 public class LinkUtil {
 
-    private static CustomTabsSession           mCustomTabsSession;
-    private static CustomTabsClient            mClient;
+    private static CustomTabsSession mCustomTabsSession;
+    private static CustomTabsClient mClient;
     private static CustomTabsServiceConnection mConnection;
 
-    public static final String EXTRA_URL        = "url";
-    public static final String EXTRA_COLOR      = "color";
+    public static final String EXTRA_URL = "url";
+    public static final String EXTRA_COLOR = "color";
     public static final String ADAPTER_POSITION = "adapter_position";
 
-    private LinkUtil() {
-    }
+    private LinkUtil() {}
 
     /**
      * Attempts to open the {@code url} in a custom tab. If no custom tab activity can be found,
      * falls back to opening externally
      *
-     * @param url             URL to open
-     * @param color           Color to provide to the browser UI if applicable
+     * @param url URL to open
+     * @param color Color to provide to the browser UI if applicable
      * @param contextActivity The current activity
-     * @param packageName     The package name recommended to use for connecting to custom tabs
-     *                        related components.
+     * @param packageName The package name recommended to use for connecting to custom tabs related
+     *     components.
      */
-    public static void openCustomTab(@NonNull String url, int color,
-            @NonNull Activity contextActivity, @NonNull String packageName) {
+    public static void openCustomTab(
+            @NonNull String url,
+            int color,
+            @NonNull Activity contextActivity,
+            @NonNull String packageName) {
         Intent intent = new Intent(contextActivity, MakeExternal.class);
         intent.putExtra(LinkUtil.EXTRA_URL, url);
-        PendingIntent pendingIntent = PendingIntent.getActivity(contextActivity, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(contextActivity, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         CustomTabsIntent.Builder builder =
                 new CustomTabsIntent.Builder(getSession())
-                        .setDefaultColorSchemeParams(new CustomTabColorSchemeParams.Builder()
-                                .setToolbarColor(color)
-                                .build())
+                        .setDefaultColorSchemeParams(
+                                new CustomTabColorSchemeParams.Builder()
+                                        .setToolbarColor(color)
+                                        .build())
                         .setShowTitle(true)
                         .setStartAnimations(contextActivity, R.anim.slide_up_fade_in, 0)
                         .setExitAnimations(contextActivity, 0, R.anim.slide_down_fade_out)
                         .setShareState(CustomTabsIntent.SHARE_STATE_ON)
-                        .addMenuItem(contextActivity.getString(R.string.open_links_externally),
+                        .addMenuItem(
+                                contextActivity.getString(R.string.open_links_externally),
                                 pendingIntent)
-                        .setCloseButtonIcon(DrawableUtil.drawableToBitmap(
-                                ContextCompat.getDrawable(contextActivity,
-                                        R.drawable.ic_arrow_back)));
+                        .setCloseButtonIcon(
+                                DrawableUtil.drawableToBitmap(
+                                        ContextCompat.getDrawable(
+                                                contextActivity, R.drawable.ic_arrow_back)));
         try {
             CustomTabsIntent customTabsIntent = builder.build();
 
             customTabsIntent.intent.setPackage(packageName);
-            customTabsIntent.launchUrl(contextActivity,
-                    formatURL(StringEscapeUtils.unescapeHtml4(url)));
+            customTabsIntent.launchUrl(
+                    contextActivity, formatURL(StringEscapeUtils.unescapeHtml4(url)));
         } catch (ActivityNotFoundException anfe) {
             Log.w(LogUtil.getTag(), "Unknown url: " + anfe);
             openExternally(url);
         }
     }
 
-    public static void openUrl(@NonNull String url, int color, @NonNull Activity contextActivity,
-            @Nullable Integer adapterPosition, @Nullable Submission submission) {
-        if (!(contextActivity instanceof ReaderMode) && ((SettingValues.readerMode
-                && !SettingValues.readerNight)
-                || SettingValues.readerMode
-                && SettingValues.readerNight
-                && SettingValues.isNight())) {
+    public static void openUrl(
+            @NonNull String url,
+            int color,
+            @NonNull Activity contextActivity,
+            @Nullable Integer adapterPosition,
+            @Nullable Submission submission) {
+        if (!(contextActivity instanceof ReaderMode)
+                && ((SettingValues.readerMode && !SettingValues.readerNight)
+                        || SettingValues.readerMode
+                                && SettingValues.readerNight
+                                && SettingValues.isNight())) {
             Intent i = new Intent(contextActivity, ReaderMode.class);
             openIntentThemed(i, url, color, contextActivity, adapterPosition, submission);
         } else if (SettingValues.linkHandlingMode == LinkHandlingMode.EXTERNAL.getValue()) {
@@ -122,8 +132,12 @@ public class LinkUtil {
         }
     }
 
-    private static void openIntentThemed(@NonNull Intent intent, @NonNull String url, int color,
-            @NonNull Activity contextActivity, @Nullable Integer adapterPosition,
+    private static void openIntentThemed(
+            @NonNull Intent intent,
+            @NonNull String url,
+            int color,
+            @NonNull Activity contextActivity,
+            @Nullable Integer adapterPosition,
             @Nullable Submission submission) {
         intent.putExtra(EXTRA_URL, url);
         if (adapterPosition != null && submission != null) {
@@ -133,10 +147,9 @@ public class LinkUtil {
         contextActivity.startActivity(intent);
     }
 
-
     /**
-     * Corrects mistakes users might make when typing URLs, e.g. case sensitivity in the scheme
-     * and converts to Uri
+     * Corrects mistakes users might make when typing URLs, e.g. case sensitivity in the scheme and
+     * converts to Uri
      *
      * @param url URL to correct
      * @return corrected as a Uri
@@ -180,8 +193,8 @@ public class LinkUtil {
      * Opens the {@code url} using the method the user has set in their preferences (custom tabs,
      * internal, external) falling back as needed
      *
-     * @param url             URL to open
-     * @param color           Color to provide to the browser UI if applicable
+     * @param url URL to open
+     * @param color Color to provide to the browser UI if applicable
      * @param contextActivity The current activity
      */
     public static void openUrl(@NonNull String url, int color, @NonNull Activity contextActivity) {
@@ -192,7 +205,7 @@ public class LinkUtil {
      * Opens the {@code uri} externally or shows an application chooser if it is set to open in this
      * application
      *
-     * @param url     URL to open
+     * @param url URL to open
      */
     public static void openExternally(String url) {
         url = StringEscapeUtils.unescapeHtml4(CompatUtil.fromHtml(url).toString());
@@ -208,12 +221,16 @@ public class LinkUtil {
         if (mClient == null) {
             mCustomTabsSession = null;
         } else if (mCustomTabsSession == null) {
-            mCustomTabsSession = mClient.newSession(new CustomTabsCallback() {
-                @Override
-                public void onNavigationEvent(int navigationEvent, Bundle extras) {
-                    Log.w(LogUtil.getTag(), "onNavigationEvent: Code = " + navigationEvent);
-                }
-            });
+            mCustomTabsSession =
+                    mClient.newSession(
+                            new CustomTabsCallback() {
+                                @Override
+                                public void onNavigationEvent(int navigationEvent, Bundle extras) {
+                                    Log.w(
+                                            LogUtil.getTag(),
+                                            "onNavigationEvent: Code = " + navigationEvent);
+                                }
+                            });
         }
         return mCustomTabsSession;
     }
@@ -239,7 +256,8 @@ public class LinkUtil {
         // Get default browser package
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://ccrama.me/"));
         ResolveInfo browserResolveInfo = pm.resolveActivity(browserIntent, 0);
-        String browserPackageName = browserResolveInfo != null ? browserResolveInfo.activityInfo.packageName : null;
+        String browserPackageName =
+                browserResolveInfo != null ? browserResolveInfo.activityInfo.packageName : null;
 
         // If we couldn't resolve either, return without modifying the intent
         if (packageName == null || browserPackageName == null) {
@@ -254,9 +272,9 @@ public class LinkUtil {
         }
 
         // Check if user has selected a specific browser
-        if (packageToSet.equals(browserPackageName) &&
-                SettingValues.selectedBrowser != null &&
-                !SettingValues.selectedBrowser.isEmpty()) {
+        if (packageToSet.equals(browserPackageName)
+                && SettingValues.selectedBrowser != null
+                && !SettingValues.selectedBrowser.isEmpty()) {
             try {
                 pm.getPackageInfo(SettingValues.selectedBrowser, PackageManager.GET_ACTIVITIES);
                 packageToSet = SettingValues.selectedBrowser;
@@ -322,10 +340,9 @@ public class LinkUtil {
         }
     }
 
-    private static void launchMarketUriIntent(final Context context, final String uriString,
-                                              final @StringRes int resId) {
+    private static void launchMarketUriIntent(
+            final Context context, final String uriString, final @StringRes int resId) {
         context.startActivity(
-                new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(uriString + context.getString(resId))));
+                new Intent(Intent.ACTION_VIEW, Uri.parse(uriString + context.getString(resId))));
     }
 }

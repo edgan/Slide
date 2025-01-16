@@ -1,9 +1,6 @@
 package me.edgan.redditslide.util;
 
-/**
- * Created by Carlos on 7/15/2016.
- */
-
+/** Created by Carlos on 7/15/2016. */
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,44 +13,54 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "url",
-        "author_name",
-        "author_url",
-        "html",
-        "width",
-        "height",
-        "type",
-        "cache_age",
-        "provider_name",
-        "provider_url",
-        "version"
+    "url",
+    "author_name",
+    "author_url",
+    "html",
+    "width",
+    "height",
+    "type",
+    "cache_age",
+    "provider_name",
+    "provider_url",
+    "version"
 })
 public class TwitterObject {
 
     @JsonProperty("url")
     private String url;
+
     @JsonProperty("author_name")
     private String authorName;
+
     @JsonProperty("author_url")
     private String authorUrl;
+
     @JsonProperty("html")
     private String html;
+
     @JsonProperty("width")
     private Integer width;
+
     @JsonProperty("height")
     private Integer height;
+
     @JsonProperty("type")
     private String type;
+
     @JsonProperty("cache_age")
     private String cacheAge;
+
     @JsonProperty("provider_name")
     private String providerName;
+
     @JsonProperty("provider_url")
     private String providerUrl;
+
     @JsonProperty("version")
     private String version;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    @JsonIgnore private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * @return The url
@@ -240,5 +247,4 @@ public class TwitterObject {
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
-
 }

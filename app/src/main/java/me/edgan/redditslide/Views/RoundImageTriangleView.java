@@ -9,10 +9,7 @@ import androidx.annotation.ColorRes;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
-/**
- * Created by Carlos on 9/13/2016.
- */
-
+/** Created by Carlos on 9/13/2016. */
 public class RoundImageTriangleView extends RoundedImageView {
 
     public RoundImageTriangleView(Context context) {
@@ -26,9 +23,10 @@ public class RoundImageTriangleView extends RoundedImageView {
     public RoundImageTriangleView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
+
     int color = Color.TRANSPARENT;
 
-    public void setFlagColor(@ColorRes int color){
+    public void setFlagColor(@ColorRes int color) {
         this.color = color;
         invalidate();
     }
@@ -50,6 +48,4 @@ public class RoundImageTriangleView extends RoundedImageView {
 
         canvas.drawPath(path, p);*/
     }
-
-
 }

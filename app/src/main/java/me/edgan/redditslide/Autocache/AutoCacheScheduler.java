@@ -7,22 +7,19 @@ import android.content.Intent;
 
 import androidx.core.content.ContextCompat;
 
-import java.util.Calendar;
-
 import me.edgan.redditslide.Reddit;
 
-/**
- * Created by carlo_000 on 10/13/2015.
- */
+import java.util.Calendar;
 
-
+/** Created by carlo_000 on 10/13/2015. */
 public class AutoCacheScheduler {
     private final PendingIntent pendingIntent;
     private final AlarmManager manager;
 
     public AutoCacheScheduler(Context context) {
         final Intent alarmIntent = new Intent(context, CacheAll.class);
-        pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+        pendingIntent =
+                PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
         manager = ContextCompat.getSystemService(context, AlarmManager.class);
         start();
     }
@@ -36,8 +33,11 @@ public class AutoCacheScheduler {
             cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR) + 1);
         }
         if (manager != null) {
-            manager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY, pendingIntent);
+            manager.setRepeating(
+                    AlarmManager.RTC_WAKEUP,
+                    cal.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY,
+                    pendingIntent);
         }
     }
 

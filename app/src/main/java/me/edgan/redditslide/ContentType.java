@@ -13,17 +13,15 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Locale;
 
-/**
- * Created by ccrama on 5/26/2015.
- */
+/** Created by ccrama on 5/26/2015. */
 public class ContentType {
     /**
      * Checks if {@code host} is contains by any of the provided {@code bases}
-     * <p/>
-     * For example "www.youtube.com" contains "youtube.com" but not "notyoutube.com" or
+     *
+     * <p>For example "www.youtube.com" contains "youtube.com" but not "notyoutube.com" or
      * "youtube.co.uk"
      *
-     * @param host  A hostname from e.g. {@link URI#getHost()}
+     * @param host A hostname from e.g. {@link URI#getHost()}
      * @param bases Any number of hostnames to compare against {@code host}
      * @return If {@code host} contains any of {@code bases}
      */
@@ -68,8 +66,10 @@ public class ContentType {
             final String host = uri.getHost().toLowerCase(Locale.ENGLISH);
             final String path = uri.getPath().toLowerCase(Locale.ENGLISH);
 
-            return host.equals("i.reddituploads.com") || path.endsWith(".png") || path.endsWith(
-                    ".jpg") || path.endsWith(".jpeg");
+            return host.equals("i.reddituploads.com")
+                    || path.endsWith(".png")
+                    || path.endsWith(".jpg")
+                    || path.endsWith(".jpeg");
 
         } catch (NullPointerException e) {
             return false;
@@ -81,10 +81,11 @@ public class ContentType {
             final String host = uri.getHost().toLowerCase(Locale.ENGLISH);
             final String path = uri.getPath().toLowerCase(Locale.ENGLISH);
 
-            return hostContains(host, "imgur.com", "bildgur.de") && (path.startsWith("/a/")
-                    || path.startsWith("/gallery/")
-                    || path.startsWith("/g/")
-                    || path.contains(","));
+            return hostContains(host, "imgur.com", "bildgur.de")
+                    && (path.startsWith("/a/")
+                            || path.startsWith("/gallery/")
+                            || path.startsWith("/g/")
+                            || path.contains(","));
 
         } catch (NullPointerException e) {
             return false;
@@ -96,8 +97,9 @@ public class ContentType {
             final String host = uri.getHost().toLowerCase(Locale.ENGLISH);
             final String path = uri.getPath().toLowerCase(Locale.ENGLISH);
 
-            return hostContains(host, "youtu.be", "youtube.com",
-                    "youtube.co.uk") && !path.contains("/user/") && !path.contains("/channel/");
+            return hostContains(host, "youtu.be", "youtube.com", "youtube.co.uk")
+                    && !path.contains("/user/")
+                    && !path.contains("/channel/");
 
         } catch (NullPointerException e) {
             return false;
@@ -138,9 +140,15 @@ public class ContentType {
      * @return ContentType of the URL
      */
     public static Type getContentType(String url) {
-        if (!url.startsWith("//") && ((url.startsWith("/") && url.length() < 4) || url.startsWith(
-                "#spoiler") || url.startsWith("/spoiler") || url.startsWith("#s-") || url.equals(
-                "#s") || url.equals("#ln") || url.equals("#b") || url.equals("#sp"))) {
+        if (!url.startsWith("//")
+                && ((url.startsWith("/") && url.length() < 4)
+                        || url.startsWith("#spoiler")
+                        || url.startsWith("/spoiler")
+                        || url.startsWith("#s-")
+                        || url.equals("#s")
+                        || url.equals("#ln")
+                        || url.equals("#b")
+                        || url.equals("#sp"))) {
             return Type.SPOILER;
         }
 
@@ -157,8 +165,9 @@ public class ContentType {
             final String host = uri.getHost().toLowerCase(Locale.ENGLISH);
             final String scheme = uri.getScheme().toLowerCase(Locale.ENGLISH);
 
-            if(hostContains(host, "v.redd.it") || (host.equals("reddit.com") && url.contains("reddit.com/video/"))){
-                if(url.contains("DASH_")){
+            if (hostContains(host, "v.redd.it")
+                    || (host.equals("reddit.com") && url.contains("reddit.com/video/"))) {
+                if (url.contains("DASH_")) {
                     return Type.VREDDIT_DIRECT;
                 } else {
                     return Type.VREDDIT_REDIRECT;
@@ -190,8 +199,9 @@ public class ContentType {
             if (hostContains(host, "imgur.com", "bildgur.de")) {
                 return Type.IMGUR;
             }
-            if (hostContains(host, "xkcd.com") && !hostContains("imgs.xkcd.com") && !hostContains(
-                    "what-if.xkcd.com")) {
+            if (hostContains(host, "xkcd.com")
+                    && !hostContains("imgs.xkcd.com")
+                    && !hostContains("what-if.xkcd.com")) {
                 return Type.XKCD;
             }
             if (hostContains(host, "tumblr.com") && uri.getPath().contains("post")) {
@@ -210,11 +220,14 @@ public class ContentType {
             return Type.LINK;
 
         } catch (URISyntaxException | NullPointerException e) {
-            if (e.getMessage() != null && (e.getMessage().contains("Illegal character in fragment")
-                    || e.getMessage().contains("Illegal character in query")
-                    || e.getMessage()
-                    .contains(
-                            "Illegal character in path"))) // a valid link but something un-encoded in the URL
+            if (e.getMessage() != null
+                    && (e.getMessage().contains("Illegal character in fragment")
+                            || e.getMessage().contains("Illegal character in query")
+                            || e.getMessage()
+                                    .contains(
+                                            "Illegal character in path"))) // a valid link but
+                                                                           // something un-encoded
+                                                                           // in the URL
             {
                 return Type.LINK;
             }
@@ -259,7 +272,6 @@ public class ContentType {
 
     public static boolean displayImage(Type t) {
         switch (t) {
-
             case ALBUM:
             case REDDIT_GALLERY:
             case DEVIANTART:
@@ -271,13 +283,11 @@ public class ContentType {
                 return true;
             default:
                 return false;
-
         }
     }
 
     public static boolean fullImage(Type t) {
         switch (t) {
-
             case ALBUM:
             case REDDIT_GALLERY:
             case DEVIANTART:
@@ -301,7 +311,6 @@ public class ContentType {
             case SPOILER:
             default:
                 return false;
-
         }
     }
 
@@ -321,7 +330,6 @@ public class ContentType {
                 return true;
             default:
                 return false;
-
         }
     }
 
@@ -397,7 +405,6 @@ public class ContentType {
                 case VREDDIT_REDIRECT:
                 case VREDDIT_DIRECT:
                     return R.string.type_vreddit;
-
             }
         }
         return R.string.type_link;
@@ -410,7 +417,7 @@ public class ContentType {
      * to open externally it returns the package name of the app that opens it, or "External"
      *
      * @param submission The submission to describe
-     * @param context    Current context
+     * @param context Current context
      * @return The content description
      */
     public static String getContentDescription(Submission submission, Context context) {
@@ -433,9 +440,11 @@ public class ContentType {
             String description;
 
             if (!packageName.equals("android")) {
-                description = pm.getApplicationLabel(
-                        pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA))
-                        .toString();
+                description =
+                        pm.getApplicationLabel(
+                                        pm.getApplicationInfo(
+                                                packageName, PackageManager.GET_META_DATA))
+                                .toString();
             } else {
                 description = res.getString(generic);
             }
@@ -455,8 +464,8 @@ public class ContentType {
             final String host = uri.getHost().toLowerCase(Locale.ENGLISH);
             final String path = uri.getPath().toLowerCase(Locale.ENGLISH);
 
-            return (host.contains("imgur.com") || host.contains("bildgur.de")) && ((path.endsWith(
-                    ".png") || path.endsWith(".jpg") || path.endsWith(".jpeg")));
+            return (host.contains("imgur.com") || host.contains("bildgur.de"))
+                    && ((path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".jpeg")));
 
         } catch (Exception e) {
             return false;
@@ -469,8 +478,10 @@ public class ContentType {
             final String host = uri.getHost().toLowerCase(Locale.ENGLISH);
             final String path = uri.getPath().toLowerCase(Locale.ENGLISH);
 
-            return (host.contains("imgur.com")) && (!(path.endsWith(".png") && !path.endsWith(
-                    ".jpg") && !path.endsWith(".jpeg")));
+            return (host.contains("imgur.com"))
+                    && (!(path.endsWith(".png")
+                            && !path.endsWith(".jpg")
+                            && !path.endsWith(".jpeg")));
 
         } catch (Exception e) {
             return false;
@@ -478,6 +489,24 @@ public class ContentType {
     }
 
     public enum Type {
-        ALBUM, REDDIT_GALLERY, DEVIANTART, EMBEDDED, EXTERNAL, GIF, VREDDIT_DIRECT, VREDDIT_REDIRECT, IMAGE, IMGUR, LINK, NONE, REDDIT, SELF, SPOILER, STREAMABLE, VIDEO, XKCD, TUMBLR
+        ALBUM,
+        REDDIT_GALLERY,
+        DEVIANTART,
+        EMBEDDED,
+        EXTERNAL,
+        GIF,
+        VREDDIT_DIRECT,
+        VREDDIT_REDIRECT,
+        IMAGE,
+        IMGUR,
+        LINK,
+        NONE,
+        REDDIT,
+        SELF,
+        SPOILER,
+        STREAMABLE,
+        VIDEO,
+        XKCD,
+        TUMBLR
     }
 }

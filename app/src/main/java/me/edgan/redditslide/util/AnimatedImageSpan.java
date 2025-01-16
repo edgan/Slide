@@ -2,13 +2,13 @@ package me.edgan.redditslide.util;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.style.DynamicDrawableSpan;
-import android.view.View;
 import android.util.Log;
-import android.graphics.Rect;
+import android.view.View;
 
 import me.edgan.redditslide.SettingValues;
 
@@ -19,29 +19,39 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
     private boolean isAttached = false;
     private boolean isAnimationEnabled = false;
     private final Runnable invalidateRunnable;
-    private static final int FRAME_DELAY = 16;  // Approximately 60fps
+    private static final int FRAME_DELAY = 16; // Approximately 60fps
 
     public AnimatedImageSpan(GifDrawable drawable, View view) {
         super(ALIGN_BASELINE); // Keep ALIGN_BASELINE but we'll handle positioning manually
         this.drawable = drawable;
         this.view = view;
         this.handler = new Handler(Looper.getMainLooper());
-        this.isAnimationEnabled = SettingValues.commentEmoteAnimation; // Initialize based on setting
+        this.isAnimationEnabled =
+                SettingValues.commentEmoteAnimation; // Initialize based on setting
 
-        invalidateRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (isAttached && isAnimationEnabled) {
-                    view.postInvalidate();
-                    handler.postDelayed(this, FRAME_DELAY);
-                }
-            }
-        };
+        invalidateRunnable =
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isAttached && isAnimationEnabled) {
+                            view.postInvalidate();
+                            handler.postDelayed(this, FRAME_DELAY);
+                        }
+                    }
+                };
     }
 
     @Override
-    public void draw(Canvas canvas, CharSequence text, int start, int end,
-                    float x, int top, int y, int bottom, Paint paint) {
+    public void draw(
+            Canvas canvas,
+            CharSequence text,
+            int start,
+            int end,
+            float x,
+            int top,
+            int y,
+            int bottom,
+            Paint paint) {
         if (!isAnimationEnabled) {
             drawable.seekToFirstFrame(); // Ensure we're on first frame when not animating
         }
@@ -70,7 +80,8 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
     }
 
     @Override
-    public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
+    public int getSize(
+            Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         Drawable d = getDrawable();
         Rect rect = d.getBounds();
 

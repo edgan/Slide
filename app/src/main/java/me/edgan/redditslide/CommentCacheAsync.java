@@ -12,6 +12,10 @@ import androidx.core.content.ContextCompat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.PhotoLoader;
+
 import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.http.RestResponse;
 import net.dean.jraw.http.SubmissionRequest;
@@ -29,13 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import me.edgan.redditslide.util.GifUtils;
-import me.edgan.redditslide.util.LogUtil;
-import me.edgan.redditslide.util.PhotoLoader;
-
-/**
- * Created by carlo_000 on 4/18/2016.
- */
+/** Created by carlo_000 on 4/18/2016. */
 public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
 
     public static final String SAVED_SUBMISSIONS = "read later";
@@ -43,18 +41,20 @@ public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
 
     NotificationManager mNotifyManager;
 
-    public CommentCacheAsync(List<Submission> submissions, Context c, String subreddit,
-            boolean[] otherChoices) {
+    public CommentCacheAsync(
+            List<Submission> submissions, Context c, String subreddit, boolean[] otherChoices) {
         alreadyReceived = submissions;
         this.context = c;
-        this.subs = new String[]{subreddit};
+        this.subs = new String[] {subreddit};
         this.otherChoices = otherChoices;
     }
 
-    public CommentCacheAsync(List<Submission> submissions, Activity mContext, String baseSub,
+    public CommentCacheAsync(
+            List<Submission> submissions,
+            Activity mContext,
+            String baseSub,
             String alternateSubName) {
-        this(submissions, mContext, baseSub, new boolean[]{true, true});
-
+        this(submissions, mContext, baseSub, new boolean[] {true, true});
     }
 
     public CommentCacheAsync(Context c, String[] subreddits) {
@@ -64,24 +64,26 @@ public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
 
     String[] subs;
 
-    Context                    context;
+    Context context;
     NotificationCompat.Builder mBuilder;
 
     boolean[] otherChoices;
 
     @Override
     public Void doInBackground(Void... params) {
-        if (Authentication.isLoggedIn && Authentication.me == null || Authentication.reddit == null) {
+        if (Authentication.isLoggedIn && Authentication.me == null
+                || Authentication.reddit == null) {
 
             if (Authentication.reddit == null) {
                 new Authentication(context);
             }
-            if(Authentication.reddit != null) {
+            if (Authentication.reddit != null) {
                 try {
                     Authentication.me = Authentication.reddit.me();
                     Authentication.mod = Authentication.me.isMod();
 
-                    Authentication.authentication.edit()
+                    Authentication.authentication
+                            .edit()
                             .putBoolean(Reddit.SHARED_PREF_IS_MOD, Authentication.mod)
                             .apply();
                     final String name = Authentication.me.getFullName();
@@ -90,16 +92,20 @@ public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
 
                     if (Authentication.reddit.isAuthenticated()) {
                         final Set<String> accounts =
-                                Authentication.authentication.getStringSet("accounts", new HashSet<String>());
+                                Authentication.authentication.getStringSet(
+                                        "accounts", new HashSet<String>());
                         if (accounts.contains(name)) { // convert to new system
                             accounts.remove(name);
                             accounts.add(name + ":" + Authentication.refresh);
-                            Authentication.authentication.edit().putStringSet("accounts", accounts).apply(); // force commit
+                            Authentication.authentication
+                                    .edit()
+                                    .putStringSet("accounts", accounts)
+                                    .apply(); // force commit
                         }
                         Authentication.isLoggedIn = true;
                         Reddit.notFirst = true;
                     }
-                } catch(Exception e){
+                } catch (Exception e) {
                     new Authentication(context);
                 }
             }
@@ -122,12 +128,17 @@ public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
 
             if (!sub.isEmpty()) {
                 if (!sub.equals(SAVED_SUBMISSIONS)) {
-                    mNotifyManager = ContextCompat.getSystemService(context, NotificationManager.class);
-                    mBuilder = new NotificationCompat.Builder(context, Reddit.CHANNEL_COMMENT_CACHE);
+                    mNotifyManager =
+                            ContextCompat.getSystemService(context, NotificationManager.class);
+                    mBuilder =
+                            new NotificationCompat.Builder(context, Reddit.CHANNEL_COMMENT_CACHE);
                     mBuilder.setOngoing(true);
-                    mBuilder.setContentTitle(context.getString(R.string.offline_caching_title,
-                            sub.equalsIgnoreCase("frontpage") ? fSub
-                                    : (fSub.contains("/m/") ? fSub : "/r/" + fSub)))
+                    mBuilder.setContentTitle(
+                                    context.getString(
+                                            R.string.offline_caching_title,
+                                            sub.equalsIgnoreCase("frontpage")
+                                                    ? fSub
+                                                    : (fSub.contains("/m/") ? fSub : "/r/" + fSub)))
                             .setSmallIcon(R.drawable.ic_save);
                 }
                 List<Submission> submissions = new ArrayList<>();
@@ -150,21 +161,25 @@ public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
                     }
                 }
 
-                int commentDepth = Integer.parseInt(
-                        SettingValues.prefs.getString(SettingValues.COMMENT_DEPTH, "5"));
-                int commentCount = Integer.parseInt(
-                        SettingValues.prefs.getString(SettingValues.COMMENT_COUNT, "50"));
+                int commentDepth =
+                        Integer.parseInt(
+                                SettingValues.prefs.getString(SettingValues.COMMENT_DEPTH, "5"));
+                int commentCount =
+                        Integer.parseInt(
+                                SettingValues.prefs.getString(SettingValues.COMMENT_COUNT, "50"));
 
                 Log.v("CommentCacheAsync", "comment count " + commentCount);
                 int random = (int) (Math.random() * 100);
 
                 for (final Submission s : submissions) {
                     try {
-                        JsonNode n = getSubmission(
-                                new SubmissionRequest.Builder(s.getId()).limit(commentCount)
-                                        .depth(commentDepth)
-                                        .sort(sortType)
-                                        .build());
+                        JsonNode n =
+                                getSubmission(
+                                        new SubmissionRequest.Builder(s.getId())
+                                                .limit(commentCount)
+                                                .depth(commentDepth)
+                                                .sort(sortType)
+                                                .build());
                         Submission s2 =
                                 SubmissionSerializer.withComments(n, CommentSort.CONFIDENCE);
                         OfflineSubreddit.writeSubmission(n, s2, context);
@@ -176,18 +191,24 @@ public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
                             case GIF:
                                 if (otherChoices[0]) {
                                     if (context instanceof Activity) {
-                                        ((Activity) context).runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                GifUtils.cacheSaveGif(
-                                                        Uri.parse(GifUtils.AsyncLoadGif.formatUrl(s.getUrl())),
-                                                        (Activity) context,
-                                                        s.getSubredditName(),
-                                                        null,
-                                                        false
-                                                );
-                                            }
-                                        });
+                                        ((Activity) context)
+                                                .runOnUiThread(
+                                                        new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                GifUtils.cacheSaveGif(
+                                                                        Uri.parse(
+                                                                                GifUtils
+                                                                                        .AsyncLoadGif
+                                                                                        .formatUrl(
+                                                                                                s
+                                                                                                        .getUrl())),
+                                                                        (Activity) context,
+                                                                        s.getSubredditName(),
+                                                                        null,
+                                                                        false);
+                                                            }
+                                                        });
                                     }
                                 }
                                 break;
@@ -205,7 +226,6 @@ public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
                         mBuilder.setProgress(submissions.size(), count, false);
                         mNotifyManager.notify(random, mBuilder.build());
                     }
-
                 }
 
                 OfflineSubreddit.newSubreddit(sub).writeToMemory(newFullnames);
@@ -218,7 +238,8 @@ public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
         if (mBuilder != null) {
             mBuilder.setContentText(context.getString(R.string.offline_caching_complete))
                     // Removes the progress bar
-                    .setSubText(success.size() + " subreddits cached").setProgress(0, 0, false);
+                    .setSubText(success.size() + " subreddits cached")
+                    .setProgress(0, 0, false);
             mBuilder.setOngoing(false);
             mNotifyManager.notify(2001, mBuilder.build());
         }
@@ -247,14 +268,16 @@ public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
 
         try {
 
-            RestResponse response = Authentication.reddit.execute(Authentication.reddit.request()
-                    .path(String.format("/comments/%s", request.getId()))
-                    .query(args)
-                    .build());
+            RestResponse response =
+                    Authentication.reddit.execute(
+                            Authentication.reddit
+                                    .request()
+                                    .path(String.format("/comments/%s", request.getId()))
+                                    .query(args)
+                                    .build());
             return response.getJson();
         } catch (Exception e) {
             return null;
         }
     }
 }
-

@@ -2,18 +2,16 @@ package me.edgan.redditslide.util;
 
 import android.content.Context;
 
+import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
+
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.models.Thumbnails;
 
 import java.util.List;
 
-import me.edgan.redditslide.ContentType;
-import me.edgan.redditslide.Reddit;
-import me.edgan.redditslide.SettingValues;
-
-/**
- * Created by TacoTheDank on 12/11/2020.
- */
+/** Created by TacoTheDank on 12/11/2020. */
 public class PhotoLoader {
 
     public static void loadPhoto(final Context c, final Submission submission) {
@@ -29,7 +27,7 @@ public class PhotoLoader {
                     || thumbnailType == Submission.ThumbnailType.URL) {
                 if (type == ContentType.Type.IMAGE) {
                     if ((!NetworkUtil.isConnectedWifi(c) && SettingValues.lowResMobile
-                            || SettingValues.lowResAlways)
+                                    || SettingValues.lowResAlways)
                             && thumbnails.getVariations() != null
                             && thumbnails.getVariations().length > 0) {
 
@@ -45,19 +43,26 @@ public class PhotoLoader {
                         }
 
                     } else {
-                        if (submission.getDataNode().has("preview") && submission.getDataNode()
-                                .get("preview")
-                                .get("images")
-                                .get(0)
-                                .get("source")
-                                .has("height")) { // Load the preview image which has probably already been cached in memory instead of the direct link
-                            url = submission.getDataNode()
-                                    .get("preview")
-                                    .get("images")
-                                    .get(0)
-                                    .get("source")
-                                    .get("url")
-                                    .asText();
+                        if (submission.getDataNode().has("preview")
+                                && submission
+                                        .getDataNode()
+                                        .get("preview")
+                                        .get("images")
+                                        .get(0)
+                                        .get("source")
+                                        .has(
+                                                "height")) { // Load the preview image which has
+                                                             // probably already been cached in
+                                                             // memory instead of the direct link
+                            url =
+                                    submission
+                                            .getDataNode()
+                                            .get("preview")
+                                            .get("images")
+                                            .get(0)
+                                            .get("source")
+                                            .get("url")
+                                            .asText();
                         } else {
                             url = submission.getUrl();
                         }
@@ -66,7 +71,7 @@ public class PhotoLoader {
                 } else {
 
                     if ((!NetworkUtil.isConnectedWifi(c) && SettingValues.lowResMobile
-                            || SettingValues.lowResAlways)
+                                    || SettingValues.lowResAlways)
                             && thumbnails.getVariations().length != 0) {
 
                         final int length = thumbnails.getVariations().length;
@@ -95,8 +100,7 @@ public class PhotoLoader {
     private static void loadImage(final Context context, final String url) {
         final Reddit appContext = (Reddit) context.getApplicationContext();
 
-        appContext.getImageLoader()
-                .loadImage(url, null);
+        appContext.getImageLoader().loadImage(url, null);
     }
 
     public static void loadPhotos(final Context c, final List<Submission> submissions) {

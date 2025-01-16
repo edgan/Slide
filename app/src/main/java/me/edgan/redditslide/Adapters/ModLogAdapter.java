@@ -1,9 +1,6 @@
 package me.edgan.redditslide.Adapters;
 
-/**
- * Created by ccrama on 3/22/2015.
- */
-
+/** Created by ccrama on 3/22/2015. */
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.text.Spannable;
@@ -22,10 +19,6 @@ import android.widget.LinearLayout;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import net.dean.jraw.models.ModAction;
-
-import java.util.Locale;
-
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.OpenRedditLink;
 import me.edgan.redditslide.R;
@@ -35,15 +28,18 @@ import me.edgan.redditslide.Views.RoundedBackgroundSpan;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.TimeUtils;
 
+import net.dean.jraw.models.ModAction;
+
+import java.util.Locale;
 
 public class ModLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements BaseAdapter {
 
-    private final       int SPACER  = 6;
+    private final int SPACER = 6;
     public static final int MESSAGE = 2;
-    public final  Activity     mContext;
+    public final Activity mContext;
     private final RecyclerView listView;
-    public        ModLogPosts  dataSet;
+    public ModLogPosts dataSet;
 
     public ModLogAdapter(Activity mContext, ModLogPosts dataSet, RecyclerView listView) {
         this.mContext = mContext;
@@ -80,13 +76,15 @@ public class ModLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         if (i == SPACER) {
-            View v = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.spacer, viewGroup, false);
+            View v =
+                    LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.spacer, viewGroup, false);
             return new SpacerViewHolder(v);
 
         } else {
-            View v = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.mod_action, viewGroup, false);
+            View v =
+                    LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.mod_action, viewGroup, false);
             return new ModLogViewHolder(v);
         }
     }
@@ -94,7 +92,7 @@ public class ModLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public static class ModLogViewHolder extends RecyclerView.ViewHolder {
 
         SpoilerRobotoTextView body;
-        ImageView             icon;
+        ImageView icon;
 
         public ModLogViewHolder(View itemView) {
             super(itemView);
@@ -116,8 +114,10 @@ public class ModLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             String spacer = mContext.getString(R.string.submission_properties_seperator);
 
             String timeAgo = TimeUtils.getTimeAgo(a.getCreated().getTime(), mContext);
-            String time = ((timeAgo == null || timeAgo.isEmpty()) ? "just now"
-                    : timeAgo); // some users were crashing here
+            String time =
+                    ((timeAgo == null || timeAgo.isEmpty())
+                            ? "just now"
+                            : timeAgo); // some users were crashing here
             titleString.append(time);
             titleString.append(spacer);
 
@@ -126,9 +126,15 @@ public class ModLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 SpannableStringBuilder subreddit = new SpannableStringBuilder("/r/" + subname);
                 if ((SettingValues.colorSubName
                         && Palette.getColor(subname) != Palette.getDefaultColor())) {
-                    subreddit.setSpan(new ForegroundColorSpan(Palette.getColor(subname)), 0,
-                            subreddit.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    subreddit.setSpan(new StyleSpan(Typeface.BOLD), 0, subreddit.length(),
+                    subreddit.setSpan(
+                            new ForegroundColorSpan(Palette.getColor(subname)),
+                            0,
+                            subreddit.length(),
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    subreddit.setSpan(
+                            new StyleSpan(Typeface.BOLD),
+                            0,
+                            subreddit.length(),
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
@@ -140,46 +146,71 @@ public class ModLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             SpannableStringBuilder author = new SpannableStringBuilder(a.getModerator());
             final int authorcolor = Palette.getFontColorUser(a.getModerator());
 
-            author.setSpan(new TypefaceSpan("sans-serif-condensed"), 0, author.length(),
+            author.setSpan(
+                    new TypefaceSpan("sans-serif-condensed"),
+                    0,
+                    author.length(),
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            author.setSpan(new StyleSpan(Typeface.BOLD), 0, author.length(),
+            author.setSpan(
+                    new StyleSpan(Typeface.BOLD),
+                    0,
+                    author.length(),
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            if (Authentication.name != null && a.getModerator()
-                    .toLowerCase(Locale.ENGLISH)
-                    .equals(Authentication.name.toLowerCase(Locale.ENGLISH))) {
+            if (Authentication.name != null
+                    && a.getModerator()
+                            .toLowerCase(Locale.ENGLISH)
+                            .equals(Authentication.name.toLowerCase(Locale.ENGLISH))) {
                 author.replace(0, author.length(), " " + a.getModerator() + " ");
-                author.setSpan(new RoundedBackgroundSpan(mContext, android.R.color.white,
-                                R.color.md_deep_orange_300, false), 0, author.length(),
+                author.setSpan(
+                        new RoundedBackgroundSpan(
+                                mContext, android.R.color.white, R.color.md_deep_orange_300, false),
+                        0,
+                        author.length(),
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             } else if (authorcolor != 0) {
-                author.setSpan(new ForegroundColorSpan(authorcolor), 0, author.length(),
+                author.setSpan(
+                        new ForegroundColorSpan(authorcolor),
+                        0,
+                        author.length(),
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            author.setSpan(new RelativeSizeSpan(0.8f), 0, author.length(),
+            author.setSpan(
+                    new RelativeSizeSpan(0.8f),
+                    0,
+                    author.length(),
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             b.append(author);
             b.append("\n\n");
-            b.append(a.getAction()).append(" ").append(!a.getDataNode().get("target_title").isNull() ?
-                    "\""
-                            + a.getDataNode().get("target_title").asText()
-                            + "\"" : "").append(a.getTargetAuthor() != null ? " by /u/"
-                    + a.getTargetAuthor() : "");
+            b.append(a.getAction())
+                    .append(" ")
+                    .append(
+                            !a.getDataNode().get("target_title").isNull()
+                                    ? "\"" + a.getDataNode().get("target_title").asText() + "\""
+                                    : "")
+                    .append(a.getTargetAuthor() != null ? " by /u/" + a.getTargetAuthor() : "");
             if (a.getTargetPermalink() != null) {
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        OpenRedditLink.openUrl(mContext, a.getTargetPermalink(), true);
-                    }
-                });
+                holder.itemView.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                OpenRedditLink.openUrl(mContext, a.getTargetPermalink(), true);
+                            }
+                        });
             }
 
             if (a.getDetails() != null) {
                 SpannableStringBuilder description =
                         new SpannableStringBuilder(" (" + a.getDetails() + ")");
-                description.setSpan(new StyleSpan(Typeface.ITALIC), 0, description.length(),
+                description.setSpan(
+                        new StyleSpan(Typeface.ITALIC),
+                        0,
+                        description.length(),
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                description.setSpan(new RelativeSizeSpan(0.8f), 0, description.length(),
+                description.setSpan(
+                        new RelativeSizeSpan(0.8f),
+                        0,
+                        description.length(),
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 b.append(description);
             }
@@ -190,61 +221,71 @@ public class ModLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             switch (action) {
                 case "removelink":
                     holder.icon.setImageDrawable(
-                            ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_close,
-                                    null));
+                            ResourcesCompat.getDrawable(
+                                    mContext.getResources(), R.drawable.ic_close, null));
                     break;
                 case "approvecomment":
                 case "approvelink":
                     holder.icon.setImageDrawable(
-                            ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_thumb_up,
-                                    null));
+                            ResourcesCompat.getDrawable(
+                                    mContext.getResources(), R.drawable.ic_thumb_up, null));
                     break;
                 case "removecomment":
-                    holder.icon.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(),
-                            R.drawable.ic_forum, null));
+                    holder.icon.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                    mContext.getResources(), R.drawable.ic_forum, null));
                     break;
                 case "editflair":
                     holder.icon.setImageDrawable(
-                            ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_local_offer,
-                                    null));
+                            ResourcesCompat.getDrawable(
+                                    mContext.getResources(), R.drawable.ic_local_offer, null));
                     break;
                 case "distinguish":
-                    holder.icon.setImageDrawable(ResourcesCompat.getDrawable(mContext.getResources(),
-                            R.drawable.ic_star, null));
+                    holder.icon.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                    mContext.getResources(), R.drawable.ic_star, null));
                     break;
                 case "sticky":
                 case "unsticky":
                     holder.icon.setImageDrawable(
-                            ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_lock,
-                                    null));
+                            ResourcesCompat.getDrawable(
+                                    mContext.getResources(), R.drawable.ic_lock, null));
                     break;
                 case "ignorereports":
                     holder.icon.setImageDrawable(
-                            ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_notifications_off,
+                            ResourcesCompat.getDrawable(
+                                    mContext.getResources(),
+                                    R.drawable.ic_notifications_off,
                                     null));
                     break;
                 case "unignorereports":
                     holder.icon.setImageDrawable(
-                            ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_notifications_active,
+                            ResourcesCompat.getDrawable(
+                                    mContext.getResources(),
+                                    R.drawable.ic_notifications_active,
                                     null));
                     break;
                 case "marknsfw":
                 case "unmarknsfw":
                     holder.icon.setImageDrawable(
-                            ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_visibility_off,
-                                    null));
+                            ResourcesCompat.getDrawable(
+                                    mContext.getResources(), R.drawable.ic_visibility_off, null));
                     break;
                 default:
                     holder.icon.setImageDrawable(
-                            ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.ic_verified_user, null));
+                            ResourcesCompat.getDrawable(
+                                    mContext.getResources(), R.drawable.ic_verified_user, null));
                     break;
             }
-
         }
         if (firstHold instanceof SpacerViewHolder) {
-            firstHold.itemView.findViewById(R.id.height)
-                    .setLayoutParams(new LinearLayout.LayoutParams(firstHold.itemView.getWidth(),
-                            mContext.findViewById(R.id.header).getHeight()));
+            firstHold
+                    .itemView
+                    .findViewById(R.id.height)
+                    .setLayoutParams(
+                            new LinearLayout.LayoutParams(
+                                    firstHold.itemView.getWidth(),
+                                    mContext.findViewById(R.id.header).getHeight()));
         }
     }
 
@@ -256,6 +297,4 @@ public class ModLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             return dataSet.posts.size() + 1;
         }
     }
-
-
 }

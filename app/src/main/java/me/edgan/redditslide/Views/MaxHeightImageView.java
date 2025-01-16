@@ -5,9 +5,7 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
-/**
- * Created by Carlos on 6/2/2016.
- */
+/** Created by Carlos on 6/2/2016. */
 public class MaxHeightImageView extends AppCompatImageView {
     public MaxHeightImageView(Context context) {
         super(context);
@@ -30,13 +28,17 @@ public class MaxHeightImageView extends AppCompatImageView {
 
         switch (hMode) {
             case MeasureSpec.AT_MOST:
-                heightMeasureSpec = MeasureSpec.makeMeasureSpec(Math.min(hSize, maxHeight), MeasureSpec.AT_MOST);
+                heightMeasureSpec =
+                        MeasureSpec.makeMeasureSpec(
+                                Math.min(hSize, maxHeight), MeasureSpec.AT_MOST);
                 break;
             case MeasureSpec.UNSPECIFIED:
                 heightMeasureSpec = MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST);
                 break;
             case MeasureSpec.EXACTLY:
-                heightMeasureSpec = MeasureSpec.makeMeasureSpec(Math.min(hSize, maxHeight), MeasureSpec.EXACTLY);
+                heightMeasureSpec =
+                        MeasureSpec.makeMeasureSpec(
+                                Math.min(hSize, maxHeight), MeasureSpec.EXACTLY);
                 break;
         }
 

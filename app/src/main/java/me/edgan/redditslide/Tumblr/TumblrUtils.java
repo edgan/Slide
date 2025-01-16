@@ -13,19 +13,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import me.edgan.redditslide.Constants;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.util.HttpUtil;
 import me.edgan.redditslide.util.LogUtil;
+
 import okhttp3.OkHttpClient;
 
-/**
- * Created by carlo_000 on 2/1/2016.
- */
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+/** Created by carlo_000 on 2/1/2016. */
 public class TumblrUtils {
 
     public static SharedPreferences tumblrRequests;
@@ -37,11 +36,9 @@ public class TumblrUtils {
         public Activity baseActivity;
 
         private OkHttpClient client;
-        private Gson         gson;
+        private Gson gson;
 
-        public void onError() {
-
-        }
+        public void onError() {}
 
         public GetTumblrPostWithCallback(@NonNull String url, @NonNull Activity baseActivity) {
 
@@ -66,12 +63,13 @@ public class TumblrUtils {
         public void parseJson(JsonElement baseData) {
             try {
                 post = new ObjectMapper().readValue(baseData.toString(), TumblrPost.class);
-                baseActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        doWithData(post.getResponse().getPosts().get(0).getPhotos());
-                    }
-                });
+                baseActivity.runOnUiThread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                doWithData(post.getResponse().getPosts().get(0).getPhotos());
+                            }
+                        });
             } catch (IOException e) {
                 e.printStackTrace();
                 LogUtil.e(e, "parseJson error, baseData [" + baseData + "]");
@@ -81,21 +79,34 @@ public class TumblrUtils {
         @Override
         protected ArrayList<JsonElement> doInBackground(final String... sub) {
             if (baseActivity != null) {
-                String apiUrl = "https://api.tumblr.com/v2/blog/"
-                        + blog
-                        + "/posts?api_key="
-                        + Constants.TUMBLR_API_KEY
-                        + "&id="
-                        + id;
+                String apiUrl =
+                        "https://api.tumblr.com/v2/blog/"
+                                + blog
+                                + "/posts?api_key="
+                                + Constants.TUMBLR_API_KEY
+                                + "&id="
+                                + id;
                 LogUtil.v(apiUrl);
-                if (tumblrRequests.contains(apiUrl) && JsonParser.parseString(
-                        tumblrRequests.getString(apiUrl, "")).getAsJsonObject().has("response")) {
-                    parseJson(JsonParser.parseString(tumblrRequests.getString(apiUrl, ""))
-                            .getAsJsonObject());
+                if (tumblrRequests.contains(apiUrl)
+                        && JsonParser.parseString(tumblrRequests.getString(apiUrl, ""))
+                                .getAsJsonObject()
+                                .has("response")) {
+                    parseJson(
+                            JsonParser.parseString(tumblrRequests.getString(apiUrl, ""))
+                                    .getAsJsonObject());
                 } else {
                     LogUtil.v(apiUrl);
                     final JsonObject result = HttpUtil.getJsonObject(client, gson, apiUrl);
-                    if (result != null && result.has("response") && result.get("response").getAsJsonObject().has("posts") && result.get("response").getAsJsonObject().get("posts").getAsJsonArray().get(0).getAsJsonObject().has("photos")) {
+                    if (result != null
+                            && result.has("response")
+                            && result.get("response").getAsJsonObject().has("posts")
+                            && result.get("response")
+                                    .getAsJsonObject()
+                                    .get("posts")
+                                    .getAsJsonArray()
+                                    .get(0)
+                                    .getAsJsonObject()
+                                    .has("photos")) {
                         tumblrRequests.edit().putString(apiUrl, result.toString()).apply();
                         parseJson(result);
                     } else {

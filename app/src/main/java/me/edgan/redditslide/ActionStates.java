@@ -7,9 +7,7 @@ import net.dean.jraw.models.VoteDirection;
 
 import java.util.ArrayList;
 
-/**
- * Created by carlo_000 on 2/26/2016.
- */
+/** Created by carlo_000 on 2/26/2016. */
 public class ActionStates {
     public static final ArrayList<String> upVotedFullnames = new ArrayList<>();
     public static final ArrayList<String> downVotedFullnames = new ArrayList<>();
@@ -36,7 +34,6 @@ public class ActionStates {
         downVotedFullnames.remove(fullname);
         unvotedFullnames.remove(fullname);
         switch (direction) {
-
             case UPVOTE:
                 upVotedFullnames.add(fullname);
                 break;
@@ -88,5 +85,4 @@ public class ActionStates {
             unSavedFullnames.add(fullname);
         }
     }
-
 }

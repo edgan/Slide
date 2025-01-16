@@ -6,10 +6,7 @@ import android.view.ViewGroup;
 import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.R;
 
-
-/**
- * Created by l3d00m on 11/13/2015.
- */
+/** Created by l3d00m on 11/13/2015. */
 public class SettingsFont extends BaseActivityAnim {
 
     private SettingsFontFragment fragment = new SettingsFontFragment(this);
@@ -20,10 +17,9 @@ public class SettingsFont extends BaseActivityAnim {
         setContentView(R.layout.activity_settings_font);
         setupAppBar(R.id.toolbar, R.string.settings_title_font, true, true);
 
-        ((ViewGroup) findViewById(R.id.settings_font)).addView(
-                getLayoutInflater().inflate(R.layout.activity_settings_font_child, null));
+        ((ViewGroup) findViewById(R.id.settings_font))
+                .addView(getLayoutInflater().inflate(R.layout.activity_settings_font_child, null));
 
         fragment.Bind();
     }
-
 }

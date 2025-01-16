@@ -14,11 +14,6 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.google.android.material.tabs.TabLayout;
 
-import net.dean.jraw.managers.WikiManager;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Fragments.WikiPage;
 import me.edgan.redditslide.R;
@@ -27,9 +22,12 @@ import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LogUtil;
 
-/**
- * Created by ccrama on 9/17/2015.
- */
+import net.dean.jraw.managers.WikiManager;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/** Created by ccrama on 9/17/2015. */
 public class Wiki extends BaseActivityAnim implements WikiPage.WikiPageListener {
 
     public static final String EXTRA_SUBREDDIT = "subreddit";
@@ -58,7 +56,7 @@ public class Wiki extends BaseActivityAnim implements WikiPage.WikiPageListener 
         setContentView(R.layout.activity_slidetabs);
         setupSubredditAppBar(R.id.toolbar, "/r/" + subreddit + " wiki", true, subreddit);
 
-        if(getIntent().hasExtra(EXTRA_PAGE)) {
+        if (getIntent().hasExtra(EXTRA_PAGE)) {
             page = getIntent().getExtras().getString(EXTRA_PAGE);
             LogUtil.v("Page is " + page);
         } else {
@@ -77,14 +75,25 @@ public class Wiki extends BaseActivityAnim implements WikiPage.WikiPageListener 
     private void createCustomCss() {
         StringBuilder customCssBuilder = new StringBuilder();
         customCssBuilder.append("<style>");
-        TypedArray ta = obtainStyledAttributes(
-                new int[]{R.attr.activity_background, R.attr.fontColor, R.attr.colorAccent});
-        customCssBuilder.append("html { ")
-                .append("background: ").append(getHexFromColorInt(ta.getColor(0, Color.WHITE))).append(";")
-                .append("color: ").append(getHexFromColorInt(ta.getColor(1, Color.BLACK))).append(";")
+        TypedArray ta =
+                obtainStyledAttributes(
+                        new int[] {
+                            R.attr.activity_background, R.attr.fontColor, R.attr.colorAccent
+                        });
+        customCssBuilder
+                .append("html { ")
+                .append("background: ")
+                .append(getHexFromColorInt(ta.getColor(0, Color.WHITE)))
+                .append(";")
+                .append("color: ")
+                .append(getHexFromColorInt(ta.getColor(1, Color.BLACK)))
+                .append(";")
                 .append("; }");
-        customCssBuilder.append("a { ")
-                .append("color: ").append(getHexFromColorInt(ta.getColor(2, Color.BLUE))).append(";")
+        customCssBuilder
+                .append("a { ")
+                .append("color: ")
+                .append(getHexFromColorInt(ta.getColor(2, Color.BLUE)))
+                .append(";")
                 .append("; }");
         ta.recycle();
         customCssBuilder.append("table, code { display: block; overflow-x: scroll; }");
@@ -94,17 +103,12 @@ public class Wiki extends BaseActivityAnim implements WikiPage.WikiPageListener 
     }
 
     private void createCustomJavaScript() {
-        globalCustomJavaScript = "<script type=\"text/javascript\">" +
-                "window.addEventListener('touchstart', function onSlideUserTouch(e) {" +
-                "var element = e.target;" +
-                "while(element) {" +
-                "if(element.tagName && (element.tagName.toLowerCase() === 'table' || element.tagName.toLowerCase() === 'code')) {" +
-                "Slide.overflowTouched();" +
-                "return;" +
-                "} else {" +
-                "element = element.parentNode;" +
-                "}}}, false)" +
-                "</script>";
+        globalCustomJavaScript =
+                "<script type=\"text/javascript\">window.addEventListener('touchstart', function"
+                    + " onSlideUserTouch(e) {var element = e.target;while(element)"
+                    + " {if(element.tagName && (element.tagName.toLowerCase() === 'table' ||"
+                    + " element.tagName.toLowerCase() === 'code')) {Slide.overflowTouched();"
+                    + "return;} else {element = element.parentNode;}}}, false)</script>";
     }
 
     private static String getHexFromColorInt(@ColorInt int colorInt) {
@@ -129,8 +133,7 @@ public class Wiki extends BaseActivityAnim implements WikiPage.WikiPageListener 
             new AlertDialog.Builder(this)
                     .setTitle(R.string.page_not_found)
                     .setMessage(R.string.page_does_not_exist)
-                    .setPositiveButton(android.R.string.ok, (dialog, which) ->
-                            dialog.dismiss())
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
                     .create()
                     .show();
         }
@@ -146,7 +149,7 @@ public class Wiki extends BaseActivityAnim implements WikiPage.WikiPageListener 
         @Override
         protected Void doInBackground(Void... params) {
 
-           wiki = new WikiManager(Authentication.reddit);
+            wiki = new WikiManager(Authentication.reddit);
             try {
                 pages = wiki.getPages(subreddit);
 
@@ -158,30 +161,30 @@ public class Wiki extends BaseActivityAnim implements WikiPage.WikiPageListener 
                 }
                 pages.removeAll(toRemove);
 
-
                 adapter = new WikiPagerAdapter(getSupportFragmentManager());
 
-
             } catch (Exception e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            new AlertDialog.Builder(Wiki.this)
-                                    .setTitle(R.string.wiki_err)
-                                    .setMessage(R.string.wiki_err_msg)
-                                    .setPositiveButton(R.string.btn_close, (dialog, which) -> {
-                                        dialog.dismiss();
-                                        finish();
-                                    })
-                                    .setOnDismissListener(dialog ->
-                                            finish())
-                                    .show();
-                        } catch(Exception ignored){
+                runOnUiThread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    new AlertDialog.Builder(Wiki.this)
+                                            .setTitle(R.string.wiki_err)
+                                            .setMessage(R.string.wiki_err_msg)
+                                            .setPositiveButton(
+                                                    R.string.btn_close,
+                                                    (dialog, which) -> {
+                                                        dialog.dismiss();
+                                                        finish();
+                                                    })
+                                            .setOnDismissListener(dialog -> finish())
+                                            .show();
+                                } catch (Exception ignored) {
 
-                        }
-                    }
-                });
+                                }
+                            }
+                        });
             }
             return null;
         }
@@ -191,7 +194,7 @@ public class Wiki extends BaseActivityAnim implements WikiPage.WikiPageListener 
             if (adapter != null) {
                 pager.setAdapter(adapter);
                 tabs.setupWithViewPager(pager);
-                if(pages.contains(page)){
+                if (pages.contains(page)) {
                     pager.setCurrentItem(pages.indexOf(page));
                 }
             } else {
@@ -199,14 +202,15 @@ public class Wiki extends BaseActivityAnim implements WikiPage.WikiPageListener 
                     new AlertDialog.Builder(Wiki.this)
                             .setTitle(R.string.wiki_err)
                             .setMessage(R.string.wiki_err_msg)
-                            .setPositiveButton(R.string.btn_close, (dialog, which) -> {
-                                dialog.dismiss();
-                                finish();
-                            })
-                            .setOnDismissListener(dialog ->
-                                    finish())
+                            .setPositiveButton(
+                                    R.string.btn_close,
+                                    (dialog, which) -> {
+                                        dialog.dismiss();
+                                        finish();
+                                    })
+                            .setOnDismissListener(dialog -> finish())
                             .show();
-                } catch(Exception e){
+                } catch (Exception e) {
 
                 }
             }

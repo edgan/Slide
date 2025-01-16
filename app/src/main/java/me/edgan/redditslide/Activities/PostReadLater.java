@@ -12,9 +12,7 @@ import me.edgan.redditslide.Fragments.ReadLaterView;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class PostReadLater extends BaseActivityAnim {
 
     @Override

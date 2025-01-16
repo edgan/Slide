@@ -5,6 +5,7 @@ import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -15,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -25,13 +25,6 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
-
-import net.dean.jraw.managers.AccountManager;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import me.edgan.redditslide.Adapters.SubredditPostsRealm;
 import me.edgan.redditslide.Authentication;
@@ -53,28 +46,35 @@ import me.edgan.redditslide.util.NetworkStateReceiver;
 import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.StringUtil;
 
+import net.dean.jraw.managers.AccountManager;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class NewsActivity extends BaseActivity
         implements NetworkStateReceiver.NetworkStateReceiverListener {
-    public static final  String IS_ONLINE     = "online";
+    public static final String IS_ONLINE = "online";
     // Instance state keys
-    static final         String SUBS          = "news";
+    static final String SUBS = "news";
     private static final String EXTRA_PAGE_TO = "PAGE_TO";
     public View header;
 
     public static Loader loader;
-    public static Map<String, String> newsSubToMap            = new HashMap<>();
-    public final  long                ANIMATE_DURATION        = 250; // duration of animations
-    private final long                ANIMATE_DURATION_OFFSET = 45;
+    public static Map<String, String> newsSubToMap = new HashMap<>();
+    public final long ANIMATE_DURATION = 250; // duration of animations
+    private final long ANIMATE_DURATION_OFFSET = 45;
     // offset for smoothing out the exit animations
-    public ToggleSwipeViewPager     pager;
+    public ToggleSwipeViewPager pager;
     public CaseInsensitiveArrayList usedArray;
     public NewsPagerAdapter adapter;
-    public TabLayout                mTabLayout;
-    public String                   selectedSub; // currently selected subreddit
-    public boolean                  inNightMode;
+    public TabLayout mTabLayout;
+    public String selectedSub; // currently selected subreddit
+    public boolean inNightMode;
     boolean changed;
     boolean currentlySubbed;
-    int     back;
+    int back;
     private int headerHeight; // height of the header
     public int reloadItemNumber = -2;
 
@@ -88,8 +88,7 @@ public class NewsActivity extends BaseActivity
         super.onPause();
         changed = false;
         if (!SettingValues.synccitName.isEmpty()) {
-            new MySynccitUpdateTask().execute(
-                    SynccitRead.newVisited.toArray(new String[0]));
+            new MySynccitUpdateTask().execute(SynccitRead.newVisited.toArray(new String[0]));
         }
         if (Authentication.isLoggedIn
                 && Authentication.me != null
@@ -162,22 +161,21 @@ public class NewsActivity extends BaseActivity
         mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         header = findViewById(R.id.header);
 
-        pager = (ToggleSwipeViewPager)
-
-                findViewById(R.id.content_view);
+        pager = (ToggleSwipeViewPager) findViewById(R.id.content_view);
 
         mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
 
         UserSubscriptions.doNewsSubs(NewsActivity.this);
         /**
-         * int for the current base theme selected.
-         * 0 = Dark, 1 = Light, 2 = AMOLED, 3 = Dark blue, 4 = AMOLED with contrast, 5 = Sepia
+         * int for the current base theme selected. 0 = Dark, 1 = Light, 2 = AMOLED, 3 = Dark blue,
+         * 4 = AMOLED with contrast, 5 = Sepia
          */
         SettingValues.currentTheme = new ColorPreferences(this).getFontStyle().getThemeType();
         networkStateReceiver = new NetworkStateReceiver();
         networkStateReceiver.addListener(this);
         try {
-            this.registerReceiver(networkStateReceiver,
+            this.registerReceiver(
+                    networkStateReceiver,
                     new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
         } catch (Exception e) {
 
@@ -185,14 +183,12 @@ public class NewsActivity extends BaseActivity
     }
 
     @Override
-    public void networkAvailable() {
-    }
+    public void networkAvailable() {}
 
     NetworkStateReceiver networkStateReceiver;
 
     @Override
-    public void networkUnavailable() {
-    }
+    public void networkUnavailable() {}
 
     @Override
     public void onResume() {
@@ -218,7 +214,6 @@ public class NewsActivity extends BaseActivity
 
     String shouldLoad;
 
-
     public void restartTheme() {
         Intent intent = this.getIntent();
         int page = pager.getCurrentItem();
@@ -233,7 +228,8 @@ public class NewsActivity extends BaseActivity
 
         if (((adapter.getCurrentFragment()) == null)) return;
         int[] firstVisibleItems =
-                ((CatchStaggeredGridLayoutManager) (((NewsView) adapter.getCurrentFragment()).rv.getLayoutManager()))
+                ((CatchStaggeredGridLayoutManager)
+                                (((NewsView) adapter.getCurrentFragment()).rv.getLayoutManager()))
                         .findFirstVisibleItemPositions(null);
         if (firstVisibleItems != null && firstVisibleItems.length > 0) {
             for (int firstVisibleItem : firstVisibleItems) {
@@ -303,15 +299,15 @@ public class NewsActivity extends BaseActivity
                     });
         } else {
             LogUtil.v("notnull");
-            mToolbar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    scrollToTop();
-                }
-            });
+            mToolbar.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            scrollToTop();
+                        }
+                    });
         }
     }
-
 
     public void updateMultiNameToSubs(Map<String, String> subs) {
         newsSubToMap = subs;
@@ -346,68 +342,72 @@ public class NewsActivity extends BaseActivity
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
             pager.clearOnPageChangeListeners();
-            pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset,
-                        int positionOffsetPixels) {
-                    if (positionOffset == 0) {
-                        header.animate()
-                                .translationY(0)
-                                .setInterpolator(new LinearInterpolator())
-                                .setDuration(180);
-                    }
-                }
-
-                @Override
-                public void onPageSelected(final int position) {
-                    Reddit.currentPosition = position;
-                    selectedSub = usedArray.get(position);
-                    NewsView page = (NewsView) adapter.getCurrentFragment();
-
-                    int colorFrom = ((ColorDrawable) header.getBackground()).getColor();
-                    int colorTo = Palette.getColor(selectedSub);
-
-                    ValueAnimator colorAnimation =
-                            ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-
-                    colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            pager.addOnPageChangeListener(
+                    new ViewPager.SimpleOnPageChangeListener() {
                         @Override
-                        public void onAnimationUpdate(ValueAnimator animator) {
-                            int color = (int) animator.getAnimatedValue();
+                        public void onPageScrolled(
+                                int position, float positionOffset, int positionOffsetPixels) {
+                            if (positionOffset == 0) {
+                                header.animate()
+                                        .translationY(0)
+                                        .setInterpolator(new LinearInterpolator())
+                                        .setDuration(180);
+                            }
+                        }
 
-                            header.setBackgroundColor(color);
+                        @Override
+                        public void onPageSelected(final int position) {
+                            Reddit.currentPosition = position;
+                            selectedSub = usedArray.get(position);
+                            NewsView page = (NewsView) adapter.getCurrentFragment();
 
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                int finalColor = Palette.getDarkerColor(color);
+                            int colorFrom = ((ColorDrawable) header.getBackground()).getColor();
+                            int colorTo = Palette.getColor(selectedSub);
 
-                                if (SettingValues.alwaysBlackStatusbar) {
-                                    finalColor = Color.BLACK;
-                                }
+                            ValueAnimator colorAnimation =
+                                    ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
 
-                                getWindow().setStatusBarColor(finalColor);
-                                if (SettingValues.colorNavBar) {
-                                    getWindow().setNavigationBarColor(
-                                            Palette.getDarkerColor(color));
+                            colorAnimation.addUpdateListener(
+                                    new ValueAnimator.AnimatorUpdateListener() {
+                                        @Override
+                                        public void onAnimationUpdate(ValueAnimator animator) {
+                                            int color = (int) animator.getAnimatedValue();
+
+                                            header.setBackgroundColor(color);
+
+                                            if (Build.VERSION.SDK_INT
+                                                    >= Build.VERSION_CODES.LOLLIPOP) {
+                                                int finalColor = Palette.getDarkerColor(color);
+
+                                                if (SettingValues.alwaysBlackStatusbar) {
+                                                    finalColor = Color.BLACK;
+                                                }
+
+                                                getWindow().setStatusBarColor(finalColor);
+                                                if (SettingValues.colorNavBar) {
+                                                    getWindow()
+                                                            .setNavigationBarColor(
+                                                                    Palette.getDarkerColor(color));
+                                                }
+                                            }
+                                        }
+                                    });
+                            colorAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+                            colorAnimation.setDuration(200);
+                            colorAnimation.start();
+
+                            setRecentBar(selectedSub);
+
+                            mTabLayout.setSelectedTabIndicatorColor(
+                                    new ColorPreferences(NewsActivity.this).getColor(selectedSub));
+                            if (page != null && page.adapter != null) {
+                                SubredditPostsRealm p = page.adapter.dataSet;
+                                if (p.offline) {
+                                    p.doNewsActivityOffline(NewsActivity.this, p.displayer);
                                 }
                             }
                         }
                     });
-                    colorAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
-                    colorAnimation.setDuration(200);
-                    colorAnimation.start();
-
-                    setRecentBar(selectedSub);
-
-                    mTabLayout.setSelectedTabIndicatorColor(
-                            new ColorPreferences(NewsActivity.this).getColor(selectedSub));
-                    if (page != null && page.adapter != null) {
-                        SubredditPostsRealm p = page.adapter.dataSet;
-                        if (p.offline) {
-                            p.doNewsActivityOffline(NewsActivity.this, p.displayer);
-                        }
-                    }
-                }
-            });
 
             if (pager.getAdapter() != null) {
                 pager.getAdapter().notifyDataSetChanged();
@@ -443,7 +443,8 @@ public class NewsActivity extends BaseActivity
         }
 
         @Override
-        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        public void setPrimaryItem(
+                @NonNull ViewGroup container, int position, @NonNull Object object) {
             if (reloadItemNumber == position || reloadItemNumber < 0) {
                 super.setPrimaryItem(container, position, object);
                 if (usedArray.size() >= position) doSetPrimary(object, position);
@@ -474,7 +475,6 @@ public class NewsActivity extends BaseActivity
                 mCurrentFragment = ((NewsView) object);
                 if (mCurrentFragment.posts == null && mCurrentFragment.isAdded()) {
                     mCurrentFragment.doAdapter();
-
                 }
             }
         }

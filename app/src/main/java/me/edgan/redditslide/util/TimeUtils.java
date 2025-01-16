@@ -3,13 +3,11 @@ package me.edgan.redditslide.util;
 import android.content.Context;
 import android.content.res.Resources;
 
-import net.dean.jraw.paginators.TimePeriod;
-
 import me.edgan.redditslide.R;
 
-/**
- * Created by ccrama on 3/1/2015.
- */
+import net.dean.jraw.paginators.TimePeriod;
+
+/** Created by ccrama on 3/1/2015. */
 public class TimeUtils {
 
     private static final long SECOND_MILLIS = 1000;
@@ -19,9 +17,7 @@ public class TimeUtils {
     private static final long YEAR_MILLIS = 365 * DAY_MILLIS;
     private static final long MONTH_MILLIS = 30 * DAY_MILLIS;
 
-    private TimeUtils() {
-    }
-
+    private TimeUtils() {}
 
     public static String getTimeAgo(long time, Context c) {
         if (time < 1000000000000L) {
@@ -43,7 +39,7 @@ public class TimeUtils {
         } else if (diff < DAY_MILLIS) {
             int hours = longToInt(diff / HOUR_MILLIS);
             return c.getString(R.string.time_hours_short, hours);
-        } else if (diff < YEAR_MILLIS){
+        } else if (diff < YEAR_MILLIS) {
             int days = longToInt(diff / DAY_MILLIS);
             return c.getString(R.string.time_days_short, days);
         } else {
@@ -100,15 +96,13 @@ public class TimeUtils {
         String hour = "";
         String minute = "";
 
-        if (hours > 0)
-            hour = res.getQuantityString(R.plurals.time_hours, hours, hours);
-        if (minutes > 0)
-            minute = res.getQuantityString(R.plurals.time_minutes, minutes, minutes);
-        return hour.isEmpty() ? minute : hour + " " + minute ;
+        if (hours > 0) hour = res.getQuantityString(R.plurals.time_hours, hours, hours);
+        if (minutes > 0) minute = res.getQuantityString(R.plurals.time_minutes, minutes, minutes);
+        return hour.isEmpty() ? minute : hour + " " + minute;
     }
 
     public static TimePeriod stringToTimePeriod(String time) {
-        for (TimePeriod timePeriod: TimePeriod.values()) {
+        for (TimePeriod timePeriod : TimePeriod.values()) {
             if (timePeriod.toString().equalsIgnoreCase(time)) {
                 return timePeriod;
             }

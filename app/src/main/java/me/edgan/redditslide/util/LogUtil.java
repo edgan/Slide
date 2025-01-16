@@ -8,7 +8,7 @@ public class LogUtil {
     /**
      * Get the stacktrace index of the method that called this class
      *
-     * Variation of http://stackoverflow.com/a/8592871/4026792
+     * <p>Variation of http://stackoverflow.com/a/8592871/4026792
      */
     static {
         int i = 1;
@@ -28,10 +28,11 @@ public class LogUtil {
      */
     public static String getTag() {
         try {
-            final StackTraceElement ste = Thread.currentThread().getStackTrace()[CALLING_METHOD_INDEX];
+            final StackTraceElement ste =
+                    Thread.currentThread().getStackTrace()[CALLING_METHOD_INDEX];
             return "(" + ste.getFileName() + ":" + ste.getLineNumber() + ")";
 
-        } catch (Exception e){
+        } catch (Exception e) {
             return "Slide";
         }
     }

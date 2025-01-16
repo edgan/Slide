@@ -9,16 +9,14 @@ import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
 
-import net.dean.jraw.http.NetworkException;
-import net.dean.jraw.managers.InboxManager;
-
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Notifications.CheckForMail;
 import me.edgan.redditslide.util.NetworkUtil;
 
-/**
- * Created by brent on 1/27/16.
- */
+import net.dean.jraw.http.NetworkException;
+import net.dean.jraw.managers.InboxManager;
+
+/** Created by brent on 1/27/16. */
 public class MarkAsReadService extends IntentService {
 
     public static final String NOTIFICATION_ID = "NOTIFICATION_ID";
@@ -27,16 +25,22 @@ public class MarkAsReadService extends IntentService {
         super("MarkReadService");
     }
 
-    public static PendingIntent getMarkAsReadIntent(int notificationId, Context context, String[] messageNames) {
+    public static PendingIntent getMarkAsReadIntent(
+            int notificationId, Context context, String[] messageNames) {
         Intent intent = new Intent(context, MarkAsReadService.class);
         intent.putExtra(NOTIFICATION_ID, notificationId - 2);
         intent.putExtra(CheckForMail.MESSAGE_EXTRA, messageNames);
-        return PendingIntent.getService(context, notificationId, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
+        return PendingIntent.getService(
+                context,
+                notificationId,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        NotificationManager manager = ContextCompat.getSystemService(this, NotificationManager.class);
+        NotificationManager manager =
+                ContextCompat.getSystemService(this, NotificationManager.class);
         if (manager != null) {
             manager.cancel(intent.getIntExtra(NOTIFICATION_ID, -1));
         }
@@ -57,7 +61,5 @@ public class MarkAsReadService extends IntentService {
                 }
             }
         }
-
     }
-
 }

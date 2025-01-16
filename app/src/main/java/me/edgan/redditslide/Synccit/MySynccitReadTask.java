@@ -1,14 +1,11 @@
 package me.edgan.redditslide.Synccit;
 
-/**
- * Created by carlo_000 on 2/16/2016.
- */
-
-import java.util.HashSet;
-
+/** Created by carlo_000 on 2/16/2016. */
 import me.edgan.redditslide.Adapters.SubmissionDisplay;
 import me.edgan.redditslide.HasSeen;
 import me.edgan.redditslide.SettingValues;
+
+import java.util.HashSet;
 
 public class MySynccitReadTask extends SynccitReadTask {
 
@@ -56,5 +53,4 @@ public class MySynccitReadTask extends SynccitReadTask {
         super.onPostExecute(result);
         if (displayer != null) displayer.updateViews();
     }
-
 }

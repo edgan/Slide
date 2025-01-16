@@ -20,23 +20,20 @@ package me.edgan.redditslide.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import me.edgan.redditslide.SettingValues;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import me.edgan.redditslide.SettingValues;
-
 public class UpgradeUtil {
     // Increment for each needed change
     private static final int VERSION = 2;
 
-    private UpgradeUtil() {
-    }
+    private UpgradeUtil() {}
 
-    /**
-     * Runs any upgrade actions required between versions in an organised way
-     */
+    /** Runs any upgrade actions required between versions in an organised way */
     public static void upgrade(Context context) {
         SharedPreferences colors = context.getSharedPreferences("COLOR", 0);
         SharedPreferences upgradePrefs = context.getSharedPreferences("upgradeUtil", 0);
@@ -56,9 +53,9 @@ public class UpgradeUtil {
             SharedPreferences prefs = context.getSharedPreferences("SETTINGS", 0);
             String domains = prefs.getString(SettingValues.PREF_ALWAYS_EXTERNAL, "");
 
-            domains = domains
-                    .replaceFirst("(?<=^|,)youtube.co(?=$|,)", "youtube.com")
-                    .replaceFirst("(?<=^|,)play.google.co(?=$|,)", "play.google.com");
+            domains =
+                    domains.replaceFirst("(?<=^|,)youtube.co(?=$|,)", "youtube.com")
+                            .replaceFirst("(?<=^|,)play.google.co(?=$|,)", "play.google.com");
 
             prefs.edit().putString(SettingValues.PREF_ALWAYS_EXTERNAL, domains).apply();
         }
@@ -83,17 +80,35 @@ public class UpgradeUtil {
             prefsEditor.remove(SettingValues.PREF_USER_FILTERS);
             prefsEditor.remove(SettingValues.PREF_ALWAYS_EXTERNAL);
 
-            Set<String> titleFilters = titleFilterStr.isEmpty() ? new HashSet<>() :
-                    new HashSet<>(Arrays.asList(titleFilterStr.replaceAll("^[,\\s]+", "")
-                            .toLowerCase(Locale.ENGLISH).split("[,\\s]+")));
+            Set<String> titleFilters =
+                    titleFilterStr.isEmpty()
+                            ? new HashSet<>()
+                            : new HashSet<>(
+                                    Arrays.asList(
+                                            titleFilterStr
+                                                    .replaceAll("^[,\\s]+", "")
+                                                    .toLowerCase(Locale.ENGLISH)
+                                                    .split("[,\\s]+")));
 
-            Set<String> textFilters = textFilterStr.isEmpty() ? new HashSet<>() :
-                    new HashSet<>(Arrays.asList(textFilterStr.replaceAll("^[,\\s]+", "")
-                            .toLowerCase(Locale.ENGLISH).split("[,\\s]+")));
+            Set<String> textFilters =
+                    textFilterStr.isEmpty()
+                            ? new HashSet<>()
+                            : new HashSet<>(
+                                    Arrays.asList(
+                                            textFilterStr
+                                                    .replaceAll("^[,\\s]+", "")
+                                                    .toLowerCase(Locale.ENGLISH)
+                                                    .split("[,\\s]+")));
 
-            Set<String> flairFilters = flairFilterStr.isEmpty() ? new HashSet<>() :
-                    new HashSet<>(Arrays.asList(flairFilterStr.replaceAll("^[,]+", "")
-                            .toLowerCase(Locale.ENGLISH).split("[,]+")));
+            Set<String> flairFilters =
+                    flairFilterStr.isEmpty()
+                            ? new HashSet<>()
+                            : new HashSet<>(
+                                    Arrays.asList(
+                                            flairFilterStr
+                                                    .replaceAll("^[,]+", "")
+                                                    .toLowerCase(Locale.ENGLISH)
+                                                    .split("[,]+")));
             // verify flairs filters are valid
             HashSet<String> invalid = new HashSet<>();
             for (String s : flairFilters) {
@@ -103,21 +118,45 @@ public class UpgradeUtil {
             }
             flairFilters.removeAll(invalid);
 
-            Set<String> subredditFilters = subredditFilterStr.isEmpty() ? new HashSet<>() :
-                    new HashSet<>(Arrays.asList(subredditFilterStr.replaceAll("^[,\\s]+", "")
-                            .toLowerCase(Locale.ENGLISH).split("[,\\s]+")));
+            Set<String> subredditFilters =
+                    subredditFilterStr.isEmpty()
+                            ? new HashSet<>()
+                            : new HashSet<>(
+                                    Arrays.asList(
+                                            subredditFilterStr
+                                                    .replaceAll("^[,\\s]+", "")
+                                                    .toLowerCase(Locale.ENGLISH)
+                                                    .split("[,\\s]+")));
 
-            Set<String> domainFilters = domainFilterStr.isEmpty() ? new HashSet<>() :
-                    new HashSet<>(Arrays.asList(domainFilterStr.replaceAll("^[,\\s]+", "")
-                            .toLowerCase(Locale.ENGLISH).split("[,\\s]+")));
+            Set<String> domainFilters =
+                    domainFilterStr.isEmpty()
+                            ? new HashSet<>()
+                            : new HashSet<>(
+                                    Arrays.asList(
+                                            domainFilterStr
+                                                    .replaceAll("^[,\\s]+", "")
+                                                    .toLowerCase(Locale.ENGLISH)
+                                                    .split("[,\\s]+")));
 
-            Set<String> usersFilters = usersFilterStr.isEmpty() ? new HashSet<>() :
-                    new HashSet<>(Arrays.asList(usersFilterStr.replaceAll("^[,\\s]+", "")
-                            .toLowerCase(Locale.ENGLISH).split("[,\\s]+")));
+            Set<String> usersFilters =
+                    usersFilterStr.isEmpty()
+                            ? new HashSet<>()
+                            : new HashSet<>(
+                                    Arrays.asList(
+                                            usersFilterStr
+                                                    .replaceAll("^[,\\s]+", "")
+                                                    .toLowerCase(Locale.ENGLISH)
+                                                    .split("[,\\s]+")));
 
-            Set<String> alwaysExternal = alwaysExternalStr.isEmpty() ? new HashSet<>() :
-                    new HashSet<>(Arrays.asList(alwaysExternalStr.replaceAll("^[,\\s]+", "")
-                            .toLowerCase(Locale.ENGLISH).split("[,\\s]+")));
+            Set<String> alwaysExternal =
+                    alwaysExternalStr.isEmpty()
+                            ? new HashSet<>()
+                            : new HashSet<>(
+                                    Arrays.asList(
+                                            alwaysExternalStr
+                                                    .replaceAll("^[,\\s]+", "")
+                                                    .toLowerCase(Locale.ENGLISH)
+                                                    .split("[,\\s]+")));
 
             prefsEditor.putStringSet(SettingValues.PREF_TITLE_FILTERS, titleFilters);
             prefsEditor.putStringSet(SettingValues.PREF_TEXT_FILTERS, textFilters);

@@ -8,14 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-/**
- * Created by carlo_000 on 4/18/2016.
- */
+/** Created by carlo_000 on 4/18/2016. */
 public class OfflineSubAdapter extends ArrayAdapter<String> {
 
     private Context mContext;
-    public OfflineSubAdapter(Context context, int textViewResourceId,
-                            String[] objects) {
+
+    public OfflineSubAdapter(Context context, int textViewResourceId, String[] objects) {
         super(context, textViewResourceId, objects);
 
         this.titles = objects;
@@ -23,6 +21,7 @@ public class OfflineSubAdapter extends ArrayAdapter<String> {
     }
 
     String[] titles;
+
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
         return getCustomView(position, convertView, parent);
@@ -37,8 +36,9 @@ public class OfflineSubAdapter extends ArrayAdapter<String> {
         ViewHolder holder;
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext)
-                    .inflate(android.R.layout.simple_list_item_1, null);
+            convertView =
+                    LayoutInflater.from(mContext)
+                            .inflate(android.R.layout.simple_list_item_1, null);
             holder = new ViewHolder();
             holder.txt01 = convertView.findViewById(android.R.id.text1);
             holder.txt01.setTextColor(Color.WHITE);
@@ -55,7 +55,4 @@ public class OfflineSubAdapter extends ArrayAdapter<String> {
     static class ViewHolder {
         TextView txt01;
     }
-
-
-
 }

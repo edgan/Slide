@@ -21,9 +21,7 @@ import me.edgan.redditslide.UserSubscriptions;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class ModQueue extends BaseActivityAnim {
 
     public ModQueuePagerAdapter adapter;
@@ -43,15 +41,16 @@ public class ModQueue extends BaseActivityAnim {
         tabs.setSelectedTabIndicatorColor(new ColorPreferences(ModQueue.this).getColor("no sub"));
         final View header = findViewById(R.id.header);
         ViewPager pager = (ViewPager) findViewById(R.id.content_view);
-        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                header.animate()
-                        .translationY(0)
-                        .setInterpolator(new LinearInterpolator())
-                        .setDuration(180);
-            }
-        });
+        pager.addOnPageChangeListener(
+                new ViewPager.SimpleOnPageChangeListener() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        header.animate()
+                                .translationY(0)
+                                .setInterpolator(new LinearInterpolator())
+                                .setDuration(180);
+                    }
+                });
         findViewById(R.id.header).setBackgroundColor(Palette.getDefaultColor());
         pager.setAdapter(new ModQueuePagerAdapter(getSupportFragmentManager()));
         tabs.setupWithViewPager(pager);
@@ -66,7 +65,8 @@ public class ModQueue extends BaseActivityAnim {
         }
 
         @Override
-        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        public void setPrimaryItem(
+                @NonNull ViewGroup container, int position, @NonNull Object object) {
             if (mCurrentFragment != object) {
                 mCurrentFragment = (Fragment) object;
             }

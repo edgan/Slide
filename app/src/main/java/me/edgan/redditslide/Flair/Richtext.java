@@ -1,6 +1,5 @@
 package me.edgan.redditslide.Flair;
 
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -9,12 +8,15 @@ public class Richtext {
     @SerializedName("e")
     @Expose
     private String e;
+
     @SerializedName("t")
     @Expose
     private String t;
+
     @SerializedName("a")
     @Expose
     private String a;
+
     @SerializedName("u")
     @Expose
     private String u;
@@ -50,5 +52,4 @@ public class Richtext {
     public void setU(String u) {
         this.u = u;
     }
-
 }

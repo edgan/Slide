@@ -26,11 +26,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
-import net.dean.jraw.models.Submission;
-
-import java.util.Arrays;
-import java.util.List;
-
 import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.ForceTouch.PeekView;
 import me.edgan.redditslide.ForceTouch.PeekViewActivity;
@@ -51,32 +46,37 @@ import me.edgan.redditslide.util.CompatUtil;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.NetworkUtil;
 
-/**
- * Created by carlo_000 on 2/7/2016.
- */
+import net.dean.jraw.models.Submission;
+
+import java.util.Arrays;
+import java.util.List;
+
+/** Created by carlo_000 on 2/7/2016. */
 public class HeaderImageLinkView extends RelativeLayout {
-    public String    loadedUrl;
-    public boolean   lq;
+    public String loadedUrl;
+    public boolean lq;
     public ImageView thumbImage2;
-    public TextView  secondTitle;
-    public TextView  secondSubTitle;
-    public View      wrapArea;
+    public TextView secondTitle;
+    public TextView secondSubTitle;
+    public View wrapArea;
     String lastDone = "";
     ContentType.Type type;
-    DisplayImageOptions bigOptions = new DisplayImageOptions.Builder().resetViewBeforeLoading(false)
-            .cacheOnDisk(true)
-            .imageScaleType(ImageScaleType.EXACTLY)
-            .cacheInMemory(false)
-            .displayer(new FadeInBitmapDisplayer(250))
-            .build();
-    boolean     clickHandled;
-    Handler     handler;
+    DisplayImageOptions bigOptions =
+            new DisplayImageOptions.Builder()
+                    .resetViewBeforeLoading(false)
+                    .cacheOnDisk(true)
+                    .imageScaleType(ImageScaleType.EXACTLY)
+                    .cacheInMemory(false)
+                    .displayer(new FadeInBitmapDisplayer(250))
+                    .build();
+    boolean clickHandled;
+    Handler handler;
     MotionEvent event;
-    Runnable    longClicked;
-    float       position;
-    private TextView  title;
-    private TextView  info;
-    public  ImageView backdrop;
+    Runnable longClicked;
+    float position;
+    private TextView title;
+    private TextView info;
+    public ImageView backdrop;
 
     public HeaderImageLinkView(Context context) {
         super(context);
@@ -95,10 +95,12 @@ public class HeaderImageLinkView extends RelativeLayout {
 
     boolean thumbUsed;
 
-    public void doImageAndText(final Submission submission, boolean full, String baseSub, boolean news) {
+    public void doImageAndText(
+            final Submission submission, boolean full, String baseSub, boolean news) {
 
         backdrop.setLayoutParams(
-            new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+                new RelativeLayout.LayoutParams(
+                        LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         boolean fullImage = ContentType.fullImage(type);
         thumbUsed = false;
@@ -112,7 +114,7 @@ public class HeaderImageLinkView extends RelativeLayout {
                 (((!NetworkUtil.isConnectedWifi(getContext()) && SettingValues.lowResMobile)
                         || SettingValues.lowResAlways));
 
-       /* todo, maybe if(thumbImage2 != null && thumbImage2 instanceof RoundImageTriangleView)
+        /* todo, maybe if(thumbImage2 != null && thumbImage2 instanceof RoundImageTriangleView)
             switch (ContentType.getContentType(submission)) {
             case ALBUM:
                 ((RoundImageTriangleView)(thumbImage2)).setFlagColor(R.color.md_blue_300);
@@ -152,24 +154,24 @@ public class HeaderImageLinkView extends RelativeLayout {
                         forceThumb = true;
                     } else if (SettingValues.cropImage) {
                         backdrop.setLayoutParams(
-                                new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                        dpToPx(200)));
+                                new RelativeLayout.LayoutParams(
+                                        LayoutParams.MATCH_PARENT, dpToPx(200)));
                     } else {
                         double h = getHeightFromAspectRatio(height, width);
                         if (h != 0) {
                             if (h > 3200) {
                                 backdrop.setLayoutParams(
-                                        new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                                3200));
+                                        new RelativeLayout.LayoutParams(
+                                                LayoutParams.MATCH_PARENT, 3200));
                             } else {
                                 backdrop.setLayoutParams(
-                                        new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                                (int) h));
+                                        new RelativeLayout.LayoutParams(
+                                                LayoutParams.MATCH_PARENT, (int) h));
                             }
                         } else {
                             backdrop.setLayoutParams(
-                                    new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                            LayoutParams.WRAP_CONTENT));
+                                    new RelativeLayout.LayoutParams(
+                                            LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
                         }
                     }
                 } else if (SettingValues.bigPicCropped) {
@@ -177,30 +179,29 @@ public class HeaderImageLinkView extends RelativeLayout {
                         forceThumb = true;
                     } else {
                         backdrop.setLayoutParams(
-                                new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                        dpToPx(200)));
+                                new RelativeLayout.LayoutParams(
+                                        LayoutParams.MATCH_PARENT, dpToPx(200)));
                     }
                 } else if (fullImage || height >= dpToPx(50)) {
                     double h = getHeightFromAspectRatio(height, width);
                     if (h != 0) {
                         if (h > 3200) {
                             backdrop.setLayoutParams(
-                                    new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                            3200));
+                                    new RelativeLayout.LayoutParams(
+                                            LayoutParams.MATCH_PARENT, 3200));
                         } else {
                             backdrop.setLayoutParams(
-                                    new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                            (int) h));
+                                    new RelativeLayout.LayoutParams(
+                                            LayoutParams.MATCH_PARENT, (int) h));
                         }
                     } else {
                         backdrop.setLayoutParams(
-                                new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                        LayoutParams.WRAP_CONTENT));
+                                new RelativeLayout.LayoutParams(
+                                        LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
                     }
                 } else {
                     forceThumb = true;
                 }
-
             }
 
             JsonNode thumbnail = submission.getDataNode().get("thumbnail");
@@ -212,7 +213,11 @@ public class HeaderImageLinkView extends RelativeLayout {
             }
 
             JsonNode node = submission.getDataNode();
-            if(!SettingValues.ignoreSubSetting && node != null && node.has("sr_detail") && node.get("sr_detail").has("show_media") && !node.get("sr_detail").get("show_media").asBoolean()){
+            if (!SettingValues.ignoreSubSetting
+                    && node != null
+                    && node.has("sr_detail")
+                    && node.get("sr_detail").has("show_media")
+                    && !node.get("sr_detail").get("show_media").asBoolean()) {
                 thumbnailType = Submission.ThumbnailType.NONE;
             }
 
@@ -226,8 +231,14 @@ public class HeaderImageLinkView extends RelativeLayout {
                 thumbImage2.setImageDrawable(
                         ContextCompat.getDrawable(getContext(), R.drawable.web));
                 thumbUsed = true;
-            } else if (submission.isNsfw()
-                    && SettingValues.getIsNSFWEnabled() || (baseSub != null && submission.isNsfw() && SettingValues.hideNSFWCollection && (baseSub.equals("frontpage") || baseSub.equals("all") || baseSub.contains("+") || baseSub.equals("popular")) )) {
+            } else if (submission.isNsfw() && SettingValues.getIsNSFWEnabled()
+                    || (baseSub != null
+                            && submission.isNsfw()
+                            && SettingValues.hideNSFWCollection
+                            && (baseSub.equals("frontpage")
+                                    || baseSub.equals("all")
+                                    || baseSub.contains("+")
+                                    || baseSub.equals("popular")))) {
                 setVisibility(View.GONE);
                 if (!full || forceThumb) {
                     thumbImage2.setVisibility(View.VISIBLE);
@@ -282,12 +293,14 @@ public class HeaderImageLinkView extends RelativeLayout {
                 // Load the URL
                 if (!full && !SettingValues.isPicsEnabled(baseSub)) {
                     thumbImage2.setVisibility(View.VISIBLE);
-                    ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                    ((Reddit) getContext().getApplicationContext())
+                            .getImageLoader()
                             .displayImage(url, thumbImage2);
                     setVisibility(View.GONE);
                 } else {
                     backdrop.setVisibility(View.VISIBLE);
-                    ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                    ((Reddit) getContext().getApplicationContext())
+                            .getImageLoader()
                             .displayImage(url, backdrop);
                     setVisibility(View.VISIBLE);
                 }
@@ -295,8 +308,10 @@ public class HeaderImageLinkView extends RelativeLayout {
             } else if (type == ContentType.Type.REDDIT_GALLERY) {
                 JsonNode dataNode = submission.getDataNode();
 
-                // If this is a crosspost, we need to load the gallery data from the parent submission
-                if (dataNode.has("crosspost_parent_list") && dataNode.get("crosspost_parent_list").size() > 0) {
+                // If this is a crosspost, we need to load the gallery data from the parent
+                // submission
+                if (dataNode.has("crosspost_parent_list")
+                        && dataNode.get("crosspost_parent_list").size() > 0) {
                     dataNode = dataNode.get("crosspost_parent_list").get(0);
                 }
 
@@ -313,12 +328,18 @@ public class HeaderImageLinkView extends RelativeLayout {
                                 if (!"failed".equals(mediaInfo.get("status").asText())) {
                                     allFailed = false;
                                     if (mediaInfo.has("p") && mediaInfo.get("p").size() > 0) {
-                                        url = mediaInfo.get("p").get(0).get("u").asText()
-                                                .replace("preview", "i")
-                                                .replaceAll("\\?.*", "");
+                                        url =
+                                                mediaInfo
+                                                        .get("p")
+                                                        .get(0)
+                                                        .get("u")
+                                                        .asText()
+                                                        .replace("preview", "i")
+                                                        .replaceAll("\\?.*", "");
 
                                         // Handle the URL similar to regular images
-                                        if (!full && !SettingValues.isPicsEnabled(baseSub) || forceThumb) {
+                                        if (!full && !SettingValues.isPicsEnabled(baseSub)
+                                                || forceThumb) {
                                             if (!submission.isSelfPost() || full) {
                                                 if (!full && thumbImage2 != null) {
                                                     thumbImage2.setVisibility(View.VISIBLE);
@@ -328,11 +349,14 @@ public class HeaderImageLinkView extends RelativeLayout {
 
                                                 loadedUrl = url;
                                                 if (!full) {
-                                                    ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                                                    ((Reddit) getContext().getApplicationContext())
+                                                            .getImageLoader()
                                                             .displayImage(url, thumbImage2);
                                                 } else {
-                                                    ((Reddit) getContext().getApplicationContext()).getImageLoader()
-                                                            .displayImage(url, thumbImage2, bigOptions);
+                                                    ((Reddit) getContext().getApplicationContext())
+                                                            .getImageLoader()
+                                                            .displayImage(
+                                                                    url, thumbImage2, bigOptions);
                                                 }
                                             } else if (thumbImage2 != null) {
                                                 thumbImage2.setVisibility(View.GONE);
@@ -341,10 +365,12 @@ public class HeaderImageLinkView extends RelativeLayout {
                                         } else {
                                             loadedUrl = url;
                                             if (!full) {
-                                                ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                                                ((Reddit) getContext().getApplicationContext())
+                                                        .getImageLoader()
                                                         .displayImage(url, backdrop);
                                             } else {
-                                                ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                                                ((Reddit) getContext().getApplicationContext())
+                                                        .getImageLoader()
                                                         .displayImage(url, backdrop, bigOptions);
                                             }
                                             setVisibility(View.VISIBLE);
@@ -356,16 +382,17 @@ public class HeaderImageLinkView extends RelativeLayout {
                                         }
 
                                         // Dimension handling
-                                        if (mediaInfo.has("s") &&
-                                                mediaInfo.get("s").has("x") &&
-                                                mediaInfo.get("s").has("y")) {
+                                        if (mediaInfo.has("s")
+                                                && mediaInfo.get("s").has("x")
+                                                && mediaInfo.get("s").has("y")) {
                                             int width = mediaInfo.get("s").get("x").asInt();
                                             int height = mediaInfo.get("s").get("y").asInt();
                                             double h = getHeightFromAspectRatio(height, width);
                                             if (h > 0) {
                                                 backdrop.setLayoutParams(
-                                                    new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                                                        (int) Math.min(h, 3200)));
+                                                        new RelativeLayout.LayoutParams(
+                                                                LayoutParams.MATCH_PARENT,
+                                                                (int) Math.min(h, 3200)));
                                             }
                                         }
                                     }
@@ -388,8 +415,9 @@ public class HeaderImageLinkView extends RelativeLayout {
                     }
                 }
             } else if (type != ContentType.Type.IMAGE
-                    && type != ContentType.Type.SELF
-                    && (!thumbnail.isNull() && (thumbnailType != Submission.ThumbnailType.URL))
+                            && type != ContentType.Type.SELF
+                            && (!thumbnail.isNull()
+                                    && (thumbnailType != Submission.ThumbnailType.URL))
                     || thumbnail.asText().isEmpty() && !submission.isSelfPost()) {
 
                 setVisibility(View.GONE);
@@ -403,8 +431,9 @@ public class HeaderImageLinkView extends RelativeLayout {
                         ContextCompat.getDrawable(getContext(), R.drawable.web));
                 thumbUsed = true;
                 loadedUrl = submission.getUrl();
-            } else if (type == ContentType.Type.IMAGE && !thumbnail.isNull() && !thumbnail.asText()
-                    .isEmpty()) {
+            } else if (type == ContentType.Type.IMAGE
+                    && !thumbnail.isNull()
+                    && !thumbnail.asText().isEmpty()) {
                 if (loadLq
                         && submission.getThumbnails() != null
                         && submission.getThumbnails().getVariations() != null
@@ -412,44 +441,68 @@ public class HeaderImageLinkView extends RelativeLayout {
 
                     if (ContentType.isImgurImage(submission.getUrl())) {
                         url = submission.getUrl();
-                        url = url.substring(0, url.lastIndexOf(".")) + (SettingValues.lqLow ? "m"
-                                : (SettingValues.lqMid ? "l" : "h")) + url.substring(
-                                url.lastIndexOf("."));
+                        url =
+                                url.substring(0, url.lastIndexOf("."))
+                                        + (SettingValues.lqLow
+                                                ? "m"
+                                                : (SettingValues.lqMid ? "l" : "h"))
+                                        + url.substring(url.lastIndexOf("."));
                     } else {
                         int length = submission.getThumbnails().getVariations().length;
                         if (SettingValues.lqLow && length >= 3) {
-                            url = CompatUtil.fromHtml(
-                                    submission.getThumbnails().getVariations()[2].getUrl())
-                                    .toString(); // unescape url characters
+                            url =
+                                    CompatUtil.fromHtml(
+                                                    submission
+                                                            .getThumbnails()
+                                                            .getVariations()[2]
+                                                            .getUrl())
+                                            .toString(); // unescape url characters
                         } else if (SettingValues.lqMid && length >= 4) {
-                            url = CompatUtil.fromHtml(
-                                    submission.getThumbnails().getVariations()[3].getUrl())
-                                    .toString(); // unescape url characters
+                            url =
+                                    CompatUtil.fromHtml(
+                                                    submission
+                                                            .getThumbnails()
+                                                            .getVariations()[3]
+                                                            .getUrl())
+                                            .toString(); // unescape url characters
                         } else if (length >= 5) {
-                            url = CompatUtil.fromHtml(
-                                    submission.getThumbnails().getVariations()[length - 1].getUrl())
-                                    .toString(); // unescape url characters
+                            url =
+                                    CompatUtil.fromHtml(
+                                                    submission
+                                                            .getThumbnails()
+                                                            .getVariations()[length - 1]
+                                                            .getUrl())
+                                            .toString(); // unescape url characters
                         } else {
-                            url = CompatUtil.fromHtml(submission.getThumbnails().getSource().getUrl())
-                                    .toString(); // unescape url characters
+                            url =
+                                    CompatUtil.fromHtml(
+                                                    submission.getThumbnails().getSource().getUrl())
+                                            .toString(); // unescape url characters
                         }
                     }
                     lq = true;
 
                 } else {
-                    if (submission.getDataNode().has("preview") && submission.getDataNode()
-                            .get("preview")
-                            .get("images")
-                            .get(0)
-                            .get("source")
-                            .has("height")) { // Load the preview image which has probably already been cached in memory instead of the direct link
-                        url = submission.getDataNode()
-                                .get("preview")
-                                .get("images")
-                                .get(0)
-                                .get("source")
-                                .get("url")
-                                .asText();
+                    if (submission.getDataNode().has("preview")
+                            && submission
+                                    .getDataNode()
+                                    .get("preview")
+                                    .get("images")
+                                    .get(0)
+                                    .get("source")
+                                    .has(
+                                            "height")) { // Load the preview image which has
+                                                         // probably already been cached in memory
+                                                         // instead of the direct link
+                        url =
+                                submission
+                                        .getDataNode()
+                                        .get("preview")
+                                        .get("images")
+                                        .get(0)
+                                        .get("source")
+                                        .get("url")
+                                        .asText();
                     } else {
                         url = submission.getUrl();
                     }
@@ -466,10 +519,12 @@ public class HeaderImageLinkView extends RelativeLayout {
 
                         loadedUrl = url;
                         if (!full) {
-                            ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                            ((Reddit) getContext().getApplicationContext())
+                                    .getImageLoader()
                                     .displayImage(url, thumbImage2);
                         } else {
-                            ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                            ((Reddit) getContext().getApplicationContext())
+                                    .getImageLoader()
                                     .displayImage(url, thumbImage2, bigOptions);
                         }
                     } else {
@@ -480,10 +535,12 @@ public class HeaderImageLinkView extends RelativeLayout {
                 } else {
                     loadedUrl = url;
                     if (!full) {
-                        ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                        ((Reddit) getContext().getApplicationContext())
+                                .getImageLoader()
                                 .displayImage(url, backdrop);
                     } else {
-                        ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                        ((Reddit) getContext().getApplicationContext())
+                                .getImageLoader()
                                 .displayImage(url, backdrop, bigOptions);
                     }
                     setVisibility(View.VISIBLE);
@@ -498,36 +555,65 @@ public class HeaderImageLinkView extends RelativeLayout {
                 if (loadLq && submission.getThumbnails().getVariations().length != 0) {
                     if (ContentType.isImgurImage(submission.getUrl())) {
                         url = submission.getUrl();
-                        url = url.substring(0, url.lastIndexOf(".")) + (SettingValues.lqLow ? "m"
-                                : (SettingValues.lqMid ? "l" : "h")) + url.substring(
-                                url.lastIndexOf("."));
+                        url =
+                                url.substring(0, url.lastIndexOf("."))
+                                        + (SettingValues.lqLow
+                                                ? "m"
+                                                : (SettingValues.lqMid ? "l" : "h"))
+                                        + url.substring(url.lastIndexOf("."));
                     } else {
                         int length = submission.getThumbnails().getVariations().length;
                         if (SettingValues.lqLow && length >= 3) {
-                            url = CompatUtil.fromHtml(
-                                    submission.getThumbnails().getVariations()[2].getUrl())
-                                    .toString(); // unescape url characters
+                            url =
+                                    CompatUtil.fromHtml(
+                                                    submission
+                                                            .getThumbnails()
+                                                            .getVariations()[2]
+                                                            .getUrl())
+                                            .toString(); // unescape url characters
                         } else if (SettingValues.lqMid && length >= 4) {
-                            url = CompatUtil.fromHtml(
-                                    submission.getThumbnails().getVariations()[3].getUrl())
-                                    .toString(); // unescape url characters
+                            url =
+                                    CompatUtil.fromHtml(
+                                                    submission
+                                                            .getThumbnails()
+                                                            .getVariations()[3]
+                                                            .getUrl())
+                                            .toString(); // unescape url characters
                         } else if (length >= 5) {
-                            url = CompatUtil.fromHtml(
-                                    submission.getThumbnails().getVariations()[length - 1].getUrl())
-                                    .toString(); // unescape url characters
+                            url =
+                                    CompatUtil.fromHtml(
+                                                    submission
+                                                            .getThumbnails()
+                                                            .getVariations()[length - 1]
+                                                            .getUrl())
+                                            .toString(); // unescape url characters
                         } else {
-                            url = CompatUtil.fromHtml(submission.getThumbnails().getSource().getUrl())
-                                    .toString(); // unescape url characters
+                            url =
+                                    CompatUtil.fromHtml(
+                                                    submission.getThumbnails().getSource().getUrl())
+                                            .toString(); // unescape url characters
                         }
                     }
                     lq = true;
 
                 } else {
-                    url = CompatUtil.fromHtml(submission.getThumbnails().getSource().getUrl().isEmpty()
-                            ? submission.getThumbnail()
-                            : submission.getThumbnails().getSource().getUrl()).toString(); // unescape url characters
+                    url =
+                            CompatUtil.fromHtml(
+                                            submission
+                                                            .getThumbnails()
+                                                            .getSource()
+                                                            .getUrl()
+                                                            .isEmpty()
+                                                    ? submission.getThumbnail()
+                                                    : submission
+                                                            .getThumbnails()
+                                                            .getSource()
+                                                            .getUrl())
+                                    .toString(); // unescape url characters
                 }
-                if (!SettingValues.isPicsEnabled(baseSub) && !full || forceThumb || (news && submission.getScore() < 5000)) {
+                if (!SettingValues.isPicsEnabled(baseSub) && !full
+                        || forceThumb
+                        || (news && submission.getScore() < 5000)) {
 
                     if (!full) {
                         thumbImage2.setVisibility(View.VISIBLE);
@@ -535,7 +621,8 @@ public class HeaderImageLinkView extends RelativeLayout {
                         wrapArea.setVisibility(View.VISIBLE);
                     }
                     loadedUrl = url;
-                    ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                    ((Reddit) getContext().getApplicationContext())
+                            .getImageLoader()
                             .displayImage(url, thumbImage2);
                     setVisibility(View.GONE);
 
@@ -543,10 +630,12 @@ public class HeaderImageLinkView extends RelativeLayout {
                     loadedUrl = url;
 
                     if (!full) {
-                        ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                        ((Reddit) getContext().getApplicationContext())
+                                .getImageLoader()
                                 .displayImage(url, backdrop);
                     } else {
-                        ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                        ((Reddit) getContext().getApplicationContext())
+                                .getImageLoader()
                                 .displayImage(url, backdrop, bigOptions);
                     }
                     setVisibility(View.VISIBLE);
@@ -558,8 +647,10 @@ public class HeaderImageLinkView extends RelativeLayout {
                 }
             } else if (!thumbnail.isNull()
                     && submission.getThumbnail() != null
-                    && (submission.getThumbnailType() == Submission.ThumbnailType.URL || (!thumbnail
-                    .isNull() && submission.isNsfw() && SettingValues.getIsNSFWEnabled()))) {
+                    && (submission.getThumbnailType() == Submission.ThumbnailType.URL
+                            || (!thumbnail.isNull()
+                                    && submission.isNsfw()
+                                    && SettingValues.getIsNSFWEnabled()))) {
 
                 url = submission.getThumbnail();
                 if (!full) {
@@ -569,10 +660,10 @@ public class HeaderImageLinkView extends RelativeLayout {
                 }
                 loadedUrl = url;
 
-                ((Reddit) getContext().getApplicationContext()).getImageLoader()
+                ((Reddit) getContext().getApplicationContext())
+                        .getImageLoader()
                         .displayImage(url, thumbImage2);
                 setVisibility(View.GONE);
-
 
             } else {
 
@@ -592,12 +683,15 @@ public class HeaderImageLinkView extends RelativeLayout {
                 } else {
                     title = findViewById(R.id.textimage);
                     info = findViewById(R.id.subtextimage);
-                    if (forceThumb || (submission.isNsfw()
-                            && submission.getThumbnailType() == Submission.ThumbnailType.NSFW
-                            || type != ContentType.Type.IMAGE
-                            && type != ContentType.Type.SELF
-                            && !submission.getDataNode().get("thumbnail").isNull()
-                            && (submission.getThumbnailType() != Submission.ThumbnailType.URL))) {
+                    if (forceThumb
+                            || (submission.isNsfw()
+                                            && submission.getThumbnailType()
+                                                    == Submission.ThumbnailType.NSFW
+                                    || type != ContentType.Type.IMAGE
+                                            && type != ContentType.Type.SELF
+                                            && !submission.getDataNode().get("thumbnail").isNull()
+                                            && (submission.getThumbnailType()
+                                                    != Submission.ThumbnailType.URL))) {
                         setBottomSheet(thumbImage2, submission, full);
                     } else {
                         setBottomSheet(this, submission, full);
@@ -608,9 +702,7 @@ public class HeaderImageLinkView extends RelativeLayout {
                 info = findViewById(R.id.subtextimage);
                 setBottomSheet(thumbImage2, submission, full);
                 setBottomSheet(this, submission, full);
-
             }
-
 
             if (SettingValues.smallTag && !full && !news) {
                 title = findViewById(R.id.tag);
@@ -629,7 +721,6 @@ public class HeaderImageLinkView extends RelativeLayout {
             title.setText(ContentType.getContentDescription(submission, getContext()));
 
             if (info != null) info.setText(submission.getDomain());
-
         }
     }
 
@@ -643,7 +734,6 @@ public class HeaderImageLinkView extends RelativeLayout {
         double ratio = (double) imageHeight / (double) imageWidth;
         double width = getWidth();
         return (width * ratio);
-
     }
 
     public void onLinkLongClick(final String url, MotionEvent event) {
@@ -660,8 +750,7 @@ public class HeaderImageLinkView extends RelativeLayout {
         if (context instanceof Activity) {
             activity = (Activity) context;
         } else if (context instanceof ContextThemeWrapper) {
-            activity =
-                    (Activity) ((ContextThemeWrapper) context).getBaseContext();
+            activity = (Activity) ((ContextThemeWrapper) context).getBaseContext();
         } else if (context instanceof ContextWrapper) {
             Context context1 = ((ContextWrapper) context).getBaseContext();
             if (context1 instanceof Activity) {
@@ -671,8 +760,7 @@ public class HeaderImageLinkView extends RelativeLayout {
                 if (context2 instanceof Activity) {
                     activity = (Activity) context2;
                 } else if (context2 instanceof ContextWrapper) {
-                    activity =
-                            (Activity) ((ContextThemeWrapper) context2).getBaseContext();
+                    activity = (Activity) ((ContextThemeWrapper) context2).getBaseContext();
                 }
             }
         } else {
@@ -681,58 +769,76 @@ public class HeaderImageLinkView extends RelativeLayout {
 
         if (activity != null && !activity.isFinishing()) {
             if (SettingValues.peek) {
-                Peek.into(R.layout.peek_view_submission, new SimpleOnPeek() {
-                    @Override
-                    public void onInflated(final PeekView peekView, final View rootView) {
-                        // do stuff
-                        TextView text = rootView.findViewById(R.id.title);
-                        text.setText(url);
-                        text.setTextColor(Color.WHITE);
-                        ((PeekMediaView) rootView.findViewById(R.id.peek)).setUrl(url);
+                Peek.into(
+                                R.layout.peek_view_submission,
+                                new SimpleOnPeek() {
+                                    @Override
+                                    public void onInflated(
+                                            final PeekView peekView, final View rootView) {
+                                        // do stuff
+                                        TextView text = rootView.findViewById(R.id.title);
+                                        text.setText(url);
+                                        text.setTextColor(Color.WHITE);
+                                        ((PeekMediaView) rootView.findViewById(R.id.peek))
+                                                .setUrl(url);
 
-                        peekView.addButton((R.id.share), new OnButtonUp() {
-                            @Override
-                            public void onButtonUp() {
-                                Reddit.defaultShareText("", url, rootView.getContext());
-                            }
-                        });
+                                        peekView.addButton(
+                                                (R.id.share),
+                                                new OnButtonUp() {
+                                                    @Override
+                                                    public void onButtonUp() {
+                                                        Reddit.defaultShareText(
+                                                                "", url, rootView.getContext());
+                                                    }
+                                                });
 
-                        peekView.addButton((R.id.upvoteb), new OnButtonUp() {
-                            @Override
-                            public void onButtonUp() {
-                                ((View) getParent()).findViewById(R.id.upvote).callOnClick();
-                            }
-                        });
+                                        peekView.addButton(
+                                                (R.id.upvoteb),
+                                                new OnButtonUp() {
+                                                    @Override
+                                                    public void onButtonUp() {
+                                                        ((View) getParent())
+                                                                .findViewById(R.id.upvote)
+                                                                .callOnClick();
+                                                    }
+                                                });
 
-                        peekView.setOnRemoveListener(new OnRemove() {
-                            @Override
-                            public void onRemove() {
-                                ((PeekMediaView) rootView.findViewById(R.id.peek)).doClose();
-                            }
-                        });
+                                        peekView.setOnRemoveListener(
+                                                new OnRemove() {
+                                                    @Override
+                                                    public void onRemove() {
+                                                        ((PeekMediaView)
+                                                                        rootView.findViewById(
+                                                                                R.id.peek))
+                                                                .doClose();
+                                                    }
+                                                });
 
-                        peekView.addButton((R.id.comments), new OnButtonUp() {
-                            @Override
-                            public void onButtonUp() {
-                                ((View) getParent().getParent()).callOnClick();
-                            }
-                        });
+                                        peekView.addButton(
+                                                (R.id.comments),
+                                                new OnButtonUp() {
+                                                    @Override
+                                                    public void onButtonUp() {
+                                                        ((View) getParent().getParent())
+                                                                .callOnClick();
+                                                    }
+                                                });
 
-                        peekView.setOnPop(new OnPop() {
-                            @Override
-                            public void onPop() {
-                                popped = true;
-                                callOnClick();
-                            }
-                        });
-                    }
-
-                })
+                                        peekView.setOnPop(
+                                                new OnPop() {
+                                                    @Override
+                                                    public void onPop() {
+                                                        popped = true;
+                                                        callOnClick();
+                                                    }
+                                                });
+                                    }
+                                })
                         .with(new PeekViewOptions().setFullScreenPeek(true))
                         .show((PeekViewActivity) activity, event);
             } else {
                 BottomSheet.Builder b = new BottomSheet.Builder(activity).title(url).grid();
-                int[] attrs = new int[]{R.attr.tintColor};
+                int[] attrs = new int[] {R.attr.tintColor};
                 TypedArray ta = getContext().obtainStyledAttributes(attrs);
 
                 int color = ta.getColor(0, Color.WHITE);
@@ -744,120 +850,136 @@ public class HeaderImageLinkView extends RelativeLayout {
 
                 ta.recycle();
 
-                b.sheet(R.id.open_link, open,
-                        getResources().getString(R.string.open_externally));
+                b.sheet(R.id.open_link, open, getResources().getString(R.string.open_externally));
                 b.sheet(R.id.share_link, share, getResources().getString(R.string.share_link));
-                b.sheet(R.id.copy_link, copy,
+                b.sheet(
+                        R.id.copy_link,
+                        copy,
                         getResources().getString(R.string.submission_link_copy));
                 final Activity finalActivity = activity;
-                b.listener(new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case R.id.open_link:
-                                LinkUtil.openExternally(url);
-                                break;
-                            case R.id.share_link:
-                                Reddit.defaultShareText("", url, finalActivity);
-                                break;
-                            case R.id.copy_link:
-                                LinkUtil.copyUrl(url, finalActivity);
-                                break;
-                        }
-                    }
-                }).show();
+                b.listener(
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        switch (which) {
+                                            case R.id.open_link:
+                                                LinkUtil.openExternally(url);
+                                                break;
+                                            case R.id.share_link:
+                                                Reddit.defaultShareText("", url, finalActivity);
+                                                break;
+                                            case R.id.copy_link:
+                                                LinkUtil.copyUrl(url, finalActivity);
+                                                break;
+                                        }
+                                    }
+                                })
+                        .show();
             }
         }
     }
 
     public void setBottomSheet(View v, final Submission submission, final boolean full) {
         handler = new Handler();
-        v.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int x = (int) event.getX();
-                int y = (int) event.getY();
-                x += getScrollX();
-                y += getScrollY();
+        v.setOnTouchListener(
+                new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        int x = (int) event.getX();
+                        int y = (int) event.getY();
+                        x += getScrollX();
+                        y += getScrollY();
 
-                HeaderImageLinkView.this.event = event;
+                        HeaderImageLinkView.this.event = event;
 
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    position = event.getY(); // used to see if the user scrolled or not
-                }
-                if (!(event.getAction() == MotionEvent.ACTION_UP
-                        || event.getAction() == MotionEvent.ACTION_DOWN)) {
-                    if (Math.abs((position - event.getY())) > 25) {
-                        handler.removeCallbacksAndMessages(null);
-                    }
-                    return false;
-                }
-
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        clickHandled = false;
-                        if (SettingValues.peek) {
-                            handler.postDelayed(longClicked,
-                                    android.view.ViewConfiguration.getTapTimeout() + 50);
-                        } else {
-                            handler.postDelayed(longClicked,
-                                    android.view.ViewConfiguration.getLongPressTimeout());
+                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                            position = event.getY(); // used to see if the user scrolled or not
+                        }
+                        if (!(event.getAction() == MotionEvent.ACTION_UP
+                                || event.getAction() == MotionEvent.ACTION_DOWN)) {
+                            if (Math.abs((position - event.getY())) > 25) {
+                                handler.removeCallbacksAndMessages(null);
+                            }
+                            return false;
                         }
 
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        handler.removeCallbacksAndMessages(null);
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                clickHandled = false;
+                                if (SettingValues.peek) {
+                                    handler.postDelayed(
+                                            longClicked,
+                                            android.view.ViewConfiguration.getTapTimeout() + 50);
+                                } else {
+                                    handler.postDelayed(
+                                            longClicked,
+                                            android.view.ViewConfiguration.getLongPressTimeout());
+                                }
 
-                        if (!clickHandled) {
-                            // regular click
-                            callOnClick();
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                handler.removeCallbacksAndMessages(null);
+
+                                if (!clickHandled) {
+                                    // regular click
+                                    callOnClick();
+                                }
+                                break;
                         }
-                        break;
-                }
-                return true;
-            }
-        });
-        longClicked = new Runnable() {
-            @Override
-            public void run() {
-                // long click
-                clickHandled = true;
-
-                handler.removeCallbacksAndMessages(null);
-                if (SettingValues.storeHistory && !full) {
-                    if (!submission.isNsfw() || SettingValues.storeNSFWHistory) {
-                        HasSeen.addSeen(submission.getFullName());
-                        ((View) getParent()).findViewById(R.id.title).setAlpha(0.54f);
-                        ((View) getParent()).findViewById(R.id.body).setAlpha(0.54f);
-
+                        return true;
                     }
-                }
-                onLinkLongClick(submission.getUrl(), event);
-            }
-        };
+                });
+        longClicked =
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        // long click
+                        clickHandled = true;
+
+                        handler.removeCallbacksAndMessages(null);
+                        if (SettingValues.storeHistory && !full) {
+                            if (!submission.isNsfw() || SettingValues.storeNSFWHistory) {
+                                HasSeen.addSeen(submission.getFullName());
+                                ((View) getParent()).findViewById(R.id.title).setAlpha(0.54f);
+                                ((View) getParent()).findViewById(R.id.body).setAlpha(0.54f);
+                            }
+                        }
+                        onLinkLongClick(submission.getUrl(), event);
+                    }
+                };
     }
 
-    public void setSubmission(final Submission submission, final boolean full, String baseSub,
+    public void setSubmission(
+            final Submission submission,
+            final boolean full,
+            String baseSub,
             ContentType.Type type) {
         this.type = type;
         if (!lastDone.equals(submission.getFullName())) {
             lq = false;
             lastDone = submission.getFullName();
             backdrop.setImageResource(
-                    android.R.color.transparent); // reset the image view in case the placeholder is still visible
+                    android.R.color
+                            .transparent); // reset the image view in case the placeholder is still
+                                           // visible
             thumbImage2.setImageResource(android.R.color.transparent);
             doImageAndText(submission, full, baseSub, false);
         }
     }
 
-    public void setSubmissionNews(final Submission submission, final boolean full, String baseSub,
+    public void setSubmissionNews(
+            final Submission submission,
+            final boolean full,
+            String baseSub,
             ContentType.Type type) {
         this.type = type;
         if (!lastDone.equals(submission.getFullName())) {
             lq = false;
             lastDone = submission.getFullName();
             backdrop.setImageResource(
-                    android.R.color.transparent); // reset the image view in case the placeholder is still visible
+                    android.R.color
+                            .transparent); // reset the image view in case the placeholder is still
+                                           // visible
             thumbImage2.setImageResource(android.R.color.transparent);
             doImageAndText(submission, full, baseSub, true);
         }
@@ -867,15 +989,12 @@ public class HeaderImageLinkView extends RelativeLayout {
         thumbImage2 = v;
     }
 
-    public void setUrl(String url) {
-
-    }
+    public void setUrl(String url) {}
 
     public void setWrapArea(View v) {
         wrapArea = v;
         secondTitle = v.findViewById(R.id.contenttitle);
         secondSubTitle = v.findViewById(R.id.contenturl);
-
     }
 
     private void init() {

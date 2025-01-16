@@ -18,8 +18,8 @@ import androidx.core.view.ViewCompat;
 /**
  * Copyright (c) Tuenti Technologies. All rights reserved.
  *
- * WebView compatible with CoordinatorLayout.
- * The implementation based on NestedScrollView of design library
+ * <p>WebView compatible with CoordinatorLayout. The implementation based on NestedScrollView of
+ * design library
  */
 public class NestedWebView extends WebView implements NestedScrollingChild, NestedScrollingParent {
 
@@ -73,49 +73,53 @@ public class NestedWebView extends WebView implements NestedScrollingChild, Nest
         }
 
         switch (action & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_MOVE: {
-                final int activePointerId = mActivePointerId;
-                if (activePointerId == INVALID_POINTER) {
-                    break;
-                }
-
-                final int pointerIndex = ev.findPointerIndex(activePointerId);
-                if (pointerIndex == -1) {
-                    Log.e(TAG, "Invalid pointerId=" + activePointerId
-                            + " in onInterceptTouchEvent");
-                    break;
-                }
-
-                final int y = (int) ev.getY(pointerIndex);
-                final int yDiff = Math.abs(y - mLastMotionY);
-                if (yDiff > mTouchSlop
-                        && (getNestedScrollAxes() & ViewCompat.SCROLL_AXIS_VERTICAL) == 0) {
-                    mIsBeingDragged = true;
-                    mLastMotionY = y;
-                    initVelocityTrackerIfNotExists();
-                    mVelocityTracker.addMovement(ev);
-                    mNestedYOffset = 0;
-                    final ViewParent parent = getParent();
-                    if (parent != null) {
-                        parent.requestDisallowInterceptTouchEvent(true);
+            case MotionEvent.ACTION_MOVE:
+                {
+                    final int activePointerId = mActivePointerId;
+                    if (activePointerId == INVALID_POINTER) {
+                        break;
                     }
+
+                    final int pointerIndex = ev.findPointerIndex(activePointerId);
+                    if (pointerIndex == -1) {
+                        Log.e(
+                                TAG,
+                                "Invalid pointerId="
+                                        + activePointerId
+                                        + " in onInterceptTouchEvent");
+                        break;
+                    }
+
+                    final int y = (int) ev.getY(pointerIndex);
+                    final int yDiff = Math.abs(y - mLastMotionY);
+                    if (yDiff > mTouchSlop
+                            && (getNestedScrollAxes() & ViewCompat.SCROLL_AXIS_VERTICAL) == 0) {
+                        mIsBeingDragged = true;
+                        mLastMotionY = y;
+                        initVelocityTrackerIfNotExists();
+                        mVelocityTracker.addMovement(ev);
+                        mNestedYOffset = 0;
+                        final ViewParent parent = getParent();
+                        if (parent != null) {
+                            parent.requestDisallowInterceptTouchEvent(true);
+                        }
+                    }
+                    break;
                 }
-                break;
-            }
 
-            case MotionEvent.ACTION_DOWN: {
+            case MotionEvent.ACTION_DOWN:
+                {
+                    mLastMotionY = (int) ev.getY();
+                    mActivePointerId = ev.getPointerId(0);
 
-                mLastMotionY = (int) ev.getY();
-                mActivePointerId = ev.getPointerId(0);
+                    initOrResetVelocityTracker();
+                    mVelocityTracker.addMovement(ev);
 
-                initOrResetVelocityTracker();
-                mVelocityTracker.addMovement(ev);
-
-                mScroller.computeScrollOffset();
-                mIsBeingDragged = !mScroller.isFinished();
-                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
-                break;
-            }
+                    mScroller.computeScrollOffset();
+                    mIsBeingDragged = !mScroller.isFinished();
+                    startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
+                    break;
+                }
 
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
@@ -149,23 +153,24 @@ public class NestedWebView extends WebView implements NestedScrollingChild, Nest
         vtev.offsetLocation(0, mNestedYOffset);
 
         switch (actionMasked) {
-            case MotionEvent.ACTION_DOWN: {
-                if (mIsBeingDragged = !mScroller.isFinished()) {
-                    final ViewParent parent = getParent();
-                    if (parent != null) {
-                        parent.requestDisallowInterceptTouchEvent(true);
+            case MotionEvent.ACTION_DOWN:
+                {
+                    if (mIsBeingDragged = !mScroller.isFinished()) {
+                        final ViewParent parent = getParent();
+                        if (parent != null) {
+                            parent.requestDisallowInterceptTouchEvent(true);
+                        }
                     }
-                }
 
-                if (!mScroller.isFinished()) {
-                    mScroller.abortAnimation();
-                }
+                    if (!mScroller.isFinished()) {
+                        mScroller.abortAnimation();
+                    }
 
-                mLastMotionY = (int) ev.getY();
-                mActivePointerId = ev.getPointerId(0);
-                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
-                break;
-            }
+                    mLastMotionY = (int) ev.getY();
+                    mActivePointerId = ev.getPointerId(0);
+                    startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
+                    break;
+                }
             case MotionEvent.ACTION_MOVE:
                 final int activePointerIndex = ev.findPointerIndex(mActivePointerId);
                 if (activePointerIndex == -1) {
@@ -213,8 +218,8 @@ public class NestedWebView extends WebView implements NestedScrollingChild, Nest
 
                     if (Math.abs(initialVelocity) > mMinimumVelocity) {
                         flingWithNestedDispatch(-initialVelocity);
-                    } else if (mScroller.springBack(getScrollX(), getScrollY(), 0, 0, 0,
-                            getScrollRange())) {
+                    } else if (mScroller.springBack(
+                            getScrollX(), getScrollY(), 0, 0, 0, getScrollRange())) {
                         this.postInvalidateOnAnimation();
                     }
                 }
@@ -223,20 +228,21 @@ public class NestedWebView extends WebView implements NestedScrollingChild, Nest
                 break;
             case MotionEvent.ACTION_CANCEL:
                 if (mIsBeingDragged && getChildCount() > 0) {
-                    if (mScroller.springBack(getScrollX(), getScrollY(), 0, 0, 0,
-                            getScrollRange())) {
+                    if (mScroller.springBack(
+                            getScrollX(), getScrollY(), 0, 0, 0, getScrollRange())) {
                         this.postInvalidateOnAnimation();
                     }
                 }
                 mActivePointerId = INVALID_POINTER;
                 endDrag();
                 break;
-            case MotionEvent.ACTION_POINTER_DOWN: {
-                final int index = ev.getActionIndex();
-                mLastMotionY = (int) ev.getY(index);
-                mActivePointerId = ev.getPointerId(index);
-                break;
-            }
+            case MotionEvent.ACTION_POINTER_DOWN:
+                {
+                    final int index = ev.getActionIndex();
+                    mLastMotionY = (int) ev.getY(index);
+                    mActivePointerId = ev.getPointerId(index);
+                    break;
+                }
             case MotionEvent.ACTION_POINTER_UP:
                 onSecondaryPointerUp(ev);
                 mLastMotionY = (int) ev.getY(ev.findPointerIndex(mActivePointerId));
@@ -263,8 +269,9 @@ public class NestedWebView extends WebView implements NestedScrollingChild, Nest
     }
 
     private void onSecondaryPointerUp(MotionEvent ev) {
-        final int pointerIndex = (ev.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
-                >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+        final int pointerIndex =
+                (ev.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
+                        >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
         final int pointerId = ev.getPointerId(pointerIndex);
         if (pointerId == mActivePointerId) {
             final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
@@ -299,8 +306,8 @@ public class NestedWebView extends WebView implements NestedScrollingChild, Nest
 
     private void flingWithNestedDispatch(int velocityY) {
         final int scrollY = getScrollY();
-        final boolean canFling = (scrollY > 0 || velocityY > 0)
-                && (scrollY < getScrollRange() || velocityY < 0);
+        final boolean canFling =
+                (scrollY > 0 || velocityY > 0) && (scrollY < getScrollRange() || velocityY < 0);
         if (!dispatchNestedPreFling(0, velocityY)) {
             dispatchNestedFling(0, velocityY, canFling);
             if (canFling) {
@@ -314,8 +321,17 @@ public class NestedWebView extends WebView implements NestedScrollingChild, Nest
             int height = getHeight() - getPaddingBottom() - getPaddingTop();
             int bottom = getChildAt(0).getHeight();
 
-            mScroller.fling(getScrollX(), getScrollY(), 0, velocityY, 0, 0, 0,
-                    Math.max(0, bottom - height), 0, height / 2);
+            mScroller.fling(
+                    getScrollX(),
+                    getScrollY(),
+                    0,
+                    velocityY,
+                    0,
+                    0,
+                    0,
+                    Math.max(0, bottom - height),
+                    0,
+                    height / 2);
 
             this.postInvalidateOnAnimation();
         }
@@ -347,9 +363,14 @@ public class NestedWebView extends WebView implements NestedScrollingChild, Nest
     }
 
     @Override
-    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed,
+    public boolean dispatchNestedScroll(
+            int dxConsumed,
+            int dyConsumed,
+            int dxUnconsumed,
+            int dyUnconsumed,
             int[] offsetInWindow) {
-        return mChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow);
+        return mChildHelper.dispatchNestedScroll(
+                dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow);
     }
 
     @Override

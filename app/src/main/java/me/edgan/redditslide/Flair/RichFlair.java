@@ -8,15 +8,19 @@ public class RichFlair {
     @SerializedName("type")
     @Expose
     private String type;
+
     @SerializedName("text_editable")
-    @Expose (serialize = true, deserialize = false)
+    @Expose(serialize = true, deserialize = false)
     private Boolean textEditable;
+
     @SerializedName("allowable_content")
     @Expose
     private String allowableContent;
+
     @SerializedName("text")
     @Expose
     private String text;
+
     @SerializedName("id")
     @Expose
     private String id;
@@ -60,5 +64,4 @@ public class RichFlair {
     public void setId(String id) {
         this.id = id;
     }
-
 }

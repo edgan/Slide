@@ -3,9 +3,7 @@ package me.edgan.redditslide.Adapters;
 import net.dean.jraw.models.CommentNode;
 import net.dean.jraw.models.MoreChildren;
 
-/**
- * Created by carlo_000 on 1/23/2016.
- */
+/** Created by carlo_000 on 1/23/2016. */
 public class MoreChildItem extends CommentObject {
     public MoreChildren children;
 

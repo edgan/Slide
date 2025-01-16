@@ -6,6 +6,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.lusfold.androidkeyvaluestore.KVStore;
 
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.PostMatch;
+
 import net.dean.jraw.models.Contribution;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.models.Thing;
@@ -17,20 +20,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import me.edgan.redditslide.Authentication;
-import me.edgan.redditslide.PostMatch;
-
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class HistoryPosts extends GeneralPosts {
-    private SwipeRefreshLayout  refreshLayout;
+    private SwipeRefreshLayout refreshLayout;
     private ContributionAdapter adapter;
-    public  boolean             loading;
+    public boolean loading;
     String prefix = "";
 
-    public HistoryPosts() {
-    }
+    public HistoryPosts() {}
 
     public HistoryPosts(String prefix) {
         this.prefix = prefix;
@@ -101,7 +98,6 @@ public class HistoryPosts extends GeneralPosts {
                 // end of submissions
                 nomore = true;
                 adapter.notifyDataSetChanged();
-
             }
             refreshLayout.setRefreshing(false);
         }
@@ -119,7 +115,6 @@ public class HistoryPosts extends GeneralPosts {
                     } else {
                         values = KVStore.getInstance().getByPrefix(prefix);
                     }
-
 
                     for (Map.Entry<String, String> entry : values.entrySet()) {
                         Object done;
@@ -142,7 +137,7 @@ public class HistoryPosts extends GeneralPosts {
                             }
                         } else {
                             String key = entry.getKey();
-                            if(!key.contains("_")){
+                            if (!key.contains("_")) {
                                 key = "t3_" + key;
                             }
                             idsSorted.put((Long) done, key.replace(prefix, ""));
@@ -155,10 +150,9 @@ public class HistoryPosts extends GeneralPosts {
                         ids.addAll(0, result2.values());
                     }
 
-                    paginator = new FullnamesPaginator(Authentication.reddit,
-                            ids.toArray(new String[ids.size()-1]));
-
-
+                    paginator =
+                            new FullnamesPaginator(
+                                    Authentication.reddit, ids.toArray(new String[ids.size() - 1]));
                 }
 
                 if (!paginator.hasNext()) {
@@ -178,7 +172,5 @@ public class HistoryPosts extends GeneralPosts {
                 return null;
             }
         }
-
     }
-
 }

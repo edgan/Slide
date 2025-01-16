@@ -1,4 +1,3 @@
-
 package me.edgan.redditslide.SwipeLayout.app;
 
 import android.os.Bundle;
@@ -8,8 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import me.edgan.redditslide.SwipeLayout.SwipeBackLayout;
 import me.edgan.redditslide.SwipeLayout.Utils;
-// * By ikew0ng
 
+// * By ikew0ng
 
 public class SwipeBackActivity extends AppCompatActivity implements SwipeBackActivityBase {
     private SwipeBackActivityHelper mHelper;
@@ -30,8 +29,7 @@ public class SwipeBackActivity extends AppCompatActivity implements SwipeBackAct
     @Override
     public View findViewById(int id) {
         View v = super.findViewById(id);
-        if (v == null && mHelper != null)
-            return mHelper.findViewById(id);
+        if (v == null && mHelper != null) return mHelper.findViewById(id);
         return v;
     }
 

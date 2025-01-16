@@ -1,9 +1,6 @@
 package me.edgan.redditslide.Adapters;
 
-/**
- * Created by ccrama on 3/22/2015.
- */
-
+/** Created by ccrama on 3/22/2015. */
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
@@ -13,11 +10,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.RecyclerView;
-
-import net.dean.jraw.models.Subreddit;
-
-import java.util.List;
-import java.util.Locale;
 
 import me.edgan.redditslide.Activities.SubredditView;
 import me.edgan.redditslide.Fragments.SubredditListView;
@@ -30,8 +22,13 @@ import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.OnSingleClickListener;
 import me.edgan.redditslide.util.SubmissionParser;
 
+import net.dean.jraw.models.Subreddit;
 
-public class SubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements BaseAdapter {
+import java.util.List;
+import java.util.Locale;
+
+public class SubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+        implements BaseAdapter {
 
     private final RecyclerView listView;
     public Activity context;
@@ -41,7 +38,12 @@ public class SubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final int SPACER = 6;
     SubredditListView displayer;
 
-    public SubredditAdapter(Activity context, SubredditNames dataSet, RecyclerView listView, String where, SubredditListView displayer) {
+    public SubredditAdapter(
+            Activity context,
+            SubredditNames dataSet,
+            RecyclerView listView,
+            String where,
+            SubredditListView displayer) {
         String where1 = where.toLowerCase(Locale.ENGLISH);
         this.listView = listView;
         this.dataSet = dataSet;
@@ -81,17 +83,25 @@ public class SubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         tag++;
 
         if (i == SPACER) {
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.spacer, viewGroup, false);
+            View v =
+                    LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.spacer, viewGroup, false);
             return new SpacerViewHolder(v);
 
         } else if (i == LOADING_SPINNER) {
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.loadingmore, viewGroup, false);
+            View v =
+                    LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.loadingmore, viewGroup, false);
             return new SubmissionFooterViewHolder(v);
         } else if (i == NO_MORE) {
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.nomoreposts, viewGroup, false);
+            View v =
+                    LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.nomoreposts, viewGroup, false);
             return new SubmissionFooterViewHolder(v);
         } else {
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.subfordiscover, viewGroup, false);
+            View v =
+                    LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.subfordiscover, viewGroup, false);
             return new SubredditViewHolder(v);
         }
     }
@@ -106,8 +116,10 @@ public class SubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             holder.name.setText(sub.getDisplayName());
             if (sub.getLocalizedSubscriberCount() != null) {
-                holder.subscribers.setText(context.getString(R.string.subreddit_subscribers_string,
-                        sub.getLocalizedSubscriberCount()));
+                holder.subscribers.setText(
+                        context.getString(
+                                R.string.subreddit_subscribers_string,
+                                sub.getLocalizedSubscriberCount()));
             } else {
                 holder.subscribers.setVisibility(View.GONE);
             }
@@ -116,37 +128,44 @@ public class SubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             BlendModeUtil.tintDrawableAsModulate(
                     holder.color.getBackground(),
                     Palette.getColor(sub.getDisplayName().toLowerCase(Locale.ENGLISH)));
-            holder.itemView.setOnClickListener(new OnSingleClickListener() {
-                @Override
-                public void onSingleClick(View view) {
-                    Intent inte = new Intent(context, SubredditView.class);
-                    inte.putExtra(SubredditView.EXTRA_SUBREDDIT, sub.getDisplayName());
-                    context.startActivityForResult(inte, 4);
-                }
-            });
-            holder.overflow.setOnClickListener(new OnSingleClickListener() {
-                @Override
-                public void onSingleClick(View view) {
-                    Intent inte = new Intent(context, SubredditView.class);
-                    inte.putExtra(SubredditView.EXTRA_SUBREDDIT, sub.getDisplayName());
-                    context.startActivityForResult(inte, 4);
-                }
-            });
-            holder.body.setOnClickListener(new OnSingleClickListener() {
-                @Override
-                public void onSingleClick(View view) {
-                    Intent inte = new Intent(context, SubredditView.class);
-                    inte.putExtra(SubredditView.EXTRA_SUBREDDIT, sub.getDisplayName());
-                    context.startActivityForResult(inte, 4);
-                }
-            });
+            holder.itemView.setOnClickListener(
+                    new OnSingleClickListener() {
+                        @Override
+                        public void onSingleClick(View view) {
+                            Intent inte = new Intent(context, SubredditView.class);
+                            inte.putExtra(SubredditView.EXTRA_SUBREDDIT, sub.getDisplayName());
+                            context.startActivityForResult(inte, 4);
+                        }
+                    });
+            holder.overflow.setOnClickListener(
+                    new OnSingleClickListener() {
+                        @Override
+                        public void onSingleClick(View view) {
+                            Intent inte = new Intent(context, SubredditView.class);
+                            inte.putExtra(SubredditView.EXTRA_SUBREDDIT, sub.getDisplayName());
+                            context.startActivityForResult(inte, 4);
+                        }
+                    });
+            holder.body.setOnClickListener(
+                    new OnSingleClickListener() {
+                        @Override
+                        public void onSingleClick(View view) {
+                            Intent inte = new Intent(context, SubredditView.class);
+                            inte.putExtra(SubredditView.EXTRA_SUBREDDIT, sub.getDisplayName());
+                            context.startActivityForResult(inte, 4);
+                        }
+                    });
             if (sub.getDataNode().get("public_description_html").asText().equals("null")) {
                 holder.body.setVisibility(View.GONE);
                 holder.overflow.setVisibility(View.GONE);
             } else {
                 holder.body.setVisibility(View.VISIBLE);
                 holder.overflow.setVisibility(View.VISIBLE);
-                setViews(sub.getDataNode().get("public_description_html").asText().trim(), sub.getDisplayName().toLowerCase(Locale.ENGLISH), holder.body, holder.overflow);
+                setViews(
+                        sub.getDataNode().get("public_description_html").asText().trim(),
+                        sub.getDisplayName().toLowerCase(Locale.ENGLISH),
+                        holder.body,
+                        holder.overflow);
             }
 
             try {
@@ -154,17 +173,20 @@ public class SubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 holder.subbed.setVisibility(state);
             } catch (Exception e) {
                 holder.subbed.setVisibility(View.INVISIBLE);
-
             }
 
         } else if (holder2 instanceof SubmissionFooterViewHolder) {
             Handler handler = new Handler();
 
-            final Runnable r = new Runnable() {
-                public void run() {
-                    notifyItemChanged(dataSet.posts.size() + 1); // the loading spinner to replaced by nomoreposts.xml
-                }
-            };
+            final Runnable r =
+                    new Runnable() {
+                        public void run() {
+                            notifyItemChanged(
+                                    dataSet.posts.size()
+                                            + 1); // the loading spinner to replaced by
+                                                  // nomoreposts.xml
+                        }
+                    };
 
             handler.post(r);
             if (holder2.itemView.findViewById(R.id.reload) != null) {
@@ -174,9 +196,14 @@ public class SubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (holder2 instanceof SpacerViewHolder) {
             final int height = (context).findViewById(R.id.header).getHeight();
 
-            holder2.itemView.findViewById(R.id.height).setLayoutParams(new LinearLayout.LayoutParams(holder2.itemView.getWidth(), height));
+            holder2.itemView
+                    .findViewById(R.id.height)
+                    .setLayoutParams(
+                            new LinearLayout.LayoutParams(holder2.itemView.getWidth(), height));
             if (listView.getLayoutManager() instanceof CatchStaggeredGridLayoutManager) {
-                CatchStaggeredGridLayoutManager.LayoutParams layoutParams = new CatchStaggeredGridLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height);
+                CatchStaggeredGridLayoutManager.LayoutParams layoutParams =
+                        new CatchStaggeredGridLayoutManager.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT, height);
                 layoutParams.setFullSpan(true);
                 holder2.itemView.setLayoutParams(layoutParams);
             }
@@ -204,7 +231,11 @@ public class SubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    private void setViews(String rawHTML, String subredditName, SpoilerRobotoTextView firstTextView, CommentOverflow commentOverflow) {
+    private void setViews(
+            String rawHTML,
+            String subredditName,
+            SpoilerRobotoTextView firstTextView,
+            CommentOverflow commentOverflow) {
         if (rawHTML.isEmpty()) {
             return;
         }
@@ -232,5 +263,4 @@ public class SubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             commentOverflow.removeAllViews();
         }
     }
-
 }

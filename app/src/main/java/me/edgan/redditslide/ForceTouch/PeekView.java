@@ -6,18 +6,16 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.Rect;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowMetrics;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
-import android.view.WindowMetrics;
 
 import androidx.annotation.FloatRange;
 import androidx.annotation.IdRes;
@@ -25,10 +23,8 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import jp.wasabeef.blurry.Blurry;
+
 import me.edgan.redditslide.ForceTouch.builder.PeekViewOptions;
 import me.edgan.redditslide.ForceTouch.callback.OnButtonUp;
 import me.edgan.redditslide.ForceTouch.callback.OnPeek;
@@ -40,30 +36,39 @@ import me.edgan.redditslide.R;
 import me.edgan.redditslide.Views.PeekMediaView;
 import me.edgan.redditslide.util.DisplayUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PeekView extends FrameLayout {
 
-    private static final int          ANIMATION_TIME = 300;
-    private static final Interpolator INTERPOLATOR   = new DecelerateInterpolator();
-    private static final int          FINGER_SIZE_DP = 40;
+    private static final int ANIMATION_TIME = 300;
+    private static final Interpolator INTERPOLATOR = new DecelerateInterpolator();
+    private static final int FINGER_SIZE_DP = 40;
 
     private int FINGER_SIZE;
 
-    public  View                   content;
+    public View content;
     private ViewGroup.LayoutParams contentParams;
 
     private PeekViewOptions options;
-    private int             distanceFromTop;
-    private int             distanceFromLeft;
-    private int             screenWidth;
-    private int             screenHeight;
+    private int distanceFromTop;
+    private int distanceFromLeft;
+    private int screenWidth;
+    private int screenHeight;
     private ViewGroup androidContentView = null;
-    private OnPeek   callbacks;
+    private OnPeek callbacks;
     private OnRemove remove;
 
-    public PeekView(Activity context, PeekViewOptions options, @LayoutRes int layoutRes,
+    public PeekView(
+            Activity context,
+            PeekViewOptions options,
+            @LayoutRes int layoutRes,
             @Nullable OnPeek callbacks) {
         super(context);
-        init(context, options, LayoutInflater.from(context).inflate(layoutRes, this, false),
+        init(
+                context,
+                options,
+                LayoutInflater.from(context).inflate(layoutRes, this, false),
                 callbacks);
     }
 
@@ -77,19 +82,24 @@ public class PeekView extends FrameLayout {
     static int eight = DisplayUtil.dpToPxVertical(8);
 
     public void highlightMenu(MotionEvent event) {
-        if(currentHighlight != 0){
+        if (currentHighlight != 0) {
             final View v = content.findViewById(currentHighlight);
             Rect outRect = new Rect();
             v.getGlobalVisibleRect(outRect);
-            if(!outRect.contains((int) event.getX(), (int) event.getY())){
+            if (!outRect.contains((int) event.getX(), (int) event.getY())) {
                 currentHighlight = 0;
                 ValueAnimator animator = ValueAnimator.ofInt(eight, eight * 2);
-                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator valueAnimator){
-                        v.setPadding(0,  (Integer) valueAnimator.getAnimatedValue(), 0, (Integer) valueAnimator.getAnimatedValue());
-                    }
-                });
+                animator.addUpdateListener(
+                        new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                v.setPadding(
+                                        0,
+                                        (Integer) valueAnimator.getAnimatedValue(),
+                                        0,
+                                        (Integer) valueAnimator.getAnimatedValue());
+                            }
+                        });
                 animator.setInterpolator(new AccelerateDecelerateInterpolator());
                 animator.setDuration(150);
                 animator.start();
@@ -101,36 +111,43 @@ public class PeekView extends FrameLayout {
             final View v = content.findViewById(i);
             Rect outRect = new Rect();
             v.getGlobalVisibleRect(outRect);
-            if(outRect.contains((int) event.getX(), (int) event.getY()) && i != currentHighlight){
+            if (outRect.contains((int) event.getX(), (int) event.getY()) && i != currentHighlight) {
                 currentHighlight = i;
                 ValueAnimator animator = ValueAnimator.ofInt(eight * 2, eight);
-                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator valueAnimator){
-                        v.setPadding(0,  (Integer) valueAnimator.getAnimatedValue(), 0, (Integer) valueAnimator.getAnimatedValue());
-                    }
-                });
+                animator.addUpdateListener(
+                        new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                v.setPadding(
+                                        0,
+                                        (Integer) valueAnimator.getAnimatedValue(),
+                                        0,
+                                        (Integer) valueAnimator.getAnimatedValue());
+                            }
+                        });
                 animator.setInterpolator(new AccelerateDecelerateInterpolator());
                 animator.setDuration(150);
                 animator.start();
 
                 break;
-            } else if(outRect.contains((int) event.getX(), (int) event.getY())){
+            } else if (outRect.contains((int) event.getX(), (int) event.getY())) {
                 break;
             }
         }
     }
 
-    public void pop(){
-        if(mOnPop != null)
-        mOnPop.onPop();
+    public void pop() {
+        if (mOnPop != null) mOnPop.onPop();
     }
 
-    public void setOnPop(OnPop mOnPop){
+    public void setOnPop(OnPop mOnPop) {
         this.mOnPop = mOnPop;
     }
 
-    public PeekView(Activity context, PeekViewOptions options, @NonNull View content,
+    public PeekView(
+            Activity context,
+            PeekViewOptions options,
+            @NonNull View content,
             @Nullable OnPeek callbacks) {
         super(context);
         init(context, options, content, callbacks);
@@ -143,17 +160,20 @@ public class PeekView extends FrameLayout {
             View v = content.findViewById(entry.getKey());
             Rect outRect = new Rect();
             v.getGlobalVisibleRect(outRect);
-            if(outRect.contains((int) event.getX(), (int) event.getY())){
+            if (outRect.contains((int) event.getX(), (int) event.getY())) {
                 entry.getValue().onButtonUp();
             }
         }
     }
 
     public void doScroll(MotionEvent event) {
-        ((PeekMediaView)content.findViewById(R.id.peek)).doScroll(event);
+        ((PeekMediaView) content.findViewById(R.id.peek)).doScroll(event);
     }
 
-    private void init(Activity context, PeekViewOptions options, @NonNull View content,
+    private void init(
+            Activity context,
+            PeekViewOptions options,
+            @NonNull View content,
             @Nullable OnPeek callbacks) {
         this.options = options;
         this.callbacks = callbacks;
@@ -196,8 +216,9 @@ public class PeekView extends FrameLayout {
         dim.setBackgroundColor(Color.BLACK);
         dim.setAlpha(options.getBackgroundDim());
 
-        LayoutParams dimParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
+        LayoutParams dimParams =
+                new LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         dim.setLayoutParams(dimParams);
 
         if (options.shouldBlurBackground()) {
@@ -210,7 +231,7 @@ public class PeekView extends FrameLayout {
                         .onto((ViewGroup) androidContentView.getRootView());
 
                 dim.setAlpha(0f);
-            } catch(Exception ignored){
+            } catch (Exception ignored) {
 
             }
         }
@@ -312,8 +333,8 @@ public class PeekView extends FrameLayout {
      * @param startX
      * @param startY
      */
-    private void setContentOffset(int startX, int startY, Translation translation,
-            int movementAmount) {
+    private void setContentOffset(
+            int startX, int startY, Translation translation, int movementAmount) {
 
         if (translation == Translation.VERTICAL) {
 
@@ -332,7 +353,8 @@ public class PeekView extends FrameLayout {
                 }
             }
 
-            // when moving the peek view below the finger location, we want to offset it a bit to the right
+            // when moving the peek view below the finger location, we want to offset it a bit to
+            // the right
             // or left as well, just so the hand doesn't cover it up.
             int extraXOffset = 0;
             if (moveDown) {
@@ -342,8 +364,10 @@ public class PeekView extends FrameLayout {
                 }
             }
 
-            // make sure they aren't outside of the layout bounds and move them with the movementAmount
-            // I move the x just a bit to the right or left here as well, because it just makes things look better
+            // make sure they aren't outside of the layout bounds and move them with the
+            // movementAmount
+            // I move the x just a bit to the right or left here as well, because it just makes
+            // things look better
             startX = ensureWithinBounds(startX + extraXOffset, screenWidth, contentParams.width);
             startY =
                     ensureWithinBounds(startY + movementAmount, screenHeight, contentParams.height);
@@ -361,7 +385,8 @@ public class PeekView extends FrameLayout {
                 }
             }
 
-            // make sure they aren't outside of the layout bounds and move them with the movementAmount
+            // make sure they aren't outside of the layout bounds and move them with the
+            // movementAmount
             startX = ensureWithinBounds(startX + movementAmount, screenWidth, contentParams.width);
             startY = ensureWithinBounds(startY, screenHeight, contentParams.height);
         }
@@ -372,11 +397,14 @@ public class PeekView extends FrameLayout {
         if (startY < statusBar) { // if it is above the status bar and action bar
             startY = statusBar + 10;
         } else if (NavigationUtils.hasNavBar(getContext())
-                && startY + contentParams.height > screenHeight - NavigationUtils.getNavBarHeight(
-                getContext())) {
+                && startY + contentParams.height
+                        > screenHeight - NavigationUtils.getNavBarHeight(getContext())) {
             // if there is a nav bar and the popup is underneath it
-            startY = screenHeight - contentParams.height - NavigationUtils.getNavBarHeight(
-                    getContext()) - DensityUtils.toDp(getContext(), 10);
+            startY =
+                    screenHeight
+                            - contentParams.height
+                            - NavigationUtils.getNavBarHeight(getContext())
+                            - DensityUtils.toDp(getContext(), 10);
         } else if (!NavigationUtils.hasNavBar(getContext())
                 && startY + contentParams.height > screenHeight) {
             startY = screenHeight - contentParams.height - DensityUtils.toDp(getContext(), 10);
@@ -400,9 +428,7 @@ public class PeekView extends FrameLayout {
         return value;
     }
 
-    /**
-     * Show the content of the PeekView by adding it to the android.R.id.content FrameLayout.
-     */
+    /** Show the content of the PeekView by adding it to the android.R.id.content FrameLayout. */
     public void show() {
         androidContentView.addView(this);
 
@@ -412,50 +438,52 @@ public class PeekView extends FrameLayout {
 
         // animate the alpha of the PeekView
         ObjectAnimator animator = ObjectAnimator.ofFloat(this, View.ALPHA, 0.0f, 1.0f);
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                if (callbacks != null) {
-                    callbacks.shown();
-                }
-            }
-        });
+        animator.addListener(
+                new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        if (callbacks != null) {
+                            callbacks.shown();
+                        }
+                    }
+                });
         animator.setDuration(options.useFadeAnimation() ? ANIMATION_TIME : 0);
         animator.setInterpolator(INTERPOLATOR);
         animator.start();
     }
 
-    /**
-     * Hide the PeekView and remove it from the android.R.id.content FrameLayout.
-     */
+    /** Hide the PeekView and remove it from the android.R.id.content FrameLayout. */
     public void hide() {
 
         // animate with a fade
         ObjectAnimator animator = ObjectAnimator.ofFloat(this, View.ALPHA, 1.0f, 0.0f);
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                // remove the view from the screen
-                androidContentView.removeView(PeekView.this);
+        animator.addListener(
+                new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+                        // remove the view from the screen
+                        androidContentView.removeView(PeekView.this);
 
-                if (callbacks != null) {
-                    callbacks.dismissed();
-                }
-            }
-        });
+                        if (callbacks != null) {
+                            callbacks.dismissed();
+                        }
+                    }
+                });
         animator.setDuration(options.useFadeAnimation() ? ANIMATION_TIME : 0);
         animator.setInterpolator(INTERPOLATOR);
         animator.start();
 
         Blurry.delete((ViewGroup) androidContentView.getRootView());
 
-        if(remove != null)
-            remove.onRemove();
+        if (remove != null) remove.onRemove();
     }
 
-    public void setOnRemoveListener(OnRemove onRemove){
+    public void setOnRemoveListener(OnRemove onRemove) {
         this.remove = onRemove;
     }
 
-    private enum Translation {HORIZONTAL, VERTICAL}
+    private enum Translation {
+        HORIZONTAL,
+        VERTICAL
+    }
 }

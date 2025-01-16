@@ -1,4 +1,3 @@
-
 package me.edgan.redditslide.ImgurAlbum;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -13,44 +12,54 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
-        "hash",
-        "title",
-        "description",
-        "width",
-        "height",
-        "size",
-        "ext",
-        "animated",
-        "prefer_video",
-        "looping",
-        "datetime"
+    "hash",
+    "title",
+    "description",
+    "width",
+    "height",
+    "size",
+    "ext",
+    "animated",
+    "prefer_video",
+    "looping",
+    "datetime"
 })
 public class Image {
 
     @JsonProperty("hash")
     private String hash;
+
     @JsonProperty("title")
     private String title;
+
     @JsonProperty("description")
     private String description;
+
     @JsonProperty("width")
     private Integer width;
+
     @JsonProperty("height")
     private Integer height;
+
     @JsonProperty("size")
     private Integer size;
+
     @JsonProperty("ext")
     private String ext;
+
     @JsonProperty("animated")
     private Boolean animated;
+
     @JsonProperty("prefer_video")
     private Boolean preferVideo;
+
     @JsonProperty("looping")
     private Boolean looping;
+
     @JsonProperty("datetime")
     private String datetime;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<>();
+
+    @JsonIgnore private Map<String, Object> additionalProperties = new HashMap<>();
 
     /**
      * @return The hash

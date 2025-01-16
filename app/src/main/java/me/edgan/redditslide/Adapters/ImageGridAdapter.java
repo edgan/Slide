@@ -11,25 +11,27 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.edgan.redditslide.Activities.GalleryImage;
 import me.edgan.redditslide.ImgurAlbum.Image;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Tumblr.Photo;
 
-/**
- * Created by carlo_000 on 3/20/2016.
- */
+import java.util.ArrayList;
+import java.util.List;
+
+/** Created by carlo_000 on 3/20/2016. */
 public class ImageGridAdapter extends android.widget.BaseAdapter {
-    private Context      mContext;
+    private Context mContext;
     private List<String> jsons;
     public static final DisplayImageOptions options =
-            new DisplayImageOptions.Builder().cacheOnDisk(true)
+            new DisplayImageOptions.Builder()
+                    .cacheOnDisk(true)
                     .resetViewBeforeLoading(true)
-                    .bitmapConfig(SettingValues.highColorspaceImages ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565)
+                    .bitmapConfig(
+                            SettingValues.highColorspaceImages
+                                    ? Bitmap.Config.ARGB_8888
+                                    : Bitmap.Config.RGB_565)
                     .imageScaleType(ImageScaleType.EXACTLY)
                     .cacheInMemory(false)
                     .displayer(new FadeInBitmapDisplayer(250))
@@ -55,9 +57,10 @@ public class ImageGridAdapter extends android.widget.BaseAdapter {
         mContext = c;
         jsons = new ArrayList<>();
         for (Photo i : tumblrAlbum) {
-            jsons.add((i.getAltSizes() != null && !i.getAltSizes().isEmpty()) ? i.getAltSizes()
-                    .get(0)
-                    .getUrl() : i.getOriginalSize().getUrl());
+            jsons.add(
+                    (i.getAltSizes() != null && !i.getAltSizes().isEmpty())
+                            ? i.getAltSizes().get(0).getUrl()
+                            : i.getOriginalSize().getUrl());
         }
     }
 
@@ -87,7 +90,8 @@ public class ImageGridAdapter extends android.widget.BaseAdapter {
         imageView.setLayoutParams(new GridView.LayoutParams(size, size));
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        ((Reddit) mContext.getApplicationContext()).getImageLoader()
+        ((Reddit) mContext.getApplicationContext())
+                .getImageLoader()
                 .displayImage(getItem(position), imageView, options);
         return imageView;
     }

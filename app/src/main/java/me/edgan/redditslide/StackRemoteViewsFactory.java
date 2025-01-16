@@ -8,15 +8,15 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import net.dean.jraw.models.Submission;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import me.edgan.redditslide.Adapters.SubredditPosts;
 import me.edgan.redditslide.util.CompatUtil;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.TimeUtils;
+
+import net.dean.jraw.models.Submission;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private final Context mContext;
@@ -25,12 +25,12 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
     public StackRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
-        int mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        int mAppWidgetId =
+                intent.getIntExtra(
+                        AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
-    public void onCreate() {
-
-    }
+    public void onCreate() {}
 
     public void onDestroy() {
         submissions.clear();
@@ -41,7 +41,8 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
     }
 
     public RemoteViews getViewAt(int position) {
-        final RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.submission_widget);
+        final RemoteViews rv =
+                new RemoteViews(mContext.getPackageName(), R.layout.submission_widget);
 
         if (position <= getCount()) {
 
@@ -51,28 +52,57 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
             ContentType.Type type = ContentType.getContentType(submission);
             if (type == ContentType.Type.IMAGE) {
                 url = submission.getUrl();
-            } else if (submission.getDataNode().has("preview") && submission.getDataNode().get("preview").get("images").get(0).get("source").has("height") && submission.getDataNode().get("preview").get("images").get(0).get("source").get("height").asInt() > 200) {
+            } else if (submission.getDataNode().has("preview")
+                    && submission
+                            .getDataNode()
+                            .get("preview")
+                            .get("images")
+                            .get(0)
+                            .get("source")
+                            .has("height")
+                    && submission
+                                    .getDataNode()
+                                    .get("preview")
+                                    .get("images")
+                                    .get(0)
+                                    .get("source")
+                                    .get("height")
+                                    .asInt()
+                            > 200) {
 
-                url = submission.getDataNode().get("preview").get("images").get(0).get("source").get("url").asText();
+                url =
+                        submission
+                                .getDataNode()
+                                .get("preview")
+                                .get("images")
+                                .get(0)
+                                .get("source")
+                                .get("url")
+                                .asText();
 
-            } else if (submission.getThumbnail() != null && (submission.getThumbnailType() == Submission.ThumbnailType.URL || submission.getThumbnailType() == Submission.ThumbnailType.NSFW)) {
+            } else if (submission.getThumbnail() != null
+                    && (submission.getThumbnailType() == Submission.ThumbnailType.URL
+                            || submission.getThumbnailType() == Submission.ThumbnailType.NSFW)) {
                 url = submission.getThumbnail();
             }
             try {
 
-                // todo rv.setImageViewBitmap(R.id.thumbnail, Glide.with(mContext).load(url).asBitmap().);
+                // todo rv.setImageViewBitmap(R.id.thumbnail,
+                // Glide.with(mContext).load(url).asBitmap().);
                 rv.setTextViewText(R.id.title, CompatUtil.fromHtml(submission.getTitle()));
-
 
             } catch (Exception e) {
                 Log.v(LogUtil.getTag(), e.toString());
             }
 
-
             rv.setTextViewText(R.id.title, CompatUtil.fromHtml(submission.getTitle()));
 
             rv.setTextViewText(R.id.subreddit, submission.getSubredditName());
-            rv.setTextViewText(R.id.info, submission.getAuthor() + " " + TimeUtils.getTimeAgo(submission.getCreated().getTime(), mContext));
+            rv.setTextViewText(
+                    R.id.info,
+                    submission.getAuthor()
+                            + " "
+                            + TimeUtils.getTimeAgo(submission.getCreated().getTime(), mContext));
 
             Bundle extras = new Bundle();
             extras.putString("url", submission.getUrl());

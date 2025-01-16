@@ -4,26 +4,23 @@ import android.os.AsyncTask;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import me.edgan.redditslide.Authentication;
+
 import net.dean.jraw.models.ModAction;
 import net.dean.jraw.paginators.ModLogPaginator;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
-import me.edgan.redditslide.Authentication;
-
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class ModLogPosts {
-    public  ArrayList<ModAction> posts;
-    public  boolean              loading;
-    private SwipeRefreshLayout   refreshLayout;
-    private ModLogAdapter        adapter;
-    private ModLogPaginator      paginator;
+    public ArrayList<ModAction> posts;
+    public boolean loading;
+    private SwipeRefreshLayout refreshLayout;
+    private ModLogAdapter adapter;
+    private ModLogPaginator paginator;
 
-    public ModLogPosts() {
-    }
+    public ModLogPosts() {}
 
     public void bindAdapter(ModLogAdapter a, SwipeRefreshLayout layout) {
         this.adapter = a;
@@ -59,7 +56,6 @@ public class ModLogPosts {
             } else {
                 adapter.setError(true);
                 refreshLayout.setRefreshing(false);
-
             }
         }
 
@@ -73,7 +69,6 @@ public class ModLogPosts {
                 if (paginator.hasNext()) {
 
                     return new ArrayList<>(paginator.next());
-
                 }
                 return null;
             } catch (Exception e) {

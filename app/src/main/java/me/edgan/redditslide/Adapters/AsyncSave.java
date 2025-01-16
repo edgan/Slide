@@ -6,13 +6,13 @@ import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import net.dean.jraw.managers.AccountManager;
-import net.dean.jraw.models.Submission;
-
 import me.edgan.redditslide.ActionStates;
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.util.LayoutUtils;
+
+import net.dean.jraw.managers.AccountManager;
+import net.dean.jraw.models.Submission;
 
 public class AsyncSave extends AsyncTask<Submission, Void, Void> {
     final Activity mContext;

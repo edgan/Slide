@@ -6,10 +6,7 @@ import android.view.ViewGroup;
 import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.R;
 
-
-/**
- * Created by l3d00m on 11/13/2015.
- */
+/** Created by l3d00m on 11/13/2015. */
 public class SettingsReddit extends BaseActivityAnim {
 
     SettingsRedditFragment fragment = new SettingsRedditFragment(this);
@@ -21,10 +18,10 @@ public class SettingsReddit extends BaseActivityAnim {
         setContentView(R.layout.activity_settings_reddit);
         setupAppBar(R.id.toolbar, R.string.settings_reddit_prefs, true, true);
 
-        ((ViewGroup) findViewById(R.id.settings_reddit)).addView(
-                getLayoutInflater().inflate(R.layout.activity_settings_reddit_child, null));
+        ((ViewGroup) findViewById(R.id.settings_reddit))
+                .addView(
+                        getLayoutInflater().inflate(R.layout.activity_settings_reddit_child, null));
 
         fragment.Bind();
     }
-
 }

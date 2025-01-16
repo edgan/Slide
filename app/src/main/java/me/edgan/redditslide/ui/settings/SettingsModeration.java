@@ -16,8 +16,10 @@ public class SettingsModeration extends BaseActivityAnim {
         setContentView(R.layout.activity_settings_moderation);
         setupAppBar(R.id.toolbar, R.string.settings_moderation, true, true);
 
-        ((ViewGroup) findViewById(R.id.settings_moderation)).addView(getLayoutInflater().inflate(
-                R.layout.activity_settings_moderation_child, null));
+        ((ViewGroup) findViewById(R.id.settings_moderation))
+                .addView(
+                        getLayoutInflater()
+                                .inflate(R.layout.activity_settings_moderation_child, null));
 
         fragment.Bind();
     }

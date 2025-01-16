@@ -14,6 +14,8 @@
 
 package me.edgan.redditslide.util;
 
+import static me.edgan.redditslide.ui.settings.SettingsHandlingFragment.LinkHandlingMode;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -23,16 +25,12 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import me.edgan.redditslide.SettingValues;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import me.edgan.redditslide.SettingValues;
-
-import static me.edgan.redditslide.ui.settings.SettingsHandlingFragment.LinkHandlingMode;
-
-/**
- * Helper class for Custom Tabs.
- */
+/** Helper class for Custom Tabs. */
 public class CustomTabsHelper {
     private static final String TAG = "CustomTabsHelper";
     static final String STABLE_PACKAGE = "com.android.chrome";
@@ -49,11 +47,11 @@ public class CustomTabsHelper {
     private CustomTabsHelper() {}
 
     /**
-     * Goes through all apps that handle VIEW intents and have a warmup service. Picks
-     * the one chosen by the user if there is one, otherwise makes a best effort to return a
-     * valid package name.
+     * Goes through all apps that handle VIEW intents and have a warmup service. Picks the one
+     * chosen by the user if there is one, otherwise makes a best effort to return a valid package
+     * name.
      *
-     * This is <strong>not</strong> threadsafe.
+     * <p>This is <strong>not</strong> threadsafe.
      *
      * @param context {@link Context} to use for accessing {@link PackageManager}.
      * @return The package name recommended to use for connecting to custom tabs related components.
@@ -111,15 +109,15 @@ public class CustomTabsHelper {
 
     /**
      * Used to check whether there is a specialized handler for a given intent.
+     *
      * @param intent The intent to check with.
      * @return Whether there is a specialized handler for the given intent.
      */
     private static boolean hasSpecializedHandlerIntents(Context context, Intent intent) {
         try {
             PackageManager pm = context.getPackageManager();
-            List<ResolveInfo> handlers = pm.queryIntentActivities(
-                    intent,
-                    PackageManager.GET_RESOLVED_FILTER);
+            List<ResolveInfo> handlers =
+                    pm.queryIntentActivities(intent, PackageManager.GET_RESOLVED_FILTER);
             if (handlers == null || handlers.isEmpty()) {
                 return false;
             }
@@ -140,6 +138,6 @@ public class CustomTabsHelper {
      * @return All possible chrome package names that provide custom tabs feature.
      */
     public static String[] getPackages() {
-        return new String[]{"", STABLE_PACKAGE, BETA_PACKAGE, DEV_PACKAGE, LOCAL_PACKAGE};
+        return new String[] {"", STABLE_PACKAGE, BETA_PACKAGE, DEV_PACKAGE, LOCAL_PACKAGE};
     }
 }

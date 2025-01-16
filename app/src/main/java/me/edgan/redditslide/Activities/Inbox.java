@@ -18,11 +18,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
-import net.dean.jraw.managers.InboxManager;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Autocache.AutoCacheScheduler;
 import me.edgan.redditslide.ContentGrabber;
@@ -39,15 +34,18 @@ import me.edgan.redditslide.util.KeyboardUtil;
 import me.edgan.redditslide.util.LayoutUtils;
 import me.edgan.redditslide.util.LogUtil;
 
-/**
- * Created by ccrama on 9/17/2015.
- */
+import net.dean.jraw.managers.InboxManager;
+
+import java.util.HashSet;
+import java.util.Set;
+
+/** Created by ccrama on 9/17/2015. */
 public class Inbox extends BaseActivityAnim {
 
     public static final String EXTRA_UNREAD = "unread";
     public InboxPagerAdapter adapter;
-    private TabLayout                  tabs;
-    private ViewPager                  pager;
+    private TabLayout tabs;
+    private ViewPager pager;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -61,7 +59,7 @@ public class Inbox extends BaseActivityAnim {
     }
 
     private boolean changed;
-    public  long    last;
+    public long last;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -119,7 +117,9 @@ public class Inbox extends BaseActivityAnim {
     @Override
     public void onCreate(Bundle savedInstance) {
         overrideSwipeFromAnywhere();
-        if (Authentication.reddit == null || !Authentication.reddit.isAuthenticated() || Authentication.me == null) {
+        if (Authentication.reddit == null
+                || !Authentication.reddit.isAuthenticated()
+                || Authentication.me == null) {
             LogUtil.v("Reauthenticating");
 
             new AsyncTask<Void, Void, Void>() {
@@ -133,7 +133,8 @@ public class Inbox extends BaseActivityAnim {
                         Authentication.me = Authentication.reddit.me();
                         Authentication.mod = Authentication.me.isMod();
 
-                        Authentication.authentication.edit()
+                        Authentication.authentication
+                                .edit()
                                 .putBoolean(Reddit.SHARED_PREF_IS_MOD, Authentication.mod)
                                 .apply();
 
@@ -154,11 +155,13 @@ public class Inbox extends BaseActivityAnim {
 
                         if (Authentication.reddit.isAuthenticated()) {
                             final Set<String> accounts =
-                                    Authentication.authentication.getStringSet("accounts", new HashSet<String>());
+                                    Authentication.authentication.getStringSet(
+                                            "accounts", new HashSet<String>());
                             if (accounts.contains(name)) { // convert to new system
                                 accounts.remove(name);
                                 accounts.add(name + ":" + Authentication.refresh);
-                                Authentication.authentication.edit()
+                                Authentication.authentication
+                                        .edit()
                                         .putStringSet("accounts", accounts)
                                         .apply(); // force commit
                             }
@@ -166,7 +169,7 @@ public class Inbox extends BaseActivityAnim {
                             Reddit.notFirst = true;
                         }
 
-                    } catch (Exception ignored){
+                    } catch (Exception ignored) {
 
                     }
                     return null;
@@ -175,8 +178,9 @@ public class Inbox extends BaseActivityAnim {
         }
 
         super.onCreate(savedInstance);
-        last = SettingValues.prefs.getLong("lastInbox",
-                System.currentTimeMillis() - (60 * 1000 * 60));
+        last =
+                SettingValues.prefs.getLong(
+                        "lastInbox", System.currentTimeMillis() - (60 * 1000 * 60));
         SettingValues.prefs.edit().putLong("lastInbox", System.currentTimeMillis()).apply();
         applyColorTheme("");
         setContentView(R.layout.activity_inbox);
@@ -198,21 +202,22 @@ public class Inbox extends BaseActivityAnim {
 
         tabs.setupWithViewPager(pager);
 
-        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                findViewById(R.id.header).animate()
-                        .translationY(0)
-                        .setInterpolator(new LinearInterpolator())
-                        .setDuration(180);
-                if (position == 3 && findViewById(R.id.read) != null) {
-                    findViewById(R.id.read).setVisibility(View.GONE);
-                } else if (findViewById(R.id.read) != null) {
-                    findViewById(R.id.read).setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
+        pager.addOnPageChangeListener(
+                new ViewPager.SimpleOnPageChangeListener() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        findViewById(R.id.header)
+                                .animate()
+                                .translationY(0)
+                                .setInterpolator(new LinearInterpolator())
+                                .setDuration(180);
+                        if (position == 3 && findViewById(R.id.read) != null) {
+                            findViewById(R.id.read).setVisibility(View.GONE);
+                        } else if (findViewById(R.id.read) != null) {
+                            findViewById(R.id.read).setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
     }
 
     private class InboxPagerAdapter extends FragmentStatePagerAdapter {
@@ -244,7 +249,7 @@ public class Inbox extends BaseActivityAnim {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         KeyboardUtil.hideKeyboard(this, getWindow().getAttributes().token, 0);
     }

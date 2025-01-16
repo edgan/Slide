@@ -1,18 +1,18 @@
-package me.edgan.redditslide.Views;/*
-Copyright 2015 Michal Pawlowski
+package me.edgan.redditslide.Views; /*
+                                    Copyright 2015 Michal Pawlowski
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+                                    Licensed under the Apache License, Version 2.0 (the "License");
+                                    you may not use this file except in compliance with the License.
+                                    You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+                                    http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+                                    Unless required by applicable law or agreed to in writing, software
+                                    distributed under the License is distributed on an "AS IS" BASIS,
+                                    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+                                    See the License for the specific language governing permissions and
+                                    limitations under the License.
+                                    */
 
 import android.app.Activity;
 import android.view.View;
@@ -25,11 +25,9 @@ import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 
-import java.util.ArrayList;
-
-import me.edgan.redditslide.R;
 import me.edgan.redditslide.util.BlendModeUtil;
 
+import java.util.ArrayList;
 
 /**
  * Helper class that iterates through Toolbar views, and sets dynamically icons and texts color
@@ -37,48 +35,56 @@ import me.edgan.redditslide.util.BlendModeUtil;
  */
 public class ToolbarColorizeHelper {
 
-    private ToolbarColorizeHelper() {
-    }
+    private ToolbarColorizeHelper() {}
 
     /**
      * Use this method to colorize toolbar icons to the desired target color
      *
-     * @param toolbarView       toolbar view being colored
+     * @param toolbarView toolbar view being colored
      * @param toolbarIconsColor the target color of toolbar icons
-     * @param activity          reference to activity needed to register observers
+     * @param activity reference to activity needed to register observers
      */
-    public static void colorizeToolbar(Toolbar toolbarView, int toolbarIconsColor, Activity activity) {
+    public static void colorizeToolbar(
+            Toolbar toolbarView, int toolbarIconsColor, Activity activity) {
         for (int i = 0; i < toolbarView.getChildCount(); i++) {
             final View v = toolbarView.getChildAt(i);
 
             // Step 1 : Changing the color of back button (or open drawer button).
             if (v instanceof ImageButton) {
                 // Action Bar back button
-                BlendModeUtil.tintDrawableAsModulate(((ImageButton) v).getDrawable(), toolbarIconsColor);
+                BlendModeUtil.tintDrawableAsModulate(
+                        ((ImageButton) v).getDrawable(), toolbarIconsColor);
             }
-
 
             if (v instanceof ActionMenuView) {
                 for (int j = 0; j < ((ActionMenuView) v).getChildCount(); j++) {
 
-                    // Step 2: Changing the color of any ActionMenuViews - icons that are not back button, nor text, nor overflow menu icon.
-                    // Colorize the ActionViews -> all icons that are NOT: back button | overflow menu
+                    // Step 2: Changing the color of any ActionMenuViews - icons that are not back
+                    // button, nor text, nor overflow menu icon.
+                    // Colorize the ActionViews -> all icons that are NOT: back button | overflow
+                    // menu
                     final View innerView = ((ActionMenuView) v).getChildAt(j);
                     if (innerView instanceof ActionMenuItemView) {
-                        for (int k = 0; k < ((ActionMenuItemView) innerView).getCompoundDrawables().length; k++) {
-                            if (((ActionMenuItemView) innerView).getCompoundDrawables()[k] != null) {
+                        for (int k = 0;
+                                k < ((ActionMenuItemView) innerView).getCompoundDrawables().length;
+                                k++) {
+                            if (((ActionMenuItemView) innerView).getCompoundDrawables()[k]
+                                    != null) {
                                 final int finalK = k;
 
-                                // Important to set the color filter in seperate thread, by adding it to the message queue
+                                // Important to set the color filter in seperate thread, by adding
+                                // it to the message queue
                                 // Won't work otherwise.
-                                innerView.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        BlendModeUtil.tintDrawableAsModulate(
-                                                ((ActionMenuItemView) innerView).getCompoundDrawables()[finalK],
-                                                toolbarIconsColor);
-                                    }
-                                });
+                                innerView.post(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                BlendModeUtil.tintDrawableAsModulate(
+                                                        ((ActionMenuItemView) innerView)
+                                                                .getCompoundDrawables()[finalK],
+                                                        toolbarIconsColor);
+                                            }
+                                        });
                             }
                         }
                     }
@@ -95,33 +101,38 @@ public class ToolbarColorizeHelper {
     }
 
     /**
-     * It's important to set overflowDescription atribute in styles, so we can grab the reference
-     * to the overflow icon. Check: res/values/styles.xml
+     * It's important to set overflowDescription atribute in styles, so we can grab the reference to
+     * the overflow icon. Check: res/values/styles.xml
      *
      * @param activity
      * @param toolbarIconsColor
      */
-    private static void setOverflowButtonColor(final Activity activity, final int toolbarIconsColor) {
+    private static void setOverflowButtonColor(
+            final Activity activity, final int toolbarIconsColor) {
         final String overflowDescription = "More options"; // FIXME edgan
         final ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
         final ViewTreeObserver viewTreeObserver = decorView.getViewTreeObserver();
-        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                final ArrayList<View> outViews = new ArrayList<>();
-                decorView.findViewsWithText(outViews, overflowDescription,
-                        View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
-                if (outViews.isEmpty()) {
-                    return;
-                }
-                ImageView overflow = (ImageView) outViews.get(0);
-                BlendModeUtil.tintImageViewAsModulate(overflow, toolbarIconsColor);
-                removeOnGlobalLayoutListener(decorView, this);
-            }
-        });
+        viewTreeObserver.addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        final ArrayList<View> outViews = new ArrayList<>();
+                        decorView.findViewsWithText(
+                                outViews,
+                                overflowDescription,
+                                View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+                        if (outViews.isEmpty()) {
+                            return;
+                        }
+                        ImageView overflow = (ImageView) outViews.get(0);
+                        BlendModeUtil.tintImageViewAsModulate(overflow, toolbarIconsColor);
+                        removeOnGlobalLayoutListener(decorView, this);
+                    }
+                });
     }
 
-    private static void removeOnGlobalLayoutListener(View v, ViewTreeObserver.OnGlobalLayoutListener listener) {
+    private static void removeOnGlobalLayoutListener(
+            View v, ViewTreeObserver.OnGlobalLayoutListener listener) {
         v.getViewTreeObserver().removeOnGlobalLayoutListener(listener);
     }
 }

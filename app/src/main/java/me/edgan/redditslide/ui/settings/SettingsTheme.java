@@ -7,11 +7,8 @@ import android.view.ViewGroup;
 import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.R;
 
-
-/**
- * Created by ccrama on 3/5/2015.
- */
-public class SettingsTheme extends BaseActivityAnim implements RestartActivity{
+/** Created by ccrama on 3/5/2015. */
+public class SettingsTheme extends BaseActivityAnim implements RestartActivity {
 
     private SettingsThemeFragment fragment = new SettingsThemeFragment(this);
 
@@ -21,8 +18,8 @@ public class SettingsTheme extends BaseActivityAnim implements RestartActivity{
         setContentView(R.layout.activity_settings_theme);
         setupAppBar(R.id.toolbar, R.string.title_edit_theme, true, true);
 
-        ((ViewGroup) findViewById(R.id.settings_theme)).addView(
-                getLayoutInflater().inflate(R.layout.activity_settings_theme_child, null));
+        ((ViewGroup) findViewById(R.id.settings_theme))
+                .addView(getLayoutInflater().inflate(R.layout.activity_settings_theme_child, null));
 
         fragment.Bind();
     }
@@ -37,5 +34,4 @@ public class SettingsTheme extends BaseActivityAnim implements RestartActivity{
         finish();
         overridePendingTransition(0, 0);
     }
-
 }

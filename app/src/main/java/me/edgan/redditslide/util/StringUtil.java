@@ -3,9 +3,7 @@ package me.edgan.redditslide.util;
 import java.util.ArrayList;
 import java.util.Collections;
 
-/**
- * Created by TacoTheDank on 03/15/2021.
- */
+/** Created by TacoTheDank on 03/15/2021. */
 public class StringUtil {
     public static String arrayToString(final ArrayList<String> array) {
         return arrayToStringInternal(array, ",", 1);
@@ -15,8 +13,8 @@ public class StringUtil {
         return arrayToStringInternal(array, separator, separator.length());
     }
 
-    private static String arrayToStringInternal(final ArrayList<String> array,
-                                                final String separator, final int separatorLength) {
+    private static String arrayToStringInternal(
+            final ArrayList<String> array, final String separator, final int separatorLength) {
         if (array != null) {
             final StringBuilder b = new StringBuilder();
             for (String s : array) {

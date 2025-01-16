@@ -1,4 +1,3 @@
-
 package me.edgan.redditslide.Tumblr;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -14,27 +13,22 @@ import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-
-@JsonPropertyOrder({
-    "caption",
-    "alt_sizes",
-    "original_size"
-})
+@JsonPropertyOrder({"caption", "alt_sizes", "original_size"})
 public class Photo {
 
     @JsonProperty("caption")
     private String caption;
+
     @JsonProperty("alt_sizes")
     private List<AltSize> altSizes = new ArrayList<AltSize>();
+
     @JsonProperty("original_size")
     private OriginalSize originalSize;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    @JsonIgnore private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     *
-     * @return
-     *     The caption
+     * @return The caption
      */
     @JsonProperty("caption")
     public String getCaption() {
@@ -42,9 +36,7 @@ public class Photo {
     }
 
     /**
-     *
-     * @param caption
-     *     The caption
+     * @param caption The caption
      */
     @JsonProperty("caption")
     public void setCaption(String caption) {
@@ -52,9 +44,7 @@ public class Photo {
     }
 
     /**
-     *
-     * @return
-     *     The altSizes
+     * @return The altSizes
      */
     @JsonProperty("alt_sizes")
     public List<AltSize> getAltSizes() {
@@ -62,9 +52,7 @@ public class Photo {
     }
 
     /**
-     *
-     * @param altSizes
-     *     The alt_sizes
+     * @param altSizes The alt_sizes
      */
     @JsonProperty("alt_sizes")
     public void setAltSizes(List<AltSize> altSizes) {
@@ -72,9 +60,7 @@ public class Photo {
     }
 
     /**
-     *
-     * @return
-     *     The originalSize
+     * @return The originalSize
      */
     @JsonProperty("original_size")
     public OriginalSize getOriginalSize() {
@@ -82,9 +68,7 @@ public class Photo {
     }
 
     /**
-     *
-     * @param originalSize
-     *     The original_size
+     * @param originalSize The original_size
      */
     @JsonProperty("original_size")
     public void setOriginalSize(OriginalSize originalSize) {
@@ -100,5 +84,4 @@ public class Photo {
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
-
 }

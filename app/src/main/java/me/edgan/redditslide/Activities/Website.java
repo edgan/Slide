@@ -23,12 +23,6 @@ import android.widget.ProgressBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.webkit.WebViewClientCompat;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.OpenRedditLink;
@@ -42,14 +36,20 @@ import me.edgan.redditslide.util.AdBlocker;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.LogUtil;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class Website extends BaseActivityAnim {
 
-    WebView              v;
-    String               url;
-    int                  subredditColor;
-    MyWebViewClient      client;
+    WebView v;
+    String url;
+    int subredditColor;
+    MyWebViewClient client;
     AdBlockWebViewClient webClient;
-    ProgressBar          p;
+    ProgressBar p;
 
     private static String getDomainName(String url) {
         URI uri;
@@ -57,8 +57,7 @@ public class Website extends BaseActivityAnim {
             uri = new URI(url);
 
             String domain = uri.getHost();
-            if(domain == null)
-                return "";
+            if (domain == null) return "";
             return domain.startsWith("www.") ? domain.substring(4) : domain;
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -94,7 +93,6 @@ public class Website extends BaseActivityAnim {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
             case android.R.id.home:
                 finish();
                 return true;
@@ -115,7 +113,8 @@ public class Website extends BaseActivityAnim {
                 startActivity(inte);
                 return true;
             case R.id.store_cookies:
-                SettingValues.prefs.edit()
+                SettingValues.prefs
+                        .edit()
                         .putBoolean(SettingValues.PREF_COOKIES, !SettingValues.cookies)
                         .apply();
                 SettingValues.cookies = !SettingValues.cookies;
@@ -126,7 +125,8 @@ public class Website extends BaseActivityAnim {
                 return true;
             case R.id.read:
                 v.evaluateJavascript(
-                        "(function(){return \"<html>\" + document.documentElement.innerHTML + \"</html>\";})();",
+                        "(function(){return \"<html>\" + document.documentElement.innerHTML +"
+                            + " \"</html>\";})();",
                         new ValueCallback<String>() {
                             @Override
                             public void onReceiveValue(String html) {
@@ -140,7 +140,6 @@ public class Website extends BaseActivityAnim {
                                 }
                                 i.putExtra(LinkUtil.EXTRA_COLOR, subredditColor);
                                 startActivity(i);
-
                             }
                         });
                 return true;
@@ -151,7 +150,6 @@ public class Website extends BaseActivityAnim {
                 Reddit.defaultShareText(v.getTitle(), v.getUrl(), Website.this);
 
                 return true;
-
         }
         return false;
     }
@@ -203,7 +201,6 @@ public class Website extends BaseActivityAnim {
             ws.setSavePassword(false);
         }
 
-
         /* todo in the future, drag left and right to go back and forward in history
 
         IOverScrollDecor decor = new HorizontalOverScrollBounceEffectDecorator(new WebViewOverScrollDecoratorAdapter(v));
@@ -239,15 +236,20 @@ public class Website extends BaseActivityAnim {
         v.getSettings().setJavaScriptEnabled(true);
         v.getSettings().setLoadWithOverviewMode(true);
         v.getSettings().setUseWideViewPort(true);
-        v.setDownloadListener(new DownloadListener() {
-            public void onDownloadStart(String url, String userAgent, String contentDisposition,
-                    String mimetype, long contentLength) {
-                // Downloads using download manager on default browser
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
-            }
-        });
+        v.setDownloadListener(
+                new DownloadListener() {
+                    public void onDownloadStart(
+                            String url,
+                            String userAgent,
+                            String contentDisposition,
+                            String mimetype,
+                            long contentLength) {
+                        // Downloads using download manager on default browser
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        startActivity(i);
+                    }
+                });
         v.loadUrl(url);
     }
 
@@ -288,7 +290,6 @@ public class Website extends BaseActivityAnim {
                         if (getSupportActionBar() != null) {
                             getSupportActionBar().setTitle(getDomainName(url));
                         }
-
                     }
                 }
             } catch (Exception ignored) {
@@ -336,7 +337,6 @@ public class Website extends BaseActivityAnim {
 
     public String currentURL;
 
-
     // Method adapted from http://www.hidroh.com/2016/05/19/hacking-up-ad-blocker-android/
     public class AdBlockWebViewClient extends WebViewClientCompat {
         private Map<String, Boolean> loadedUrls = new HashMap<>();
@@ -361,8 +361,9 @@ public class Website extends BaseActivityAnim {
                 try {
                     // https://stackoverflow.com/a/58163386/6952238
                     Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
-                    if ((intent != null) && ((intent.getScheme().equals("https"))
-                            || (intent.getScheme().equals("http")))) {
+                    if ((intent != null)
+                            && ((intent.getScheme().equals("https"))
+                                    || (intent.getScheme().equals("http")))) {
                         String fallbackUrl = intent.getStringExtra("browser_fallback_url");
                         v.loadUrl(fallbackUrl);
                     }

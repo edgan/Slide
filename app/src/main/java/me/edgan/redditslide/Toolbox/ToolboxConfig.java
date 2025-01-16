@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class defining a toolbox config. Contains removal reasons, mod macros, usernote colors, domain tags, etc.
+ * Class defining a toolbox config. Contains removal reasons, mod macros, usernote colors, domain
+ * tags, etc.
  */
 public class ToolboxConfig {
     @SerializedName("ver")
@@ -36,9 +37,7 @@ public class ToolboxConfig {
     @JsonAdapter(EmptyStringAsNullTypeAdapter.class)
     private Map<String, String> banMacros;
 
-    public ToolboxConfig() {
-
-    }
+    public ToolboxConfig() {}
 
     public int getSchema() {
         return schema;
@@ -57,7 +56,9 @@ public class ToolboxConfig {
     }
 
     public String getUsernoteColor(String type) {
-        if (usernoteTypes != null && usernoteTypes.get(type) != null && usernoteTypes.get(type).get("color") != null) {
+        if (usernoteTypes != null
+                && usernoteTypes.get(type) != null
+                && usernoteTypes.get(type).get("color") != null) {
             return usernoteTypes.get(type).get("color");
         } else {
             if (Toolbox.DEFAULT_USERNOTE_TYPES.get(type) != null) {
@@ -69,7 +70,9 @@ public class ToolboxConfig {
     }
 
     public String getUsernoteText(String type) {
-        if (usernoteTypes != null && usernoteTypes.get(type) != null && usernoteTypes.get(type).get("text") != null) {
+        if (usernoteTypes != null
+                && usernoteTypes.get(type) != null
+                && usernoteTypes.get(type).get("text") != null) {
             return usernoteTypes.get(type).get("text");
         } else {
             if (Toolbox.DEFAULT_USERNOTE_TYPES.get(type) != null) {
@@ -80,10 +83,12 @@ public class ToolboxConfig {
         }
     }
 
-    public static class UsernoteTypeDeserializer implements JsonDeserializer<Map<String, Map<String, String>>> {
+    public static class UsernoteTypeDeserializer
+            implements JsonDeserializer<Map<String, Map<String, String>>> {
         @Override
         public Map<String, Map<String, String>> deserialize(
-                JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                throws JsonParseException {
             if (json.isJsonPrimitive()) { // isn't an array
                 return null;
             }
@@ -98,19 +103,22 @@ public class ToolboxConfig {
         }
     }
 
-    // from https://stackoverflow.com/a/48806970, because toolbox uses empty strings to mean null in some instances
+    // from https://stackoverflow.com/a/48806970, because toolbox uses empty strings to mean null in
+    // some instances
     public static final class EmptyStringAsNullTypeAdapter<T> implements JsonDeserializer<T> {
         @Override
-        public T deserialize(final JsonElement jsonElement, final Type type, final JsonDeserializationContext context)
+        public T deserialize(
+                final JsonElement jsonElement,
+                final Type type,
+                final JsonDeserializationContext context)
                 throws JsonParseException {
-            if ( jsonElement.isJsonPrimitive() ) {
+            if (jsonElement.isJsonPrimitive()) {
                 final JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
-                if ( jsonPrimitive.isString() && jsonPrimitive.getAsString().isEmpty() ) {
+                if (jsonPrimitive.isString() && jsonPrimitive.getAsString().isEmpty()) {
                     return null;
                 }
             }
             return context.deserialize(jsonElement, type);
         }
-
     }
 }

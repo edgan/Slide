@@ -24,17 +24,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * Created by carlo_000 on 11/19/2015.
- */
+/** Created by carlo_000 on 11/19/2015. */
 public class OfflineSubreddit {
 
-    public static  Long   currentid                 = 0L;
+    public static Long currentid = 0L;
     private static String savedSubmissionsSubreddit = "";
-    public long                  time;
+    public long time;
     public ArrayList<Submission> submissions;
-    public String                subreddit;
-    public boolean               base;
+    public String subreddit;
+    public boolean base;
 
     public static void writeSubmission(JsonNode node, Submission s, Context c) {
         writeSubmissionToStorage(s, node, c);
@@ -89,7 +87,8 @@ public class OfflineSubreddit {
             }
 
             if (fullNames.length() > 0) {
-                Reddit.cachedData.edit()
+                Reddit.cachedData
+                        .edit()
                         .putString(title, fullNames.substring(0, fullNames.length() - 1))
                         .apply();
             }
@@ -107,7 +106,8 @@ public class OfflineSubreddit {
                 fullNames.append(sub.getFullName()).append(",");
             }
             if (fullNames.length() > 0) {
-                Reddit.cachedData.edit()
+                Reddit.cachedData
+                        .edit()
                         .putString(title, fullNames.substring(0, fullNames.length() - 1))
                         .apply();
             }
@@ -132,8 +132,8 @@ public class OfflineSubreddit {
                     }
                 }
                 String savedSubmissions =
-                        Reddit.cachedData.getString(OfflineSubreddit.savedSubmissionsSubreddit,
-                                fullNames);
+                        Reddit.cachedData.getString(
+                                OfflineSubreddit.savedSubmissionsSubreddit, fullNames);
                 Reddit.cachedData.edit().remove(savedSubmissionsSubreddit).apply();
                 if (!savedSubmissions.equals(fullNames)) {
                     savedSubmissions = fullNames + savedSubmissions;
@@ -157,8 +157,8 @@ public class OfflineSubreddit {
                     }
                 }
                 String savedSubmissions =
-                        Reddit.cachedData.getString(OfflineSubreddit.savedSubmissionsSubreddit,
-                                name);
+                        Reddit.cachedData.getString(
+                                OfflineSubreddit.savedSubmissionsSubreddit, name);
                 if (!savedSubmissions.equals(name)) {
                     Reddit.cachedData.edit().remove(savedSubmissionsSubreddit).apply();
                     String modifiedSavedSubmissions = savedSubmissions.replace(name + ",", "");
@@ -189,8 +189,8 @@ public class OfflineSubreddit {
 
     private static HashMap<String, OfflineSubreddit> cache;
 
-    public static OfflineSubreddit getSubreddit(String subreddit, Long time, boolean offline,
-            Context c) {
+    public static OfflineSubreddit getSubreddit(
+            String subreddit, Long time, boolean offline, Context c) {
         if (cache == null) cache = new HashMap<>();
         String title;
         if (subreddit != null) {
@@ -213,8 +213,10 @@ public class OfflineSubreddit {
 
             o.time = time;
 
-            String[] split = Reddit.cachedData.getString(subreddit.toLowerCase(Locale.ENGLISH) + "," + time, "")
-                    .split(",");
+            String[] split =
+                    Reddit.cachedData
+                            .getString(subreddit.toLowerCase(Locale.ENGLISH) + "," + time, "")
+                            .split(",");
             if (split.length > 0) {
                 o.time = time;
                 o.submissions = new ArrayList<>();
@@ -233,7 +235,6 @@ public class OfflineSubreddit {
                             e.printStackTrace();
                         }
                     }
-
                 }
 
             } else {
@@ -241,17 +242,16 @@ public class OfflineSubreddit {
             }
             cache.put(title, o);
             return o;
-
         }
     }
 
-    public static Submission getSubmissionFromStorage(String fullName, Context c, boolean offline,
-            ObjectReader reader) throws IOException {
+    public static Submission getSubmissionFromStorage(
+            String fullName, Context c, boolean offline, ObjectReader reader) throws IOException {
         String gotten = getStringFromFile(fullName, c);
         if (!gotten.isEmpty()) {
             if (gotten.startsWith("[") && offline) {
-                return (SubmissionSerializer.withComments(reader.readTree(gotten),
-                        CommentSort.CONFIDENCE));
+                return (SubmissionSerializer.withComments(
+                        reader.readTree(gotten), CommentSort.CONFIDENCE));
             } else if (gotten.startsWith("[")) {
                 JsonNode elem = reader.readTree(gotten);
                 return (new Submission(elem.get(0).get("data").get("children").get(0).get("data")));
@@ -290,7 +290,6 @@ public class OfflineSubreddit {
         o.submissions = new ArrayList<>();
 
         return o;
-
     }
 
     public void clearPost(Submission s) {
@@ -307,7 +306,7 @@ public class OfflineSubreddit {
         }
     }
 
-    int        savedIndex;
+    int savedIndex;
     Submission savedSubmission;
 
     public void hide(int index) {
@@ -371,8 +370,9 @@ public class OfflineSubreddit {
     public static ArrayList<String> getAllFormatted() {
         ArrayList<String> keys = new ArrayList<>();
         for (String s : Reddit.cachedData.getAll().keySet()) {
-            if (s.contains(",") && !keys.contains(s.substring(0, s.indexOf(","))) && !s.startsWith(
-                    "multi")) {
+            if (s.contains(",")
+                    && !keys.contains(s.substring(0, s.indexOf(",")))
+                    && !s.startsWith("multi")) {
                 keys.add(s.substring(0, s.indexOf(",")));
             }
         }

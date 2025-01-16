@@ -16,10 +16,11 @@ public class SettingsComments extends BaseActivityAnim {
         setContentView(R.layout.activity_settings_comments);
         setupAppBar(R.id.toolbar, R.string.settings_title_comments, true, true);
 
-        ((ViewGroup) findViewById(R.id.settings_comments)).addView(
-                getLayoutInflater().inflate(R.layout.activity_settings_comments_child, null));
+        ((ViewGroup) findViewById(R.id.settings_comments))
+                .addView(
+                        getLayoutInflater()
+                                .inflate(R.layout.activity_settings_comments_child, null));
 
         fragment.Bind();
     }
-
 }

@@ -1,5 +1,7 @@
 package me.edgan.redditslide.Activities;
 
+import static me.edgan.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,37 +12,30 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.edgan.redditslide.Adapters.RedditGalleryView;
 import me.edgan.redditslide.Fragments.SubmissionsView;
-import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
-import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LinkUtil;
-import me.edgan.redditslide.util.StorageUtil;
 
-import static me.edgan.redditslide.Notifications.ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Activity for displaying Reddit gallery content in a vertical scrolling view.
- * Supports downloading images using the Storage Access Framework.
+ * Activity for displaying Reddit gallery content in a vertical scrolling view. Supports downloading
+ * images using the Storage Access Framework.
  */
 public class RedditGallery extends BaseSaveActivity {
 
@@ -70,7 +65,9 @@ public class RedditGallery extends BaseSaveActivity {
                 i.putExtra(MediaView.ADAPTER_POSITION, adapterPosition);
 
                 if (getIntent().hasExtra(MediaView.SUBMISSION_URL)) {
-                    i.putExtra(MediaView.SUBMISSION_URL, getIntent().getStringExtra(MediaView.SUBMISSION_URL));
+                    i.putExtra(
+                            MediaView.SUBMISSION_URL,
+                            getIntent().getStringExtra(MediaView.SUBMISSION_URL));
                 }
                 if (subreddit != null && !subreddit.isEmpty()) {
                     i.putExtra(RedditGalleryPager.SUBREDDIT, subreddit);
@@ -130,7 +127,11 @@ public class RedditGallery extends BaseSaveActivity {
         overrideSwipeFromAnywhere();
         super.onCreate(savedInstanceState);
 
-        getTheme().applyStyle(new ColorPreferences(this).getDarkThemeSubreddit(ColorPreferences.FONT_STYLE), true);
+        getTheme()
+                .applyStyle(
+                        new ColorPreferences(this)
+                                .getDarkThemeSubreddit(ColorPreferences.FONT_STYLE),
+                        true);
         setContentView(R.layout.album);
 
         // Keep the screen on
@@ -206,40 +207,50 @@ public class RedditGallery extends BaseSaveActivity {
         public RecyclerView recyclerView;
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        public View onCreateView(
+                LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             rootView = inflater.inflate(R.layout.fragment_verticalalbum, container, false);
 
-            final PreCachingLayoutManager mLayoutManager = new PreCachingLayoutManager(getActivity());
+            final PreCachingLayoutManager mLayoutManager =
+                    new PreCachingLayoutManager(getActivity());
             recyclerView = rootView.findViewById(R.id.images);
             recyclerView.setLayoutManager(mLayoutManager);
 
             final RedditGallery galleryActivity = (RedditGallery) getActivity();
             if (galleryActivity != null) {
-                galleryActivity.images = (ArrayList<GalleryImage>) getActivity().getIntent()
-                        .getSerializableExtra(RedditGallery.GALLERY_URLS);
+                galleryActivity.images =
+                        (ArrayList<GalleryImage>)
+                                getActivity()
+                                        .getIntent()
+                                        .getSerializableExtra(RedditGallery.GALLERY_URLS);
 
                 galleryActivity.mToolbar = rootView.findViewById(R.id.toolbar);
                 galleryActivity.mToolbar.setTitle(R.string.type_gallery);
 
-                ToolbarColorizeHelper.colorizeToolbar(galleryActivity.mToolbar, Color.WHITE, getActivity());
+                ToolbarColorizeHelper.colorizeToolbar(
+                        galleryActivity.mToolbar, Color.WHITE, getActivity());
                 galleryActivity.setSupportActionBar(galleryActivity.mToolbar);
                 galleryActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-                galleryActivity.mToolbar.setPopupTheme(new ColorPreferences(getActivity())
-                        .getDarkThemeSubreddit(ColorPreferences.FONT_STYLE));
+                galleryActivity.mToolbar.setPopupTheme(
+                        new ColorPreferences(getActivity())
+                                .getDarkThemeSubreddit(ColorPreferences.FONT_STYLE));
 
-                rootView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        rootView.findViewById(R.id.progress).setVisibility(View.GONE);
-                        RedditGalleryView adapter = new RedditGalleryView(galleryActivity,
-                                galleryActivity.images,
-                                rootView.findViewById(R.id.toolbar).getHeight(),
-                                galleryActivity.subreddit,
-                                galleryActivity.submissionTitle);
-                        recyclerView.setAdapter(adapter);
-                    }
-                });
+                rootView.post(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                rootView.findViewById(R.id.progress).setVisibility(View.GONE);
+                                RedditGalleryView adapter =
+                                        new RedditGalleryView(
+                                                galleryActivity,
+                                                galleryActivity.images,
+                                                rootView.findViewById(R.id.toolbar).getHeight(),
+                                                galleryActivity.subreddit,
+                                                galleryActivity.submissionTitle);
+                                recyclerView.setAdapter(adapter);
+                            }
+                        });
             }
 
             return rootView;

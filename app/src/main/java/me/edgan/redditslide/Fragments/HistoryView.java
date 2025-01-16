@@ -21,7 +21,6 @@ import me.edgan.redditslide.handler.ToolbarScrollHideHandler;
 
 public class HistoryView extends Fragment {
 
-
     private int totalItemCount;
     private int visibleItemCount;
     private int pastVisiblesItems;
@@ -29,7 +28,8 @@ public class HistoryView extends Fragment {
     private HistoryPosts posts;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_verticalcontent, container, false);
 
@@ -37,26 +37,28 @@ public class HistoryView extends Fragment {
 
         final PreCachingLayoutManager mLayoutManager = new PreCachingLayoutManager(getContext());
 
-
         rv.setLayoutManager(mLayoutManager);
         rv.setItemViewCacheSize(2);
         v.findViewById(R.id.post_floating_action_button).setVisibility(View.GONE);
-        final SwipeRefreshLayout mSwipeRefreshLayout = v.findViewById(R.id.activity_main_swipe_refresh_layout);
+        final SwipeRefreshLayout mSwipeRefreshLayout =
+                v.findViewById(R.id.activity_main_swipe_refresh_layout);
 
         mSwipeRefreshLayout.setColorSchemeColors(Palette.getColors("default", getActivity()));
 
         // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
         // So, we estimate the height of the header in dp
-        mSwipeRefreshLayout.setProgressViewOffset(false,
+        mSwipeRefreshLayout.setProgressViewOffset(
+                false,
                 Constants.TAB_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.TAB_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);
 
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
+        mSwipeRefreshLayout.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                    }
+                });
 
         posts = new HistoryPosts();
         adapter = new ContributionAdapter(getActivity(), posts, rv);
@@ -73,32 +75,39 @@ public class HistoryView extends Fragment {
 
                         // TODO catch errors
                     }
-                }
-        );
-        rv.addOnScrollListener(new ToolbarScrollHideHandler(getActivity().findViewById(R.id.toolbar), getActivity().findViewById(R.id.header)) {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                visibleItemCount = rv.getLayoutManager().getChildCount();
-                totalItemCount = rv.getLayoutManager().getItemCount();
-                if (rv.getLayoutManager() instanceof PreCachingLayoutManager) {
-                    pastVisiblesItems = ((PreCachingLayoutManager) rv.getLayoutManager()).findFirstVisibleItemPosition();
-                } else {
-                    int[] firstVisibleItems = null;
-                    firstVisibleItems = ((CatchStaggeredGridLayoutManager) rv.getLayoutManager()).findFirstVisibleItemPositions(firstVisibleItems);
-                    if (firstVisibleItems != null && firstVisibleItems.length > 0) {
-                        pastVisiblesItems = firstVisibleItems[0];
-                    }
-                }
+                });
+        rv.addOnScrollListener(
+                new ToolbarScrollHideHandler(
+                        getActivity().findViewById(R.id.toolbar),
+                        getActivity().findViewById(R.id.header)) {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        visibleItemCount = rv.getLayoutManager().getChildCount();
+                        totalItemCount = rv.getLayoutManager().getItemCount();
+                        if (rv.getLayoutManager() instanceof PreCachingLayoutManager) {
+                            pastVisiblesItems =
+                                    ((PreCachingLayoutManager) rv.getLayoutManager())
+                                            .findFirstVisibleItemPosition();
+                        } else {
+                            int[] firstVisibleItems = null;
+                            firstVisibleItems =
+                                    ((CatchStaggeredGridLayoutManager) rv.getLayoutManager())
+                                            .findFirstVisibleItemPositions(firstVisibleItems);
+                            if (firstVisibleItems != null && firstVisibleItems.length > 0) {
+                                pastVisiblesItems = firstVisibleItems[0];
+                            }
+                        }
 
-                if (!posts.loading) {
-                    if ((visibleItemCount + pastVisiblesItems) + 5 >= totalItemCount && !posts.nomore) {
-                        posts.loading = true;
-                        posts.loadMore(adapter, false);
+                        if (!posts.loading) {
+                            if ((visibleItemCount + pastVisiblesItems) + 5 >= totalItemCount
+                                    && !posts.nomore) {
+                                posts.loading = true;
+                                posts.loadMore(adapter, false);
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
         return v;
     }
 }

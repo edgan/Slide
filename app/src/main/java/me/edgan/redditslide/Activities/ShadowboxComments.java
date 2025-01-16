@@ -8,19 +8,17 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import net.dean.jraw.models.Comment;
-
-import java.util.ArrayList;
-
 import me.edgan.redditslide.Adapters.CommentUrlObject;
 import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.Fragments.AlbumFullComments;
 import me.edgan.redditslide.Fragments.MediaFragmentComment;
 import me.edgan.redditslide.R;
 
-/**
- * Created by ccrama on 9/17/2015.
- */
+import net.dean.jraw.models.Comment;
+
+import java.util.ArrayList;
+
+/** Created by ccrama on 9/17/2015. */
 public class ShadowboxComments extends FullScreenActivity {
     public static ArrayList<CommentUrlObject> comments;
 
@@ -28,7 +26,7 @@ public class ShadowboxComments extends FullScreenActivity {
     public void onCreate(Bundle savedInstance) {
         overrideSwipeFromAnywhere();
 
-        if(comments == null || comments.isEmpty()){
+        if (comments == null || comments.isEmpty()) {
             finish();
         }
         applyDarkColorTheme(comments.get(0).comment.getComment().getSubredditName());
@@ -92,7 +90,7 @@ public class ShadowboxComments extends FullScreenActivity {
 
         @Override
         public int getCount() {
-            return comments.size() ;
+            return comments.size();
         }
     }
 }

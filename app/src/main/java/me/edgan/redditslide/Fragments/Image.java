@@ -16,19 +16,16 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 
-
-/**
- * Created by ccrama on 6/2/2015.
- */
+/** Created by ccrama on 6/2/2015. */
 public class Image extends Fragment {
 
     String url;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.submission_imagecard, container, false);
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ViewGroup rootView =
+                (ViewGroup) inflater.inflate(R.layout.submission_imagecard, container, false);
 
         final SubsamplingScaleImageView image = rootView.findViewById(R.id.image);
         TextView title = rootView.findViewById(R.id.title);
@@ -37,17 +34,18 @@ public class Image extends Fragment {
         title.setVisibility(View.GONE);
         desc.setVisibility(View.GONE);
 
-
-        ((Reddit) getContext().getApplicationContext()).getImageLoader()
-                .loadImage(url,
+        ((Reddit) getContext().getApplicationContext())
+                .getImageLoader()
+                .loadImage(
+                        url,
                         new SimpleImageLoadingListener() {
 
                             @Override
-                            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                            public void onLoadingComplete(
+                                    String imageUri, View view, Bitmap loadedImage) {
                                 image.setImage(ImageSource.bitmap(loadedImage));
                             }
                         });
-
 
         return rootView;
     }
@@ -57,7 +55,5 @@ public class Image extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
         url = bundle.getString("url");
-
     }
-
 }

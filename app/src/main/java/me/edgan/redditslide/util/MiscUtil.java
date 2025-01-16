@@ -15,9 +15,9 @@ import me.edgan.redditslide.R;
 
 /**
  * Created by TacoTheDank on 03/15/2021.
- * <p>
- * These functions wouldn't really make sense to be anywhere else, so...
- * MiscUtil is meant to be temporary; these functions will ideally eventually go into their own little places.
+ *
+ * <p>These functions wouldn't really make sense to be anywhere else, so... MiscUtil is meant to be
+ * temporary; these functions will ideally eventually go into their own little places.
  */
 public class MiscUtil {
 
@@ -38,20 +38,33 @@ public class MiscUtil {
         }
     }
 
-    private static void createAwards(final Context mContext, final int fontsize,
-                                     final SpannableStringBuilder awarded, Bitmap image) {
+    private static void createAwards(
+            final Context mContext,
+            final int fontsize,
+            final SpannableStringBuilder awarded,
+            Bitmap image) {
         final float aspectRatio = (float) (1.00 * image.getWidth() / image.getHeight());
-        image = Bitmap.createScaledBitmap(image, (int) Math.ceil(fontsize * aspectRatio),
-                (int) Math.ceil(fontsize), true);
-        awarded.setSpan(new ImageSpan(mContext, image, ImageSpan.ALIGN_BASELINE), 0, 2,
+        image =
+                Bitmap.createScaledBitmap(
+                        image,
+                        (int) Math.ceil(fontsize * aspectRatio),
+                        (int) Math.ceil(fontsize),
+                        true);
+        awarded.setSpan(
+                new ImageSpan(mContext, image, ImageSpan.ALIGN_BASELINE),
+                0,
+                2,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        awarded.setSpan(new RelativeSizeSpan(0.75f), 3, awarded.length(),
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        awarded.setSpan(
+                new RelativeSizeSpan(0.75f), 3, awarded.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    public static void addAwards(final Context mContext, final int fontsize,
-                                 final ProfileCommentViewHolder holder,
-                                 final Integer awards, final int drawable) {
+    public static void addAwards(
+            final Context mContext,
+            final int fontsize,
+            final ProfileCommentViewHolder holder,
+            final Integer awards,
+            final int drawable) {
         if (awards > 0) {
             final String timesAwarded = awards == 1 ? "" : "\u200Ax" + awards;
             final SpannableStringBuilder awarded =
@@ -62,9 +75,12 @@ public class MiscUtil {
         }
     }
 
-    public static void addCommentAwards(final Context mContext, final int fontsize,
-                                        final SpannableStringBuilder titleString, final Integer awards,
-                                        final Bitmap image) {
+    public static void addCommentAwards(
+            final Context mContext,
+            final int fontsize,
+            final SpannableStringBuilder titleString,
+            final Integer awards,
+            final Bitmap image) {
         if (awards > 0) {
             final String timesAwarded = awards == 1 ? "" : "\u200Ax" + awards;
             final SpannableStringBuilder awarded =
@@ -75,9 +91,12 @@ public class MiscUtil {
         }
     }
 
-    public static void addSubmissionAwards(final Context mContext, final int fontsize,
-                                           final SpannableStringBuilder titleString,
-                                           final Integer awards, final int drawable) {
+    public static void addSubmissionAwards(
+            final Context mContext,
+            final int fontsize,
+            final SpannableStringBuilder titleString,
+            final Integer awards,
+            final int drawable) {
         if (awards > 0) {
             final String timesAwarded = awards == 1 ? "" : "\u200Ax" + awards;
             final SpannableStringBuilder awarded =
@@ -89,9 +108,12 @@ public class MiscUtil {
         }
     }
 
-    public static void addSearchAwards(final Context mContext, final int fontsize,
-                                       final SpannableStringBuilder titleString,
-                                       final Integer awards, final int drawable) {
+    public static void addSearchAwards(
+            final Context mContext,
+            final int fontsize,
+            final SpannableStringBuilder titleString,
+            final Integer awards,
+            final int drawable) {
         if (awards > 0) {
             final String timesAwarded = awards == 1 ? "" : "\u200Ax" + awards;
             final SpannableStringBuilder awarded =

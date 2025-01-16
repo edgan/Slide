@@ -1,4 +1,3 @@
-
 package me.edgan.redditslide.Tumblr;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -12,19 +11,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-
 @JsonPropertyOrder("id")
 public class Post_ {
 
     @JsonProperty("id")
     private String id;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    @JsonIgnore private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     *
-     * @return
-     *     The id
+     * @return The id
      */
     @JsonProperty("id")
     public String getId() {
@@ -32,9 +28,7 @@ public class Post_ {
     }
 
     /**
-     *
-     * @param id
-     *     The id
+     * @param id The id
      */
     @JsonProperty("id")
     public void setId(String id) {
@@ -50,5 +44,4 @@ public class Post_ {
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
-
 }

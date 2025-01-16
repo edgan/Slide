@@ -15,15 +15,15 @@ import me.edgan.redditslide.SpoilerRobotoTextView;
 
 public class TextViewLinkHandler extends BaseMovementMethod {
     private final ClickableText clickableText;
-    String                subreddit;
+    String subreddit;
     SpoilerRobotoTextView comm;
-    Spannable             sequence;
-    float                 position;
-    boolean               clickHandled;
-    Handler               handler;
-    Runnable              longClicked;
-    URLSpan[]             link;
-    MotionEvent           event;
+    Spannable sequence;
+    float position;
+    boolean clickHandled;
+    Handler handler;
+    Runnable longClicked;
+    URLSpan[] link;
+    MotionEvent event;
 
     public TextViewLinkHandler(ClickableText clickableText, String subreddit, Spannable sequence) {
         this.clickableText = clickableText;
@@ -32,19 +32,20 @@ public class TextViewLinkHandler extends BaseMovementMethod {
 
         clickHandled = false;
         handler = new Handler();
-        longClicked = new Runnable() {
-            @Override
-            public void run() {
-                // long click
-                clickHandled = true;
+        longClicked =
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        // long click
+                        clickHandled = true;
 
-                handler.removeCallbacksAndMessages(null);
-                if (link != null && link.length > 0 && link[0] != null) {
-                    TextViewLinkHandler.this.clickableText.onLinkLongClick(link[0].getURL(), event);
-                }
-
-            }
-        };
+                        handler.removeCallbacksAndMessages(null);
+                        if (link != null && link.length > 0 && link[0] != null) {
+                            TextViewLinkHandler.this.clickableText.onLinkLongClick(
+                                    link[0].getURL(), event);
+                        }
+                    }
+                };
     }
 
     @Override
@@ -87,11 +88,11 @@ public class TextViewLinkHandler extends BaseMovementMethod {
                     clickHandled = false;
                     this.event = event;
                     if (SettingValues.peek) {
-                        handler.postDelayed(longClicked,
-                                android.view.ViewConfiguration.getTapTimeout() + 50);
+                        handler.postDelayed(
+                                longClicked, android.view.ViewConfiguration.getTapTimeout() + 50);
                     } else {
-                        handler.postDelayed(longClicked,
-                                android.view.ViewConfiguration.getLongPressTimeout());
+                        handler.postDelayed(
+                                longClicked, android.view.ViewConfiguration.getLongPressTimeout());
                     }
 
                     break;
@@ -122,5 +123,4 @@ public class TextViewLinkHandler extends BaseMovementMethod {
             return false;
         }
     }
-
 }

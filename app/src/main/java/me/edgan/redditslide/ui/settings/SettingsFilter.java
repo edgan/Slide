@@ -16,17 +16,15 @@ import android.widget.TextView;
 
 import androidx.core.util.Consumer;
 
-import java.util.Locale;
-import java.util.Set;
-
 import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Visuals.Palette;
 
-/**
- * Created by l3d00m on 11/13/2015.
- */
+import java.util.Locale;
+import java.util.Set;
+
+/** Created by l3d00m on 11/13/2015. */
 public class SettingsFilter extends BaseActivityAnim {
     EditText title;
     EditText text;
@@ -49,24 +47,28 @@ public class SettingsFilter extends BaseActivityAnim {
         flair = (EditText) findViewById(R.id.flair);
         user = (EditText) findViewById(R.id.user);
 
-        title.setOnEditorActionListener(makeOnEditorActionListener(SettingValues.titleFilters::add));
+        title.setOnEditorActionListener(
+                makeOnEditorActionListener(SettingValues.titleFilters::add));
         text.setOnEditorActionListener(makeOnEditorActionListener(SettingValues.textFilters::add));
-        domain.setOnEditorActionListener(makeOnEditorActionListener(SettingValues.domainFilters::add));
-        subreddit.setOnEditorActionListener(makeOnEditorActionListener(SettingValues.subredditFilters::add));
+        domain.setOnEditorActionListener(
+                makeOnEditorActionListener(SettingValues.domainFilters::add));
+        subreddit.setOnEditorActionListener(
+                makeOnEditorActionListener(SettingValues.subredditFilters::add));
         user.setOnEditorActionListener(makeOnEditorActionListener(SettingValues.userFilters::add));
 
-        flair.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                String text = v.getText().toString().toLowerCase(Locale.ENGLISH).trim();
-                if (text.matches(".+:.+")) {
-                    SettingValues.flairFilters.add(text);
-                    v.setText("");
-                    updateFilters();
-                }
-            }
+        flair.setOnEditorActionListener(
+                (v, actionId, event) -> {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        String text = v.getText().toString().toLowerCase(Locale.ENGLISH).trim();
+                        if (text.matches(".+:.+")) {
+                            SettingValues.flairFilters.add(text);
+                            v.setText("");
+                            updateFilters();
+                        }
+                    }
 
-            return false;
-        });
+                    return false;
+                });
 
         updateFilters();
     }
@@ -77,7 +79,8 @@ public class SettingsFilter extends BaseActivityAnim {
      * @param filtersAdd called when done is pressed
      * @return The new OnEditorActionListener
      */
-    private TextView.OnEditorActionListener makeOnEditorActionListener(Consumer<String> filtersAdd) {
+    private TextView.OnEditorActionListener makeOnEditorActionListener(
+            Consumer<String> filtersAdd) {
         return new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -95,55 +98,80 @@ public class SettingsFilter extends BaseActivityAnim {
     }
 
     /**
-     * Iterate through filters and add an item for each to the layout with id, with a remove button calling filtersRemoved
+     * Iterate through filters and add an item for each to the layout with id, with a remove button
+     * calling filtersRemoved
      *
-     * @param id            ID of linearlayout containing items
-     * @param filters       Set of filters to iterate through
+     * @param id ID of linearlayout containing items
+     * @param filters Set of filters to iterate through
      * @param filtersRemove Method to call on remove button press
      */
     private void updateList(int id, Set<String> filters, Consumer<String> filtersRemove) {
         ((LinearLayout) findViewById(id)).removeAllViews();
         for (String s : filters) {
-            final View t = getLayoutInflater().inflate(R.layout.account_textview, (LinearLayout) findViewById(id), false);
+            final View t =
+                    getLayoutInflater()
+                            .inflate(
+                                    R.layout.account_textview,
+                                    (LinearLayout) findViewById(id),
+                                    false);
             ((TextView) t.findViewById(R.id.name)).setText(s);
-            t.findViewById(R.id.remove).setOnClickListener(v -> {
-                filtersRemove.accept(s);
-                updateFilters();
-            });
+            t.findViewById(R.id.remove)
+                    .setOnClickListener(
+                            v -> {
+                                filtersRemove.accept(s);
+                                updateFilters();
+                            });
             ((LinearLayout) findViewById(id)).addView(t);
         }
     }
 
-    /**
-     * Updates the filters shown in the UI
-     */
+    /** Updates the filters shown in the UI */
     public void updateFilters() {
-        updateList(R.id.domainlist, SettingValues.domainFilters, SettingValues.domainFilters::remove);
-        updateList(R.id.subredditlist, SettingValues.subredditFilters, SettingValues.subredditFilters::remove);
+        updateList(
+                R.id.domainlist, SettingValues.domainFilters, SettingValues.domainFilters::remove);
+        updateList(
+                R.id.subredditlist,
+                SettingValues.subredditFilters,
+                SettingValues.subredditFilters::remove);
         updateList(R.id.userlist, SettingValues.userFilters, SettingValues.userFilters::remove);
         updateList(R.id.selftextlist, SettingValues.textFilters, SettingValues.textFilters::remove);
         updateList(R.id.titlelist, SettingValues.titleFilters, SettingValues.titleFilters::remove);
 
         ((LinearLayout) findViewById(R.id.flairlist)).removeAllViews();
         for (String s : SettingValues.flairFilters) {
-            final View t = getLayoutInflater().inflate(R.layout.account_textview, (LinearLayout) findViewById(R.id.domainlist), false);
+            final View t =
+                    getLayoutInflater()
+                            .inflate(
+                                    R.layout.account_textview,
+                                    (LinearLayout) findViewById(R.id.domainlist),
+                                    false);
             SpannableStringBuilder b = new SpannableStringBuilder();
             String subname = s.split(":")[0];
             SpannableStringBuilder subreddit = new SpannableStringBuilder(" /r/" + subname + " ");
-            if ((SettingValues.colorSubName && Palette.getColor(subname) != Palette.getDefaultColor())) {
-                subreddit.setSpan(new ForegroundColorSpan(Palette.getColor(subname)), 0, subreddit.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                subreddit.setSpan(new StyleSpan(Typeface.BOLD), 0, subreddit.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            if ((SettingValues.colorSubName
+                    && Palette.getColor(subname) != Palette.getDefaultColor())) {
+                subreddit.setSpan(
+                        new ForegroundColorSpan(Palette.getColor(subname)),
+                        0,
+                        subreddit.length(),
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                subreddit.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        0,
+                        subreddit.length(),
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             b.append(subreddit).append(s.split(":")[1]);
             ((TextView) t.findViewById(R.id.name)).setText(b);
-            t.findViewById(R.id.remove).setOnClickListener(v -> {
-                SettingValues.flairFilters.remove(s);
-                updateFilters();
-            });
+            t.findViewById(R.id.remove)
+                    .setOnClickListener(
+                            v -> {
+                                SettingValues.flairFilters.remove(s);
+                                updateFilters();
+                            });
             ((LinearLayout) findViewById(R.id.flairlist)).addView(t);
         }
     }
-
 
     @Override
     public void onPause() {

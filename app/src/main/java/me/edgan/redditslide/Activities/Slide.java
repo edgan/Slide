@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-/**
- * Created by ccrama on 9/28/2015.
- */
+/** Created by ccrama on 9/28/2015. */
 public class Slide extends Activity {
 
     public static boolean hasStarted;

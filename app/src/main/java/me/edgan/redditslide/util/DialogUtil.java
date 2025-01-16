@@ -2,6 +2,7 @@ package me.edgan.redditslide.util;
 
 import android.net.Uri;
 import android.util.Log;
+
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,10 +10,7 @@ import androidx.documentfile.provider.DocumentFile;
 
 import me.edgan.redditslide.R;
 
-/**
- * Created by TacoTheDank on 07/14/2021.
- * Updated to use Storage Access Framework
- */
+/** Created by TacoTheDank on 07/14/2021. Updated to use Storage Access Framework */
 public class DialogUtil {
     private static final String TAG = "DialogUtil";
 
@@ -31,31 +29,32 @@ public class DialogUtil {
             }
         }
 
-        showBaseChooserDialog(activity,
-                R.string.err_something_wrong, R.string.err_couldnt_save_choose_new);
+        showBaseChooserDialog(
+                activity, R.string.err_something_wrong, R.string.err_couldnt_save_choose_new);
     }
 
     public static void showFirstDialog(final AppCompatActivity activity) {
-        showBaseChooserDialog(activity,
-                R.string.set_save_location, R.string.set_save_location_msg);
+        showBaseChooserDialog(activity, R.string.set_save_location, R.string.set_save_location_msg);
     }
 
     private static void showBaseChooserDialog(
             final AppCompatActivity activity,
             final @StringRes int titleId,
-            final @StringRes int messageId
-    ) {
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setTitle(titleId)
-                .setMessage(messageId)
-                .setPositiveButton(android.R.string.ok, (dialogInterface, which) -> {
-                    try {
-                        StorageUtil.showDirectoryChooser(activity);
-                    } catch (Exception e) {
-                        LogUtil.e(e, TAG + "Error launching directory chooser");
-                    }
-                })
-                .create();
+            final @StringRes int messageId) {
+        AlertDialog dialog =
+                new AlertDialog.Builder(activity)
+                        .setTitle(titleId)
+                        .setMessage(messageId)
+                        .setPositiveButton(
+                                android.R.string.ok,
+                                (dialogInterface, which) -> {
+                                    try {
+                                        StorageUtil.showDirectoryChooser(activity);
+                                    } catch (Exception e) {
+                                        LogUtil.e(e, TAG + "Error launching directory chooser");
+                                    }
+                                })
+                        .create();
 
         dialog.show();
     }

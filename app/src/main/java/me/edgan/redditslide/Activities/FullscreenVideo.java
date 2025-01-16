@@ -16,10 +16,7 @@ import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.LogUtil;
 
-
-/**
- * Created by ccrama on 3/5/2015.
- */
+/** Created by ccrama on 3/5/2015. */
 public class FullscreenVideo extends FullScreenActivity {
 
     public static final String EXTRA_HTML = "html";
@@ -37,7 +34,6 @@ public class FullscreenVideo extends FullScreenActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
-
 
         String data = getIntent().getExtras().getString(EXTRA_HTML);
         v = (WebView) findViewById(R.id.webgif);
@@ -62,21 +58,30 @@ public class FullscreenVideo extends FullScreenActivity {
         if (dat.contains("src=\"")) {
             int start = dat.indexOf("src=\"") + 5;
             dat = dat.substring(start, dat.indexOf("\"", start));
-            if(dat.startsWith("//")){
+            if (dat.startsWith("//")) {
                 dat = "https:" + dat;
             }
             LogUtil.v(dat);
             v.loadUrl(dat);
-            if ((dat.contains("youtube.co" ) || dat.contains("youtu.be")) && !Reddit.appRestart.contains("showYouTubePopup")) {
+            if ((dat.contains("youtube.co") || dat.contains("youtu.be"))
+                    && !Reddit.appRestart.contains("showYouTubePopup")) {
                 new AlertDialog.Builder(FullscreenVideo.this)
                         .setTitle(R.string.load_videos_internally)
                         .setMessage(R.string.load_videos_internally_content)
-                        .setPositiveButton(R.string.btn_sure, (dialog, which) ->
-                                LinkUtil.launchMarketUri(
-                                        FullscreenVideo.this, R.string.youtube_plugin_package))
+                        .setPositiveButton(
+                                R.string.btn_sure,
+                                (dialog, which) ->
+                                        LinkUtil.launchMarketUri(
+                                                FullscreenVideo.this,
+                                                R.string.youtube_plugin_package))
                         .setNegativeButton(R.string.btn_no, null)
-                        .setNeutralButton(R.string.do_not_show_again, (dialog, which) ->
-                                Reddit.appRestart.edit().putBoolean("showYouTubePopup", false).apply())
+                        .setNeutralButton(
+                                R.string.do_not_show_again,
+                                (dialog, which) ->
+                                        Reddit.appRestart
+                                                .edit()
+                                                .putBoolean("showYouTubePopup", false)
+                                                .apply())
                         .show();
             }
         } else {

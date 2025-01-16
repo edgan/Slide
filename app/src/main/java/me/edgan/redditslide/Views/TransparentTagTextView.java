@@ -16,9 +16,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 import me.edgan.redditslide.R;
 
-/**
- * Created by carlos on 3/14/16.
- */
+/** Created by carlos on 3/14/16. */
 public class TransparentTagTextView extends AppCompatTextView {
     Bitmap mMaskBitmap;
     Canvas mMaskCanvas;
@@ -51,7 +49,7 @@ public class TransparentTagTextView extends AppCompatTextView {
 
     @Override
     public void setBackgroundDrawable(Drawable bg) {
-        if(bg != null) {
+        if (bg != null) {
             mBackground = bg;
             int w = bg.getIntrinsicWidth();
             int h = bg.getIntrinsicHeight();
@@ -81,7 +79,7 @@ public class TransparentTagTextView extends AppCompatTextView {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        if(w > 0 && h > 0) {
+        if (w > 0 && h > 0) {
             mBackgroundBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
             mBackgroundCanvas = new Canvas(mBackgroundBitmap);
             mMaskBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
@@ -102,7 +100,7 @@ public class TransparentTagTextView extends AppCompatTextView {
         mBackground.draw(mBackgroundCanvas);
 
         // Draw mask
-        if(mMaskCanvas != null) {
+        if (mMaskCanvas != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 mMaskCanvas.drawColor(Color.BLACK, BlendMode.CLEAR);
             } else {

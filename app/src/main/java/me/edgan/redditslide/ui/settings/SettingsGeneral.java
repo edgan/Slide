@@ -5,14 +5,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.documentfile.provider.DocumentFile;
 
 import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.R;
@@ -20,9 +17,7 @@ import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.StorageUtil;
 
-/**
- * Created by ccrama on 3/5/2015.
- */
+/** Created by ccrama on 3/5/2015. */
 public class SettingsGeneral extends BaseActivityAnim implements StorageUtil.DirectoryChooserHost {
 
     private SettingsGeneralFragment fragment = new SettingsGeneralFragment(this);
@@ -35,13 +30,16 @@ public class SettingsGeneral extends BaseActivityAnim implements StorageUtil.Dir
         setContentView(R.layout.activity_settings_general);
         setupAppBar(R.id.toolbar, R.string.settings_title_general, true, true);
 
-        ((ViewGroup) findViewById(R.id.settings_general)).addView(
-                getLayoutInflater().inflate(R.layout.activity_settings_general_child, null));
+        ((ViewGroup) findViewById(R.id.settings_general))
+                .addView(
+                        getLayoutInflater()
+                                .inflate(R.layout.activity_settings_general_child, null));
 
         fragment.Bind();
 
         // Initialize location view with current path
-        TextView locationView = (TextView) findViewById(R.id.settings_general_set_save_location_view);
+        TextView locationView =
+                (TextView) findViewById(R.id.settings_general_set_save_location_view);
         if (locationView != null) {
             Uri currentUri = StorageUtil.getStorageUri(this);
             if (currentUri != null && StorageUtil.hasStorageAccess(this)) {
@@ -53,40 +51,50 @@ public class SettingsGeneral extends BaseActivityAnim implements StorageUtil.Dir
         }
 
         // Initialize download button switch
-        SwitchCompat downloadSwitch = (SwitchCompat) findViewById(R.id.settings_general_show_download_button);
+        SwitchCompat downloadSwitch =
+                (SwitchCompat) findViewById(R.id.settings_general_show_download_button);
         if (downloadSwitch != null) {
             downloadSwitch.setChecked(SettingValues.imageDownloadButton);
         }
 
-        RelativeLayout saveLocationLayout = (RelativeLayout) findViewById(R.id.settings_general_set_save_location);
+        RelativeLayout saveLocationLayout =
+                (RelativeLayout) findViewById(R.id.settings_general_set_save_location);
         if (saveLocationLayout != null) {
-            saveLocationLayout.setOnClickListener(view -> {
-                showDirectoryChooser();
-            });
+            saveLocationLayout.setOnClickListener(
+                    view -> {
+                        showDirectoryChooser();
+                    });
         }
     }
 
     private void showDirectoryChooser() {
-        StorageUtil.showDirectoryChooser(this, uri -> {
-            if (uri != null) {
-                String path = StorageUtil.getDisplayPath(this, uri);
+        StorageUtil.showDirectoryChooser(
+                this,
+                uri -> {
+                    if (uri != null) {
+                        String path = StorageUtil.getDisplayPath(this, uri);
 
-                TextView locationView = (TextView) findViewById(R.id.settings_general_set_save_location_view);
-                if (locationView != null) {
-                    locationView.setText(path);
-                }
+                        TextView locationView =
+                                (TextView)
+                                        findViewById(R.id.settings_general_set_save_location_view);
+                        if (locationView != null) {
+                            locationView.setText(path);
+                        }
 
-                SwitchCompat downloadSwitch = (SwitchCompat) findViewById(R.id.settings_general_show_download_button);
-                if (downloadSwitch != null) {
-                    downloadSwitch.setChecked(true);
-                }
+                        SwitchCompat downloadSwitch =
+                                (SwitchCompat)
+                                        findViewById(R.id.settings_general_show_download_button);
+                        if (downloadSwitch != null) {
+                            downloadSwitch.setChecked(true);
+                        }
 
-                SettingValues.imageDownloadButton = true;
-                SettingValues.prefs.edit()
-                    .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, true)
-                    .apply();
-            }
-        });
+                        SettingValues.imageDownloadButton = true;
+                        SettingValues.prefs
+                                .edit()
+                                .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, true)
+                                .apply();
+                    }
+                });
     }
 
     @Override
@@ -98,11 +106,15 @@ public class SettingsGeneral extends BaseActivityAnim implements StorageUtil.Dir
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 try {
-                    final int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION
-                            | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    final int takeFlags =
+                            data.getFlags()
+                                    & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                            | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     getContentResolver().takePersistableUriPermission(uri, takeFlags);
                 } catch (Exception e) {
-                    LogUtil.e(e, "SlideStorage Error taking persistent permission: " + e.getMessage());
+                    LogUtil.e(
+                            e,
+                            "SlideStorage Error taking persistent permission: " + e.getMessage());
                 }
             }
 
@@ -113,20 +125,23 @@ public class SettingsGeneral extends BaseActivityAnim implements StorageUtil.Dir
             }
 
             String path = StorageUtil.getDisplayPath(this, uri);
-            TextView locationView = (TextView) findViewById(R.id.settings_general_set_save_location_view);
+            TextView locationView =
+                    (TextView) findViewById(R.id.settings_general_set_save_location_view);
             if (locationView != null) {
                 locationView.setText(path);
             }
 
-            SwitchCompat downloadSwitch = (SwitchCompat) findViewById(R.id.settings_general_show_download_button);
+            SwitchCompat downloadSwitch =
+                    (SwitchCompat) findViewById(R.id.settings_general_show_download_button);
             if (downloadSwitch != null) {
                 downloadSwitch.setChecked(true);
             }
 
             SettingValues.imageDownloadButton = true;
-            SettingValues.prefs.edit()
-                .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, true)
-                .apply();
+            SettingValues.prefs
+                    .edit()
+                    .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, true)
+                    .apply();
         }
     }
 

@@ -1,16 +1,16 @@
 /*
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
- */
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 
 package me.edgan.redditslide.ForceTouch.builder;
 
@@ -24,9 +24,7 @@ import me.edgan.redditslide.ForceTouch.PeekView;
 import me.edgan.redditslide.ForceTouch.PeekViewActivity;
 import me.edgan.redditslide.ForceTouch.callback.OnPeek;
 
-/**
- * This is a builder class to facilitate the creation of the PeekView.
- */
+/** This is a builder class to facilitate the creation of the PeekView. */
 public class Peek {
 
     public static Peek into(@LayoutRes int layoutRes, @Nullable OnPeek onPeek) {
@@ -38,8 +36,8 @@ public class Peek {
     }
 
     /**
-     * Used to clear the peeking ability. This could be useful for a RecyclerView/ListView, where a recycled item
-     * shouldn't use the PeekView, but the original item did.
+     * Used to clear the peeking ability. This could be useful for a RecyclerView/ListView, where a
+     * recycled item shouldn't use the PeekView, but the original item did.
      *
      * @param view the view we want to stop peeking into
      */
@@ -56,7 +54,6 @@ public class Peek {
     private Peek(@LayoutRes int layoutRes, @Nullable OnPeek callbacks) {
         this.layoutRes = layoutRes;
         this.callbacks = callbacks;
-
     }
 
     private Peek(View layout, @Nullable OnPeek callbacks) {
@@ -92,5 +89,4 @@ public class Peek {
         peek.setOffsetByMotionEvent(motionEvent);
         activity.showPeek(peek, motionEvent.getRawY());
     }
-
 }

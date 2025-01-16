@@ -11,7 +11,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 public class ImageLoaderUnescape extends ImageLoader {
 
-    private volatile static ImageLoaderUnescape instance;
+    private static volatile ImageLoaderUnescape instance;
 
     public static ImageLoaderUnescape getInstance() {
         if (instance == null) {
@@ -25,8 +25,13 @@ public class ImageLoaderUnescape extends ImageLoader {
     }
 
     @Override
-    public void displayImage(String uri, ImageAware imageAware, DisplayImageOptions options,
-                             ImageSize targetSize, ImageLoadingListener listener, ImageLoadingProgressListener progressListener) {
+    public void displayImage(
+            String uri,
+            ImageAware imageAware,
+            DisplayImageOptions options,
+            ImageSize targetSize,
+            ImageLoadingListener listener,
+            ImageLoadingProgressListener progressListener) {
         String newUri = StringEscapeUtils.unescapeHtml4(uri);
         super.displayImage(newUri, imageAware, options, targetSize, listener, progressListener);
     }

@@ -9,8 +9,9 @@ import android.widget.RelativeLayout;
 import io.codetail.animation.RevealViewGroup;
 import io.codetail.animation.ViewRevealManager;
 
-//Adapted from https://github.com/MajeurAndroid/CircularReveal/commit/a87e3ad4daac96f942be0e240ebfc098a79f5419
-//And migrated to 2.1.0
+// Adapted from
+// https://github.com/MajeurAndroid/CircularReveal/commit/a87e3ad4daac96f942be0e240ebfc098a79f5419
+// And migrated to 2.1.0
 
 public class RevealRelativeLayout extends RelativeLayout implements RevealViewGroup {
 

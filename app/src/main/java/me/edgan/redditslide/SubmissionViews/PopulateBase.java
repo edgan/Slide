@@ -6,28 +6,26 @@ import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import net.dean.jraw.ApiException;
-import net.dean.jraw.managers.AccountManager;
-import net.dean.jraw.models.Submission;
-
 import me.edgan.redditslide.Activities.MediaView;
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.util.LayoutUtils;
 
-/**
- * Created by TacoTheDank on 04/04/2021.
- */
+import net.dean.jraw.ApiException;
+import net.dean.jraw.managers.AccountManager;
+import net.dean.jraw.models.Submission;
+
+/** Created by TacoTheDank on 04/04/2021. */
 public class PopulateBase {
-    public static void addAdaptorPosition(Intent myIntent, Submission submission, int adapterPosition) {
+    public static void addAdaptorPosition(
+            Intent myIntent, Submission submission, int adapterPosition) {
         if (submission.getComments() == null && adapterPosition != -1) {
             myIntent.putExtra(MediaView.ADAPTER_POSITION, adapterPosition);
             myIntent.putExtra(MediaView.SUBMISSION_URL, submission.getPermalink());
         }
         SubmissionsView.currentPosition(adapterPosition);
         SubmissionsView.currentSubmission(submission);
-
     }
 
     public static class AsyncReportTask extends AsyncTask<String, Void, Void> {
@@ -51,7 +49,8 @@ public class PopulateBase {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Snackbar s = Snackbar.make(contextView, R.string.msg_report_sent, Snackbar.LENGTH_SHORT);
+            Snackbar s =
+                    Snackbar.make(contextView, R.string.msg_report_sent, Snackbar.LENGTH_SHORT);
             LayoutUtils.showSnackbar(s);
         }
     }

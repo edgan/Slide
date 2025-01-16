@@ -3,19 +3,14 @@ package me.edgan.redditslide.Activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
-
-import androidx.annotation.Nullable;
 
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
-import me.edgan.redditslide.R;
 import me.edgan.redditslide.util.StorageUtil;
 
 /**
- * Base activity that implements SAF image saving functionality.
- * This provides common image saving behavior that can be inherited by other activities.
+ * Base activity that implements SAF image saving functionality. This provides common image saving
+ * behavior that can be inherited by other activities.
  */
 public abstract class BaseSaveActivity extends FullScreenActivity {
 
@@ -39,8 +34,11 @@ public abstract class BaseSaveActivity extends FullScreenActivity {
             Log.d(TAG, "Got tree URI: " + treeUri);
 
             try {
-                getContentResolver().takePersistableUriPermission(treeUri,
-                        Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                getContentResolver()
+                        .takePersistableUriPermission(
+                                treeUri,
+                                Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 Log.d(TAG, "Took persistable permission");
 
                 // Save the URI
@@ -56,8 +54,7 @@ public abstract class BaseSaveActivity extends FullScreenActivity {
     }
 
     /**
-     * Shows the directory picker if no directory is selected,
-     * otherwise proceeds with save.
+     * Shows the directory picker if no directory is selected, otherwise proceeds with save.
      *
      * @param isGif Whether the content is a GIF
      * @param contentUrl URL of the content to save
@@ -86,8 +83,8 @@ public abstract class BaseSaveActivity extends FullScreenActivity {
     }
 
     /**
-     * Override this to handle when storage permission is granted.
-     * Child classes can implement this to retry failed save attempts.
+     * Override this to handle when storage permission is granted. Child classes can implement this
+     * to retry failed save attempts.
      */
     protected void onStoragePermissionGranted() {
         // Override in subclasses if needed

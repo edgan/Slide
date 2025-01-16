@@ -16,10 +16,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.mikepenz.itemanimators.SlideUpAlphaAnimator;
 
-import net.dean.jraw.models.Subreddit;
-
-import java.util.List;
-
 import me.edgan.redditslide.Activities.BaseActivity;
 import me.edgan.redditslide.Adapters.SubredditAdapter;
 import me.edgan.redditslide.Adapters.SubredditNames;
@@ -31,6 +27,10 @@ import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.handler.ToolbarScrollHideHandler;
 import me.edgan.redditslide.util.LogUtil;
 
+import net.dean.jraw.models.Subreddit;
+
+import java.util.List;
+
 public class SubredditListView extends Fragment {
     public SubredditNames posts;
     public RecyclerView rv;
@@ -41,25 +41,33 @@ public class SubredditListView extends Fragment {
     public String where;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), new ColorPreferences(inflater.getContext()).getThemeSubreddit(where));
-        View v = LayoutInflater.from(contextThemeWrapper).inflate(R.layout.fragment_verticalcontent, container, false);
+        final Context contextThemeWrapper =
+                new ContextThemeWrapper(
+                        getActivity(),
+                        new ColorPreferences(inflater.getContext()).getThemeSubreddit(where));
+        View v =
+                LayoutInflater.from(contextThemeWrapper)
+                        .inflate(R.layout.fragment_verticalcontent, container, false);
 
         rv = v.findViewById(R.id.vertical_content);
-        final RecyclerView.LayoutManager mLayoutManager = new PreCachingLayoutManager(getActivity());
+        final RecyclerView.LayoutManager mLayoutManager =
+                new PreCachingLayoutManager(getActivity());
 
         rv.setLayoutManager(mLayoutManager);
-        rv.setItemAnimator(new SlideUpAlphaAnimator().withInterpolator(new LinearOutSlowInInterpolator()));
+        rv.setItemAnimator(
+                new SlideUpAlphaAnimator().withInterpolator(new LinearOutSlowInInterpolator()));
 
         mSwipeRefreshLayout = v.findViewById(R.id.activity_main_swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeColors(Palette.getColors("no sub", getContext()));
 
         // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
         // So, we estimate the height of the header in dp
-        mSwipeRefreshLayout.setProgressViewOffset(false,
+        mSwipeRefreshLayout.setProgressViewOffset(
+                false,
                 Constants.TAB_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.TAB_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);
 
@@ -72,37 +80,42 @@ public class SubredditListView extends Fragment {
     public boolean main;
 
     public void doAdapter() {
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
+        mSwipeRefreshLayout.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                    }
+                });
 
         posts = new SubredditNames(where, getContext(), SubredditListView.this);
         adapter = new SubredditAdapter(getActivity(), posts, rv, where, this);
         rv.setAdapter(adapter);
         posts.loadMore(mSwipeRefreshLayout.getContext(), true, where);
         mSwipeRefreshLayout.setOnRefreshListener(this::refresh);
-        rv.addOnScrollListener(new ToolbarScrollHideHandler(((BaseActivity) getActivity()).mToolbar, getActivity().findViewById(R.id.header)) {
+        rv.addOnScrollListener(
+                new ToolbarScrollHideHandler(
+                        ((BaseActivity) getActivity()).mToolbar,
+                        getActivity().findViewById(R.id.header)) {
 
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (!posts.loading && !posts.nomore) {
-                    visibleItemCount = rv.getLayoutManager().getChildCount();
-                    totalItemCount = rv.getLayoutManager().getItemCount();
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        if (!posts.loading && !posts.nomore) {
+                            visibleItemCount = rv.getLayoutManager().getChildCount();
+                            totalItemCount = rv.getLayoutManager().getItemCount();
 
-                    pastVisiblesItems = ((LinearLayoutManager)rv.getLayoutManager()).findFirstVisibleItemPosition();
-                    if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                        posts.loading = true;
-                        LogUtil.v("Loading more");
-                        posts.loadMore(mSwipeRefreshLayout.getContext(), false, where);
+                            pastVisiblesItems =
+                                    ((LinearLayoutManager) rv.getLayoutManager())
+                                            .findFirstVisibleItemPosition();
+                            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                                posts.loading = true;
+                                LogUtil.v("Loading more");
+                                posts.loadMore(mSwipeRefreshLayout.getContext(), false, where);
+                            }
+                        }
                     }
-                }
-
-            }
-        });
+                });
     }
 
     @Override
@@ -118,21 +131,23 @@ public class SubredditListView extends Fragment {
 
     public void updateSuccess(final List<Subreddit> submissions, final int startIndex) {
         if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mSwipeRefreshLayout != null) {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
+            getActivity()
+                    .runOnUiThread(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (mSwipeRefreshLayout != null) {
+                                        mSwipeRefreshLayout.setRefreshing(false);
+                                    }
 
-                    if (startIndex > 0) {
-                        adapter.notifyItemRangeInserted(startIndex + 1, posts.posts.size());
-                    } else {
-                        adapter.notifyDataSetChanged();
-                    }
-
-                }
-            });
+                                    if (startIndex > 0) {
+                                        adapter.notifyItemRangeInserted(
+                                                startIndex + 1, posts.posts.size());
+                                    } else {
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                }
+                            });
         }
     }
 

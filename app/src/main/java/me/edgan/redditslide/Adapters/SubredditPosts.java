@@ -7,19 +7,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 
-import net.dean.jraw.http.NetworkException;
-import net.dean.jraw.models.Submission;
-import net.dean.jraw.paginators.DomainPaginator;
-import net.dean.jraw.paginators.Paginator;
-import net.dean.jraw.paginators.SubredditPaginator;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-
-import me.edgan.redditslide.Activities.BaseActivity;
 import me.edgan.redditslide.Activities.MainActivity;
 import me.edgan.redditslide.Activities.SubredditView;
 import me.edgan.redditslide.Authentication;
@@ -41,22 +28,35 @@ import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.PhotoLoader;
 import me.edgan.redditslide.util.TimeUtils;
 
+import net.dean.jraw.http.NetworkException;
+import net.dean.jraw.models.Submission;
+import net.dean.jraw.paginators.DomainPaginator;
+import net.dean.jraw.paginators.Paginator;
+import net.dean.jraw.paginators.SubredditPaginator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+
 /**
  * This class is reponsible for loading subreddit specific submissions {@link loadMore(Context,
- * SubmissionDisplay, boolean, String)} is implemented asynchronously. <p/> Created by ccrama on
- * 9/17/2015.
+ * SubmissionDisplay, boolean, String)} is implemented asynchronously.
+ *
+ * <p>Created by ccrama on 9/17/2015.
  */
 public class SubredditPosts implements PostLoader {
     public List<Submission> posts;
-    public String           subreddit;
-    public String           subredditRandom;
+    public String subreddit;
+    public String subredditRandom;
     public boolean nomore = false;
-    public  boolean          offline;
-    public  boolean          forced;
-    public  boolean          loading;
-    public  boolean          error;
-    private Paginator        paginator;
-    public  OfflineSubreddit cached;
+    public boolean offline;
+    public boolean forced;
+    public boolean loading;
+    public boolean error;
+    private Paginator paginator;
+    public OfflineSubreddit cached;
     Context c;
     boolean force18;
 
@@ -74,13 +74,13 @@ public class SubredditPosts implements PostLoader {
     }
 
     @Override
-    public void loadMore(final Context context, final SubmissionDisplay display,
-            final boolean reset) {
+    public void loadMore(
+            final Context context, final SubmissionDisplay display, final boolean reset) {
         new LoadData(context, display, reset).execute(subreddit);
     }
 
-    public void loadMore(Context context, SubmissionDisplay display, boolean reset,
-            String subreddit) {
+    public void loadMore(
+            Context context, SubmissionDisplay display, boolean reset, String subreddit) {
         this.subreddit = subreddit;
         loadMore(context, display, reset);
     }
@@ -99,12 +99,10 @@ public class SubredditPosts implements PostLoader {
 
     boolean authedOnce = false;
     boolean usedOffline;
-    public long              currentid;
+    public long currentid;
     public SubmissionDisplay displayer;
 
-    /**
-     * Asynchronous task for loading data
-     */
+    /** Asynchronous task for loading data */
     private class LoadData extends AsyncTask<String, Void, List<Submission>> {
         final boolean reset;
         Context context;
@@ -119,7 +117,7 @@ public class SubredditPosts implements PostLoader {
 
         @Override
         public void onPreExecute() {
-            if(reset) {
+            if (reset) {
                 posts.clear();
                 displayer.onAdapterUpdated();
             }
@@ -144,11 +142,17 @@ public class SubredditPosts implements PostLoader {
                         loadMore(context, displayer, reset, subreddit);
                         return;
                     } else {
-                        Toast.makeText(context,
-                                "A server error occurred, " + e.getResponse().getStatusCode() + (
-                                        e.getResponse().getStatusMessage().isEmpty() ? ""
-                                                : ": " + e.getResponse().getStatusMessage()),
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(
+                                        context,
+                                        "A server error occurred, "
+                                                + e.getResponse().getStatusCode()
+                                                + (e.getResponse().getStatusMessage().isEmpty()
+                                                        ? ""
+                                                        : ": "
+                                                                + e.getResponse()
+                                                                        .getStatusMessage()),
+                                        Toast.LENGTH_SHORT)
+                                .show();
                     }
                 }
                 success = false;
@@ -170,16 +174,18 @@ public class SubredditPosts implements PostLoader {
                 currentid = 0;
                 OfflineSubreddit.currentid = currentid;
 
-                if (subreddit.equals("random") || subreddit.equals("myrandom") || subreddit.equals(
-                        "randnsfw")) {
+                if (subreddit.equals("random")
+                        || subreddit.equals("myrandom")
+                        || subreddit.equals("randnsfw")) {
                     subredditRandom = submissions.get(0).getSubredditName();
                 }
 
                 MainActivity.randomoverride = subredditRandom;
 
-                if (context instanceof SubredditView && (subreddit.equals("random")
-                        || subreddit.equals("myrandom")
-                        || subreddit.equals("randnsfw"))) {
+                if (context instanceof SubredditView
+                        && (subreddit.equals("random")
+                                || subreddit.equals("myrandom")
+                                || subreddit.equals("randnsfw"))) {
                     ((SubredditView) context).subreddit = subredditRandom;
                     ((SubredditView) context).executeAsyncSubreddit(subredditRandom);
                 }
@@ -252,13 +258,13 @@ public class SubredditPosts implements PostLoader {
                 paginator.setSorting(SettingValues.getSubmissionSort(subreddit));
                 paginator.setTimePeriod(SettingValues.getSubmissionTimePeriod(subreddit));
                 paginator.setLimit(Constants.PAGINATOR_POST_LIMIT);
-
             }
 
             List<Submission> filteredSubmissions = getNextFiltered();
 
-            if (!(SettingValues.noImages && ((!NetworkUtil.isConnectedWifi(c)
-                    && SettingValues.lowResMobile) || SettingValues.lowResAlways))) {
+            if (!(SettingValues.noImages
+                    && ((!NetworkUtil.isConnectedWifi(c) && SettingValues.lowResMobile)
+                            || SettingValues.lowResAlways))) {
                 PhotoLoader.loadPhotos(c, filteredSubmissions);
             }
             if (SettingValues.storeHistory) {
@@ -304,9 +310,12 @@ public class SubredditPosts implements PostLoader {
                 }
 
                 for (Submission s : adding) {
-                    if (!PostMatch.doesMatch(s, paginator instanceof SubredditPaginator
-                            ? ((SubredditPaginator) paginator).getSubreddit()
-                            : ((DomainPaginator) paginator).getDomain(), force18)) {
+                    if (!PostMatch.doesMatch(
+                            s,
+                            paginator instanceof SubredditPaginator
+                                    ? ((SubredditPaginator) paginator).getSubreddit()
+                                    : ((DomainPaginator) paginator).getDomain(),
+                            force18)) {
                         filteredSubmissions.add(s);
                     }
                 }
@@ -339,15 +348,17 @@ public class SubredditPosts implements PostLoader {
         int i = 0;
         for (String s : all) {
             String[] split = s.split(",");
-            titles[i] = (Long.parseLong(split[1]) == 0 ? c.getString(
-                    R.string.settings_backup_submission_only)
-                    : TimeUtils.getTimeAgo(Long.parseLong(split[1]), c) + c.getString(
-                            R.string.settings_backup_comments));
+            titles[i] =
+                    (Long.parseLong(split[1]) == 0
+                            ? c.getString(R.string.settings_backup_submission_only)
+                            : TimeUtils.getTimeAgo(Long.parseLong(split[1]), c)
+                                    + c.getString(R.string.settings_backup_comments));
             base[i] = s;
             i++;
         }
         ((MainActivity) c).getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        ((MainActivity) c).getSupportActionBar()
+        ((MainActivity) c)
+                .getSupportActionBar()
                 .setListNavigationCallbacks(
                         new OfflineSubAdapter(c, android.R.layout.simple_list_item_1, titles),
                         new ActionBar.OnNavigationListener() {
@@ -363,8 +374,9 @@ public class SubredditPosts implements PostLoader {
 
                                     @Override
                                     protected Void doInBackground(Void... params) {
-                                        cached = OfflineSubreddit.getSubreddit(subreddit,
-                                                Long.valueOf(s2[1]), true, c);
+                                        cached =
+                                                OfflineSubreddit.getSubreddit(
+                                                        subreddit, Long.valueOf(s2[1]), true, c);
                                         List<Submission> finalSubs = new ArrayList<>();
                                         for (Submission s : cached.submissions) {
                                             if (!PostMatch.doesMatch(s, subreddit, force18)) {

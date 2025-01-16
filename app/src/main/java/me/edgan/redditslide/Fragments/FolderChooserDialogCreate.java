@@ -31,13 +31,12 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * @author Aidan Follestad (afollestad)
- * https://github.com/afollestad/material-dialogs/
- * <p>
- * Directly based on 0.9.6.0 release source, adapted to support https://github.com/ccrama/Slide/pull/3144
- * alongside some miscellaneous code improvements.
+ * @author Aidan Follestad (afollestad) https://github.com/afollestad/material-dialogs/
+ *     <p>Directly based on 0.9.6.0 release source, adapted to support
+ *     https://github.com/ccrama/Slide/pull/3144 alongside some miscellaneous code improvements.
  */
-public class FolderChooserDialogCreate extends DialogFragment implements MaterialDialog.ListCallback {
+public class FolderChooserDialogCreate extends DialogFragment
+        implements MaterialDialog.ListCallback {
 
     private static final String DEFAULT_TAG = "[MD_FOLDER_SELECTOR]";
 
@@ -49,9 +48,9 @@ public class FolderChooserDialogCreate extends DialogFragment implements Materia
     String[] getContentsArray() {
         if (parentContents == null) {
             if (canGoUp) {
-                return new String[]{getBuilder().goUpLabel};
+                return new String[] {getBuilder().goUpLabel};
             }
-            return new String[]{};
+            return new String[] {};
         }
         final String[] results = new String[parentContents.length + (canGoUp ? 1 : 0)];
         if (canGoUp) {
@@ -84,9 +83,8 @@ public class FolderChooserDialogCreate extends DialogFragment implements Materia
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && ActivityCompat.checkSelfPermission(
-                getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED
-        ) {
+                                getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
             return new MaterialDialog.Builder(getActivity())
                     .title(R.string.md_error_label)
                     .content(R.string.md_storage_perm_error)
@@ -94,7 +92,8 @@ public class FolderChooserDialogCreate extends DialogFragment implements Materia
                     .build();
         }
         if (getArguments() == null || !getArguments().containsKey("builder")) {
-            throw new IllegalStateException("You must create a FolderChooserDialog using the Builder.");
+            throw new IllegalStateException(
+                    "You must create a FolderChooserDialog using the Builder.");
         }
         if (!getArguments().containsKey("current_path")) {
             getArguments().putString("current_path", getBuilder().initialPath);
@@ -108,23 +107,22 @@ public class FolderChooserDialogCreate extends DialogFragment implements Materia
                         .title(parentFolder.getAbsolutePath())
                         .items(getContentsArray())
                         .itemsCallback(this)
-                        .onPositive((dialog, which) -> {
-                            dialog.dismiss();
-                            callback.onFolderSelection(
-                                    FolderChooserDialogCreate.this,
-                                    parentFolder,
-                                    getBuilder().isSaveToLocation);
-                        })
-                        .onNegative((dialog, which) ->
-                                dialog.dismiss())
+                        .onPositive(
+                                (dialog, which) -> {
+                                    dialog.dismiss();
+                                    callback.onFolderSelection(
+                                            FolderChooserDialogCreate.this,
+                                            parentFolder,
+                                            getBuilder().isSaveToLocation);
+                                })
+                        .onNegative((dialog, which) -> dialog.dismiss())
                         .autoDismiss(false)
                         .positiveText(getBuilder().chooseButton)
                         .negativeText(getBuilder().cancelButton);
 
         if (getBuilder().allowNewFolder) {
             builder.neutralText(getBuilder().newFolderButton);
-            builder.onNeutral((dialog, which) ->
-                    createNewFolder());
+            builder.onNeutral((dialog, which) -> createNewFolder());
         }
         if ("/".equals(getBuilder().initialPath)) {
             canGoUp = false;
@@ -143,17 +141,24 @@ public class FolderChooserDialogCreate extends DialogFragment implements Materia
     private void createNewFolder() {
         new MaterialDialog.Builder(getActivity())
                 .title(getBuilder().newFolderButton)
-                .input(0, 0, false, (dialog, input) -> {
-                    final File newFile = new File(parentFolder, input.toString());
-                    if (newFile.mkdir()) {
-                        reload();
-                    } else {
-                        final String msg = "Unable to create folder "
-                                + newFile.getAbsolutePath()
-                                + ", make sure you have the READ_MEDIA_VISUAL_USER_SELECTED permission or root permissions.";
-                        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
-                    }
-                })
+                .input(
+                        0,
+                        0,
+                        false,
+                        (dialog, input) -> {
+                            final File newFile = new File(parentFolder, input.toString());
+                            if (newFile.mkdir()) {
+                                reload();
+                            } else {
+                                final String msg =
+                                        "Unable to create folder "
+                                                + newFile.getAbsolutePath()
+                                                + ", make sure you have the"
+                                                + " READ_MEDIA_VISUAL_USER_SELECTED permission or"
+                                                + " root permissions.";
+                                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                            }
+                        })
                 .show();
     }
 
@@ -161,7 +166,8 @@ public class FolderChooserDialogCreate extends DialogFragment implements Materia
     public void onSelection(MaterialDialog materialDialog, View view, int i, CharSequence s) {
         if (canGoUp && i == 0) {
             parentFolder = parentFolder.getParentFile();
-            if (parentFolder != null && parentFolder.getAbsolutePath().equals("/storage/emulated")) {
+            if (parentFolder != null
+                    && parentFolder.getAbsolutePath().equals("/storage/emulated")) {
                 parentFolder = parentFolder.getParentFile();
             }
             if (parentFolder != null) {
@@ -202,7 +208,8 @@ public class FolderChooserDialogCreate extends DialogFragment implements Materia
             callback = (FolderCallback) getParentFragment();
         } else {
             throw new IllegalStateException(
-                    "FolderChooserDialog needs to be shown from an Activity/Fragment implementing FolderCallback.");
+                    "FolderChooserDialog needs to be shown from an Activity/Fragment implementing"
+                        + " FolderCallback.");
         }
     }
 
@@ -227,31 +234,27 @@ public class FolderChooserDialogCreate extends DialogFragment implements Materia
     }
 
     public interface FolderCallback {
-        void onFolderSelection(@NonNull FolderChooserDialogCreate dialog,
-                               @NonNull File folder, boolean isSaveToLocation);
+        void onFolderSelection(
+                @NonNull FolderChooserDialogCreate dialog,
+                @NonNull File folder,
+                boolean isSaveToLocation);
 
         void onFolderChooserDismissed(@NonNull FolderChooserDialogCreate dialog);
     }
 
     public static class Builder implements Serializable {
 
-        @NonNull
-        final transient Context context;
+        @NonNull final transient Context context;
         protected boolean isSaveToLocation;
-        @StringRes
-        int chooseButton;
-        @StringRes
-        int cancelButton;
+        @StringRes int chooseButton;
+        @StringRes int cancelButton;
         String initialPath;
         String tag;
         boolean allowNewFolder;
-        @StringRes
-        int newFolderButton;
+        @StringRes int newFolderButton;
         String goUpLabel;
-        @Nullable
-        String mediumFont;
-        @Nullable
-        String regularFont;
+        @Nullable String mediumFont;
+        @Nullable String regularFont;
 
         public Builder(@NonNull Context context) {
             this.context = context;

@@ -19,6 +19,16 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.CaseInsensitiveArrayList;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Visuals.GetClosestColor;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.LogUtil;
+
 import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.http.oauth.Credentials;
 import net.dean.jraw.http.oauth.OAuthData;
@@ -32,24 +42,12 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import me.edgan.redditslide.Authentication;
-import me.edgan.redditslide.CaseInsensitiveArrayList;
-import me.edgan.redditslide.Constants;
-import me.edgan.redditslide.R;
-import me.edgan.redditslide.Reddit;
-import me.edgan.redditslide.UserSubscriptions;
-import me.edgan.redditslide.Visuals.GetClosestColor;
-import me.edgan.redditslide.Visuals.Palette;
-import me.edgan.redditslide.util.LogUtil;
-
-
-/**
- * Created by ccrama on 5/27/2015.
- */
+/** Created by ccrama on 5/27/2015. */
 public class Login extends BaseActivityAnim {
-    final Credentials credentials = Credentials.installedApp(Constants.getClientId(), Constants.REDDIT_REDIRECT_URL);
+    final Credentials credentials =
+            Credentials.installedApp(Constants.getClientId(), Constants.REDDIT_REDIRECT_URL);
 
-    Dialog                           d;
+    Dialog d;
     CaseInsensitiveArrayList subNames;
 
     @Override
@@ -59,24 +57,46 @@ public class Login extends BaseActivityAnim {
         applyColorTheme("");
         try {
             setContentView(R.layout.activity_login);
-        } catch(Exception e){
+        } catch (Exception e) {
             finish();
             return;
         }
         setupAppBar(R.id.toolbar, R.string.title_login, true, true);
 
         String[] scopes = {
-                "identity", "modcontributors", "modconfig", "modothers", "modwiki", "creddits",
-                "livemanage", "account", "privatemessages", "modflair", "modlog", "report",
-                "modposts", "modwiki", "read", "vote", "edit", "submit", "subscribe", "save",
-                "wikiread", "flair", "history", "mysubreddits", "wikiedit"
+            "identity",
+            "modcontributors",
+            "modconfig",
+            "modothers",
+            "modwiki",
+            "creddits",
+            "livemanage",
+            "account",
+            "privatemessages",
+            "modflair",
+            "modlog",
+            "report",
+            "modposts",
+            "modwiki",
+            "read",
+            "vote",
+            "edit",
+            "submit",
+            "subscribe",
+            "save",
+            "wikiread",
+            "flair",
+            "history",
+            "mysubreddits",
+            "wikiedit"
         };
         if (Authentication.reddit == null) {
             new Authentication(getApplicationContext());
         }
         final OAuthHelper oAuthHelper = Authentication.reddit.getOAuthHelper();
 
-	final Credentials credentials = Credentials.installedApp(Constants.getClientId(), Constants.REDDIT_REDIRECT_URL);
+        final Credentials credentials =
+                Credentials.installedApp(Constants.getClientId(), Constants.REDDIT_REDIRECT_URL);
         String authorizationUrl =
                 oAuthHelper.getAuthorizationUrl(credentials, true, scopes).toExternalForm();
         authorizationUrl = authorizationUrl.replace("www.", "i.");
@@ -105,19 +125,20 @@ public class Login extends BaseActivityAnim {
             cookieSyncMngr.sync();
         }
 
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                LogUtil.v(url);
-                if (url.contains("code=")) {
-                    Log.v(LogUtil.getTag(), "WebView URL: " + url);
-                    // Authentication code received, prevent HTTP call from being made.
-                    webView.stopLoading();
-                    new UserChallengeTask(oAuthHelper, credentials).execute(url);
-                    webView.setVisibility(View.GONE);
-                }
-            }
-        });
+        webView.setWebViewClient(
+                new WebViewClient() {
+                    @Override
+                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                        LogUtil.v(url);
+                        if (url.contains("code=")) {
+                            Log.v(LogUtil.getTag(), "WebView URL: " + url);
+                            // Authentication code received, prevent HTTP call from being made.
+                            webView.stopLoading();
+                            new UserChallengeTask(oAuthHelper, credentials).execute(url);
+                            webView.setVisibility(View.GONE);
+                        }
+                    }
+                });
 
         webView.loadUrl(authorizationUrl);
     }
@@ -138,22 +159,25 @@ public class Login extends BaseActivityAnim {
             new AlertDialog.Builder(Login.this)
                     .setTitle(R.string.login_subscribe_rslideforreddit)
                     .setMessage(R.string.login_subscribe_rslideforreddit_desc)
-                    .setPositiveButton(R.string.btn_yes, (dialog, which) -> {
-                        subNames.add(2, "slideforreddit");
-                        UserSubscriptions.setSubscriptions(subNames);
-                        Reddit.forceRestart(Login.this, true);
-                    })
-                    .setNegativeButton(R.string.btn_no, (dialog, which) -> {
-                        UserSubscriptions.setSubscriptions(subNames);
-                        Reddit.forceRestart(Login.this, true);
-                    })
+                    .setPositiveButton(
+                            R.string.btn_yes,
+                            (dialog, which) -> {
+                                subNames.add(2, "slideforreddit");
+                                UserSubscriptions.setSubscriptions(subNames);
+                                Reddit.forceRestart(Login.this, true);
+                            })
+                    .setNegativeButton(
+                            R.string.btn_no,
+                            (dialog, which) -> {
+                                UserSubscriptions.setSubscriptions(subNames);
+                                Reddit.forceRestart(Login.this, true);
+                            })
                     .setCancelable(false)
                     .show();
         } else {
             UserSubscriptions.setSubscriptions(subNames);
             Reddit.forceRestart(Login.this, true);
         }
-
     }
 
     public void doLastStuff(final ArrayList<Subreddit> subs) {
@@ -162,37 +186,35 @@ public class Login extends BaseActivityAnim {
         new AlertDialog.Builder(Login.this)
                 .setTitle(R.string.login_sync_colors)
                 .setMessage(R.string.login_sync_colors_desc)
-                .setPositiveButton(R.string.btn_yes, (dialog, which) -> {
-                    for (Subreddit s : subs) {
-                        if (s.getDataNode().has("key_color")
-                                && !s.getDataNode()
-                                .get("key_color")
-                                .asText()
-                                .isEmpty()
-                                && Palette.getColor(s.getDisplayName().toLowerCase(Locale.ENGLISH)) == Palette
-                                .getDefaultColor()) {
-                            Palette.setColor(s.getDisplayName().toLowerCase(Locale.ENGLISH),
-                                    GetClosestColor.getClosestColor(
-                                            s.getDataNode().get("key_color").asText(),
-                                            Login.this));
-                        }
-
-                    }
-                    doSubStrings(subs);
-                })
-                .setNegativeButton(R.string.btn_no, (dialog, which) ->
-                        doSubStrings(subs))
-                .setOnDismissListener(dialog ->
-                        doSubStrings(subs))
+                .setPositiveButton(
+                        R.string.btn_yes,
+                        (dialog, which) -> {
+                            for (Subreddit s : subs) {
+                                if (s.getDataNode().has("key_color")
+                                        && !s.getDataNode().get("key_color").asText().isEmpty()
+                                        && Palette.getColor(
+                                                        s.getDisplayName()
+                                                                .toLowerCase(Locale.ENGLISH))
+                                                == Palette.getDefaultColor()) {
+                                    Palette.setColor(
+                                            s.getDisplayName().toLowerCase(Locale.ENGLISH),
+                                            GetClosestColor.getClosestColor(
+                                                    s.getDataNode().get("key_color").asText(),
+                                                    Login.this));
+                                }
+                            }
+                            doSubStrings(subs);
+                        })
+                .setNegativeButton(R.string.btn_no, (dialog, which) -> doSubStrings(subs))
+                .setOnDismissListener(dialog -> doSubStrings(subs))
                 .create()
                 .show();
     }
 
-
     private final class UserChallengeTask extends AsyncTask<String, Void, OAuthData> {
-        private final OAuthHelper    mOAuthHelper;
-        private final Credentials    mCredentials;
-        private       MaterialDialog mMaterialDialog;
+        private final OAuthHelper mOAuthHelper;
+        private final Credentials mCredentials;
+        private MaterialDialog mMaterialDialog;
 
         public UserChallengeTask(OAuthHelper oAuthHelper, Credentials credentials) {
             Log.v(LogUtil.getTag(), "UserChallengeTask()");
@@ -204,7 +226,8 @@ public class Login extends BaseActivityAnim {
         protected void onPreExecute() {
             // Show a dialog to indicate progress
             MaterialDialog.Builder builder =
-                    new MaterialDialog.Builder(Login.this).title(R.string.login_authenticating)
+                    new MaterialDialog.Builder(Login.this)
+                            .title(R.string.login_authenticating)
                             .progress(true, 0)
                             .content(R.string.misc_please_wait)
                             .cancelable(false);
@@ -221,14 +244,16 @@ public class Login extends BaseActivityAnim {
                     Authentication.isLoggedIn = true;
                     String refreshToken = Authentication.reddit.getOAuthData().getRefreshToken();
                     SharedPreferences.Editor editor = Authentication.authentication.edit();
-                    Set<String> accounts = Authentication.authentication.getStringSet("accounts",
-                            new HashSet<String>());
+                    Set<String> accounts =
+                            Authentication.authentication.getStringSet(
+                                    "accounts", new HashSet<String>());
                     LoggedInAccount me = Authentication.reddit.me();
                     accounts.add(me.getFullName() + ":" + refreshToken);
                     Authentication.name = me.getFullName();
                     editor.putStringSet("accounts", accounts);
-                    Set<String> tokens = Authentication.authentication.getStringSet("tokens",
-                            new HashSet<String>());
+                    Set<String> tokens =
+                            Authentication.authentication.getStringSet(
+                                    "tokens", new HashSet<String>());
                     tokens.add(refreshToken);
                     editor.putStringSet("tokens", tokens);
                     editor.putString("lasttoken", refreshToken);
@@ -256,11 +281,13 @@ public class Login extends BaseActivityAnim {
                 Reddit.appRestart.edit().putBoolean("firststarting", true).apply();
 
                 UserSubscriptions.switchAccounts();
-                d = new MaterialDialog.Builder(Login.this).cancelable(false)
-                        .title(R.string.login_starting)
-                        .progress(true, 0)
-                        .content(R.string.login_starting_desc)
-                        .build();
+                d =
+                        new MaterialDialog.Builder(Login.this)
+                                .cancelable(false)
+                                .title(R.string.login_starting)
+                                .progress(true, 0)
+                                .content(R.string.login_starting_desc)
+                                .build();
                 d.show();
 
                 UserSubscriptions.syncSubredditsGetObjectAsync(Login.this);
@@ -269,14 +296,14 @@ public class Login extends BaseActivityAnim {
                 new AlertDialog.Builder(Login.this)
                         .setTitle(R.string.err_authentication)
                         .setMessage(R.string.login_failed_err_decline)
-                        .setNeutralButton(android.R.string.ok, (dialog, which) -> {
-                            Reddit.forceRestart(Login.this, true);
-                            finish();
-                        })
+                        .setNeutralButton(
+                                android.R.string.ok,
+                                (dialog, which) -> {
+                                    Reddit.forceRestart(Login.this, true);
+                                    finish();
+                                })
                         .show();
             }
         }
     }
-
-
 }

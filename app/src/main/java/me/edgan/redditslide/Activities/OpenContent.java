@@ -8,15 +8,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.Locale;
-
 import me.edgan.redditslide.OpenRedditLink;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.util.LogUtil;
 
-/**
- * Created by ccrama on 9/28/2015.
- */
+import java.util.Locale;
+
+/** Created by ccrama on 9/28/2015. */
 public class OpenContent extends Activity {
 
     public static final String EXTRA_URL = "url";
@@ -46,9 +44,9 @@ public class OpenContent extends Activity {
     boolean second = false;
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        if(second){
+        if (second) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAndRemoveTask();
             } else {
@@ -60,7 +58,7 @@ public class OpenContent extends Activity {
     }
 
     @Override
-    public void onNewIntent(Intent intent){
+    public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Uri data = intent.getData();
         Bundle extras = intent.getExtras();
@@ -78,7 +76,6 @@ public class OpenContent extends Activity {
         url = url.toLowerCase(Locale.ENGLISH);
 
         Log.v(LogUtil.getTag(), url);
-
 
         OpenRedditLink.openUrl(this, url, true);
     }

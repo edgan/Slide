@@ -1,7 +1,6 @@
 package me.edgan.redditslide.Activities;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -29,10 +28,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.cocosw.bottomsheet.BottomSheet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import me.edgan.redditslide.Adapters.ImageGridAdapter;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
@@ -51,10 +46,13 @@ import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.ShareUtil;
 import me.edgan.redditslide.util.StorageUtil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * Displays gallery content in a horizontal paging view.
- * This class extends BaseSaveActivity to use the Storage Access Framework
- * for saving images, replacing the old file-based approach.
+ * Displays gallery content in a horizontal paging view. This class extends BaseSaveActivity to use
+ * the Storage Access Framework for saving images, replacing the old file-based approach.
  */
 public class RedditGalleryPager extends BaseSaveActivity {
 
@@ -63,8 +61,8 @@ public class RedditGalleryPager extends BaseSaveActivity {
     ViewPager p;
     public List<GalleryImage> images;
     private BottomSheet.Builder bottomSheetBuilder;
-    private String lastContentUrl;  // Track URL for retry after permission
-    private int lastIndex = -1;     // Track index for retry after permission
+    private String lastContentUrl; // Track URL for retry after permission
+    private int lastIndex = -1; // Track index for retry after permission
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -77,11 +75,16 @@ public class RedditGalleryPager extends BaseSaveActivity {
 
             case R.id.vertical:
                 SettingValues.albumSwipe = false;
-                SettingValues.prefs.edit().putBoolean(SettingValues.PREF_ALBUM_SWIPE, false).apply();
+                SettingValues.prefs
+                        .edit()
+                        .putBoolean(SettingValues.PREF_ALBUM_SWIPE, false)
+                        .apply();
 
                 Intent i = new Intent(RedditGalleryPager.this, RedditGallery.class);
                 if (getIntent().hasExtra(MediaView.SUBMISSION_URL)) {
-                    i.putExtra(MediaView.SUBMISSION_URL, getIntent().getStringExtra(MediaView.SUBMISSION_URL));
+                    i.putExtra(
+                            MediaView.SUBMISSION_URL,
+                            getIntent().getStringExtra(MediaView.SUBMISSION_URL));
                 }
                 if (getIntent().hasExtra(SUBREDDIT)) {
                     i.putExtra(SUBREDDIT, getIntent().getStringExtra(SUBREDDIT));
@@ -139,7 +142,11 @@ public class RedditGalleryPager extends BaseSaveActivity {
     public void onCreate(Bundle savedInstanceState) {
         overrideSwipeFromAnywhere();
         super.onCreate(savedInstanceState);
-        getTheme().applyStyle(new ColorPreferences(this).getDarkThemeSubreddit(ColorPreferences.FONT_STYLE), true);
+        getTheme()
+                .applyStyle(
+                        new ColorPreferences(this)
+                                .getDarkThemeSubreddit(ColorPreferences.FONT_STYLE),
+                        true);
         setContentView(R.layout.album_pager);
 
         // Keep the screen on
@@ -162,7 +169,9 @@ public class RedditGalleryPager extends BaseSaveActivity {
         }
 
         findViewById(R.id.progress).setVisibility(View.GONE);
-        images = (ArrayList<GalleryImage>) getIntent().getSerializableExtra(RedditGallery.GALLERY_URLS);
+        images =
+                (ArrayList<GalleryImage>)
+                        getIntent().getSerializableExtra(RedditGallery.GALLERY_URLS);
 
         p = (ViewPager) findViewById(R.id.images_horizontal);
         p.setOffscreenPageLimit(2);
@@ -174,36 +183,46 @@ public class RedditGalleryPager extends BaseSaveActivity {
         GalleryViewPagerAdapter adapter = new GalleryViewPagerAdapter(getSupportFragmentManager());
         p.setAdapter(adapter);
 
-        p.post(new Runnable() {
-            @Override
-            public void run() {
-                // Force load first two positions
-                adapter.instantiateItem(p, 0);
-                adapter.instantiateItem(p, 1);
-            }
-        });
-
-        findViewById(R.id.grid).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LayoutInflater l = getLayoutInflater();
-                View body = l.inflate(R.layout.album_grid_dialog, null, false);
-                GridView gridview = body.findViewById(R.id.images);
-                gridview.setAdapter(new ImageGridAdapter(RedditGalleryPager.this, true, images));
-
-                final AlertDialog.Builder builder = new AlertDialog.Builder(RedditGalleryPager.this)
-                        .setView(body);
-                final Dialog d = builder.create();
-                gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    public void onItemClick(AdapterView<?> parent, View v, int position,
-                            long id) {
-                        p.setCurrentItem(position + 1);
-                        d.dismiss();
+        p.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        // Force load first two positions
+                        adapter.instantiateItem(p, 0);
+                        adapter.instantiateItem(p, 1);
                     }
                 });
-                d.show();
-            }
-        });
+
+        findViewById(R.id.grid)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                LayoutInflater l = getLayoutInflater();
+                                View body = l.inflate(R.layout.album_grid_dialog, null, false);
+                                GridView gridview = body.findViewById(R.id.images);
+                                gridview.setAdapter(
+                                        new ImageGridAdapter(
+                                                RedditGalleryPager.this, true, images));
+
+                                final AlertDialog.Builder builder =
+                                        new AlertDialog.Builder(RedditGalleryPager.this)
+                                                .setView(body);
+                                final Dialog d = builder.create();
+                                gridview.setOnItemClickListener(
+                                        new AdapterView.OnItemClickListener() {
+                                            public void onItemClick(
+                                                    AdapterView<?> parent,
+                                                    View v,
+                                                    int position,
+                                                    long id) {
+                                                p.setCurrentItem(position + 1);
+                                                d.dismiss();
+                                            }
+                                        });
+                                d.show();
+                            }
+                        });
 
         p.setCurrentItem(0);
 
@@ -217,21 +236,23 @@ public class RedditGalleryPager extends BaseSaveActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mToolbar.setPopupTheme(new ColorPreferences(this).getDarkThemeSubreddit(ColorPreferences.FONT_STYLE));
+        mToolbar.setPopupTheme(
+                new ColorPreferences(this).getDarkThemeSubreddit(ColorPreferences.FONT_STYLE));
     }
 
     private void setupGridAndPagerListeners(final GalleryViewPagerAdapter adapter) {
         findViewById(R.id.grid).setOnClickListener(v -> showGridView());
 
-        p.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset,
-                                       int positionOffsetPixels) {
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().setSubtitle((position + 1) + "/" + images.size());
-                }
-            }
-        });
+        p.addOnPageChangeListener(
+                new ViewPager.SimpleOnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(
+                            int position, float positionOffset, int positionOffsetPixels) {
+                        if (getSupportActionBar() != null) {
+                            getSupportActionBar().setSubtitle((position + 1) + "/" + images.size());
+                        }
+                    }
+                });
         adapter.notifyDataSetChanged();
     }
 
@@ -241,14 +262,15 @@ public class RedditGalleryPager extends BaseSaveActivity {
         GridView gridview = body.findViewById(R.id.images);
         gridview.setAdapter(new ImageGridAdapter(RedditGalleryPager.this, true, images));
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(RedditGalleryPager.this)
-                .setView(body);
+        final AlertDialog.Builder builder =
+                new AlertDialog.Builder(RedditGalleryPager.this).setView(body);
         final Dialog d = builder.create();
 
-        gridview.setOnItemClickListener((parent, v, position, id) -> {
-            p.setCurrentItem(position);
-            d.dismiss();
-        });
+        gridview.setOnItemClickListener(
+                (parent, v, position, id) -> {
+                    p.setCurrentItem(position);
+                    d.dismiss();
+                });
 
         d.show();
     }
@@ -264,10 +286,11 @@ public class RedditGalleryPager extends BaseSaveActivity {
         return true;
     }
 
-    public void showBottomSheetImage(final String contentUrl, final boolean isGif, final int index) {
-        lastContentUrl = contentUrl;  // Store for potential retry after permission grant
+    public void showBottomSheetImage(
+            final String contentUrl, final boolean isGif, final int index) {
+        lastContentUrl = contentUrl; // Store for potential retry after permission grant
 
-        int[] attrs = new int[]{R.attr.tintColor};
+        int[] attrs = new int[] {R.attr.tintColor};
         TypedArray ta = obtainStyledAttributes(attrs);
 
         int color = ta.getColor(0, Color.WHITE);
@@ -289,22 +312,23 @@ public class RedditGalleryPager extends BaseSaveActivity {
         }
         bottomSheetBuilder.sheet(4, save, getString(R.string.submission_save_image));
 
-        bottomSheetBuilder.listener((dialog, which) -> {
-            switch (which) {
-                case 2:
-                    LinkUtil.openExternally(contentUrl);
-                    break;
-                case 3:
-                    ShareUtil.shareImage(contentUrl, RedditGalleryPager.this);
-                    break;
-                case 5:
-                    Reddit.defaultShareText("", contentUrl, RedditGalleryPager.this);
-                    break;
-                case 4:
-                    doImageSave(isGif, contentUrl, index);
-                    break;
-            }
-        });
+        bottomSheetBuilder.listener(
+                (dialog, which) -> {
+                    switch (which) {
+                        case 2:
+                            LinkUtil.openExternally(contentUrl);
+                            break;
+                        case 3:
+                            ShareUtil.shareImage(contentUrl, RedditGalleryPager.this);
+                            break;
+                        case 5:
+                            Reddit.defaultShareText("", contentUrl, RedditGalleryPager.this);
+                            break;
+                        case 4:
+                            doImageSave(isGif, contentUrl, index);
+                            break;
+                    }
+                });
 
         bottomSheetBuilder.show();
     }
@@ -371,9 +395,11 @@ public class RedditGalleryPager extends BaseSaveActivity {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            rootView = (ViewGroup) inflater.inflate(R.layout.submission_gifcard_album, container, false);
+        public View onCreateView(
+                LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            rootView =
+                    (ViewGroup)
+                            inflater.inflate(R.layout.submission_gifcard_album, container, false);
             loader = rootView.findViewById(R.id.gifprogress);
             gif = rootView.findViewById(R.id.gif);
 
@@ -386,30 +412,36 @@ public class RedditGalleryPager extends BaseSaveActivity {
 
             LogUtil.i(url);
 
-            new GifUtils.AsyncLoadGif(getActivity(),
-                    rootView.findViewById(R.id.gif),
-                    loader,
-                    null,
-                    null,
-                    false,
-                    true,
-                    rootView.findViewById(R.id.size),
-                    ((RedditGalleryPager)getActivity()).subreddit,
-                    getActivity().getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE)
-            ).execute(url);
+            new GifUtils.AsyncLoadGif(
+                            getActivity(),
+                            rootView.findViewById(R.id.gif),
+                            loader,
+                            null,
+                            null,
+                            false,
+                            true,
+                            rootView.findViewById(R.id.size),
+                            ((RedditGalleryPager) getActivity()).subreddit,
+                            getActivity().getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE))
+                    .execute(url);
 
-            rootView.findViewById(R.id.more).setOnClickListener(v1 ->
-                ((RedditGalleryPager) getActivity()).showBottomSheetImage(url, true, i));
+            rootView.findViewById(R.id.more)
+                    .setOnClickListener(
+                            v1 ->
+                                    ((RedditGalleryPager) getActivity())
+                                            .showBottomSheetImage(url, true, i));
 
-            rootView.findViewById(R.id.save).setOnClickListener(v1 -> {
-                if (url != null && getActivity() != null) {
-                    ((RedditGalleryPager) getActivity()).doImageSave(true, url, i);
-                } else if (url == null) {
-                    LogUtil.i("URL is null");
-                } else if (getActivity() == null) {
-                    LogUtil.i("getActivity is null");
-                }
-            });
+            rootView.findViewById(R.id.save)
+                    .setOnClickListener(
+                            v1 -> {
+                                if (url != null && getActivity() != null) {
+                                    ((RedditGalleryPager) getActivity()).doImageSave(true, url, i);
+                                } else if (url == null) {
+                                    LogUtil.i("URL is null");
+                                } else if (getActivity() == null) {
+                                    LogUtil.i("getActivity is null");
+                                }
+                            });
 
             if (!SettingValues.imageDownloadButton) {
                 rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
@@ -434,10 +466,12 @@ public class RedditGalleryPager extends BaseSaveActivity {
         } else {
             if (isGif) {
                 // Handle video/gif save
-                GifUtils.cacheSaveGif(Uri.parse(contentUrl), this,
-                    subreddit != null ? subreddit : "",
-                    submissionTitle != null ? submissionTitle : "",
-                    true);
+                GifUtils.cacheSaveGif(
+                        Uri.parse(contentUrl),
+                        this,
+                        subreddit != null ? subreddit : "",
+                        submissionTitle != null ? submissionTitle : "",
+                        true);
             } else {
                 // Handle image save
                 Intent i = new Intent(this, ImageDownloadNotificationService.class);
@@ -461,12 +495,11 @@ public class RedditGalleryPager extends BaseSaveActivity {
 
         private int i = 0;
 
-        public ImageFullNoSubmission() {
-        }
+        public ImageFullNoSubmission() {}
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
+        public View onCreateView(
+                LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             final ViewGroup rootView =
                     (ViewGroup) inflater.inflate(R.layout.album_image_pager, container, false);
 
@@ -475,29 +508,42 @@ public class RedditGalleryPager extends BaseSaveActivity {
 
             if (SettingValues.loadImageLq
                     && (SettingValues.lowResAlways
-                    || (!NetworkUtil.isConnectedWifi(getActivity()) && SettingValues.lowResMobile))) {
-                String lqurl = url.substring(0, url.lastIndexOf("."))
-                        + (SettingValues.lqLow ? "m" : (SettingValues.lqMid ? "l" : "h"))
-                        + url.substring(url.lastIndexOf("."));
-                AlbumPager.loadImage(rootView, this, lqurl,
+                            || (!NetworkUtil.isConnectedWifi(getActivity())
+                                    && SettingValues.lowResMobile))) {
+                String lqurl =
+                        url.substring(0, url.lastIndexOf("."))
+                                + (SettingValues.lqLow ? "m" : (SettingValues.lqMid ? "l" : "h"))
+                                + url.substring(url.lastIndexOf("."));
+                AlbumPager.loadImage(
+                        rootView,
+                        this,
+                        lqurl,
                         ((RedditGalleryPager) getActivity()).images.size() == 1);
             } else {
-                AlbumPager.loadImage(rootView, this, url,
+                AlbumPager.loadImage(
+                        rootView,
+                        this,
+                        url,
                         ((RedditGalleryPager) getActivity()).images.size() == 1);
             }
 
-            rootView.findViewById(R.id.more).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((RedditGalleryPager) getActivity()).showBottomSheetImage(url, false, i);
-                }
-            });
-            rootView.findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v2) {
-                    ((RedditGalleryPager) getActivity()).doImageSave(false, url, i);
-                }
-            });
+            rootView.findViewById(R.id.more)
+                    .setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    ((RedditGalleryPager) getActivity())
+                                            .showBottomSheetImage(url, false, i);
+                                }
+                            });
+            rootView.findViewById(R.id.save)
+                    .setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v2) {
+                                    ((RedditGalleryPager) getActivity()).doImageSave(false, url, i);
+                                }
+                            });
             if (!SettingValues.imageDownloadButton) {
                 rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
             }
@@ -508,13 +554,15 @@ public class RedditGalleryPager extends BaseSaveActivity {
             rootView.findViewById(R.id.hq).setVisibility(View.GONE);
 
             if (getActivity().getIntent().hasExtra(MediaView.SUBMISSION_URL)) {
-                rootView.findViewById(R.id.comments).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        getActivity().finish();
-                        SubmissionsView.datachanged(adapterPosition);
-                    }
-                });
+                rootView.findViewById(R.id.comments)
+                        .setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        getActivity().finish();
+                                        SubmissionsView.datachanged(adapterPosition);
+                                    }
+                                });
             } else {
                 rootView.findViewById(R.id.comments).setVisibility(View.GONE);
             }
@@ -530,12 +578,10 @@ public class RedditGalleryPager extends BaseSaveActivity {
     }
 
     private void showFirstDialog() {
-        runOnUiThread(() ->
-                DialogUtil.showFirstDialog(RedditGalleryPager.this));
+        runOnUiThread(() -> DialogUtil.showFirstDialog(RedditGalleryPager.this));
     }
 
     private void showErrorDialog() {
-        runOnUiThread(() ->
-                DialogUtil.showErrorDialog(RedditGalleryPager.this));
+        runOnUiThread(() -> DialogUtil.showErrorDialog(RedditGalleryPager.this));
     }
 }

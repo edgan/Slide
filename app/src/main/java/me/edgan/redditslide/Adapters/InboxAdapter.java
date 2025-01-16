@@ -1,9 +1,6 @@
 package me.edgan.redditslide.Adapters;
 
-/**
- * Created by ccrama on 3/22/2015.
- */
-
+/** Created by ccrama on 3/22/2015. */
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -36,16 +33,6 @@ import com.cocosw.bottomsheet.BottomSheet;
 import com.devspark.robototextview.RobotoTypefaces;
 import com.google.android.material.snackbar.Snackbar;
 
-import net.dean.jraw.ApiException;
-import net.dean.jraw.managers.InboxManager;
-import net.dean.jraw.models.Captcha;
-import net.dean.jraw.models.Message;
-import net.dean.jraw.models.PrivateMessage;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
 import me.edgan.redditslide.Activities.Inbox;
 import me.edgan.redditslide.Activities.Profile;
 import me.edgan.redditslide.Activities.SendMessage;
@@ -68,15 +55,24 @@ import me.edgan.redditslide.util.LayoutUtils;
 import me.edgan.redditslide.util.SubmissionParser;
 import me.edgan.redditslide.util.TimeUtils;
 
+import net.dean.jraw.ApiException;
+import net.dean.jraw.managers.InboxManager;
+import net.dean.jraw.models.Captcha;
+import net.dean.jraw.models.Message;
+import net.dean.jraw.models.PrivateMessage;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements BaseAdapter {
 
     private static final int TOP_LEVEL = 1;
-    private final        int SPACER    = 6;
-    public final  Context       mContext;
-    private final RecyclerView  listView;
-    public        InboxMessages dataSet;
+    private final int SPACER = 6;
+    public final Context mContext;
+    private final RecyclerView listView;
+    public InboxMessages dataSet;
 
     public InboxAdapter(Context mContext, InboxMessages dataSet, RecyclerView listView) {
 
@@ -85,7 +81,6 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.dataSet = dataSet;
 
         boolean isSame = false;
-
     }
 
     @Override
@@ -102,8 +97,8 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public int getItemViewType(int position) {
         if (position == 0 && !dataSet.posts.isEmpty()
                 || position == dataSet.posts.size() + 1
-                && dataSet.nomore
-                && !dataSet.where.equalsIgnoreCase("where")) {
+                        && dataSet.nomore
+                        && !dataSet.where.equalsIgnoreCase("where")) {
             return SPACER;
         } else {
             position -= 1;
@@ -112,7 +107,7 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             return 5;
         }
         if (dataSet.posts.get(position).getSubject().toLowerCase(Locale.ENGLISH).contains("re:")
-                && dataSet.where.equalsIgnoreCase("messages"))//IS COMMENT IN MESSAGES
+                && dataSet.where.equalsIgnoreCase("messages")) // IS COMMENT IN MESSAGES
         {
             return 2;
         }
@@ -123,24 +118,26 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         if (i == SPACER) {
-            View v = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.spacer, viewGroup, false);
+            View v =
+                    LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.spacer, viewGroup, false);
             return new SpacerViewHolder(v);
         } else if (i == TOP_LEVEL) {
-            View v = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.top_level_message, viewGroup, false);
+            View v =
+                    LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.top_level_message, viewGroup, false);
             return new MessageViewHolder(v);
         } else if (i == 5) {
-            View v = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.loadingmore, viewGroup, false);
+            View v =
+                    LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.loadingmore, viewGroup, false);
             return new ContributionAdapter.EmptyViewHolder(v);
         } else {
-            View v = LayoutInflater.from(viewGroup.getContext())
-                    .inflate(R.layout.message_reply, viewGroup, false);
+            View v =
+                    LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.message_reply, viewGroup, false);
             return new MessageViewHolder(v);
-
         }
-
     }
 
     @Override
@@ -161,7 +158,7 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             if (!dataSet.where.contains("mod")
                     && comment.getDataNode().has("dest")
                     && !Authentication.name.equalsIgnoreCase(
-                    comment.getDataNode().get("dest").asText())
+                            comment.getDataNode().get("dest").asText())
                     && !comment.getDataNode().get("dest").asText().equals("reddit")) {
                 author = comment.getDataNode().get("dest").asText().replace("#", "/r/");
                 direction = "to ";
@@ -177,34 +174,49 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     SpannableStringBuilder pinned =
                             new SpannableStringBuilder(" " + UserTags.getUserTag(author) + " ");
                     pinned.setSpan(
-                            new RoundedBackgroundSpan(mContext, android.R.color.white, R.color.md_blue_500,
-                                    false), 0, pinned.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            new RoundedBackgroundSpan(
+                                    mContext, android.R.color.white, R.color.md_blue_500, false),
+                            0,
+                            pinned.length(),
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     titleString.append(pinned);
                     titleString.append(" ");
                 }
 
                 if (UserSubscriptions.friends.contains(author)) {
-                    SpannableStringBuilder pinned = new SpannableStringBuilder(
-                            " " + mContext.getString(R.string.profile_friend) + " ");
-                    pinned.setSpan(new RoundedBackgroundSpan(mContext, android.R.color.white,
-                                    R.color.md_deep_orange_500, false), 0, pinned.length(),
+                    SpannableStringBuilder pinned =
+                            new SpannableStringBuilder(
+                                    " " + mContext.getString(R.string.profile_friend) + " ");
+                    pinned.setSpan(
+                            new RoundedBackgroundSpan(
+                                    mContext,
+                                    android.R.color.white,
+                                    R.color.md_deep_orange_500,
+                                    false),
+                            0,
+                            pinned.length(),
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     titleString.append(pinned);
                     titleString.append(" ");
                 }
             }
             String spacer = mContext.getString(R.string.submission_properties_seperator);
-            if (comment.getDataNode().has("subreddit") && !comment.getDataNode()
-                    .get("subreddit")
-                    .isNull()) {
+            if (comment.getDataNode().has("subreddit")
+                    && !comment.getDataNode().get("subreddit").isNull()) {
                 titleString.append(spacer);
                 String subname = comment.getDataNode().get("subreddit").asText();
                 SpannableStringBuilder subreddit = new SpannableStringBuilder("/r/" + subname);
                 if ((SettingValues.colorSubName
                         && Palette.getColor(subname) != Palette.getDefaultColor())) {
-                    subreddit.setSpan(new ForegroundColorSpan(Palette.getColor(subname)), 0,
-                            subreddit.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    subreddit.setSpan(new StyleSpan(Typeface.BOLD), 0, subreddit.length(),
+                    subreddit.setSpan(
+                            new ForegroundColorSpan(Palette.getColor(subname)),
+                            0,
+                            subreddit.length(),
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    subreddit.setSpan(
+                            new StyleSpan(Typeface.BOLD),
+                            0,
+                            subreddit.length(),
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
 
@@ -217,9 +229,15 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     && comment.getCreated().getTime() > ((Inbox) mContext).last
                     && !comment.isRead()) {
                 SpannableStringBuilder tagNew = new SpannableStringBuilder("\u00A0NEW\u00A0");
-                tagNew.setSpan(new RoundedBackgroundSpan(Color.WHITE,
-                                mContext.getResources().getColor(R.color.md_green_400), true, mContext), 0,
-                        tagNew.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                tagNew.setSpan(
+                        new RoundedBackgroundSpan(
+                                Color.WHITE,
+                                mContext.getResources().getColor(R.color.md_green_400),
+                                true,
+                                mContext),
+                        0,
+                        tagNew.length(),
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 b.append(tagNew);
                 b.append(" ");
             }
@@ -227,18 +245,26 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             b.append(comment.getSubject());
 
             if (comment.getDataNode().has("link_title")) {
-                SpannableStringBuilder link = new SpannableStringBuilder(" "
-                        + CompatUtil.fromHtml(comment.getDataNode().get("link_title").asText())
-                        + " ");
-                link.setSpan(new StyleSpan(Typeface.BOLD_ITALIC), 0, link.length(),
+                SpannableStringBuilder link =
+                        new SpannableStringBuilder(
+                                " "
+                                        + CompatUtil.fromHtml(
+                                                comment.getDataNode().get("link_title").asText())
+                                        + " ");
+                link.setSpan(
+                        new StyleSpan(Typeface.BOLD_ITALIC),
+                        0,
+                        link.length(),
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                link.setSpan(new RelativeSizeSpan(0.8f), 0, link.length(),
+                link.setSpan(
+                        new RelativeSizeSpan(0.8f),
+                        0,
+                        link.length(),
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 b.append(link);
             }
             messageViewHolder.title.setText(b);
-
 
             if (comment.isRead()) {
                 messageViewHolder.title.setTextColor(
@@ -248,148 +274,217 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         ContextCompat.getColor(mContext, R.color.md_red_400));
             }
 
-
-            messageViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    int[] attrs = new int[]{R.attr.tintColor};
-                    TypedArray ta = mContext.obtainStyledAttributes(attrs);
-
-                    final int color = ta.getColor(0, Color.WHITE);
-                    Drawable profile = mContext.getResources().getDrawable(R.drawable.ic_account_circle);
-                    final Drawable reply = mContext.getResources().getDrawable(R.drawable.ic_reply);
-                    Drawable unhide = mContext.getResources().getDrawable(R.drawable.ic_visibility);
-                    Drawable hide = mContext.getResources().getDrawable(R.drawable.ic_visibility_off);
-                    Drawable copy = mContext.getResources().getDrawable(R.drawable.ic_content_copy);
-                    Drawable reddit = mContext.getResources().getDrawable(R.drawable.ic_forum);
-
-                    final List<Drawable> drawableSet = Arrays.asList(
-                            profile, hide, copy, reddit, reply, unhide);
-                    BlendModeUtil.tintDrawablesAsSrcAtop(drawableSet, color);
-
-                    ta.recycle();
-
-                    BottomSheet.Builder b = new BottomSheet.Builder((Activity) mContext).title(
-                            CompatUtil.fromHtml(comment.getSubject()));
-
-                    String author = comment.getAuthor();
-                    if (!dataSet.where.contains("mod")
-                            && comment.getDataNode().has("dest")
-                            && !Authentication.name.equalsIgnoreCase(
-                            comment.getDataNode().get("dest").asText())
-                            && !comment.getDataNode().get("dest").asText().equals("reddit")) {
-                        author = comment.getDataNode().get("dest").asText().replace("#", "/r/");
-                    }
-                    if (comment.getAuthor() != null) {
-                        b.sheet(1, profile, "/u/" + author);
-                    }
-
-                    String read = mContext.getString(R.string.mail_mark_read);
-                    Drawable rDrawable = hide;
-                    if (comment.isRead()) {
-                        read = mContext.getString(R.string.mail_mark_unread);
-                        rDrawable = unhide;
-                    }
-                    b.sheet(2, rDrawable, read);
-                    b.sheet(3, reply, mContext.getString(R.string.btn_reply));
-                    b.sheet(25, copy, mContext.getString(R.string.misc_copy_text));
-                    if (comment.isComment()) {
-                        b.sheet(30, reddit, mContext.getString(R.string.mail_view_full_thread));
-                    }
-                    final String finalAuthor = author;
-                    b.listener(new DialogInterface.OnClickListener() {
+            messageViewHolder.itemView.setOnLongClickListener(
+                    new View.OnLongClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case 1: {
-                                    Intent i = new Intent(mContext, Profile.class);
-                                    i.putExtra(Profile.EXTRA_PROFILE, finalAuthor);
+                        public boolean onLongClick(View v) {
+                            int[] attrs = new int[] {R.attr.tintColor};
+                            TypedArray ta = mContext.obtainStyledAttributes(attrs);
+
+                            final int color = ta.getColor(0, Color.WHITE);
+                            Drawable profile =
+                                    mContext.getResources()
+                                            .getDrawable(R.drawable.ic_account_circle);
+                            final Drawable reply =
+                                    mContext.getResources().getDrawable(R.drawable.ic_reply);
+                            Drawable unhide =
+                                    mContext.getResources().getDrawable(R.drawable.ic_visibility);
+                            Drawable hide =
+                                    mContext.getResources()
+                                            .getDrawable(R.drawable.ic_visibility_off);
+                            Drawable copy =
+                                    mContext.getResources().getDrawable(R.drawable.ic_content_copy);
+                            Drawable reddit =
+                                    mContext.getResources().getDrawable(R.drawable.ic_forum);
+
+                            final List<Drawable> drawableSet =
+                                    Arrays.asList(profile, hide, copy, reddit, reply, unhide);
+                            BlendModeUtil.tintDrawablesAsSrcAtop(drawableSet, color);
+
+                            ta.recycle();
+
+                            BottomSheet.Builder b =
+                                    new BottomSheet.Builder((Activity) mContext)
+                                            .title(CompatUtil.fromHtml(comment.getSubject()));
+
+                            String author = comment.getAuthor();
+                            if (!dataSet.where.contains("mod")
+                                    && comment.getDataNode().has("dest")
+                                    && !Authentication.name.equalsIgnoreCase(
+                                            comment.getDataNode().get("dest").asText())
+                                    && !comment.getDataNode()
+                                            .get("dest")
+                                            .asText()
+                                            .equals("reddit")) {
+                                author =
+                                        comment.getDataNode()
+                                                .get("dest")
+                                                .asText()
+                                                .replace("#", "/r/");
+                            }
+                            if (comment.getAuthor() != null) {
+                                b.sheet(1, profile, "/u/" + author);
+                            }
+
+                            String read = mContext.getString(R.string.mail_mark_read);
+                            Drawable rDrawable = hide;
+                            if (comment.isRead()) {
+                                read = mContext.getString(R.string.mail_mark_unread);
+                                rDrawable = unhide;
+                            }
+                            b.sheet(2, rDrawable, read);
+                            b.sheet(3, reply, mContext.getString(R.string.btn_reply));
+                            b.sheet(25, copy, mContext.getString(R.string.misc_copy_text));
+                            if (comment.isComment()) {
+                                b.sheet(
+                                        30,
+                                        reddit,
+                                        mContext.getString(R.string.mail_view_full_thread));
+                            }
+                            final String finalAuthor = author;
+                            b.listener(
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(
+                                                        DialogInterface dialog, int which) {
+                                                    switch (which) {
+                                                        case 1:
+                                                            {
+                                                                Intent i =
+                                                                        new Intent(
+                                                                                mContext,
+                                                                                Profile.class);
+                                                                i.putExtra(
+                                                                        Profile.EXTRA_PROFILE,
+                                                                        finalAuthor);
+                                                                mContext.startActivity(i);
+                                                            }
+                                                            break;
+                                                        case 2:
+                                                            {
+                                                                if (comment.isRead()) {
+                                                                    comment.read = false;
+                                                                    new AsyncSetRead(false)
+                                                                            .execute(comment);
+                                                                    messageViewHolder.title
+                                                                            .setTextColor(
+                                                                                    ContextCompat
+                                                                                            .getColor(
+                                                                                                    mContext,
+                                                                                                    R
+                                                                                                            .color
+                                                                                                            .md_red_400));
+                                                                } else {
+                                                                    comment.read = true;
+                                                                    new AsyncSetRead(true)
+                                                                            .execute(comment);
+                                                                    messageViewHolder.title
+                                                                            .setTextColor(
+                                                                                    messageViewHolder
+                                                                                            .content
+                                                                                            .getCurrentTextColor());
+                                                                }
+                                                            }
+                                                            break;
+                                                        case 3:
+                                                            {
+                                                                doInboxReply(comment);
+                                                            }
+                                                            break;
+                                                        case 25:
+                                                            {
+                                                                ClipboardUtil.copyToClipboard(
+                                                                        mContext,
+                                                                        "Message",
+                                                                        comment.getBody());
+                                                                Toast.makeText(
+                                                                                mContext,
+                                                                                mContext.getString(
+                                                                                        R.string
+                                                                                                .mail_message_copied),
+                                                                                Toast.LENGTH_SHORT)
+                                                                        .show();
+                                                            }
+                                                            break;
+                                                        case 30:
+                                                            {
+                                                                String context =
+                                                                        comment.getDataNode()
+                                                                                .get("context")
+                                                                                .asText();
+                                                                OpenRedditLink.openUrl(
+                                                                        mContext,
+                                                                        "https://reddit.com"
+                                                                                + context.substring(
+                                                                                        0,
+                                                                                        context
+                                                                                                .lastIndexOf(
+                                                                                                        "/")),
+                                                                        true);
+                                                            }
+                                                            break;
+                                                    }
+                                                }
+                                            })
+                                    .show();
+                            return true;
+                        }
+                    });
+
+            messageViewHolder.itemView.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (comment.isRead()) {
+                                if (comment instanceof PrivateMessage) {
+                                    DataShare.sharedMessage = (PrivateMessage) comment;
+                                    Intent i = new Intent(mContext, SendMessage.class);
+                                    i.putExtra(SendMessage.EXTRA_NAME, comment.getAuthor());
+                                    i.putExtra(SendMessage.EXTRA_REPLY, true);
                                     mContext.startActivity(i);
+                                } else {
+                                    OpenRedditLink.openUrl(
+                                            mContext,
+                                            comment.getDataNode().get("context").asText(),
+                                            true);
                                 }
-                                break;
-                                case 2: {
-                                    if (comment.isRead()) {
-                                        comment.read = false;
-                                        new AsyncSetRead(false).execute(comment);
-                                        messageViewHolder.title.setTextColor(
-                                                ContextCompat.getColor(mContext,
-                                                        R.color.md_red_400));
-                                    } else {
-                                        comment.read = true;
-                                        new AsyncSetRead(true).execute(comment);
-                                        messageViewHolder.title.setTextColor(
-                                                messageViewHolder.content.getCurrentTextColor());
+                            } else {
+                                comment.read = true;
+                                new AsyncSetRead(true).execute(comment);
+
+                                messageViewHolder.title.setTextColor(
+                                        messageViewHolder.content.getCurrentTextColor());
+                                {
+                                    SpannableStringBuilder b =
+                                            new SpannableStringBuilder(comment.getSubject());
+
+                                    if (comment.getDataNode().has("link_title")) {
+                                        SpannableStringBuilder link =
+                                                new SpannableStringBuilder(
+                                                        " "
+                                                                + CompatUtil.fromHtml(
+                                                                        comment.getDataNode()
+                                                                                .get("link_title")
+                                                                                .asText())
+                                                                + " ");
+                                        link.setSpan(
+                                                new StyleSpan(Typeface.BOLD_ITALIC),
+                                                0,
+                                                link.length(),
+                                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                        link.setSpan(
+                                                new RelativeSizeSpan(0.8f),
+                                                0,
+                                                link.length(),
+                                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                                        b.append(link);
                                     }
+                                    messageViewHolder.title.setText(b);
                                 }
-                                break;
-                                case 3: {
-                                    doInboxReply(comment);
-                                }
-                                break;
-                                case 25: {
-                                    ClipboardUtil.copyToClipboard(mContext, "Message", comment.getBody());
-                                    Toast.makeText(mContext,
-                                            mContext.getString(R.string.mail_message_copied),
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                                break;
-                                case 30: {
-                                    String context = comment.getDataNode().get("context").asText();
-                                    OpenRedditLink.openUrl(mContext,
-                                            "https://reddit.com" + context.substring(0,
-                                                    context.lastIndexOf("/")), true);
-                                }
-                                break;
                             }
                         }
-                    }).show();
-                    return true;
-                }
-            });
-
-            messageViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (comment.isRead()) {
-                        if (comment instanceof PrivateMessage) {
-                            DataShare.sharedMessage = (PrivateMessage) comment;
-                            Intent i = new Intent(mContext, SendMessage.class);
-                            i.putExtra(SendMessage.EXTRA_NAME, comment.getAuthor());
-                            i.putExtra(SendMessage.EXTRA_REPLY, true);
-                            mContext.startActivity(i);
-                        } else {
-                            OpenRedditLink.openUrl(mContext,
-                                    comment.getDataNode().get("context").asText(), true);
-                        }
-                    } else {
-                        comment.read = true;
-                        new AsyncSetRead(true).execute(comment);
-
-                        messageViewHolder.title.setTextColor(
-                                messageViewHolder.content.getCurrentTextColor());
-                        {
-                            SpannableStringBuilder b =
-                                    new SpannableStringBuilder(comment.getSubject());
-
-                            if (comment.getDataNode().has("link_title")) {
-                                SpannableStringBuilder link = new SpannableStringBuilder(
-                                        " "
-                                                + CompatUtil.fromHtml(
-                                                comment.getDataNode().get("link_title").asText())
-                                                + " ");
-                                link.setSpan(new StyleSpan(Typeface.BOLD_ITALIC), 0, link.length(),
-                                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                link.setSpan(new RelativeSizeSpan(0.8f), 0, link.length(),
-                                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                                b.append(link);
-                            }
-                            messageViewHolder.title.setText(b);
-                        }
-                    }
-                }
-            });            // Set typeface for body
-
+                    }); // Set typeface for body
 
             int type = new FontPreferences(mContext).getFontTypeComment().getTypeface();
             Typeface typeface;
@@ -400,15 +495,20 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
             messageViewHolder.content.setTypeface(typeface);
 
-
-            setViews(comment.getDataNode().get("body_html").asText(), "FORCE_LINK_CLICK",
+            setViews(
+                    comment.getDataNode().get("body_html").asText(),
+                    "FORCE_LINK_CLICK",
                     messageViewHolder);
         }
 
         if (viewHolder instanceof SpacerViewHolder) {
-            viewHolder.itemView.findViewById(R.id.height)
-                    .setLayoutParams(new LinearLayout.LayoutParams(viewHolder.itemView.getWidth(),
-                            ((Activity) mContext).findViewById(R.id.header).getHeight()));
+            viewHolder
+                    .itemView
+                    .findViewById(R.id.height)
+                    .setLayoutParams(
+                            new LinearLayout.LayoutParams(
+                                    viewHolder.itemView.getWidth(),
+                                    ((Activity) mContext).findViewById(R.id.header).getHeight()));
         }
     }
 
@@ -419,39 +519,47 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         final EditText e = dialoglayout.findViewById(R.id.entry);
 
-        DoEditorActions.doActions(e, dialoglayout,
-                ((AppCompatActivity) mContext).getSupportFragmentManager(), (Activity) mContext,
-                replyTo.getBody(), null);
+        DoEditorActions.doActions(
+                e,
+                dialoglayout,
+                ((AppCompatActivity) mContext).getSupportFragmentManager(),
+                (Activity) mContext,
+                replyTo.getBody(),
+                null);
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
-                .setView(dialoglayout);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext).setView(dialoglayout);
         final Dialog d = builder.create();
         d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         d.show();
-        dialoglayout.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                d.dismiss();
-            }
-        });
-        dialoglayout.findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String text = e.getText().toString();
-                new AsyncReplyTask(replyTo, text).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                d.dismiss();
-            }
-        });
-
-
+        dialoglayout
+                .findViewById(R.id.cancel)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                d.dismiss();
+                            }
+                        });
+        dialoglayout
+                .findViewById(R.id.submit)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final String text = e.getText().toString();
+                                new AsyncReplyTask(replyTo, text)
+                                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                d.dismiss();
+                            }
+                        });
     }
 
     private class AsyncReplyTask extends AsyncTask<Void, Void, Void> {
         String trying;
 
         Message replyTo;
-        String  text;
+        String text;
 
         public AsyncReplyTask(Message replyTo, String text) {
             this.replyTo = replyTo;
@@ -469,8 +577,8 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         public void sendMessage(Captcha captcha, String captchaAttempt) {
             try {
-                new net.dean.jraw.managers.AccountManager(Authentication.reddit).reply(replyTo,
-                        text);
+                new net.dean.jraw.managers.AccountManager(Authentication.reddit)
+                        .reply(replyTo, text);
                 sent = true;
             } catch (ApiException e) {
                 sent = false;
@@ -485,15 +593,17 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 s = Snackbar.make(listView, "Reply sent!", Snackbar.LENGTH_LONG);
                 LayoutUtils.showSnackbar(s);
             } else {
-                s = Snackbar.make(listView, "Sending failed! Reply saved as a draft.",
-                        Snackbar.LENGTH_LONG);
+                s =
+                        Snackbar.make(
+                                listView,
+                                "Sending failed! Reply saved as a draft.",
+                                Snackbar.LENGTH_LONG);
                 LayoutUtils.showSnackbar(s);
                 Drafts.addDraft(text);
                 sent = true;
             }
         }
     }
-
 
     public static class SpacerViewHolder extends RecyclerView.ViewHolder {
         public SpacerViewHolder(View itemView) {
@@ -523,14 +633,13 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             if (startIndex == 0) {
                 holder.commentOverflow.setViews(blocks, subredditName);
             } else {
-                holder.commentOverflow.setViews(blocks.subList(startIndex, blocks.size()),
-                        subredditName);
+                holder.commentOverflow.setViews(
+                        blocks.subList(startIndex, blocks.size()), subredditName);
             }
         } else {
             holder.commentOverflow.removeAllViews();
         }
     }
-
 
     @Override
     public int getItemCount() {
@@ -538,7 +647,6 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             return 0;
         } else {
             return dataSet.posts.size() + 2;
-
         }
     }
 
@@ -556,6 +664,4 @@ public class InboxAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             return null;
         }
     }
-
-
 }

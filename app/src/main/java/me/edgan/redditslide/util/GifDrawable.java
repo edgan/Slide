@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
-import android.util.Log;
 
 public class GifDrawable extends Drawable {
     private final Movie movie;
@@ -65,17 +64,13 @@ public class GifDrawable extends Drawable {
         return PixelFormat.TRANSLUCENT;
     }
 
-    /**
-     * Starts the GIF animation.
-     */
+    /** Starts the GIF animation. */
     public void start() {
         startTime = 0; // Reset to start
         invalidateSelf();
     }
 
-    /**
-     * Stops the GIF animation.
-     */
+    /** Stops the GIF animation. */
     public void stop() {
         isPlaying = false;
         startTime = 0;

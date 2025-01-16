@@ -31,22 +31,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.dean.jraw.ApiException;
-import net.dean.jraw.http.HttpRequest;
-import net.dean.jraw.managers.AccountManager;
-import net.dean.jraw.models.Submission;
-import net.dean.jraw.models.Subreddit;
-
-import org.json.JSONObject;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Collections;
-
 import gun0912.tedimagepicker.builder.TedImagePicker;
-import gun0912.tedimagepicker.builder.listener.OnSelectedListener;
 
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Drafts;
@@ -67,29 +52,42 @@ import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.SubmissionParser;
 import me.edgan.redditslide.util.TitleExtractor;
 import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
+
+import net.dean.jraw.ApiException;
+import net.dean.jraw.http.HttpRequest;
+import net.dean.jraw.managers.AccountManager;
+import net.dean.jraw.models.Submission;
+import net.dean.jraw.models.Subreddit;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
-/**
- * Created by ccrama on 3/5/2015.
- */
+import org.json.JSONObject;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+/** Created by ccrama on 3/5/2015. */
 public class Submit extends BaseActivity {
 
-    private             boolean      sent;
-    private             String       trying;
-    private             String       URL;
-    private             String       selectedFlairID;
-    private             SwitchCompat inboxReplies;
-    private             View         image;
-    private             View         link;
-    private             View         self;
-    public static final String       EXTRA_SUBREDDIT = "subreddit";
-    public static final String       EXTRA_BODY      = "body";
-    public static final String       EXTRA_IS_SELF   = "is_self";
+    private boolean sent;
+    private String trying;
+    private String URL;
+    private String selectedFlairID;
+    private SwitchCompat inboxReplies;
+    private View image;
+    private View link;
+    private View self;
+    public static final String EXTRA_SUBREDDIT = "subreddit";
+    public static final String EXTRA_BODY = "body";
+    public static final String EXTRA_IS_SELF = "is_self";
 
     AsyncTask<Void, Void, Subreddit> tchange;
     private OkHttpClient client;
-    private Gson         gson;
+    private Gson gson;
 
     @Override
     public void onDestroy() {
@@ -146,158 +144,207 @@ public class Submit extends BaseActivity {
         if (initialBody != null) {
             ((ImageInsertEditText) self.findViewById(R.id.bodytext)).setText(initialBody);
         }
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,
-                UserSubscriptions.getAllSubreddits(this));
+        ArrayAdapter adapter =
+                new ArrayAdapter(
+                        this,
+                        android.R.layout.simple_list_item_1,
+                        UserSubscriptions.getAllSubreddits(this));
 
         subredditText.setAdapter(adapter);
         subredditText.setThreshold(2);
 
-        subredditText.addTextChangedListener(new SimpleTextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (tchange != null) {
-                    tchange.cancel(true);
-                }
-                findViewById(R.id.submittext).setVisibility(View.GONE);
-            }
-        });
-
-        subredditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                findViewById(R.id.submittext).setVisibility(View.GONE);
-                if (!hasFocus) {
-                    tchange = new AsyncTask<Void, Void, Subreddit>() {
-                        @Override
-                        protected Subreddit doInBackground(Void... params) {
-                            try {
-                                return Authentication.reddit.getSubreddit(
-                                        subredditText.getText().toString());
-                            } catch (Exception ignored) {
-
-                            }
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(Subreddit s) {
-
-                            if (s != null) {
-                                String text = s.getDataNode().get("submit_text_html").asText();
-                                if (text != null && !text.isEmpty() && !text.equals("null")) {
-                                    findViewById(R.id.submittext).setVisibility(View.VISIBLE);
-                                    setViews(text, subredditText.getText().toString(),
-                                            (SpoilerRobotoTextView) findViewById(R.id.submittext),
-                                            (CommentOverflow) findViewById(R.id.commentOverflow));
-                                }
-                                if (s.getSubredditType().equals("RESTRICTED")) {
-                                    subredditText.setText("");
-                                    new AlertDialog.Builder(Submit.this)
-                                            .setTitle(R.string.err_submit_restricted)
-                                            .setMessage(R.string.err_submit_restricted_text)
-                                            .setPositiveButton(R.string.btn_ok, null)
-                                            .show();
-                                }
-                            } else {
-                                findViewById(R.id.submittext).setVisibility(View.GONE);
-                            }
-                        }
-                    };
-                    tchange.execute();
-                }
-            }
-        });
-
-        findViewById(R.id.selftextradio).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                self.setVisibility(View.VISIBLE);
-
-                image.setVisibility(View.GONE);
-                link.setVisibility(View.GONE);
-            }
-        });
-        findViewById(R.id.imageradio).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                self.setVisibility(View.GONE);
-                image.setVisibility(View.VISIBLE);
-                link.setVisibility(View.GONE);
-            }
-        });
-        findViewById(R.id.linkradio).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                self.setVisibility(View.GONE);
-                image.setVisibility(View.GONE);
-                link.setVisibility(View.VISIBLE);
-            }
-        });
-        findViewById(R.id.flair).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showFlairChooser();
-            }
-        });
-
-        findViewById(R.id.suggest).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AsyncTask<String, Void, String>() {
-                    Dialog d;
-
+        subredditText.addTextChangedListener(
+                new SimpleTextWatcher() {
                     @Override
-                    protected String doInBackground(String... params) {
-                        try {
-                            return TitleExtractor.getPageTitle(params[0]);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        if (tchange != null) {
+                            tchange.cancel(true);
                         }
-                        return null;
+                        findViewById(R.id.submittext).setVisibility(View.GONE);
                     }
-
-                    @Override
-                    protected void onPreExecute() {
-                        d = new MaterialDialog.Builder(Submit.this).progress(true, 100)
-                                .title(R.string.editor_finding_title)
-                                .content(R.string.misc_please_wait)
-                                .show();
-                    }
-
-                    @Override
-                    protected void onPostExecute(String s) {
-                        if (s != null) {
-                            ((EditText) findViewById(R.id.titletext)).setText(s);
-                            d.dismiss();
-                        } else {
-                            d.dismiss();
-                            new AlertDialog.Builder(Submit.this)
-                                    .setTitle(R.string.title_not_found)
-                                    .setPositiveButton(R.string.btn_ok, null)
-                                    .show();
-                        }
-                    }
-                }.execute(((EditText) findViewById(R.id.urltext)).getText().toString());
-            }
-        });
-        findViewById(R.id.selImage).setOnClickListener(v -> {
-            TedImagePicker.with(Submit.this)
-                .title("Choose a photo")
-                .start(uri -> {
-                    List<Uri> uris = Collections.singletonList(uri);
-                    handleImageIntent(uris);
-                    KeyboardUtil.hideKeyboard(Submit.this, findViewById(R.id.bodytext).getWindowToken(), 0);
                 });
-        });
-        DoEditorActions.doActions(((EditText) findViewById(R.id.bodytext)),
-                findViewById(R.id.selftext), getSupportFragmentManager(), Submit.this, null, null);
-        if (intent.hasExtra(Intent.EXTRA_TEXT) && !intent.getExtras()
-                .getString(Intent.EXTRA_TEXT, "")
-                .isEmpty() && !intent.getBooleanExtra(EXTRA_IS_SELF, false)) {
+
+        subredditText.setOnFocusChangeListener(
+                new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        findViewById(R.id.submittext).setVisibility(View.GONE);
+                        if (!hasFocus) {
+                            tchange =
+                                    new AsyncTask<Void, Void, Subreddit>() {
+                                        @Override
+                                        protected Subreddit doInBackground(Void... params) {
+                                            try {
+                                                return Authentication.reddit.getSubreddit(
+                                                        subredditText.getText().toString());
+                                            } catch (Exception ignored) {
+
+                                            }
+                                            return null;
+                                        }
+
+                                        @Override
+                                        protected void onPostExecute(Subreddit s) {
+
+                                            if (s != null) {
+                                                String text =
+                                                        s.getDataNode()
+                                                                .get("submit_text_html")
+                                                                .asText();
+                                                if (text != null
+                                                        && !text.isEmpty()
+                                                        && !text.equals("null")) {
+                                                    findViewById(R.id.submittext)
+                                                            .setVisibility(View.VISIBLE);
+                                                    setViews(
+                                                            text,
+                                                            subredditText.getText().toString(),
+                                                            (SpoilerRobotoTextView)
+                                                                    findViewById(R.id.submittext),
+                                                            (CommentOverflow)
+                                                                    findViewById(
+                                                                            R.id.commentOverflow));
+                                                }
+                                                if (s.getSubredditType().equals("RESTRICTED")) {
+                                                    subredditText.setText("");
+                                                    new AlertDialog.Builder(Submit.this)
+                                                            .setTitle(
+                                                                    R.string.err_submit_restricted)
+                                                            .setMessage(
+                                                                    R.string
+                                                                            .err_submit_restricted_text)
+                                                            .setPositiveButton(
+                                                                    R.string.btn_ok, null)
+                                                            .show();
+                                                }
+                                            } else {
+                                                findViewById(R.id.submittext)
+                                                        .setVisibility(View.GONE);
+                                            }
+                                        }
+                                    };
+                            tchange.execute();
+                        }
+                    }
+                });
+
+        findViewById(R.id.selftextradio)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                self.setVisibility(View.VISIBLE);
+
+                                image.setVisibility(View.GONE);
+                                link.setVisibility(View.GONE);
+                            }
+                        });
+        findViewById(R.id.imageradio)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                self.setVisibility(View.GONE);
+                                image.setVisibility(View.VISIBLE);
+                                link.setVisibility(View.GONE);
+                            }
+                        });
+        findViewById(R.id.linkradio)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                self.setVisibility(View.GONE);
+                                image.setVisibility(View.GONE);
+                                link.setVisibility(View.VISIBLE);
+                            }
+                        });
+        findViewById(R.id.flair)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                showFlairChooser();
+                            }
+                        });
+
+        findViewById(R.id.suggest)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new AsyncTask<String, Void, String>() {
+                                    Dialog d;
+
+                                    @Override
+                                    protected String doInBackground(String... params) {
+                                        try {
+                                            return TitleExtractor.getPageTitle(params[0]);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        return null;
+                                    }
+
+                                    @Override
+                                    protected void onPreExecute() {
+                                        d =
+                                                new MaterialDialog.Builder(Submit.this)
+                                                        .progress(true, 100)
+                                                        .title(R.string.editor_finding_title)
+                                                        .content(R.string.misc_please_wait)
+                                                        .show();
+                                    }
+
+                                    @Override
+                                    protected void onPostExecute(String s) {
+                                        if (s != null) {
+                                            ((EditText) findViewById(R.id.titletext)).setText(s);
+                                            d.dismiss();
+                                        } else {
+                                            d.dismiss();
+                                            new AlertDialog.Builder(Submit.this)
+                                                    .setTitle(R.string.title_not_found)
+                                                    .setPositiveButton(R.string.btn_ok, null)
+                                                    .show();
+                                        }
+                                    }
+                                }.execute(
+                                        ((EditText) findViewById(R.id.urltext))
+                                                .getText()
+                                                .toString());
+                            }
+                        });
+        findViewById(R.id.selImage)
+                .setOnClickListener(
+                        v -> {
+                            TedImagePicker.with(Submit.this)
+                                    .title("Choose a photo")
+                                    .start(
+                                            uri -> {
+                                                List<Uri> uris = Collections.singletonList(uri);
+                                                handleImageIntent(uris);
+                                                KeyboardUtil.hideKeyboard(
+                                                        Submit.this,
+                                                        findViewById(R.id.bodytext)
+                                                                .getWindowToken(),
+                                                        0);
+                                            });
+                        });
+        DoEditorActions.doActions(
+                ((EditText) findViewById(R.id.bodytext)),
+                findViewById(R.id.selftext),
+                getSupportFragmentManager(),
+                Submit.this,
+                null,
+                null);
+        if (intent.hasExtra(Intent.EXTRA_TEXT)
+                && !intent.getExtras().getString(Intent.EXTRA_TEXT, "").isEmpty()
+                && !intent.getBooleanExtra(EXTRA_IS_SELF, false)) {
             String data = intent.getStringExtra(Intent.EXTRA_TEXT);
             if (data.contains("\n")) {
-                ((EditText) findViewById(R.id.titletext)).setText(
-                        data.substring(0, data.indexOf("\n")));
+                ((EditText) findViewById(R.id.titletext))
+                        .setText(data.substring(0, data.indexOf("\n")));
                 ((EditText) findViewById(R.id.urltext)).setText(data.substring(data.indexOf("\n")));
             } else {
                 ((EditText) findViewById(R.id.urltext)).setText(data);
@@ -310,42 +357,47 @@ public class Submit extends BaseActivity {
         } else if (intent.hasExtra(Intent.EXTRA_STREAM)) {
             final Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
             if (imageUri != null) {
-                handleImageIntent(new ArrayList<Uri>() {{
-                    add(imageUri);
-                }});
+                handleImageIntent(
+                        new ArrayList<Uri>() {
+                            {
+                                add(imageUri);
+                            }
+                        });
                 self.setVisibility(View.GONE);
                 image.setVisibility(View.VISIBLE);
                 link.setVisibility(View.GONE);
                 ((RadioButton) findViewById(R.id.imageradio)).setChecked(true);
             }
         }
-        if (intent.hasExtra(Intent.EXTRA_SUBJECT) && !intent.getExtras()
-                .getString(Intent.EXTRA_SUBJECT, "")
-                .isEmpty()) {
+        if (intent.hasExtra(Intent.EXTRA_SUBJECT)
+                && !intent.getExtras().getString(Intent.EXTRA_SUBJECT, "").isEmpty()) {
             String data = intent.getStringExtra(Intent.EXTRA_SUBJECT);
             ((EditText) findViewById(R.id.titletext)).setText(data);
         }
-        findViewById(R.id.send).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((FloatingActionButton) findViewById(R.id.send)).hide();
-                new AsyncDo().execute();
-            }
-        });
-
+        findViewById(R.id.send)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ((FloatingActionButton) findViewById(R.id.send)).hide();
+                                new AsyncDo().execute();
+                            }
+                        });
     }
 
     private void setImage(final String URL) {
         this.URL = URL;
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                findViewById(R.id.imagepost).setVisibility(View.VISIBLE);
-                ((Reddit) getApplication()).getImageLoader()
-                        .displayImage(URL, ((ImageView) findViewById(R.id.imagepost)));
-            }
-        });
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        findViewById(R.id.imagepost).setVisibility(View.VISIBLE);
+                        ((Reddit) getApplication())
+                                .getImageLoader()
+                                .displayImage(URL, ((ImageView) findViewById(R.id.imagepost)));
+                    }
+                });
     }
 
     private void showFlairChooser() {
@@ -355,7 +407,8 @@ public class Submit extends BaseActivity {
         String subreddit = ((EditText) findViewById(R.id.subreddittext)).getText().toString();
 
         final Dialog d =
-                new MaterialDialog.Builder(Submit.this).title(R.string.submit_findingflairs)
+                new MaterialDialog.Builder(Submit.this)
+                        .title(R.string.submit_findingflairs)
                         .cancelable(true)
                         .content(R.string.misc_please_wait)
                         .progress(true, 100)
@@ -366,15 +419,22 @@ public class Submit extends BaseActivity {
             @Override
             protected JsonArray doInBackground(Void... params) {
                 flairs = new ArrayList<>();
-                HttpRequest r = Authentication.reddit.request()
-                        .path("/r/" + subreddit + "/api/link_flair_v2.json")
-                        .get()
-                        .build();
+                HttpRequest r =
+                        Authentication.reddit
+                                .request()
+                                .path("/r/" + subreddit + "/api/link_flair_v2.json")
+                                .get()
+                                .build();
 
-                Request request = new Request.Builder()
-                        .headers(r.getHeaders().newBuilder().set("User-Agent", "Slide flair search").build())
-                        .url(r.getUrl())
-                        .build();
+                Request request =
+                        new Request.Builder()
+                                .headers(
+                                        r.getHeaders()
+                                                .newBuilder()
+                                                .set("User-Agent", "Slide flair search")
+                                                .build())
+                                .url(r.getUrl())
+                                .build();
 
                 return HttpUtil.getJsonArray(client, gson, request);
             }
@@ -387,9 +447,13 @@ public class Submit extends BaseActivity {
                 } else {
                     try {
                         final HashMap<String, RichFlair> flairs = new HashMap<>();
-                        for(JsonElement object : result) {
-                            RichFlair choice = new ObjectMapper().disable(
-                                    DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).readValue(object.toString(), RichFlair.class);
+                        for (JsonElement object : result) {
+                            RichFlair choice =
+                                    new ObjectMapper()
+                                            .disable(
+                                                    DeserializationFeature
+                                                            .FAIL_ON_UNKNOWN_PROPERTIES)
+                                            .readValue(object.toString(), RichFlair.class);
                             String title = choice.getText();
                             flairs.put(title, choice);
                         }
@@ -397,20 +461,29 @@ public class Submit extends BaseActivity {
 
                         ArrayList<String> allKeys = new ArrayList<>(flairs.keySet());
 
-                        new MaterialDialog.Builder(Submit.this).title(
-                                getString(R.string.submit_flairchoices, subreddit))
+                        new MaterialDialog.Builder(Submit.this)
+                                .title(getString(R.string.submit_flairchoices, subreddit))
                                 .items(allKeys)
-                                .itemsCallback(new MaterialDialog.ListCallback() {
-                                    @Override
-                                    public void onSelection(MaterialDialog dialog,
-                                            View itemView, int which, CharSequence text) {
-                                        RichFlair selected = flairs.get(allKeys.get(which));
-                                        selectedFlairID = selected.getId();
-                                        ((TextView) findViewById(R.id.flair)).setText(getString(R.string.submit_selected_flair, selected.getText()));
-                                    }
-                                })
+                                .itemsCallback(
+                                        new MaterialDialog.ListCallback() {
+                                            @Override
+                                            public void onSelection(
+                                                    MaterialDialog dialog,
+                                                    View itemView,
+                                                    int which,
+                                                    CharSequence text) {
+                                                RichFlair selected = flairs.get(allKeys.get(which));
+                                                selectedFlairID = selected.getId();
+                                                ((TextView) findViewById(R.id.flair))
+                                                        .setText(
+                                                                getString(
+                                                                        R.string
+                                                                                .submit_selected_flair,
+                                                                        selected.getText()));
+                                            }
+                                        })
                                 .show();
-                } catch(Exception e) {
+                    } catch (Exception e) {
                         LogUtil.v(e.toString());
                         d.dismiss();
                         LogUtil.v("Error parsing flairs");
@@ -420,7 +493,10 @@ public class Submit extends BaseActivity {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public void setViews(String rawHTML, String subredditName, SpoilerRobotoTextView firstTextView,
+    public void setViews(
+            String rawHTML,
+            String subredditName,
+            SpoilerRobotoTextView firstTextView,
             CommentOverflow commentOverflow) {
         if (rawHTML.isEmpty()) {
             return;
@@ -464,7 +540,6 @@ public class Submit extends BaseActivity {
                 new UploadImgurAlbumSubmit(this, uris.toArray(new Uri[0]));
             } catch (Exception e) {
                 e.printStackTrace();
-
             }
         }
     }
@@ -478,126 +553,174 @@ public class Submit extends BaseActivity {
                     final String text =
                             ((EditText) findViewById(R.id.bodytext)).getText().toString();
                     try {
-                        AccountManager.SubmissionBuilder builder = new AccountManager.SubmissionBuilder(
-                                ((EditText) findViewById(R.id.bodytext)).getText()
-                                        .toString(), ((AutoCompleteTextView) findViewById(
-                                R.id.subreddittext)).getText().toString(),
-                                ((EditText) findViewById(R.id.titletext)).getText()
-                                        .toString());
+                        AccountManager.SubmissionBuilder builder =
+                                new AccountManager.SubmissionBuilder(
+                                        ((EditText) findViewById(R.id.bodytext))
+                                                .getText()
+                                                .toString(),
+                                        ((AutoCompleteTextView) findViewById(R.id.subreddittext))
+                                                .getText()
+                                                .toString(),
+                                        ((EditText) findViewById(R.id.titletext))
+                                                .getText()
+                                                .toString());
 
-                        if(selectedFlairID != null) {
+                        if (selectedFlairID != null) {
                             builder.flairID(selectedFlairID);
                         }
 
                         Submission s = new AccountManager(Authentication.reddit).submit(builder);
-                        new AccountManager(Authentication.reddit).sendRepliesToInbox(s,
-                                inboxReplies.isChecked());
-                       OpenRedditLink.openUrl(Submit.this,
-                                "reddit.com/r/" + ((AutoCompleteTextView) findViewById(
-                                        R.id.subreddittext)).getText().toString() + "/comments/" + s
-                                        .getFullName()
-                                        .substring(3), true);
+                        new AccountManager(Authentication.reddit)
+                                .sendRepliesToInbox(s, inboxReplies.isChecked());
+                        OpenRedditLink.openUrl(
+                                Submit.this,
+                                "reddit.com/r/"
+                                        + ((AutoCompleteTextView) findViewById(R.id.subreddittext))
+                                                .getText()
+                                                .toString()
+                                        + "/comments/"
+                                        + s.getFullName().substring(3),
+                                true);
                         Submit.this.finish();
                     } catch (final ApiException e) {
                         Drafts.addDraft(text);
                         e.printStackTrace();
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                showErrorRetryDialog(getString(R.string.misc_err)
-                                        + ": "
-                                        + e.getExplanation()
-                                        + "\n"
-                                        + getString(R.string.misc_retry_draft));
-                            }
-                        });
+                        runOnUiThread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showErrorRetryDialog(
+                                                getString(R.string.misc_err)
+                                                        + ": "
+                                                        + e.getExplanation()
+                                                        + "\n"
+                                                        + getString(R.string.misc_retry_draft));
+                                    }
+                                });
                     }
                 } else if (link.getVisibility() == View.VISIBLE) {
                     try {
-                        Submission s = new AccountManager(Authentication.reddit).submit(
-                                new AccountManager.SubmissionBuilder(
-                                        new URL(((EditText) findViewById(R.id.urltext)).getText()
-                                                .toString()), ((AutoCompleteTextView) findViewById(
-                                        R.id.subreddittext)).getText().toString(),
-                                        ((EditText) findViewById(R.id.titletext)).getText()
-                                                .toString()));
-                        new AccountManager(Authentication.reddit).sendRepliesToInbox(s,
-                                inboxReplies.isChecked());
-                        OpenRedditLink.openUrl(Submit.this,
-                                "reddit.com/r/" + ((AutoCompleteTextView) findViewById(
-                                        R.id.subreddittext)).getText().toString() + "/comments/" + s
-                                        .getFullName()
-                                        .substring(3), true);
+                        Submission s =
+                                new AccountManager(Authentication.reddit)
+                                        .submit(
+                                                new AccountManager.SubmissionBuilder(
+                                                        new URL(
+                                                                ((EditText)
+                                                                                findViewById(
+                                                                                        R.id
+                                                                                                .urltext))
+                                                                        .getText()
+                                                                        .toString()),
+                                                        ((AutoCompleteTextView)
+                                                                        findViewById(
+                                                                                R.id.subreddittext))
+                                                                .getText()
+                                                                .toString(),
+                                                        ((EditText) findViewById(R.id.titletext))
+                                                                .getText()
+                                                                .toString()));
+                        new AccountManager(Authentication.reddit)
+                                .sendRepliesToInbox(s, inboxReplies.isChecked());
+                        OpenRedditLink.openUrl(
+                                Submit.this,
+                                "reddit.com/r/"
+                                        + ((AutoCompleteTextView) findViewById(R.id.subreddittext))
+                                                .getText()
+                                                .toString()
+                                        + "/comments/"
+                                        + s.getFullName().substring(3),
+                                true);
 
                         Submit.this.finish();
                     } catch (final ApiException e) {
                         e.printStackTrace();
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                        runOnUiThread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
 
-                                if (e instanceof ApiException) {
-                                    showErrorRetryDialog(getString(R.string.misc_err)
-                                            + ": "
-                                            + e.getExplanation()
-                                            + "\n"
-                                            + getString(R.string.misc_retry));
-                                } else {
-                                    showErrorRetryDialog(
-                                            getString(R.string.misc_err) + ": " + getString(
-                                                    R.string.err_invalid_url) + "\n" + getString(
-                                                    R.string.misc_retry));
-                                }
-                            }
-                        });
+                                        if (e instanceof ApiException) {
+                                            showErrorRetryDialog(
+                                                    getString(R.string.misc_err)
+                                                            + ": "
+                                                            + e.getExplanation()
+                                                            + "\n"
+                                                            + getString(R.string.misc_retry));
+                                        } else {
+                                            showErrorRetryDialog(
+                                                    getString(R.string.misc_err)
+                                                            + ": "
+                                                            + getString(R.string.err_invalid_url)
+                                                            + "\n"
+                                                            + getString(R.string.misc_retry));
+                                        }
+                                    }
+                                });
                     }
                 } else if (image.getVisibility() == View.VISIBLE) {
                     try {
-                        Submission s = new AccountManager(Authentication.reddit).submit(
-                                new AccountManager.SubmissionBuilder(new URL(URL),
-                                        ((AutoCompleteTextView) findViewById(
-                                                R.id.subreddittext)).getText().toString(),
-                                        ((EditText) findViewById(R.id.titletext)).getText()
-                                                .toString()));
-                        new AccountManager(Authentication.reddit).sendRepliesToInbox(s,
-                                inboxReplies.isChecked());
-                        OpenRedditLink.openUrl(Submit.this,
-                                "reddit.com/r/" + ((AutoCompleteTextView) findViewById(
-                                        R.id.subreddittext)).getText().toString() + "/comments/" + s
-                                        .getFullName()
-                                        .substring(3), true);
+                        Submission s =
+                                new AccountManager(Authentication.reddit)
+                                        .submit(
+                                                new AccountManager.SubmissionBuilder(
+                                                        new URL(URL),
+                                                        ((AutoCompleteTextView)
+                                                                        findViewById(
+                                                                                R.id.subreddittext))
+                                                                .getText()
+                                                                .toString(),
+                                                        ((EditText) findViewById(R.id.titletext))
+                                                                .getText()
+                                                                .toString()));
+                        new AccountManager(Authentication.reddit)
+                                .sendRepliesToInbox(s, inboxReplies.isChecked());
+                        OpenRedditLink.openUrl(
+                                Submit.this,
+                                "reddit.com/r/"
+                                        + ((AutoCompleteTextView) findViewById(R.id.subreddittext))
+                                                .getText()
+                                                .toString()
+                                        + "/comments/"
+                                        + s.getFullName().substring(3),
+                                true);
 
                         Submit.this.finish();
                     } catch (final Exception e) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (e instanceof ApiException) {
-                                    showErrorRetryDialog(
-                                            getString(R.string.misc_err) + ": " + ((ApiException) e)
-                                                    .getExplanation() + "\n" + getString(
-                                                    R.string.misc_retry));
-                                } else {
-                                    showErrorRetryDialog(
-                                            getString(R.string.misc_err) + ": " + getString(
-                                                    R.string.err_invalid_url) + "\n" + getString(
-                                                    R.string.misc_retry));
-                                }
-                            }
-                        });
+                        runOnUiThread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (e instanceof ApiException) {
+                                            showErrorRetryDialog(
+                                                    getString(R.string.misc_err)
+                                                            + ": "
+                                                            + ((ApiException) e).getExplanation()
+                                                            + "\n"
+                                                            + getString(R.string.misc_retry));
+                                        } else {
+                                            showErrorRetryDialog(
+                                                    getString(R.string.misc_err)
+                                                            + ": "
+                                                            + getString(R.string.err_invalid_url)
+                                                            + "\n"
+                                                            + getString(R.string.misc_retry));
+                                        }
+                                    }
+                                });
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        showErrorRetryDialog(getString(R.string.misc_retry));
-                    }
-                });
+                runOnUiThread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                showErrorRetryDialog(getString(R.string.misc_retry));
+                            }
+                        });
             }
             return null;
         }
@@ -611,32 +734,36 @@ public class Submit extends BaseActivity {
             this.c = c;
             this.uri = u;
 
-            dialog = new MaterialDialog.Builder(c).title(
-                    c.getString(R.string.editor_uploading_image))
-                    .progress(false, 100)
-                    .cancelable(false)
-                    .autoDismiss(false)
-                    .build();
+            dialog =
+                    new MaterialDialog.Builder(c)
+                            .title(c.getString(R.string.editor_uploading_image))
+                            .progress(false, 100)
+                            .cancelable(false)
+                            .autoDismiss(false)
+                            .build();
 
-            new MaterialDialog.Builder(c).title(c.getString(R.string.editor_upload_image_question))
+            new MaterialDialog.Builder(c)
+                    .title(c.getString(R.string.editor_upload_image_question))
                     .cancelable(false)
                     .autoDismiss(false)
                     .positiveText(c.getString(R.string.btn_upload))
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(MaterialDialog d, DialogAction w) {
-                            d.dismiss();
-                            dialog.show();
-                            execute(uri);
-                        }
-                    })
+                    .onPositive(
+                            new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(MaterialDialog d, DialogAction w) {
+                                    d.dismiss();
+                                    dialog.show();
+                                    execute(uri);
+                                }
+                            })
                     .negativeText(c.getString(R.string.btn_cancel))
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(MaterialDialog d, DialogAction w) {
-                            d.dismiss();
-                        }
-                    })
+                    .onNegative(
+                            new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(MaterialDialog d, DialogAction w) {
+                                    d.dismiss();
+                                }
+                            })
                     .show();
         }
 
@@ -666,31 +793,35 @@ public class Submit extends BaseActivity {
             this.c = c;
             this.uris = u;
 
-            dialog = new MaterialDialog.Builder(c).title(
-                    c.getString(R.string.editor_uploading_image))
-                    .progress(false, 100)
-                    .cancelable(false)
-                    .build();
+            dialog =
+                    new MaterialDialog.Builder(c)
+                            .title(c.getString(R.string.editor_uploading_image))
+                            .progress(false, 100)
+                            .cancelable(false)
+                            .build();
 
-            new MaterialDialog.Builder(c).title(c.getString(R.string.editor_upload_image_question))
+            new MaterialDialog.Builder(c)
+                    .title(c.getString(R.string.editor_upload_image_question))
                     .cancelable(false)
                     .autoDismiss(false)
                     .positiveText(c.getString(R.string.btn_upload))
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(MaterialDialog d, DialogAction w) {
-                            d.dismiss();
-                            dialog.show();
-                            execute(uris);
-                        }
-                    })
+                    .onPositive(
+                            new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(MaterialDialog d, DialogAction w) {
+                                    d.dismiss();
+                                    dialog.show();
+                                    execute(uris);
+                                }
+                            })
                     .negativeText(c.getString(R.string.btn_cancel))
-                    .onNegative(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(MaterialDialog d, DialogAction w) {
-                            d.dismiss();
-                        }
-                    })
+                    .onNegative(
+                            new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(MaterialDialog d, DialogAction w) {
+                                    d.dismiss();
+                                }
+                            })
                     .show();
         }
 
@@ -716,14 +847,14 @@ public class Submit extends BaseActivity {
         new AlertDialog.Builder(Submit.this)
                 .setTitle(R.string.err_title)
                 .setMessage(message)
-                .setNegativeButton(R.string.btn_no, (dialogInterface, i) ->
-                        finish())
-                .setPositiveButton(R.string.btn_yes, (dialogInterface, i) ->
-                        ((FloatingActionButton) findViewById(R.id.send)).show())
-                .setOnDismissListener(dialog ->
-                        ((FloatingActionButton) findViewById(R.id.send)).show())
+                .setNegativeButton(R.string.btn_no, (dialogInterface, i) -> finish())
+                .setPositiveButton(
+                        R.string.btn_yes,
+                        (dialogInterface, i) ->
+                                ((FloatingActionButton) findViewById(R.id.send)).show())
+                .setOnDismissListener(
+                        dialog -> ((FloatingActionButton) findViewById(R.id.send)).show())
                 .create()
                 .show();
     }
-
 }

@@ -16,6 +16,12 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.util.LogUtil;
+
 import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.http.oauth.Credentials;
 import net.dean.jraw.http.oauth.OAuthData;
@@ -26,16 +32,7 @@ import net.dean.jraw.models.LoggedInAccount;
 import java.util.HashSet;
 import java.util.Set;
 
-import me.edgan.redditslide.Authentication;
-import me.edgan.redditslide.Constants;
-import me.edgan.redditslide.R;
-import me.edgan.redditslide.Reddit;
-import me.edgan.redditslide.util.LogUtil;
-
-
-/**
- * Created by ccrama on 5/27/2015.
- */
+/** Created by ccrama on 5/27/2015. */
 public class Reauthenticate extends BaseActivityAnim {
     @Override
     public void onCreate(Bundle savedInstance) {
@@ -44,11 +41,38 @@ public class Reauthenticate extends BaseActivityAnim {
         setContentView(R.layout.activity_login);
         setupAppBar(R.id.toolbar, "Re-authenticate", true, true);
 
-        String[] scopes = {"identity", "modcontributors", "modconfig", "modothers", "modwiki", "creddits", "livemanage", "account", "privatemessages", "modflair", "modlog", "report", "modposts", "modwiki", "read", "vote", "edit", "submit", "subscribe", "save", "wikiread", "flair", "history", "mysubreddits", "wikiedit"};
+        String[] scopes = {
+            "identity",
+            "modcontributors",
+            "modconfig",
+            "modothers",
+            "modwiki",
+            "creddits",
+            "livemanage",
+            "account",
+            "privatemessages",
+            "modflair",
+            "modlog",
+            "report",
+            "modposts",
+            "modwiki",
+            "read",
+            "vote",
+            "edit",
+            "submit",
+            "subscribe",
+            "save",
+            "wikiread",
+            "flair",
+            "history",
+            "mysubreddits",
+            "wikiedit"
+        };
         final OAuthHelper oAuthHelper = Authentication.reddit.getOAuthHelper();
-	final Credentials credentials = Credentials.installedApp(Constants.getClientId(), Constants.REDDIT_REDIRECT_URL);
-        String authorizationUrl = oAuthHelper.getAuthorizationUrl(credentials, true, scopes)
-                .toExternalForm();
+        final Credentials credentials =
+                Credentials.installedApp(Constants.getClientId(), Constants.REDDIT_REDIRECT_URL);
+        String authorizationUrl =
+                oAuthHelper.getAuthorizationUrl(credentials, true, scopes).toExternalForm();
         authorizationUrl = authorizationUrl.replace("www.", "i.");
         authorizationUrl = authorizationUrl.replace("%3A%2F%2Fi", "://www");
         Log.v(LogUtil.getTag(), "Auth URL: " + authorizationUrl);
@@ -61,27 +85,29 @@ public class Reauthenticate extends BaseActivityAnim {
         final WebView webView = (WebView) findViewById(R.id.web);
 
         webView.loadUrl(authorizationUrl);
-        webView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-//                activity.setProgress(newProgress * 1000);
-            }
-        });
+        webView.setWebChromeClient(
+                new WebChromeClient() {
+                    @Override
+                    public void onProgressChanged(WebView view, int newProgress) {
+                        //                activity.setProgress(newProgress * 1000);
+                    }
+                });
 
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                if (url.contains("code=")) {
-                    Log.v(LogUtil.getTag(), "WebView URL: " + url);
-                    // Authentication code received, prevent HTTP call from being made.
-                    webView.stopLoading();
-                    new UserChallengeTask(oAuthHelper, credentials).execute(url);
-                    webView.setVisibility(View.GONE);
-                    webView.clearCache(true);
-                    webView.clearHistory();
-                }
-            }
-        });
+        webView.setWebViewClient(
+                new WebViewClient() {
+                    @Override
+                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                        if (url.contains("code=")) {
+                            Log.v(LogUtil.getTag(), "WebView URL: " + url);
+                            // Authentication code received, prevent HTTP call from being made.
+                            webView.stopLoading();
+                            new UserChallengeTask(oAuthHelper, credentials).execute(url);
+                            webView.setVisibility(View.GONE);
+                            webView.clearCache(true);
+                            webView.clearHistory();
+                        }
+                    }
+                });
     }
 
     private final class UserChallengeTask extends AsyncTask<String, Void, OAuthData> {
@@ -98,11 +124,12 @@ public class Reauthenticate extends BaseActivityAnim {
         @Override
         protected void onPreExecute() {
             // Show a dialog to indicate progress
-            MaterialDialog.Builder builder = new MaterialDialog.Builder(Reauthenticate.this)
-                    .title(R.string.login_authenticating)
-                    .progress(true, 0)
-                    .content(R.string.misc_please_wait)
-                    .cancelable(false);
+            MaterialDialog.Builder builder =
+                    new MaterialDialog.Builder(Reauthenticate.this)
+                            .title(R.string.login_authenticating)
+                            .progress(true, 0)
+                            .content(R.string.misc_please_wait)
+                            .cancelable(false);
             mMaterialDialog = builder.build();
             mMaterialDialog.show();
         }
@@ -116,7 +143,9 @@ public class Reauthenticate extends BaseActivityAnim {
                     Authentication.isLoggedIn = true;
                     String refreshToken = Authentication.reddit.getOAuthData().getRefreshToken();
                     SharedPreferences.Editor editor = Authentication.authentication.edit();
-                    Set<String> accounts = Authentication.authentication.getStringSet("accounts", new HashSet<String>());
+                    Set<String> accounts =
+                            Authentication.authentication.getStringSet(
+                                    "accounts", new HashSet<String>());
                     LoggedInAccount me = Authentication.reddit.me();
                     String toRemove = "";
                     for (String s : accounts) {
@@ -125,13 +154,14 @@ public class Reauthenticate extends BaseActivityAnim {
                         }
                     }
 
-                    if (!toRemove.isEmpty())
-                        accounts.remove(toRemove);
+                    if (!toRemove.isEmpty()) accounts.remove(toRemove);
 
                     accounts.add(me.getFullName() + ":" + refreshToken);
                     Authentication.name = me.getFullName();
                     editor.putStringSet("accounts", accounts);
-                    Set<String> tokens = Authentication.authentication.getStringSet("tokens", new HashSet<String>());
+                    Set<String> tokens =
+                            Authentication.authentication.getStringSet(
+                                    "tokens", new HashSet<String>());
                     tokens.add(refreshToken);
                     editor.putStringSet("tokens", tokens);
                     editor.putString("lasttoken", refreshToken);
@@ -157,14 +187,10 @@ public class Reauthenticate extends BaseActivityAnim {
 
             new AlertDialog.Builder(Reauthenticate.this)
                     .setTitle(R.string.reauth_complete)
-                    .setPositiveButton(R.string.btn_ok, (dialog, which) ->
-                            finish())
+                    .setPositiveButton(R.string.btn_ok, (dialog, which) -> finish())
                     .setCancelable(false)
-                    .setOnCancelListener(dialog ->
-                            finish())
+                    .setOnCancelListener(dialog -> finish())
                     .show();
         }
     }
-
-
 }

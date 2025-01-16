@@ -9,9 +9,7 @@ import net.dean.jraw.models.Submission;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Created by carlo_000 on 10/16/2015.
- */
+/** Created by carlo_000 on 10/16/2015. */
 public class Hidden {
     public static final Set<String> id = new HashSet<>();
 
@@ -44,5 +42,4 @@ public class Hidden {
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
-
 }

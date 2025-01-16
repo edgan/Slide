@@ -13,7 +13,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -39,7 +38,26 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.lusfold.androidkeyvaluestore.KVStore;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import me.edgan.redditslide.Activities.MainActivity;
+import me.edgan.redditslide.Autocache.AutoCacheScheduler;
+import me.edgan.redditslide.ImgurAlbum.AlbumUtils;
+import me.edgan.redditslide.Notifications.NotificationJobScheduler;
+import me.edgan.redditslide.Notifications.NotificationPiggyback;
+import me.edgan.redditslide.Tumblr.TumblrUtils;
+import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.AdBlocker;
+import me.edgan.redditslide.util.CompatUtil;
+import me.edgan.redditslide.util.GifCache;
+import me.edgan.redditslide.util.ImageLoaderUtils;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.util.SortingUtil;
+import me.edgan.redditslide.util.UpgradeUtil;
+
 import net.dean.jraw.http.NetworkException;
+
+import okhttp3.Dns;
+import okhttp3.OkHttpClient;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.commons.text.StringEscapeUtils;
@@ -58,39 +76,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import me.edgan.redditslide.Activities.MainActivity;
-import me.edgan.redditslide.Autocache.AutoCacheScheduler;
-import me.edgan.redditslide.ImgurAlbum.AlbumUtils;
-import me.edgan.redditslide.Notifications.NotificationJobScheduler;
-import me.edgan.redditslide.Notifications.NotificationPiggyback;
-import me.edgan.redditslide.Tumblr.TumblrUtils;
-import me.edgan.redditslide.Visuals.Palette;
-import me.edgan.redditslide.util.AdBlocker;
-import me.edgan.redditslide.util.CompatUtil;
-import me.edgan.redditslide.util.GifCache;
-import me.edgan.redditslide.util.ImageLoaderUtils;
-import me.edgan.redditslide.util.LogUtil;
-import me.edgan.redditslide.util.NetworkUtil;
-import me.edgan.redditslide.util.SortingUtil;
-import me.edgan.redditslide.util.UpgradeUtil;
-import okhttp3.Dns;
-import okhttp3.OkHttpClient;
-
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class Reddit extends MultiDexApplication implements Application.ActivityLifecycleCallbacks {
     private static Application mApplication;
 
     public static final String EMPTY_STRING = "NOTHING";
 
-    public static final long   enter_animation_time_original = 600;
-    public static final String PREF_LAYOUT                   = "PRESET";
-    public static final String SHARED_PREF_IS_MOD            = "is_mod";
+    public static final long enter_animation_time_original = 600;
+    public static final String PREF_LAYOUT = "PRESET";
+    public static final String SHARED_PREF_IS_MOD = "is_mod";
     public static Cache videoCache;
 
-    public static       long enter_animation_time            = enter_animation_time_original;
-    public static final int  enter_animation_time_multiplier = 1;
+    public static long enter_animation_time = enter_animation_time_original;
+    public static final int enter_animation_time_multiplier = 1;
 
     public static Authentication authentication;
 
@@ -98,23 +96,23 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
     public static SharedPreferences appRestart;
     public static SharedPreferences tags;
 
-    public static int                      dpWidth;
-    public static int                      notificationTime;
-    public static boolean                  videoPlugin;
+    public static int dpWidth;
+    public static int notificationTime;
+    public static boolean videoPlugin;
     public static NotificationJobScheduler notifications;
-    public static       boolean isLoading = false;
-    public static final long    time      = System.currentTimeMillis();
-    public static boolean            fabClear;
+    public static boolean isLoading = false;
+    public static final long time = System.currentTimeMillis();
+    public static boolean fabClear;
     public static ArrayList<Integer> lastPosition;
-    public static int                currentPosition;
-    public static SharedPreferences  cachedData;
+    public static int currentPosition;
+    public static SharedPreferences cachedData;
     public static final boolean noGapps = true; // for testing
-    public static boolean            overrideLanguage;
-    public static boolean            isRestarting;
+    public static boolean overrideLanguage;
+    public static boolean isRestarting;
     public static AutoCacheScheduler autoCache;
-    public static boolean            peek;
-    public        boolean      active;
-    public        ImageLoader  defaultImageLoader;
+    public static boolean peek;
+    public boolean active;
+    public ImageLoader defaultImageLoader;
     public static OkHttpClient client;
 
     public static boolean canUseNightModeAuto = false;
@@ -159,18 +157,23 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
 
     public static HashMap<String, String> getInstalledBrowsers() {
         int packageMatcher =
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PackageManager.MATCH_ALL : PackageManager.GET_DISABLED_COMPONENTS;
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                        ? PackageManager.MATCH_ALL
+                        : PackageManager.GET_DISABLED_COMPONENTS;
 
         HashMap<String, String> browserMap = new HashMap<>();
 
-        final List<ResolveInfo> resolveInfoList = getAppContext().getPackageManager()
-                .queryIntentActivities(
-                        new Intent(Intent.ACTION_VIEW, Uri.parse("http://ccrama.me")),
-                        packageMatcher);
+        final List<ResolveInfo> resolveInfoList =
+                getAppContext()
+                        .getPackageManager()
+                        .queryIntentActivities(
+                                new Intent(Intent.ACTION_VIEW, Uri.parse("http://ccrama.me")),
+                                packageMatcher);
 
         for (ResolveInfo resolveInfo : resolveInfoList) {
             if (resolveInfo.activityInfo.enabled) {
-                browserMap.put(resolveInfo.activityInfo.applicationInfo.packageName,
+                browserMap.put(
+                        resolveInfo.activityInfo.applicationInfo.packageName,
                         Reddit.getAppContext()
                                 .getPackageManager()
                                 .getApplicationLabel(resolveInfo.activityInfo.applicationInfo)
@@ -208,8 +211,8 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
         }
         if (authentication != null
                 && Authentication.didOnline
-                && Authentication.authentication.getLong("expires", 0) <= Calendar.getInstance()
-                .getTimeInMillis()) {
+                && Authentication.authentication.getLong("expires", 0)
+                        <= Calendar.getInstance().getTimeInMillis()) {
             authentication.updateToken(activity);
         } else if (NetworkUtil.isConnected(activity) && authentication == null) {
             authentication = new Authentication(this);
@@ -217,8 +220,7 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
     }
 
     @Override
-    public void onActivityPaused(Activity activity) {
-    }
+    public void onActivityPaused(Activity activity) {}
 
     public static void setDefaultErrorHandler(Context base) {
         // START code adapted from https://github.com/QuantumBadger/RedReader/
@@ -226,134 +228,174 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
                 Thread.getDefaultUncaughtExceptionHandler();
         final WeakReference<Context> cont = new WeakReference<>(base);
 
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            public void uncaughtException(Thread thread, Throwable t) {
-                if (cont.get() != null) {
-                    final Context c = cont.get();
-                    Writer writer = new StringWriter();
-                    PrintWriter printWriter = new PrintWriter(writer);
-                    t.printStackTrace(printWriter);
-                    String stacktrace = writer.toString().replace(";", ",");
-                    if (stacktrace.contains("UnknownHostException") || stacktrace.contains(
-                            "SocketTimeoutException") || stacktrace.contains("ConnectException")) {
-                        // is offline
-                        final Handler mHandler = new Handler(Looper.getMainLooper());
-                        mHandler.post(new Runnable() {
-                                          @Override
-                                          public void run() {
-                                              try {
-                                                  new AlertDialog.Builder(c)
-                                                          .setTitle(R.string.err_title)
-                                                          .setMessage(R.string.err_connection_failed_msg)
-                                                          .setNegativeButton(R.string.btn_close, (dialog, which) -> {
-                                                              if (!(c instanceof MainActivity)) {
-                                                                  ((Activity) c).finish();
-                                                              }
-                                                          })
-                                                          .setPositiveButton(R.string.btn_offline, (dialog, which) -> {
-                                                              Reddit.appRestart.edit()
-                                                                      .putBoolean("forceoffline", true)
-                                                                      .apply();
-                                                              Reddit.forceRestart(c, false);
-                                                          })
-                                                          .show();
-                                              } catch (Exception ignored) {
+        Thread.setDefaultUncaughtExceptionHandler(
+                new Thread.UncaughtExceptionHandler() {
+                    public void uncaughtException(Thread thread, Throwable t) {
+                        if (cont.get() != null) {
+                            final Context c = cont.get();
+                            Writer writer = new StringWriter();
+                            PrintWriter printWriter = new PrintWriter(writer);
+                            t.printStackTrace(printWriter);
+                            String stacktrace = writer.toString().replace(";", ",");
+                            if (stacktrace.contains("UnknownHostException")
+                                    || stacktrace.contains("SocketTimeoutException")
+                                    || stacktrace.contains("ConnectException")) {
+                                // is offline
+                                final Handler mHandler = new Handler(Looper.getMainLooper());
+                                mHandler.post(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    new AlertDialog.Builder(c)
+                                                            .setTitle(R.string.err_title)
+                                                            .setMessage(
+                                                                    R.string
+                                                                            .err_connection_failed_msg)
+                                                            .setNegativeButton(
+                                                                    R.string.btn_close,
+                                                                    (dialog, which) -> {
+                                                                        if (!(c
+                                                                                instanceof
+                                                                                MainActivity)) {
+                                                                            ((Activity) c).finish();
+                                                                        }
+                                                                    })
+                                                            .setPositiveButton(
+                                                                    R.string.btn_offline,
+                                                                    (dialog, which) -> {
+                                                                        Reddit.appRestart
+                                                                                .edit()
+                                                                                .putBoolean(
+                                                                                        "forceoffline",
+                                                                                        true)
+                                                                                .apply();
+                                                                        Reddit.forceRestart(
+                                                                                c, false);
+                                                                    })
+                                                            .show();
+                                                } catch (Exception ignored) {
 
-                                              }
-                                          }
-                                      }
-
-                        );
-                    } else if (stacktrace.contains("403 Forbidden") || stacktrace.contains(
-                            "401 Unauthorized")) {
-                        // Un-authenticated
-                        final Handler mHandler = new Handler(Looper.getMainLooper());
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    new AlertDialog.Builder(c)
-                                            .setTitle(R.string.err_title)
-                                            .setMessage(R.string.err_refused_request_msg)
-                                            .setNegativeButton("No", (dialog, which) -> {
-                                                if (!(c instanceof MainActivity)) {
-                                                    ((Activity) c).finish();
                                                 }
-                                            })
-                                            .setPositiveButton("Yes", (dialog, which) ->
-                                                    authentication.updateToken(c))
-                                            .show();
-                                } catch (Exception ignored) {
+                                            }
+                                        });
+                            } else if (stacktrace.contains("403 Forbidden")
+                                    || stacktrace.contains("401 Unauthorized")) {
+                                // Un-authenticated
+                                final Handler mHandler = new Handler(Looper.getMainLooper());
+                                mHandler.post(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    new AlertDialog.Builder(c)
+                                                            .setTitle(R.string.err_title)
+                                                            .setMessage(
+                                                                    R.string
+                                                                            .err_refused_request_msg)
+                                                            .setNegativeButton(
+                                                                    "No",
+                                                                    (dialog, which) -> {
+                                                                        if (!(c
+                                                                                instanceof
+                                                                                MainActivity)) {
+                                                                            ((Activity) c).finish();
+                                                                        }
+                                                                    })
+                                                            .setPositiveButton(
+                                                                    "Yes",
+                                                                    (dialog, which) ->
+                                                                            authentication
+                                                                                    .updateToken(c))
+                                                            .show();
+                                                } catch (Exception ignored) {
 
-                                }
-                            }
-                        });
-
-                    } else if (stacktrace.contains("404 Not Found") || stacktrace.contains(
-                            "400 Bad Request")) {
-                        final Handler mHandler = new Handler(Looper.getMainLooper());
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    new AlertDialog.Builder(c)
-                                            .setTitle(R.string.err_title)
-                                            .setMessage(R.string.err_could_not_find_content_msg)
-                                            .setNegativeButton("Close", (dialog, which) -> {
-                                                if (!(c instanceof MainActivity)) {
-                                                    ((Activity) c).finish();
                                                 }
-                                            })
-                                            .show();
-                                } catch (Exception ignored) {
+                                            }
+                                        });
 
+                            } else if (stacktrace.contains("404 Not Found")
+                                    || stacktrace.contains("400 Bad Request")) {
+                                final Handler mHandler = new Handler(Looper.getMainLooper());
+                                mHandler.post(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    new AlertDialog.Builder(c)
+                                                            .setTitle(R.string.err_title)
+                                                            .setMessage(
+                                                                    R.string
+                                                                            .err_could_not_find_content_msg)
+                                                            .setNegativeButton(
+                                                                    "Close",
+                                                                    (dialog, which) -> {
+                                                                        if (!(c
+                                                                                instanceof
+                                                                                MainActivity)) {
+                                                                            ((Activity) c).finish();
+                                                                        }
+                                                                    })
+                                                            .show();
+                                                } catch (Exception ignored) {
+
+                                                }
+                                            }
+                                        });
+                            } else if (t instanceof NetworkException) {
+                                Toast.makeText(
+                                                c,
+                                                "Error "
+                                                        + ((NetworkException) t)
+                                                                .getResponse()
+                                                                .getStatusMessage()
+                                                        + ": "
+                                                        + (t).getMessage(),
+                                                Toast.LENGTH_LONG)
+                                        .show();
+                            } else if (t instanceof NullPointerException
+                                    && t.getMessage()
+                                            .contains(
+                                                    "Attempt to invoke virtual method"
+                                                        + " 'android.content.Context"
+                                                        + " android.view.ViewGroup.getContext()' on"
+                                                        + " a null object reference")) {
+                                t.printStackTrace();
+                            } else if (t instanceof WindowManager.BadTokenException) {
+                                t.printStackTrace();
+                            } else if (t instanceof IllegalArgumentException
+                                    && t.getMessage().contains("pointerIndex out of range")) {
+                                t.printStackTrace();
+                            } else {
+                                appRestart
+                                        .edit()
+                                        .putString("startScreen", "a")
+                                        .apply(); // Force reload of data after crash incase state
+                                // was not saved
+
+                                try {
+
+                                    SharedPreferences prefs =
+                                            c.getSharedPreferences(
+                                                    "STACKTRACE", Context.MODE_PRIVATE);
+                                    prefs.edit().putString("stacktrace", stacktrace).apply();
+
+                                } catch (Throwable ignored) {
                                 }
+
+                                androidHandler.uncaughtException(thread, t);
                             }
-                        });
-                    } else if (t instanceof NetworkException) {
-                        Toast.makeText(c, "Error "
-                                + ((NetworkException) t).getResponse().getStatusMessage()
-                                + ": "
-                                + (t).getMessage(), Toast.LENGTH_LONG).show();
-                    } else if (t instanceof NullPointerException && t.getMessage()
-                            .contains(
-                                    "Attempt to invoke virtual method 'android.content.Context android.view.ViewGroup.getContext()' on a null object reference")) {
-                        t.printStackTrace();
-                    } else if (t instanceof WindowManager.BadTokenException) {
-                        t.printStackTrace();
-                    } else if (t instanceof IllegalArgumentException && t.getMessage()
-                            .contains("pointerIndex out of range")) {
-                        t.printStackTrace();
-                    } else {
-                        appRestart.edit()
-                                .putString("startScreen", "a")
-                                .apply(); // Force reload of data after crash incase state was not saved
-
-
-                        try {
-
-                            SharedPreferences prefs =
-                                    c.getSharedPreferences("STACKTRACE", Context.MODE_PRIVATE);
-                            prefs.edit().putString("stacktrace", stacktrace).apply();
-
-                        } catch (Throwable ignored) {
+                        } else {
+                            androidHandler.uncaughtException(thread, t);
                         }
-
-
-                        androidHandler.uncaughtException(thread, t);
                     }
-                } else {
-                    androidHandler.uncaughtException(thread, t);
-                }
-            }
-        });
+                });
         // END adaptation
 
     }
 
     @Override
-    public void onActivityStopped(Activity activity) {
-    }
+    public void onActivityStopped(Activity activity) {}
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -361,16 +403,13 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
     }
 
     @Override
-    public void onActivityStarted(Activity activity) {
-    }
+    public void onActivityStarted(Activity activity) {}
 
     @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-    }
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
 
     @Override
-    public void onActivityDestroyed(Activity activity) {
-    }
+    public void onActivityDestroyed(Activity activity) {}
 
     @Override
     public void onCreate() {
@@ -382,12 +421,14 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
         }
 
         final File dir;
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) && getExternalCacheDir() != null) {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)
+                && getExternalCacheDir() != null) {
             dir = new File(getExternalCacheDir() + File.separator + "video-cache");
         } else {
             dir = new File(getCacheDir() + File.separator + "video-cache");
         }
-        LeastRecentlyUsedCacheEvictor evictor = new LeastRecentlyUsedCacheEvictor(256 * 1024 * 1024);
+        LeastRecentlyUsedCacheEvictor evictor =
+                new LeastRecentlyUsedCacheEvictor(256 * 1024 * 1024);
         DatabaseProvider databaseProvider = new ExoDatabaseProvider(getAppContext());
         videoCache = new SimpleCache(dir, evictor, databaseProvider); // 256MB
 
@@ -406,8 +447,8 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
         }
 
         overrideLanguage =
-                getSharedPreferences("SETTINGS", 0).getBoolean(SettingValues.PREF_OVERRIDE_LANGUAGE,
-                        false);
+                getSharedPreferences("SETTINGS", 0)
+                        .getBoolean(SettingValues.PREF_OVERRIDE_LANGUAGE, false);
         appRestart = getSharedPreferences("appRestart", 0);
         AlbumUtils.albumRequests = getSharedPreferences("albums", 0);
         TumblrUtils.tumblrRequests = getSharedPreferences("tumblr", 0);
@@ -425,7 +466,8 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
         UserSubscriptions.newsNameToSubs = getSharedPreferences("NEWSMULTITONAME", 0);
         UserSubscriptions.news = getSharedPreferences("NEWS", 0);
 
-        UserSubscriptions.newsNameToSubs.edit()
+        UserSubscriptions.newsNameToSubs
+                .edit()
                 .putString("android", "android+androidapps+googlepixel")
                 .putString("news", "worldnews+news+politics")
                 .apply();
@@ -498,8 +540,8 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
     public boolean isNotificationAccessEnabled() {
         ActivityManager manager = ContextCompat.getSystemService(this, ActivityManager.class);
         if (manager != null) {
-            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(
-                    Integer.MAX_VALUE)) {
+            for (ActivityManager.RunningServiceInfo service :
+                    manager.getRunningServices(Integer.MAX_VALUE)) {
                 if (NotificationPiggyback.class.getName().equals(service.service.getClassName())) {
                     return true;
                 }
@@ -508,44 +550,64 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
         return false;
     }
 
-
-    public static final String CHANNEL_IMG           = "IMG_DOWNLOADS";
+    public static final String CHANNEL_IMG = "IMG_DOWNLOADS";
     public static final String CHANNEL_COMMENT_CACHE = "POST_SYNC";
-    public static final String CHANNEL_MAIL          = "MAIL_NOTIFY";
-    public static final String CHANNEL_MODMAIL       = "MODMAIL_NOTIFY";
-    public static final String CHANNEL_SUBCHECKING   = "SUB_CHECK_NOTIFY";
+    public static final String CHANNEL_MAIL = "MAIL_NOTIFY";
+    public static final String CHANNEL_MODMAIL = "MODMAIL_NOTIFY";
+    public static final String CHANNEL_SUBCHECKING = "SUB_CHECK_NOTIFY";
 
     public void setupNotificationChannels() {
-            // Each triple contains the channel ID, name, and importance level
-            List<Triple<String, String, Integer>> notificationTripleList =
-                    new ArrayList<Triple<String, String, Integer>>() {{
-                        add(Triple.of(CHANNEL_IMG, "Image downloads",
-                                NotificationManagerCompat.IMPORTANCE_LOW));
-                        add(Triple.of(CHANNEL_COMMENT_CACHE, "Comment caching",
-                                NotificationManagerCompat.IMPORTANCE_LOW));
-                        add(Triple.of(CHANNEL_MAIL, "Reddit mail",
-                                NotificationManagerCompat.IMPORTANCE_HIGH));
-                        add(Triple.of(CHANNEL_MODMAIL, "Reddit modmail",
-                                NotificationManagerCompat.IMPORTANCE_HIGH));
-                        add(Triple.of(CHANNEL_SUBCHECKING, "Submission post checking",
-                                NotificationManagerCompat.IMPORTANCE_LOW));
-                    }};
+        // Each triple contains the channel ID, name, and importance level
+        List<Triple<String, String, Integer>> notificationTripleList =
+                new ArrayList<Triple<String, String, Integer>>() {
+                    {
+                        add(
+                                Triple.of(
+                                        CHANNEL_IMG,
+                                        "Image downloads",
+                                        NotificationManagerCompat.IMPORTANCE_LOW));
+                        add(
+                                Triple.of(
+                                        CHANNEL_COMMENT_CACHE,
+                                        "Comment caching",
+                                        NotificationManagerCompat.IMPORTANCE_LOW));
+                        add(
+                                Triple.of(
+                                        CHANNEL_MAIL,
+                                        "Reddit mail",
+                                        NotificationManagerCompat.IMPORTANCE_HIGH));
+                        add(
+                                Triple.of(
+                                        CHANNEL_MODMAIL,
+                                        "Reddit modmail",
+                                        NotificationManagerCompat.IMPORTANCE_HIGH));
+                        add(
+                                Triple.of(
+                                        CHANNEL_SUBCHECKING,
+                                        "Submission post checking",
+                                        NotificationManagerCompat.IMPORTANCE_LOW));
+                    }
+                };
 
-            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
-            for (Triple<String, String, Integer> notificationTriple : notificationTripleList) {
-                final NotificationChannelCompat notificationChannel =
-                        new NotificationChannelCompat.Builder(
-                                notificationTriple.getLeft(), notificationTriple.getRight())
-                                .setName(notificationTriple.getMiddle())
-                                .setLightsEnabled(true)
-                                .setShowBadge(notificationTriple.getRight() == NotificationManagerCompat.IMPORTANCE_HIGH)
-                                .setLightColor(notificationTriple.getLeft().contains("MODMAIL")
-                                        ? ResourcesCompat.getColor(this.getResources(), R.color.md_red_500, null)
-                                        : Palette.getColor(""))
-                                .build();
-                notificationManager.createNotificationChannel(notificationChannel);
-            }
+        for (Triple<String, String, Integer> notificationTriple : notificationTripleList) {
+            final NotificationChannelCompat notificationChannel =
+                    new NotificationChannelCompat.Builder(
+                                    notificationTriple.getLeft(), notificationTriple.getRight())
+                            .setName(notificationTriple.getMiddle())
+                            .setLightsEnabled(true)
+                            .setShowBadge(
+                                    notificationTriple.getRight()
+                                            == NotificationManagerCompat.IMPORTANCE_HIGH)
+                            .setLightColor(
+                                    notificationTriple.getLeft().contains("MODMAIL")
+                                            ? ResourcesCompat.getColor(
+                                                    this.getResources(), R.color.md_red_500, null)
+                                            : Palette.getColor(""))
+                            .build();
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
     }
 
     // IPV6 workaround by /u/talklittle

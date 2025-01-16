@@ -7,6 +7,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import me.edgan.redditslide.Authentication;
+
 import net.dean.jraw.models.Message;
 import net.dean.jraw.models.PrivateMessage;
 import net.dean.jraw.paginators.InboxPaginator;
@@ -14,11 +16,7 @@ import net.dean.jraw.paginators.Paginator;
 
 import java.util.ArrayList;
 
-import me.edgan.redditslide.Authentication;
-
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class InboxMessages extends GeneralPosts {
     public ArrayList<Message> posts;
     public boolean loading;
@@ -39,10 +37,7 @@ public class InboxMessages extends GeneralPosts {
 
     public void loadMore(InboxAdapter adapter, String where, boolean refresh) {
 
-            new LoadData(refresh).execute(where);
-
-
-
+        new LoadData(refresh).execute(where);
     }
 
     public class LoadData extends AsyncTask<String, Void, ArrayList<Message>> {
@@ -57,29 +52,30 @@ public class InboxMessages extends GeneralPosts {
             if (subs == null && !nomore) {
                 adapter.setError(true);
                 refreshLayout.setRefreshing(false);
-            } else if(!nomore) {
+            } else if (!nomore) {
 
-                if(subs.size() < 25){
+                if (subs.size() < 25) {
                     nomore = true;
                 }
                 if (reset) {
                     posts = subs;
 
                 } else {
-                    if(posts == null){
-                        posts =new ArrayList<>();
+                    if (posts == null) {
+                        posts = new ArrayList<>();
                     }
                     posts.addAll(subs);
                 }
-                ((Activity) adapter.mContext).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshLayout.setRefreshing(false);
-                        loading = false;
-                        adapter.notifyDataSetChanged();
-
-                    }
-                });
+                ((Activity) adapter.mContext)
+                        .runOnUiThread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        refreshLayout.setRefreshing(false);
+                                        loading = false;
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
             }
         }
 
@@ -95,15 +91,16 @@ public class InboxMessages extends GeneralPosts {
                     ArrayList<Message> done = new ArrayList<>();
                     for (Message m : paginator.next()) {
                         done.add(m);
-                        if (m.getDataNode().has("replies") && !m.getDataNode().get("replies").toString().isEmpty() && m.getDataNode().get("replies").has("data") && m.getDataNode().get("replies").get("data").has("children")) {
+                        if (m.getDataNode().has("replies")
+                                && !m.getDataNode().get("replies").toString().isEmpty()
+                                && m.getDataNode().get("replies").has("data")
+                                && m.getDataNode().get("replies").get("data").has("children")) {
                             JsonNode n = m.getDataNode().get("replies").get("data").get("children");
 
                             for (JsonNode o : n) {
                                 done.add(new PrivateMessage(o.get("data")));
                             }
-
                         }
-
                     }
                     return done;
 

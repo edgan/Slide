@@ -6,6 +6,12 @@ import android.widget.Toast;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import me.edgan.redditslide.Activities.MultiredditOverview;
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.PostMatch;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.util.SortingUtil;
+
 import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.models.Contribution;
 import net.dean.jraw.models.Submission;
@@ -17,26 +23,19 @@ import net.dean.jraw.paginators.TimePeriod;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import me.edgan.redditslide.Activities.MultiredditOverview;
-import me.edgan.redditslide.Authentication;
-import me.edgan.redditslide.PostMatch;
-import me.edgan.redditslide.R;
-import me.edgan.redditslide.util.SortingUtil;
-
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class SubredditSearchPosts extends GeneralPosts {
     private String term;
     private String subreddit = "";
-    public  boolean               loading;
+    public boolean loading;
     private Paginator<Submission> paginator;
-    public  SwipeRefreshLayout    refreshLayout;
-    private ContributionAdapter   adapter;
+    public SwipeRefreshLayout refreshLayout;
+    private ContributionAdapter adapter;
 
     public Activity parent;
 
-    public SubredditSearchPosts(String subreddit, String term, Activity parent, boolean multireddit) {
+    public SubredditSearchPosts(
+            String subreddit, String term, Activity parent, boolean multireddit) {
         if (subreddit != null) {
             this.subreddit = subreddit;
         }
@@ -58,8 +57,13 @@ public class SubredditSearchPosts extends GeneralPosts {
         new LoadData(reset).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public void loadMore(ContributionAdapter a, String subreddit, String where, boolean reset,
-            boolean multi, TimePeriod time) {
+    public void loadMore(
+            ContributionAdapter a,
+            String subreddit,
+            String where,
+            boolean reset,
+            boolean multi,
+            TimePeriod time) {
         this.adapter = a;
         this.subreddit = subreddit;
         this.term = where;
@@ -87,13 +91,26 @@ public class SubredditSearchPosts extends GeneralPosts {
         public void onPostExecute(ArrayList<Contribution> submissions) {
             loading = false;
 
-            if(error != null){
-                if(error instanceof NetworkException){
-                    NetworkException e = (NetworkException)error;
-                    Toast.makeText(adapter.mContext,"Loading failed, " + e.getResponse().getStatusCode() + ": " + ((NetworkException) error).getResponse().getStatusMessage(), Toast.LENGTH_LONG).show();
+            if (error != null) {
+                if (error instanceof NetworkException) {
+                    NetworkException e = (NetworkException) error;
+                    Toast.makeText(
+                                    adapter.mContext,
+                                    "Loading failed, "
+                                            + e.getResponse().getStatusCode()
+                                            + ": "
+                                            + ((NetworkException) error)
+                                                    .getResponse()
+                                                    .getStatusMessage(),
+                                    Toast.LENGTH_LONG)
+                            .show();
                 }
-                if(error.getCause() instanceof UnknownHostException){
-                    Toast.makeText(adapter.mContext,"Loading failed, please check your internet connection", Toast.LENGTH_LONG).show();
+                if (error.getCause() instanceof UnknownHostException) {
+                    Toast.makeText(
+                                    adapter.mContext,
+                                    "Loading failed, please check your internet connection",
+                                    Toast.LENGTH_LONG)
+                            .show();
                 }
             }
 
@@ -140,7 +157,8 @@ public class SubredditSearchPosts extends GeneralPosts {
                 nomore = true;
                 adapter.notifyDataSetChanged();
                 if (reset) {
-                    Toast.makeText(adapter.mContext, R.string.no_posts_found, Toast.LENGTH_LONG).show();
+                    Toast.makeText(adapter.mContext, R.string.no_posts_found, Toast.LENGTH_LONG)
+                            .show();
                 }
             } else if (!nomore) {
                 // error
@@ -155,26 +173,28 @@ public class SubredditSearchPosts extends GeneralPosts {
             try {
                 if (reset || paginator == null) {
                     if (multireddit) {
-                        paginator = new SubmissionSearchPaginatorMultireddit(Authentication.reddit,
-                                term);
-                        ((SubmissionSearchPaginatorMultireddit) paginator).setMultiReddit(
-                                MultiredditOverview.searchMulti);
-                        ((SubmissionSearchPaginatorMultireddit) paginator).setSearchSorting(
-                                SubmissionSearchPaginatorMultireddit.SearchSort.valueOf(
-                                        SortingUtil.search.toString()));
-                        ((SubmissionSearchPaginatorMultireddit) paginator).setSyntax(
-                                SubmissionSearchPaginatorMultireddit.SearchSyntax.LUCENE);
+                        paginator =
+                                new SubmissionSearchPaginatorMultireddit(
+                                        Authentication.reddit, term);
+                        ((SubmissionSearchPaginatorMultireddit) paginator)
+                                .setMultiReddit(MultiredditOverview.searchMulti);
+                        ((SubmissionSearchPaginatorMultireddit) paginator)
+                                .setSearchSorting(
+                                        SubmissionSearchPaginatorMultireddit.SearchSort.valueOf(
+                                                SortingUtil.search.toString()));
+                        ((SubmissionSearchPaginatorMultireddit) paginator)
+                                .setSyntax(
+                                        SubmissionSearchPaginatorMultireddit.SearchSyntax.LUCENE);
 
                     } else {
                         paginator = new SubmissionSearchPaginator(Authentication.reddit, term);
                         if (!subreddit.isEmpty()) {
                             ((SubmissionSearchPaginator) paginator).setSubreddit(subreddit);
                         }
-                        ((SubmissionSearchPaginator) paginator).setSearchSorting(
-                                SortingUtil.search);
-                        ((SubmissionSearchPaginator) paginator).setSyntax(
-                                SubmissionSearchPaginator.SearchSyntax.LUCENE);
-
+                        ((SubmissionSearchPaginator) paginator)
+                                .setSearchSorting(SortingUtil.search);
+                        ((SubmissionSearchPaginator) paginator)
+                                .setSyntax(SubmissionSearchPaginator.SearchSyntax.LUCENE);
                     }
                     paginator.setTimePeriod((time));
                 }
@@ -187,13 +207,12 @@ public class SubredditSearchPosts extends GeneralPosts {
 
                 return newSubmissions;
             } catch (Exception e) {
-              error = e;
+                error = e;
                 e.printStackTrace();
                 return null;
             }
         }
+
         Exception error;
-
     }
-
 }

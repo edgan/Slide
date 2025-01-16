@@ -1,4 +1,3 @@
-
 package me.edgan.redditslide.SwipeLayout;
 
 import android.app.Activity;
@@ -7,25 +6,19 @@ import android.os.Build;
 
 import java.lang.reflect.Method;
 
-/**
- * Created by Chaojun Wang on 6/9/14.
- *
- */
+/** Created by Chaojun Wang on 6/9/14. */
 public class Utils {
-    private Utils() {
-    }
+    private Utils() {}
 
     /**
-     * Convert a translucent themed Activity
-     * {@link android.R.attr#windowIsTranslucent} to a fullscreen opaque
-     * Activity.
-     * <p>
-     * Call this whenever the background of a translucent Activity has changed
-     * to become opaque. Doing so will allow the {@link android.view.Surface} of
-     * the Activity behind to be released.
-     * <p>
-     * This call has no effect on non-translucent activities or on activities
-     * with the {@link android.R.attr#windowIsFloating} attribute.
+     * Convert a translucent themed Activity {@link android.R.attr#windowIsTranslucent} to a
+     * fullscreen opaque Activity.
+     *
+     * <p>Call this whenever the background of a translucent Activity has changed to become opaque.
+     * Doing so will allow the {@link android.view.Surface} of the Activity behind to be released.
+     *
+     * <p>This call has no effect on non-translucent activities or on activities with the {@link
+     * android.R.attr#windowIsFloating} attribute.
      */
     public static void convertActivityFromTranslucent(Activity activity) {
         try {
@@ -37,16 +30,15 @@ public class Utils {
     }
 
     /**
-     * Convert a translucent themed Activity
-     * {@link android.R.attr#windowIsTranslucent} back from opaque to
-     * translucent following a call to
-     * {@link #convertActivityFromTranslucent(android.app.Activity)} .
-     * <p>
-     * Calling this allows the Activity behind this one to be seen again. Once
-     * all such Activities have been redrawn
-     * <p>
-     * This call has no effect on non-translucent activities or on activities
-     * with the {@link android.R.attr#windowIsFloating} attribute.
+     * Convert a translucent themed Activity {@link android.R.attr#windowIsTranslucent} back from
+     * opaque to translucent following a call to {@link
+     * #convertActivityFromTranslucent(android.app.Activity)} .
+     *
+     * <p>Calling this allows the Activity behind this one to be seen again. Once all such
+     * Activities have been redrawn
+     *
+     * <p>This call has no effect on non-translucent activities or on activities with the {@link
+     * android.R.attr#windowIsFloating} attribute.
      */
     public static void convertActivityToTranslucent(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -56,9 +48,7 @@ public class Utils {
         }
     }
 
-    /**
-     * Calling the convertToTranslucent method on platforms before Android 5.0
-     */
+    /** Calling the convertToTranslucent method on platforms before Android 5.0 */
     public static void convertActivityToTranslucentBeforeL(Activity activity) {
         try {
             Class<?>[] classes = Activity.class.getDeclaredClasses();
@@ -68,19 +58,16 @@ public class Utils {
                     translucentConversionListenerClazz = clazz;
                 }
             }
-            Method method = Activity.class.getDeclaredMethod("convertToTranslucent",
-                    translucentConversionListenerClazz);
+            Method method =
+                    Activity.class.getDeclaredMethod(
+                            "convertToTranslucent", translucentConversionListenerClazz);
             method.setAccessible(true);
-            method.invoke(activity, new Object[] {
-                null
-            });
+            method.invoke(activity, new Object[] {null});
         } catch (Throwable ignored) {
         }
     }
 
-    /**
-     * Calling the convertToTranslucent method on platforms after Android 5.0
-     */
+    /** Calling the convertToTranslucent method on platforms after Android 5.0 */
     private static void convertActivityToTranslucentAfterL(Activity activity) {
         try {
             Method getActivityOptions = Activity.class.getDeclaredMethod("getActivityOptions");
@@ -94,8 +81,11 @@ public class Utils {
                     translucentConversionListenerClazz = clazz;
                 }
             }
-            Method convertToTranslucent = Activity.class.getDeclaredMethod("convertToTranslucent",
-                    translucentConversionListenerClazz, ActivityOptions.class);
+            Method convertToTranslucent =
+                    Activity.class.getDeclaredMethod(
+                            "convertToTranslucent",
+                            translucentConversionListenerClazz,
+                            ActivityOptions.class);
             convertToTranslucent.setAccessible(true);
             convertToTranslucent.invoke(activity, null, options);
         } catch (Throwable ignored) {

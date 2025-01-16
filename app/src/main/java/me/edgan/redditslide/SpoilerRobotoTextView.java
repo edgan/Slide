@@ -9,6 +9,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Movie;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.CharacterStyle;
+import android.text.style.DynamicDrawableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.text.style.QuoteSpan;
@@ -30,39 +32,19 @@ import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Log;
-import android.graphics.Movie;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import java.io.FileInputStream;
-import org.apache.commons.io.FileUtils;
-import java.io.IOException;
-import android.text.style.DynamicDrawableSpan;
-import android.text.Layout;
-import android.graphics.Rect;
 
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.ContextCompat;
 
 import com.cocosw.bottomsheet.BottomSheet;
 import com.devspark.robototextview.widget.RobotoTextView;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import me.edgan.redditslide.Activities.Album;
 import me.edgan.redditslide.Activities.AlbumPager;
@@ -81,23 +63,31 @@ import me.edgan.redditslide.Views.CustomQuoteSpan;
 import me.edgan.redditslide.Views.PeekMediaView;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.handler.TextViewLinkHandler;
+import me.edgan.redditslide.util.AnimatedImageSpan;
 import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.ClipboardUtil;
 import me.edgan.redditslide.util.CompatUtil;
-import me.edgan.redditslide.util.LinkUtil;
-import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.GifDrawable;
 import me.edgan.redditslide.util.GifUtils;
-import me.edgan.redditslide.util.AnimatedImageSpan;
+import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.LogUtil;
 
-/**
- * Created by carlo_000 on 1/11/2016.
- */
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/** Created by carlo_000 on 1/11/2016. */
 public class SpoilerRobotoTextView extends RobotoTextView implements ClickableText {
-    private              List<CharacterStyle> storedSpoilerSpans  = new ArrayList<>();
-    private              List<Integer>        storedSpoilerStarts = new ArrayList<>();
-    private              List<Integer>        storedSpoilerEnds   = new ArrayList<>();
-    private static final Pattern              htmlSpoilerPattern  =
+    private List<CharacterStyle> storedSpoilerSpans = new ArrayList<>();
+    private List<Integer> storedSpoilerStarts = new ArrayList<>();
+    private List<Integer> storedSpoilerEnds = new ArrayList<>();
+    private static final Pattern htmlSpoilerPattern =
             Pattern.compile("<a href=\"[#/](?:spoiler|sp|s)\">([^<]*)</a>");
     private static final Pattern nativeSpoilerPattern =
             Pattern.compile("<span class=\"[^\"]*md-spoiler-text+[^\"]*\">([^<]*)</span>");
@@ -142,8 +132,9 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     }
 
     /**
-     * Set the text from html. Handles formatting spoilers, links etc. <p/> The text must be valid
-     * html.
+     * Set the text from html. Handles formatting spoilers, links etc.
+     *
+     * <p>The text must be valid html.
      *
      * @param text html text
      */
@@ -152,10 +143,11 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     }
 
     /**
-     * Set the text from html. Handles formatting spoilers, links etc. <p/> The text must be valid
-     * html.
+     * Set the text from html. Handles formatting spoilers, links etc.
      *
-     * @param baseText  html text
+     * <p>The text must be valid html.
+     *
+     * @param baseText html text
      * @param subreddit the subreddit to theme
      */
     public void setTextHtml(CharSequence baseText, String subreddit) {
@@ -188,7 +180,6 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             if (subreddit.equals("FORCE_LINK_CLICK")) {
                 setLongClickable(false);
             }
-
         }
 
         builder = removeNewlines(builder);
@@ -198,9 +189,12 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         super.setText(builder, BufferType.SPANNABLE);
     }
 
-
     /**
-     * Replaces the blue line produced by <blockquote>s with something more visible
+     * Replaces the blue line produced by
+     *
+     * <blockquote>
+     *
+     * s with something more visible
      *
      * @param spannable parsed comment text #fromHtml
      */
@@ -215,18 +209,24 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             spannable.removeSpan(quoteSpan);
 
             // If the theme is Light or Sepia, use a darker blue; otherwise, use a lighter blue
-            final int barColor = ContextCompat.getColor(getContext(),
-                    SettingValues.currentTheme == 1 || SettingValues.currentTheme == 5
-                            ? R.color.md_blue_600 : R.color.md_blue_400);
+            final int barColor =
+                    ContextCompat.getColor(
+                            getContext(),
+                            SettingValues.currentTheme == 1 || SettingValues.currentTheme == 5
+                                    ? R.color.md_blue_600
+                                    : R.color.md_blue_400);
 
             final int BAR_WIDTH = 4;
             final int GAP = 5;
 
-            spannable.setSpan(new CustomQuoteSpan(
+            spannable.setSpan(
+                    new CustomQuoteSpan(
                             barColor, // bar color
                             BAR_WIDTH, // bar width
                             GAP), // bar + text gap
-                    start, end, flags);
+                    start,
+                    end,
+                    flags);
         }
     }
 
@@ -239,7 +239,10 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     }
 
     private String saveEmotesFromDestruction(String html) {
-        // Emotes often have no spoiler caption, and therefore are converted to empty anchors. Html.fromHtml removes anchors with zero length node text. Find zero length anchors that start with "/" and add "." to them.
+        // Emotes often have no spoiler caption, and therefore are converted to empty anchors.
+        // Html.fromHtml removes anchors with zero length node text. Find zero length anchors that
+        // start
+        // with "/" and add "." to them.
         Pattern htmlEmotePattern = Pattern.compile("<a href=\"/.*\"></a>");
         Matcher htmlEmoteMatcher = htmlEmotePattern.matcher(html);
         while (htmlEmoteMatcher.find()) {
@@ -275,9 +278,9 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
 
     private static class EmoteDrawInfo {
         GifDrawable drawable;
-        int position;  // Character position in text
-        float x;       // Cached x position
-        float y;       // Cached y position
+        int position; // Character position in text
+        float x; // Cached x position
+        float y; // Cached y position
         boolean isValid;
 
         EmoteDrawInfo(GifDrawable drawable, int position) {
@@ -302,11 +305,12 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             return;
         }
 
-        synchronized(spanLock) {
+        synchronized (spanLock) {
             try {
                 if (!isAttachedToWindow()) {
                     Log.d("EmoteDebug", "View not attached, queueing update for " + emoteName);
-                    pendingSpans.add(new PendingEmoteSpan((AnimatedImageSpan) span, emoteName, position));
+                    pendingSpans.add(
+                            new PendingEmoteSpan((AnimatedImageSpan) span, emoteName, position));
                     return;
                 }
 
@@ -326,7 +330,10 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 int count = 0;
 
                 while (count <= position) {
-                    pos = content.indexOf('\uFFFC', pos + 1); // '\uFFFC' is the object replacement character
+                    pos =
+                            content.indexOf(
+                                    '\uFFFC',
+                                    pos + 1); // '\uFFFC' is the object replacement character
                     if (pos == -1) {
                         Log.e("EmoteDebug", "Could not find position for emote " + emoteName);
                         return;
@@ -364,7 +371,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        synchronized(spanLock) {
+        synchronized (spanLock) {
             // First apply any pending spans
             if (!pendingSpans.isEmpty()) {
                 Log.d("EmoteDebug", "Applying " + pendingSpans.size() + " pending spans");
@@ -378,7 +385,8 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             CharSequence text = getText();
             if (text instanceof Spannable) {
                 Spannable spannable = (Spannable) text;
-                DynamicDrawableSpan[] spans = spannable.getSpans(0, spannable.length(), DynamicDrawableSpan.class);
+                DynamicDrawableSpan[] spans =
+                        spannable.getSpans(0, spannable.length(), DynamicDrawableSpan.class);
                 for (DynamicDrawableSpan span : spans) {
                     if (span instanceof AnimatedImageSpan) {
                         ((AnimatedImageSpan) span).onAttached();
@@ -390,12 +398,13 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
 
     @Override
     protected void onDetachedFromWindow() {
-        synchronized(spanLock) {
+        synchronized (spanLock) {
             // Stop all spans
             CharSequence text = getText();
             if (text instanceof Spannable) {
                 Spannable spannable = (Spannable) text;
-                DynamicDrawableSpan[] spans = spannable.getSpans(0, spannable.length(), DynamicDrawableSpan.class);
+                DynamicDrawableSpan[] spans =
+                        spannable.getSpans(0, spannable.length(), DynamicDrawableSpan.class);
                 for (DynamicDrawableSpan span : spans) {
                     if (span instanceof AnimatedImageSpan) {
                         ((AnimatedImageSpan) span).onDetached();
@@ -407,7 +416,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     }
 
     private void cleanupGifs() {
-        synchronized(spanLock) {
+        synchronized (spanLock) {
             // Stop all active GIF animations
             for (EmoteDrawInfo info : emoteDrawables) {
                 info.drawable.stop();
@@ -418,7 +427,8 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             CharSequence currentText = getText();
             if (currentText instanceof Spannable) {
                 Spannable spannable = (Spannable) currentText;
-                AnimatedImageSpan[] spans = spannable.getSpans(0, spannable.length(), AnimatedImageSpan.class);
+                AnimatedImageSpan[] spans =
+                        spannable.getSpans(0, spannable.length(), AnimatedImageSpan.class);
                 for (AnimatedImageSpan span : spans) {
                     spannable.removeSpan(span);
                 }
@@ -439,18 +449,18 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             // Clear existing state
             cleanupGifs();
 
-            Pattern redditPattern = Pattern.compile(
-                "<img\\s+src=\\\"(https://www\\.redditstatic\\.com/marketplace-assets/v1/core/emotes/snoomoji_emotes/free_emotes_pack/([^/\\\"]+)\\.gif)\\\"[^>]*>");
-            Pattern giphyPattern = Pattern.compile(
-                "<img\\s+src=\\\"(https://external-preview\\.redd\\.it/([^?]+)\\?width=([0-9]+)&height=([0-9]+)&s=([^\\\"]+))\\\"[^>]*>"
-            );
+            Pattern redditPattern =
+                    Pattern.compile(
+                            "<img\\s+src=\\\"(https://www\\.redditstatic\\.com/marketplace-assets/v1/core/emotes/snoomoji_emotes/free_emotes_pack/([^/\\\"]+)\\.gif)\\\"[^>]*>");
+            Pattern giphyPattern =
+                    Pattern.compile(
+                            "<img\\s+src=\\\"(https://external-preview\\.redd\\.it/([^?]+)\\?width=([0-9]+)&height=([0-9]+)&s=([^\\\"]+))\\\"[^>]*>");
 
             List<EmoteSpanRequest> spanRequests = new ArrayList<>();
             StringBuilder processedText = new StringBuilder();
 
             // Strip divs first
-            text = text.replaceAll("<div class=\\\"md\\\"><div>", "")
-                      .replaceAll("</div>", "");
+            text = text.replaceAll("<div class=\\\"md\\\"><div>", "").replaceAll("</div>", "");
 
             // Process the text for both patterns
             processPattern(text, redditPattern, processedText, spanRequests);
@@ -472,7 +482,11 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         }
     }
 
-    private void processPattern(String text, Pattern pattern, StringBuilder processedText, List<EmoteSpanRequest> spanRequests) {
+    private void processPattern(
+            String text,
+            Pattern pattern,
+            StringBuilder processedText,
+            List<EmoteSpanRequest> spanRequests) {
         Matcher matcher = pattern.matcher(text);
         int lastEnd = 0;
         int emoteCount = spanRequests.size();
@@ -493,12 +507,8 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 if (gifUrl != null && emoteName != null) {
                     processedText.append("\uFFFC"); // Object replacement character
 
-                    spanRequests.add(new EmoteSpanRequest(
-                        gifUrl,
-                        emoteCount,
-                        emoteCount + 1,
-                        emoteName
-                    ));
+                    spanRequests.add(
+                            new EmoteSpanRequest(gifUrl, emoteCount, emoteCount + 1, emoteName));
 
                     emoteCount++;
                 }
@@ -518,82 +528,134 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     private void loadGifEmote(EmoteSpanRequest request, TextView textView, int pos) {
         Log.d("EmoteDebug", "Starting GIF download for: " + request.gifUrl);
 
-        GifUtils.downloadGif(request.gifUrl, new GifUtils.GifDownloadCallback() {
-            @Override
-            public void onGifDownloaded(File gifFile) {
-                float scale = 0.5f;
-                try {
-                    Movie movie = Movie.decodeFile(gifFile.getAbsolutePath());
-                    if (movie != null) {
-                        // After decoding the movie and obtaining width and height
-                        int intrinsicHeight = movie.height();
-                        int intrinsicWidth = movie.width();
+        GifUtils.downloadGif(
+                request.gifUrl,
+                new GifUtils.GifDownloadCallback() {
+                    @Override
+                    public void onGifDownloaded(File gifFile) {
+                        float scale = 0.5f;
+                        try {
+                            Movie movie = Movie.decodeFile(gifFile.getAbsolutePath());
+                            if (movie != null) {
+                                // After decoding the movie and obtaining width and height
+                                int intrinsicHeight = movie.height();
+                                int intrinsicWidth = movie.width();
 
-                        int height = (int) (intrinsicHeight * scale);
-                        int width = (int) (intrinsicWidth * scale);
+                                int height = (int) (intrinsicHeight * scale);
+                                int width = (int) (intrinsicWidth * scale);
 
-                        GifDrawable gifDrawable = new GifDrawable(movie, null);
-                        gifDrawable.setBounds(0, 0, 0, height);
+                                GifDrawable gifDrawable = new GifDrawable(movie, null);
+                                gifDrawable.setBounds(0, 0, 0, height);
 
-                        Log.d("EmoteDebug", "Created drawable for " + request.emoteName + " with bounds " + height + "x" + width);
+                                Log.d(
+                                        "EmoteDebug",
+                                        "Created drawable for "
+                                                + request.emoteName
+                                                + " with bounds "
+                                                + height
+                                                + "x"
+                                                + width);
 
-                        // Wrap GifDrawable in AnimatedImageSpan
-                        AnimatedImageSpan animatedSpan = new AnimatedImageSpan(gifDrawable, SpoilerRobotoTextView.this);
+                                // Wrap GifDrawable in AnimatedImageSpan
+                                AnimatedImageSpan animatedSpan =
+                                        new AnimatedImageSpan(
+                                                gifDrawable, SpoilerRobotoTextView.this);
 
-                        // Post to UI thread
-                        textView.post(() -> {
-                            synchronized(spanLock) {
-                                try {
-                                    if (!isAttachedToWindow()) {
-                                        Log.d("EmoteDebug", "View not attached, queueing update for " + request.emoteName);
-                                        pendingSpans.add(new PendingEmoteSpan(animatedSpan, request.emoteName, pos));
-                                        return;
-                                    }
+                                // Post to UI thread
+                                textView.post(
+                                        () -> {
+                                            synchronized (spanLock) {
+                                                try {
+                                                    if (!isAttachedToWindow()) {
+                                                        Log.d(
+                                                                "EmoteDebug",
+                                                                "View not attached, queueing update"
+                                                                        + " for "
+                                                                        + request.emoteName);
+                                                        pendingSpans.add(
+                                                                new PendingEmoteSpan(
+                                                                        animatedSpan,
+                                                                        request.emoteName,
+                                                                        pos));
+                                                        return;
+                                                    }
 
-                                    CharSequence currentText = getText();
-                                    if (currentText instanceof Spannable) {
-                                        Spannable spannable = (Spannable) currentText;
-                                        int start = spannable.toString().indexOf(currentText.toString());
-                                        int end = start + currentText.toString().length();
+                                                    CharSequence currentText = getText();
+                                                    if (currentText instanceof Spannable) {
+                                                        Spannable spannable =
+                                                                (Spannable) currentText;
+                                                        int start =
+                                                                spannable
+                                                                        .toString()
+                                                                        .indexOf(
+                                                                                currentText
+                                                                                        .toString());
+                                                        int end =
+                                                                start
+                                                                        + currentText
+                                                                                .toString()
+                                                                                .length();
 
-                                        boolean found = findObjectReplacementChar(currentText);
-                                        if (found) {
-                                            spannable.setSpan(animatedSpan, start, start + 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-                                        } else {
-                                            spannable.setSpan(animatedSpan, end - 2, end, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-                                        }
-                                    }
+                                                        boolean found =
+                                                                findObjectReplacementChar(
+                                                                        currentText);
+                                                        if (found) {
+                                                            spannable.setSpan(
+                                                                    animatedSpan,
+                                                                    start,
+                                                                    start + 1,
+                                                                    Spannable
+                                                                            .SPAN_EXCLUSIVE_INCLUSIVE);
+                                                        } else {
+                                                            spannable.setSpan(
+                                                                    animatedSpan,
+                                                                    end - 2,
+                                                                    end,
+                                                                    Spannable
+                                                                            .SPAN_EXCLUSIVE_INCLUSIVE);
+                                                        }
+                                                    }
 
-                                    // Explicitly call onAttached for the new span
-                                    animatedSpan.onAttached();
+                                                    // Explicitly call onAttached for the new span
+                                                    animatedSpan.onAttached();
 
-                                    if (SettingValues.commentEmoteAnimation) {
-                                        animatedSpan.start();
-                                    }
+                                                    if (SettingValues.commentEmoteAnimation) {
+                                                        animatedSpan.start();
+                                                    }
 
-                                    emoteDrawables.add(new EmoteDrawInfo(animatedSpan.getGifDrawable(), pos));
+                                                    emoteDrawables.add(
+                                                            new EmoteDrawInfo(
+                                                                    animatedSpan.getGifDrawable(),
+                                                                    pos));
 
-                                    // Force layout update
-                                    requestLayout();
+                                                    // Force layout update
+                                                    requestLayout();
 
-                                } catch (Exception e) {
-                                    Log.e("EmoteDebug", "Error setting emote drawable for " + request.emoteName, e);
-                                }
+                                                } catch (Exception e) {
+                                                    Log.e(
+                                                            "EmoteDebug",
+                                                            "Error setting emote drawable for "
+                                                                    + request.emoteName,
+                                                            e);
+                                                }
+                                            }
+                                        });
+                            } else {
+                                Log.e(
+                                        "EmoteDebug",
+                                        "Failed to decode movie for: " + request.emoteName);
                             }
-                        });
-                    } else {
-                        Log.e("EmoteDebug", "Failed to decode movie for: " + request.emoteName);
+                        } catch (Exception e) {
+                            Log.e("EmoteDebug", "Error processing GIF: " + request.emoteName, e);
+                        }
                     }
-                } catch (Exception e) {
-                    Log.e("EmoteDebug", "Error processing GIF: " + request.emoteName, e);
-                }
-            }
 
-            @Override
-            public void onGifDownloadFailed(Exception e) {
-                Log.e("EmoteDebug", "Failed to download GIF: " + request.gifUrl, e);
-            }
-        }, textView.getContext());
+                    @Override
+                    public void onGifDownloadFailed(Exception e) {
+                        Log.e("EmoteDebug", "Failed to download GIF: " + request.gifUrl, e);
+                    }
+                },
+                textView.getContext());
     }
 
     // Helper class to keep track of span requests
@@ -620,8 +682,13 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 setLargeLinks(builder, span);
             }
             File emoteDir = new File(Environment.getExternalStorageDirectory(), "RedditEmotes");
-            File emoteFile = new File(emoteDir, span.getURL().replace("/", "").replaceAll("-.*", "")
-                    + ".png"); // BPM uses "-" to add dynamics for emotes in browser. Fall back to original here if exists.
+            File emoteFile =
+                    new File(
+                            emoteDir,
+                            span.getURL().replace("/", "").replaceAll("-.*", "")
+                                    + ".png"); // BPM uses "-" to add dynamics for emotes in
+            // browser. Fall back to
+            // original here if exists.
             boolean startsWithSlash = span.getURL().startsWith("/");
             boolean hasOnlyOneSlash = StringUtils.countMatches(span.getURL(), "/") == 1;
 
@@ -634,24 +701,37 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 // Make sure bitmap loaded works well with screen density.
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 DisplayMetrics metrics = new DisplayMetrics();
-                ContextCompat.getSystemService(getContext(), WindowManager.class).getDefaultDisplay().getMetrics(metrics);
+                ContextCompat.getSystemService(getContext(), WindowManager.class)
+                        .getDefaultDisplay()
+                        .getMetrics(metrics);
                 options.inDensity = 240;
                 options.inScreenDensity = metrics.densityDpi;
                 options.inScaled = true;
 
-                // Since emotes are not directly attached to included text, add extra character to attach image to.
+                // Since emotes are not directly attached to included text, add extra character to
+                // attach
+                // image to.
                 builder.removeSpan(span);
                 if (builder.subSequence(start, end).charAt(0) != '.') {
                     builder.insert(start, ".");
                 }
                 Bitmap emoteBitmap = BitmapFactory.decodeFile(emoteFile.getAbsolutePath(), options);
-                builder.setSpan(new ImageSpan(getContext(), emoteBitmap), start, start + 1,
+                builder.setSpan(
+                        new ImageSpan(getContext(), emoteBitmap),
+                        start,
+                        start + 1,
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 // Check if url span has length. If it does, it's a spoiler/caption
                 if (textCovers.length() > 1) {
-                    builder.setSpan(new URLSpan("/sp"), start + 1, end + 1,
+                    builder.setSpan(
+                            new URLSpan("/sp"),
+                            start + 1,
+                            end + 1,
                             Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                    builder.setSpan(new StyleSpan(Typeface.ITALIC), start + 1, end + 1,
+                    builder.setSpan(
+                            new StyleSpan(Typeface.ITALIC),
+                            start + 1,
+                            end + 1,
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
                 builder.append("\n"); // Newline to fix text wrapping issues
@@ -664,33 +744,48 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         if (url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);
         }
-        String text = builder.subSequence(builder.getSpanStart(span), builder.getSpanEnd(span))
-                .toString();
+        String text =
+                builder.subSequence(builder.getSpanStart(span), builder.getSpanEnd(span))
+                        .toString();
         if (!text.equalsIgnoreCase(url)) {
             ContentType.Type contentType = ContentType.getContentType(url);
             String bod;
             try {
-                bod = " (" + ((url.contains("/") && url.startsWith("/") && !(url.split("/").length
-                        > 2)) ? url
-                        : (getContext().getString(ContentType.getContentID(contentType, false)) + (
-                                contentType == ContentType.Type.LINK ? " " + Uri.parse(url)
-                                        .getHost() : ""))) + ")";
+                bod =
+                        " ("
+                                + ((url.contains("/")
+                                                && url.startsWith("/")
+                                                && !(url.split("/").length > 2))
+                                        ? url
+                                        : (getContext()
+                                                        .getString(
+                                                                ContentType.getContentID(
+                                                                        contentType, false))
+                                                + (contentType == ContentType.Type.LINK
+                                                        ? " " + Uri.parse(url).getHost()
+                                                        : "")))
+                                + ")";
             } catch (Exception e) {
-                bod = " ("
-                        + getContext().getString(ContentType.getContentID(contentType, false))
-                        + ")";
+                bod =
+                        " ("
+                                + getContext()
+                                        .getString(ContentType.getContentID(contentType, false))
+                                + ")";
             }
             SpannableStringBuilder b = new SpannableStringBuilder(bod);
-            b.setSpan(new StyleSpan(Typeface.BOLD), 0, b.length(),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            b.setSpan(
+                    new StyleSpan(Typeface.BOLD), 0, b.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             b.setSpan(new RelativeSizeSpan(0.8f), 0, b.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             builder.insert(builder.getSpanEnd(span), b);
         }
     }
 
     private void setLargeLinks(SpannableStringBuilder builder, URLSpan span) {
-        builder.setSpan(new RelativeSizeSpan(1.3f), builder.getSpanStart(span),
-                builder.getSpanEnd(span), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        builder.setSpan(
+                new RelativeSizeSpan(1.3f),
+                builder.getSpanStart(span),
+                builder.getSpanEnd(span),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     private void setStrikethrough(SpannableStringBuilder builder) {
@@ -710,8 +805,8 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                     && builder.charAt(i + 2) == ']'
                     && builder.charAt(i + 3) == ']') {
                 end = i;
-                builder.setSpan(new StrikethroughSpan(), start, end,
-                        Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                builder.setSpan(
+                        new StrikethroughSpan(), start, end, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 builder.delete(end, end + offset);
                 builder.delete(start - offset, start);
                 i -= offset + (end - start); // length of text
@@ -735,7 +830,10 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                     && builder.charAt(i + 2) == ']'
                     && builder.charAt(i + 3) == ']') {
                 end = i;
-                builder.setSpan(new BackgroundColorSpan(Palette.getColor(subreddit)), start, end,
+                builder.setSpan(
+                        new BackgroundColorSpan(Palette.getColor(subreddit)),
+                        start,
+                        end,
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 builder.delete(end, end + offset);
                 builder.delete(start - offset, start);
@@ -757,8 +855,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         if (context instanceof Activity) {
             activity = (Activity) context;
         } else if (context instanceof ContextThemeWrapper) {
-            activity =
-                    (Activity) ((ContextThemeWrapper) context).getBaseContext();
+            activity = (Activity) ((ContextThemeWrapper) context).getBaseContext();
         } else if (context instanceof ContextWrapper) {
             Context context1 = ((ContextWrapper) context).getBaseContext();
             if (context1 instanceof Activity) {
@@ -768,8 +865,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 if (context2 instanceof Activity) {
                     activity = (Activity) context2;
                 } else if (context2 instanceof ContextWrapper) {
-                    activity =
-                            (Activity) ((ContextThemeWrapper) context2).getBaseContext();
+                    activity = (Activity) ((ContextThemeWrapper) context2).getBaseContext();
                 }
             }
         } else {
@@ -869,8 +965,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         if (context instanceof Activity) {
             activity = (Activity) context;
         } else if (context instanceof ContextThemeWrapper) {
-            activity =
-                    (Activity) ((ContextThemeWrapper) context).getBaseContext();
+            activity = (Activity) ((ContextThemeWrapper) context).getBaseContext();
         } else if (context instanceof ContextWrapper) {
             Context context1 = ((ContextWrapper) context).getBaseContext();
             if (context1 instanceof Activity) {
@@ -880,8 +975,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 if (context2 instanceof Activity) {
                     activity = (Activity) context2;
                 } else if (context2 instanceof ContextWrapper) {
-                    activity =
-                            (Activity) ((ContextThemeWrapper) context2).getBaseContext();
+                    activity = (Activity) ((ContextThemeWrapper) context2).getBaseContext();
                 }
             }
         } else {
@@ -890,64 +984,88 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
 
         if (activity != null && !activity.isFinishing()) {
             if (SettingValues.peek) {
-                Peek.into(R.layout.peek_view, new SimpleOnPeek() {
-                    @Override
-                    public void onInflated(final PeekView peekView, final View rootView) {
-                        // do stuff
-                        TextView text = rootView.findViewById(R.id.title);
-                        text.setText(url);
-                        text.setTextColor(Color.WHITE);
-                        ((PeekMediaView) rootView.findViewById(R.id.peek)).setUrl(url);
+                Peek.into(
+                                R.layout.peek_view,
+                                new SimpleOnPeek() {
+                                    @Override
+                                    public void onInflated(
+                                            final PeekView peekView, final View rootView) {
+                                        // do stuff
+                                        TextView text = rootView.findViewById(R.id.title);
+                                        text.setText(url);
+                                        text.setTextColor(Color.WHITE);
+                                        ((PeekMediaView) rootView.findViewById(R.id.peek))
+                                                .setUrl(url);
 
-                        peekView.addButton((R.id.copy), new OnButtonUp() {
-                            @Override
-                            public void onButtonUp() {
-                                ClipboardUtil.copyToClipboard(rootView.getContext(), "Link", url);
-                                Toast.makeText(rootView.getContext(),
-                                        R.string.submission_link_copied, Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                                        peekView.addButton(
+                                                (R.id.copy),
+                                                new OnButtonUp() {
+                                                    @Override
+                                                    public void onButtonUp() {
+                                                        ClipboardUtil.copyToClipboard(
+                                                                rootView.getContext(), "Link", url);
+                                                        Toast.makeText(
+                                                                        rootView.getContext(),
+                                                                        R.string
+                                                                                .submission_link_copied,
+                                                                        Toast.LENGTH_SHORT)
+                                                                .show();
+                                                    }
+                                                });
 
-                        peekView.setOnRemoveListener(new OnRemove() {
-                            @Override
-                            public void onRemove() {
-                                ((PeekMediaView) rootView.findViewById(R.id.peek)).doClose();
-                            }
-                        });
+                                        peekView.setOnRemoveListener(
+                                                new OnRemove() {
+                                                    @Override
+                                                    public void onRemove() {
+                                                        ((PeekMediaView)
+                                                                        rootView.findViewById(
+                                                                                R.id.peek))
+                                                                .doClose();
+                                                    }
+                                                });
 
-                        peekView.addButton((R.id.share), new OnButtonUp() {
-                            @Override
-                            public void onButtonUp() {
-                                Reddit.defaultShareText("", url, rootView.getContext());
-                            }
-                        });
+                                        peekView.addButton(
+                                                (R.id.share),
+                                                new OnButtonUp() {
+                                                    @Override
+                                                    public void onButtonUp() {
+                                                        Reddit.defaultShareText(
+                                                                "", url, rootView.getContext());
+                                                    }
+                                                });
 
-                        peekView.addButton((R.id.pop), new OnButtonUp() {
-                            @Override
-                            public void onButtonUp() {
-                                Reddit.defaultShareText("", url, rootView.getContext());
-                            }
-                        });
+                                        peekView.addButton(
+                                                (R.id.pop),
+                                                new OnButtonUp() {
+                                                    @Override
+                                                    public void onButtonUp() {
+                                                        Reddit.defaultShareText(
+                                                                "", url, rootView.getContext());
+                                                    }
+                                                });
 
-                        peekView.addButton((R.id.external), new OnButtonUp() {
-                            @Override
-                            public void onButtonUp() {
-                                LinkUtil.openExternally(url);
-                            }
-                        });
-                        peekView.setOnPop(new OnPop() {
-                            @Override
-                            public void onPop() {
-                                onLinkClick(url, 0, "", null);
-                            }
-                        });
-                    }
-                })
+                                        peekView.addButton(
+                                                (R.id.external),
+                                                new OnButtonUp() {
+                                                    @Override
+                                                    public void onButtonUp() {
+                                                        LinkUtil.openExternally(url);
+                                                    }
+                                                });
+                                        peekView.setOnPop(
+                                                new OnPop() {
+                                                    @Override
+                                                    public void onPop() {
+                                                        onLinkClick(url, 0, "", null);
+                                                    }
+                                                });
+                                    }
+                                })
                         .with(new PeekViewOptions().setFullScreenPeek(true))
                         .show((PeekViewActivity) activity, event);
             } else {
                 BottomSheet.Builder b = new BottomSheet.Builder(activity).title(url).grid();
-                int[] attrs = new int[]{R.attr.tintColor};
+                int[] attrs = new int[] {R.attr.tintColor};
                 TypedArray ta = getContext().obtainStyledAttributes(attrs);
 
                 int color = ta.getColor(0, Color.WHITE);
@@ -959,41 +1077,43 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
 
                 ta.recycle();
 
-                b.sheet(R.id.open_link, open,
-                        getResources().getString(R.string.open_externally));
+                b.sheet(R.id.open_link, open, getResources().getString(R.string.open_externally));
                 b.sheet(R.id.share_link, share, getResources().getString(R.string.share_link));
-                b.sheet(R.id.copy_link, copy,
+                b.sheet(
+                        R.id.copy_link,
+                        copy,
                         getResources().getString(R.string.submission_link_copy));
                 final Activity finalActivity = activity;
-                b.listener(new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case R.id.open_link:
-                                LinkUtil.openExternally(url);
-                                break;
-                            case R.id.share_link:
-                                Reddit.defaultShareText("", url, finalActivity);
-                                break;
-                            case R.id.copy_link:
-                                LinkUtil.copyUrl(url, finalActivity);
-                                break;
-                        }
-                    }
-                }).show();
+                b.listener(
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        switch (which) {
+                                            case R.id.open_link:
+                                                LinkUtil.openExternally(url);
+                                                break;
+                                            case R.id.share_link:
+                                                Reddit.defaultShareText("", url, finalActivity);
+                                                break;
+                                            case R.id.copy_link:
+                                                LinkUtil.copyUrl(url, finalActivity);
+                                                break;
+                                        }
+                                    }
+                                })
+                        .show();
             }
         }
     }
 
     private void openVReddit(String url, String subreddit, Activity activity) {
-        new OpenVRedditTask(activity, subreddit).executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR, url);
+        new OpenVRedditTask(activity, subreddit)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);
     }
-
 
     private void openGif(String url, String subreddit, Activity activity) {
         if (SettingValues.gif) {
-            if(GifUtils.AsyncLoadGif.getVideoType(url).shouldLoadPreview()){
+            if (GifUtils.AsyncLoadGif.getVideoType(url).shouldLoadPreview()) {
                 LinkUtil.openUrl(url, Palette.getColor(subreddit), activity);
             } else {
                 Intent myIntent = new Intent(getContext(), MediaView.class);
@@ -1028,17 +1148,17 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         } else {
             LinkUtil.openExternally(submission);
         }
-
     }
 
     public void setOrRemoveSpoilerSpans(int endOfLink, URLSpan span) {
         if (span != null) {
             int offset = (span.getURL().contains("hidden")) ? -1 : 2;
             Spannable text = (Spannable) getText();
-            // add 2 to end of link since there is a white space between the link text and the spoiler
+            // add 2 to end of link since there is a white space between the link text and the
+            // spoiler
             ForegroundColorSpan[] foregroundColors =
-                    text.getSpans(endOfLink + offset, endOfLink + offset,
-                            ForegroundColorSpan.class);
+                    text.getSpans(
+                            endOfLink + offset, endOfLink + offset, ForegroundColorSpan.class);
 
             if (foregroundColors.length > 1) {
                 text.removeSpan(foregroundColors[1]);
@@ -1047,10 +1167,12 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                     if (storedSpoilerStarts.get(i) < endOfLink + offset
                             && storedSpoilerEnds.get(i) > endOfLink + offset) {
                         try {
-                            text.setSpan(storedSpoilerSpans.get(i), storedSpoilerStarts.get(i),
-                                    storedSpoilerEnds.get(i) > text.toString().length() ?
-                                            storedSpoilerEnds.get(i)
-                                                    + offset : storedSpoilerEnds.get(i),
+                            text.setSpan(
+                                    storedSpoilerSpans.get(i),
+                                    storedSpoilerStarts.get(i),
+                                    storedSpoilerEnds.get(i) > text.toString().length()
+                                            ? storedSpoilerEnds.get(i) + offset
+                                            : storedSpoilerEnds.get(i),
                                     Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                         } catch (Exception ignored) {
                             // catch out of bounds
@@ -1064,8 +1186,9 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     }
 
     /**
-     * Set the necessary spans for each spoiler. <p/> The algorithm works in the same way as
-     * <code>setCodeFont</code>.
+     * Set the necessary spans for each spoiler.
+     *
+     * <p>The algorithm works in the same way as <code>setCodeFont</code>.
      *
      * @param sequence
      * @return
@@ -1092,26 +1215,33 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 sequence.delete(end, end + 4);
                 sequence.delete(start, start + 4);
 
-                BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(
-                        Palette.getDarkerColor(Palette.getColor(subreddit)));
-                ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(
-                        Palette.getDarkerColor(Palette.getColor(subreddit)));
+                BackgroundColorSpan backgroundColorSpan =
+                        new BackgroundColorSpan(
+                                Palette.getDarkerColor(Palette.getColor(subreddit)));
+                ForegroundColorSpan foregroundColorSpan =
+                        new ForegroundColorSpan(
+                                Palette.getDarkerColor(Palette.getColor(subreddit)));
                 ForegroundColorSpan underneathColorSpan = new ForegroundColorSpan(Color.WHITE);
 
                 URLSpan urlSpan = sequence.getSpans(start, start, URLSpan.class)[0];
-                sequence.setSpan(urlSpan, sequence.getSpanStart(urlSpan), start - 1,
+                sequence.setSpan(
+                        urlSpan,
+                        sequence.getSpanStart(urlSpan),
+                        start - 1,
                         Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 
-
-                sequence.setSpan(new URLSpanNoUnderline("#spoilerhidden"), start, end - 4,
+                sequence.setSpan(
+                        new URLSpanNoUnderline("#spoilerhidden"),
+                        start,
+                        end - 4,
                         Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 // spoiler text has a space at the front
-                sequence.setSpan(backgroundColorSpan, start, end - 4,
-                        Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                sequence.setSpan(underneathColorSpan, start, end - 4,
-                        Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-                sequence.setSpan(foregroundColorSpan, start, end - 4,
-                        Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                sequence.setSpan(
+                        backgroundColorSpan, start, end - 4, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                sequence.setSpan(
+                        underneathColorSpan, start, end - 4, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                sequence.setSpan(
+                        foregroundColorSpan, start, end - 4, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
                 storedSpoilerSpans.add(underneathColorSpan);
                 storedSpoilerSpans.add(foregroundColorSpan);
@@ -1148,10 +1278,12 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
     }
 
     /**
-     * Sets the styling for string with code segments. <p/> The general process is to search for
-     * <code>[[&lt;[</code> and <code>]&gt;]]</code> tokens to find the code fragments within the
-     * escaped text. A <code>Spannable</code> is created which which breaks up the origin sequence
-     * into non-code and code fragments, and applies a monospace font to the code fragments.
+     * Sets the styling for string with code segments.
+     *
+     * <p>The general process is to search for <code>[[&lt;[</code> and <code>]&gt;]]</code> tokens
+     * to find the code fragments within the escaped text. A <code>Spannable</code> is created which
+     * which breaks up the origin sequence into non-code and code fragments, and applies a monospace
+     * font to the code fragments.
      *
      * @param sequence the Spannable generated from Html.fromHtml
      * @return the message with monospace font applied to code fragments
@@ -1177,7 +1309,10 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             if (end > start) {
                 sequence.delete(end, end + 4);
                 sequence.delete(start, start + 4);
-                sequence.setSpan(new TypefaceSpan("monospace"), start, end - 4,
+                sequence.setSpan(
+                        new TypefaceSpan("monospace"),
+                        start,
+                        end - 4,
                         Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 start = 0;
                 end = 0;
@@ -1187,6 +1322,4 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
 
         return sequence;
     }
-
-
 }

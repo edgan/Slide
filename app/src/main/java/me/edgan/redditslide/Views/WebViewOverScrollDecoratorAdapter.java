@@ -5,9 +5,7 @@ import android.webkit.WebView;
 
 import me.everything.android.ui.overscroll.adapters.IOverScrollDecoratorAdapter;
 
-/**
- * Created by Carlos on 8/19/2016.
- */
+/** Created by Carlos on 8/19/2016. */
 public class WebViewOverScrollDecoratorAdapter implements IOverScrollDecoratorAdapter {
 
     protected final WebView mView;
@@ -30,5 +28,4 @@ public class WebViewOverScrollDecoratorAdapter implements IOverScrollDecoratorAd
     public boolean isInAbsoluteEnd() {
         return !mView.canScrollHorizontally(1);
     }
-
 }

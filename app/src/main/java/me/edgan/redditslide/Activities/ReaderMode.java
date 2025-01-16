@@ -13,11 +13,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.wuman.jreadability.Readability;
 
-import org.apache.commons.text.StringEscapeUtils;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import me.edgan.redditslide.Constants;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
@@ -25,12 +20,16 @@ import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LinkUtil;
 
+import org.apache.commons.text.StringEscapeUtils;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 public class ReaderMode extends BaseActivityAnim {
-    private       int    mSubredditColor;
+    private int mSubredditColor;
     public static String html;
     SpoilerRobotoTextView v;
     private String url;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,7 +47,6 @@ public class ReaderMode extends BaseActivityAnim {
         if (getIntent().hasExtra("url")) {
             url = getIntent().getExtras().getString(LinkUtil.EXTRA_URL, "");
             ((Toolbar) findViewById(R.id.toolbar)).setTitle(url);
-
         }
 
         v = (SpoilerRobotoTextView) findViewById(R.id.body);
@@ -58,19 +56,20 @@ public class ReaderMode extends BaseActivityAnim {
 
         // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
         // So, we estimate the height of the header in dp.
-        mSwipeRefreshLayout.setProgressViewOffset(false,
+        mSwipeRefreshLayout.setProgressViewOffset(
+                false,
                 Constants.SINGLE_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.SINGLE_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);
 
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
+        mSwipeRefreshLayout.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                    }
+                });
 
         new AsyncGetArticle().execute();
-
     }
 
     private void display(String title, String web) {
@@ -82,8 +81,8 @@ public class ReaderMode extends BaseActivityAnim {
             if (index < 0) {
                 index = 0;
             }
-            ((Toolbar) findViewById(R.id.toolbar)).setTitle(
-                    v.getText().toString().substring(0, index));
+            ((Toolbar) findViewById(R.id.toolbar))
+                    .setTitle(v.getText().toString().substring(0, index));
         }
     }
 
@@ -107,7 +106,7 @@ public class ReaderMode extends BaseActivityAnim {
                     articleText = readability.outerHtml();
                 } else {
                     Readability readability =
-                            new Readability(StringEscapeUtils.unescapeJava(html));  // URL
+                            new Readability(StringEscapeUtils.unescapeJava(html)); // URL
                     readability.init();
                     articleText = readability.outerHtml();
                 }
@@ -127,25 +126,23 @@ public class ReaderMode extends BaseActivityAnim {
             } else {
                 new AlertDialog.Builder(ReaderMode.this)
                         .setTitle(R.string.internal_browser_extracting_error)
-                        .setPositiveButton(R.string.btn_ok, (dialog, which) ->
-                                finish())
-                        .setNeutralButton("Open in web view", (dialog, which) -> {
-                            Intent i = new Intent(ReaderMode.this, Website.class);
-                            i.putExtra(LinkUtil.EXTRA_URL, url);
-                            startActivity(i);
-                            finish();
-                        })
+                        .setPositiveButton(R.string.btn_ok, (dialog, which) -> finish())
+                        .setNeutralButton(
+                                "Open in web view",
+                                (dialog, which) -> {
+                                    Intent i = new Intent(ReaderMode.this, Website.class);
+                                    i.putExtra(LinkUtil.EXTRA_URL, url);
+                                    startActivity(i);
+                                    finish();
+                                })
                         .setCancelable(false)
                         .show();
             }
         }
 
         @Override
-        protected void onPreExecute() {
-
-        }
+        protected void onPreExecute() {}
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -160,7 +157,6 @@ public class ReaderMode extends BaseActivityAnim {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
             case android.R.id.home:
                 finish();
                 return true;
@@ -170,11 +166,11 @@ public class ReaderMode extends BaseActivityAnim {
                 return true;
             case R.id.share:
                 Reddit.defaultShareText(
-                        ((Toolbar) findViewById(R.id.toolbar)).getTitle().toString(), url,
+                        ((Toolbar) findViewById(R.id.toolbar)).getTitle().toString(),
+                        url,
                         ReaderMode.this);
 
                 return true;
-
         }
         return false;
     }

@@ -7,6 +7,8 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import me.edgan.redditslide.Reddit;
+
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -15,9 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import me.edgan.redditslide.Reddit;
-
-//Following methods sourced from https://github.com/Kennyc1012/Opengur, Code by Kenny Campagna
+// Following methods sourced from https://github.com/Kennyc1012/Opengur, Code by Kenny Campagna
 public class ImgurUtils {
     public static File createFile(Uri uri, @NonNull Context context) {
         InputStream in;
@@ -41,9 +41,11 @@ public class ImgurUtils {
 
         // Create files from a uri in our cache directory so they eventually get deleted
         String timeStamp = String.valueOf(System.currentTimeMillis());
-        File cacheDir = ((Reddit) context.getApplicationContext()).getImageLoader()
-                .getDiskCache()
-                .getDirectory();
+        File cacheDir =
+                ((Reddit) context.getApplicationContext())
+                        .getImageLoader()
+                        .getDiskCache()
+                        .getDirectory();
         File tempFile = new File(cacheDir, timeStamp + extension);
 
         if (writeInputStreamToFile(in, tempFile)) {

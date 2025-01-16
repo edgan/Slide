@@ -10,18 +10,15 @@ import androidx.core.content.ContextCompat;
 
 import me.edgan.redditslide.Reddit;
 
-/**
- * Created by carlo_000 on 10/13/2015.
- */
-
-
+/** Created by carlo_000 on 10/13/2015. */
 public class NotificationJobScheduler {
     private final PendingIntent pendingIntent;
     private final AlarmManager manager;
 
     public NotificationJobScheduler(Context context) {
         final Intent alarmIntent = new Intent(context, CheckForMail.class);
-        pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+        pendingIntent =
+                PendingIntent.getBroadcast(context, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
         manager = ContextCompat.getSystemService(context, AlarmManager.class);
         start();
     }

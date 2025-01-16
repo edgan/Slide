@@ -16,38 +16,38 @@ import android.widget.TableRow;
 
 import com.devspark.robototextview.RobotoTypefaces;
 
-import java.util.List;
-
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.FontPreferences;
 import me.edgan.redditslide.util.DisplayUtil;
 
-/**
- * Class that provides methods to help bind submissions with
- * multiple blocks of text.
- */
+import java.util.List;
+
+/** Class that provides methods to help bind submissions with multiple blocks of text. */
 public class CommentOverflow extends LinearLayout {
     private ColorPreferences colorPreferences;
     private Typeface typeface = null;
-    private              int                textColor;
-    private              int                fontSize;
+    private int textColor;
+    private int fontSize;
     private static final MarginLayoutParams COLUMN_PARAMS;
     private static final MarginLayoutParams MARGIN_PARAMS;
     private static final MarginLayoutParams HR_PARAMS;
 
     static {
-        COLUMN_PARAMS = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+        COLUMN_PARAMS =
+                new TableRow.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         COLUMN_PARAMS.setMargins(0, 0, 32, 0);
 
-        MARGIN_PARAMS = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+        MARGIN_PARAMS =
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         MARGIN_PARAMS.setMargins(0, 16, 0, 16);
 
-        HR_PARAMS = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                DisplayUtil.dpToPxVertical(2));
+        HR_PARAMS =
+                new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, DisplayUtil.dpToPxVertical(2));
         HR_PARAMS.setMargins(0, 16, 0, 16);
     }
 
@@ -73,7 +73,7 @@ public class CommentOverflow extends LinearLayout {
     /**
      * Set the text for the corresponding views.
      *
-     * @param blocks    list of all blocks to be set
+     * @param blocks list of all blocks to be set
      * @param subreddit
      */
     public void setViews(List<String> blocks, String subreddit) {
@@ -83,10 +83,13 @@ public class CommentOverflow extends LinearLayout {
     /**
      * Set the text for the corresponding views.
      *
-     * @param blocks    list of all blocks to be set
+     * @param blocks list of all blocks to be set
      * @param subreddit
      */
-    public void setViews(List<String> blocks, String subreddit, OnClickListener click,
+    public void setViews(
+            List<String> blocks,
+            String subreddit,
+            OnClickListener click,
             OnLongClickListener longClick) {
         Context context = getContext();
         int type = new FontPreferences(context).getFontTypeComment().getTypeface();
@@ -101,9 +104,12 @@ public class CommentOverflow extends LinearLayout {
         textColor = typedValue.data;
         TypedValue fontSizeTypedValue = new TypedValue();
         theme.resolveAttribute(R.attr.font_commentbody, fontSizeTypedValue, true);
-        TypedArray a = context.obtainStyledAttributes(null, new int[]{R.attr.font_commentbody},
-                R.attr.font_commentbody,
-                new FontPreferences(context).getCommentFontStyle().getResId());
+        TypedArray a =
+                context.obtainStyledAttributes(
+                        null,
+                        new int[] {R.attr.font_commentbody},
+                        R.attr.font_commentbody,
+                        new FontPreferences(context).getCommentFontStyle().getResId());
         fontSize = a.getDimensionPixelSize(0, -1);
         a.recycle();
         removeAllViews();
@@ -111,7 +117,6 @@ public class CommentOverflow extends LinearLayout {
         if (!blocks.isEmpty()) {
             setVisibility(View.VISIBLE);
         }
-
 
         for (String block : blocks) {
             if (block.startsWith("<table>")) {
@@ -163,16 +168,17 @@ public class CommentOverflow extends LinearLayout {
         return formatTable(text, subreddit, null, null);
     }
 
-    private TableLayout formatTable(String text, String subreddit, OnClickListener click,
-            OnLongClickListener longClick) {
+    private TableLayout formatTable(
+            String text, String subreddit, OnClickListener click, OnLongClickListener longClick) {
         TableRow.LayoutParams rowParams =
-                new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                        TableRow.LayoutParams.WRAP_CONTENT);
+                new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
 
         Context context = getContext();
         TableLayout table = new TableLayout(context);
         TableLayout.LayoutParams params =
-                new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT,
+                new TableLayout.LayoutParams(
+                        TableLayout.LayoutParams.WRAP_CONTENT,
                         TableLayout.LayoutParams.WRAP_CONTENT);
         table.setLayoutParams(params);
 
@@ -230,30 +236,35 @@ public class CommentOverflow extends LinearLayout {
             } else if (!columnStarted
                     && i + tableColumnStart.length() < text.length()
                     && (text.subSequence(i, i + tableColumnStart.length())
-                    .toString()
-                    .equals(tableColumnStart) || text.subSequence(i, i + tableHeaderStart.length())
-                    .toString()
-                    .equals(tableHeaderStart))) {
+                                    .toString()
+                                    .equals(tableColumnStart)
+                            || text.subSequence(i, i + tableHeaderStart.length())
+                                    .toString()
+                                    .equals(tableHeaderStart))) {
                 columnStarted = true;
                 gravity = Gravity.START;
                 i += tableColumnStart.length();
                 columnStart = i;
-            } else if (!columnStarted && i + tableColumnStartRight.length() < text.length() && (text
-                    .subSequence(i, i + tableColumnStartRight.length())
-                    .toString()
-                    .equals(tableColumnStartRight) || text.subSequence(i,
-                    i + tableHeaderStartRight.length()).toString().equals(tableHeaderStartRight))) {
+            } else if (!columnStarted
+                    && i + tableColumnStartRight.length() < text.length()
+                    && (text.subSequence(i, i + tableColumnStartRight.length())
+                                    .toString()
+                                    .equals(tableColumnStartRight)
+                            || text.subSequence(i, i + tableHeaderStartRight.length())
+                                    .toString()
+                                    .equals(tableHeaderStartRight))) {
                 columnStarted = true;
                 gravity = Gravity.END;
                 i += tableColumnStartRight.length();
                 columnStart = i;
-            } else if (!columnStarted && i + tableColumnStartCenter.length() < text.length() && (
-                    text.subSequence(i, i + tableColumnStartCenter.length())
-                            .toString()
-                            .equals(tableColumnStartCenter)
+            } else if (!columnStarted
+                    && i + tableColumnStartCenter.length() < text.length()
+                    && (text.subSequence(i, i + tableColumnStartCenter.length())
+                                    .toString()
+                                    .equals(tableColumnStartCenter)
                             || text.subSequence(i, i + tableHeaderStartCenter.length())
-                            .toString()
-                            .equals(tableHeaderStartCenter))) {
+                                    .toString()
+                                    .equals(tableHeaderStartCenter))) {
                 columnStarted = true;
                 gravity = Gravity.CENTER;
                 i += tableColumnStartCenter.length();
@@ -261,24 +272,28 @@ public class CommentOverflow extends LinearLayout {
             } else if (!columnStarted
                     && i + tableColumnStartLeft.length() < text.length()
                     && (text.subSequence(i, i + tableColumnStartLeft.length())
-                    .toString()
-                    .equals(tableColumnStartLeft) || text.subSequence(i,
-                    i + tableHeaderStartLeft.length()).toString().equals(tableHeaderStartLeft))) {
+                                    .toString()
+                                    .equals(tableColumnStartLeft)
+                            || text.subSequence(i, i + tableHeaderStartLeft.length())
+                                    .toString()
+                                    .equals(tableHeaderStartLeft))) {
                 columnStarted = true;
                 gravity = Gravity.START;
                 i += tableColumnStartLeft.length();
                 columnStart = i;
             } else if (text.substring(i).startsWith("<td")) {
                 // case for <td colspan="2"  align="left">
-                // See last table in https://www.reddit.com/r/GlobalOffensive/comments/51s3r8/virtuspro_vs_vgcyberzen_sl_ileague_s2_finals/
+                // See last table in
+                // https://www.reddit.com/r/GlobalOffensive/comments/51s3r8/virtuspro_vs_vgcyberzen_sl_ileague_s2_finals/
                 columnStarted = true;
                 i += text.substring(i).indexOf(">") + 1;
                 columnStart = i;
             } else if (text.subSequence(i, i + tableColumnEnd.length())
-                    .toString()
-                    .equals(tableColumnEnd) || text.subSequence(i, i + tableHeaderEnd.length())
-                    .toString()
-                    .equals(tableHeaderEnd)) {
+                            .toString()
+                            .equals(tableColumnEnd)
+                    || text.subSequence(i, i + tableHeaderEnd.length())
+                            .toString()
+                            .equals(tableHeaderEnd)) {
                 columnEnd = i;
 
                 SpoilerRobotoTextView textView = new SpoilerRobotoTextView(context);

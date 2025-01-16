@@ -20,12 +20,12 @@ import me.edgan.redditslide.handler.ToolbarScrollHideHandler;
 
 public class ModLog extends Fragment {
 
-
-    public  ModLogAdapter adapter;
-    private ModLogPosts   posts;
+    public ModLogAdapter adapter;
+    private ModLogPosts posts;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_verticalcontent, container, false);
 
@@ -35,27 +35,33 @@ public class ModLog extends Fragment {
 
         v.findViewById(R.id.post_floating_action_button).setVisibility(View.GONE);
 
-        final SwipeRefreshLayout mSwipeRefreshLayout = v.findViewById(R.id.activity_main_swipe_refresh_layout);
+        final SwipeRefreshLayout mSwipeRefreshLayout =
+                v.findViewById(R.id.activity_main_swipe_refresh_layout);
 
         mSwipeRefreshLayout.setColorSchemeColors(Palette.getColors("mod", getActivity()));
 
         // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
         // So, we estimate the height of the header in dp
-        mSwipeRefreshLayout.setProgressViewOffset(false,
+        mSwipeRefreshLayout.setProgressViewOffset(
+                false,
                 Constants.TAB_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.TAB_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);
 
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
+        mSwipeRefreshLayout.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                    }
+                });
         posts = new ModLogPosts();
         adapter = new ModLogAdapter(getActivity(), posts, rv);
         rv.setAdapter(adapter);
 
-        rv.addOnScrollListener(new ToolbarScrollHideHandler(((ModQueue) getActivity()).mToolbar, (getActivity()).findViewById(R.id.header)));
+        rv.addOnScrollListener(
+                new ToolbarScrollHideHandler(
+                        ((ModQueue) getActivity()).mToolbar,
+                        (getActivity()).findViewById(R.id.header)));
 
         posts.bindAdapter(adapter, mSwipeRefreshLayout);
         mSwipeRefreshLayout.setOnRefreshListener(
@@ -64,8 +70,7 @@ public class ModLog extends Fragment {
                     public void onRefresh() {
                         posts.loadMore(adapter);
                     }
-                }
-        );
+                });
         return v;
     }
 
@@ -74,6 +79,4 @@ public class ModLog extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
     }
-
-
 }

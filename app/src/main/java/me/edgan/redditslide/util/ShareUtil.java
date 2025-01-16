@@ -9,25 +9,28 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.Reddit;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import me.edgan.redditslide.R;
-import me.edgan.redditslide.Reddit;
-
 public class ShareUtil {
-    private ShareUtil() {
-    }
+    private ShareUtil() {}
 
     public static void shareImage(final String finalUrl, final Context context) {
-        ((Reddit) context.getApplicationContext()).getImageLoader()
-                .loadImage(finalUrl, new SimpleImageLoadingListener() {
-                    @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                        shareImage(loadedImage, context);
-                    }
-                });
+        ((Reddit) context.getApplicationContext())
+                .getImageLoader()
+                .loadImage(
+                        finalUrl,
+                        new SimpleImageLoadingListener() {
+                            @Override
+                            public void onLoadingComplete(
+                                    String imageUri, View view, Bitmap loadedImage) {
+                                shareImage(loadedImage, context);
+                            }
+                        });
     }
 
     /**
@@ -65,16 +68,21 @@ public class ShareUtil {
                     final Uri contentUri = FileUtil.getFileUri(image, context);
                     if (contentUri != null) {
                         final Intent shareImageIntent =
-                                FileUtil.getFileIntent(image, new Intent(Intent.ACTION_SEND),
-                                        context);
+                                FileUtil.getFileIntent(
+                                        image, new Intent(Intent.ACTION_SEND), context);
                         shareImageIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
 
                         // Select a share option
-                        context.startActivity(Intent.createChooser(shareImageIntent,
-                                context.getString(R.string.misc_img_share)));
+                        context.startActivity(
+                                Intent.createChooser(
+                                        shareImageIntent,
+                                        context.getString(R.string.misc_img_share)));
                     } else {
-                        Toast.makeText(context, context.getString(R.string.err_share_image),
-                                Toast.LENGTH_LONG).show();
+                        Toast.makeText(
+                                        context,
+                                        context.getString(R.string.err_share_image),
+                                        Toast.LENGTH_LONG)
+                                .show();
                     }
                 }
             }

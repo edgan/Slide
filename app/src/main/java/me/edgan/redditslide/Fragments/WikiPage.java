@@ -14,12 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.webkit.WebViewClientCompat;
 
-import net.dean.jraw.managers.WikiManager;
-
-import org.apache.commons.text.StringEscapeUtils;
-
-import java.lang.ref.WeakReference;
-
 import me.edgan.redditslide.Activities.Wiki;
 import me.edgan.redditslide.BuildConfig;
 import me.edgan.redditslide.Constants;
@@ -27,6 +21,11 @@ import me.edgan.redditslide.OpenRedditLink;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Visuals.Palette;
 
+import net.dean.jraw.managers.WikiManager;
+
+import org.apache.commons.text.StringEscapeUtils;
+
+import java.lang.ref.WeakReference;
 
 public class WikiPage extends Fragment {
     private String title;
@@ -39,7 +38,8 @@ public class WikiPage extends Fragment {
     private SwipeRefreshLayout ref;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.justtext, container, false);
     }
 
@@ -54,8 +54,12 @@ public class WikiPage extends Fragment {
         setUpWebView();
 
         if (getActivity() != null) {
-            new WikiAsyncTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                    ((Wiki) getActivity()).wiki, subreddit, title);
+            new WikiAsyncTask(this)
+                    .executeOnExecutor(
+                            AsyncTask.THREAD_POOL_EXECUTOR,
+                            ((Wiki) getActivity()).wiki,
+                            subreddit,
+                            title);
         }
     }
 
@@ -65,45 +69,51 @@ public class WikiPage extends Fragment {
         // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
         // So, we estimate the height of the header in dp
         // Something isn't right with the Wiki layout though, so use the SINGLE_HEADER instead.
-        ref.setProgressViewOffset(false,
+        ref.setProgressViewOffset(
+                false,
                 Constants.SINGLE_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.SINGLE_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);
-        ref.post(new Runnable() {
-            @Override
-            public void run() {
-                ref.setRefreshing(true);
-            }
-        });
+        ref.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        ref.setRefreshing(true);
+                    }
+                });
     }
 
     private void setUpWebView() {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new WikiPageJavaScriptInterface(), "Slide");
 
-        webView.setWebViewClient(new WebViewClientCompat() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.toLowerCase().startsWith(wikiUrl.toLowerCase()) && listener != null) {
-                    String pagePiece = url.toLowerCase().replace(wikiUrl.toLowerCase(), "")
-                            .split("\\?")[0]
-                            .split("#")[0];
-                    listener.embeddedWikiLinkClicked(pagePiece);
-                } else {
-                    OpenRedditLink.openUrl(getContext(), url, true);
-                }
-                return true;
-            }
+        webView.setWebViewClient(
+                new WebViewClientCompat() {
+                    @Override
+                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                        if (url.toLowerCase().startsWith(wikiUrl.toLowerCase())
+                                && listener != null) {
+                            String pagePiece =
+                                    url.toLowerCase()
+                                            .replace(wikiUrl.toLowerCase(), "")
+                                            .split("\\?")[0]
+                                            .split("#")[0];
+                            listener.embeddedWikiLinkClicked(pagePiece);
+                        } else {
+                            OpenRedditLink.openUrl(getContext(), url, true);
+                        }
+                        return true;
+                    }
 
-            @Override
-            public void onPageFinished(WebView webView, String url) {
-                super.onPageFinished(webView, url);
-                if (getView() != null) {
-                    getView().findViewById(R.id.wiki_web_view).setVisibility(View.VISIBLE);
-                    ref.setRefreshing(false);
-                    ref.setEnabled(false);
-                }
-            }
-        });
+                    @Override
+                    public void onPageFinished(WebView webView, String url) {
+                        super.onPageFinished(webView, url);
+                        if (getView() != null) {
+                            getView().findViewById(R.id.wiki_web_view).setVisibility(View.VISIBLE);
+                            ref.setRefreshing(false);
+                            ref.setEnabled(false);
+                        }
+                    }
+                });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
@@ -146,7 +156,11 @@ public class WikiPage extends Fragment {
         @Override
         protected String doInBackground(Object[] params) {
             return StringEscapeUtils.unescapeHtml4(
-                    ((WikiManager) params[0]).get((String) params[1], (String) params[2]).getDataNode().get("content_html").asText());
+                    ((WikiManager) params[0])
+                            .get((String) params[1], (String) params[2])
+                            .getDataNode()
+                            .get("content_html")
+                            .asText());
         }
 
         @Override

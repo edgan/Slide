@@ -4,14 +4,12 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import me.edgan.redditslide.SettingValues;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import me.edgan.redditslide.SettingValues;
-
-/**
- * Created by ccrama on 9/28/2015.
- */
+/** Created by ccrama on 9/28/2015. */
 public class MakeExternal extends Activity {
     @Override
     public void onCreate(Bundle savedInstance) {

@@ -20,8 +20,7 @@ import me.edgan.redditslide.Reddit;
  */
 public class NetworkUtil {
 
-    private NetworkUtil() {
-    }
+    private NetworkUtil() {}
 
     /**
      * Uses the provided context to determine the current connectivity status.
@@ -36,11 +35,10 @@ public class NetworkUtil {
         return getConnectivityStatusNew(context);
     }
 
-    /**
-     * For devices running pre-Marshmallow.
-     */
+    /** For devices running pre-Marshmallow. */
     private static Status getConnectivityStatusPre23(final Context context) {
-        final ConnectivityManager cm = ContextCompat.getSystemService(context, ConnectivityManager.class);
+        final ConnectivityManager cm =
+                ContextCompat.getSystemService(context, ConnectivityManager.class);
         if (cm == null) {
             return Status.NONE;
         }
@@ -64,12 +62,11 @@ public class NetworkUtil {
         }
     }
 
-    /**
-     * For devices running Marshmallow and above.
-     */
+    /** For devices running Marshmallow and above. */
     @RequiresApi(api = Build.VERSION_CODES.M)
     private static Status getConnectivityStatusNew(final Context context) {
-        final ConnectivityManager cm = ContextCompat.getSystemService(context, ConnectivityManager.class);
+        final ConnectivityManager cm =
+                ContextCompat.getSystemService(context, ConnectivityManager.class);
         if (cm == null) {
             return Status.NONE;
         }
@@ -94,8 +91,8 @@ public class NetworkUtil {
         }
         // nwCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
         // isWifiEnabled() supports detecting Wi-Fi connections over VPN
-        if (wifiManager.isWifiEnabled() ||
-                nwCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+        if (wifiManager.isWifiEnabled()
+                || nwCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
             if (cm.isActiveNetworkMetered())
                 return Status.MOBILE; // respect metered wifi networks as mobile
             return Status.WIFI;
@@ -115,8 +112,7 @@ public class NetworkUtil {
      * @return true if the application is connected, false if otherwise.
      */
     public static boolean isConnected(final Context context) {
-        return !Reddit.appRestart.contains("forceoffline")
-                && isConnectedNoOverride(context);
+        return !Reddit.appRestart.contains("forceoffline") && isConnectedNoOverride(context);
     }
 
     public static boolean isConnectedNoOverride(final Context context) {
@@ -135,26 +131,20 @@ public class NetworkUtil {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private static boolean isConnectedToInternet(final NetworkCapabilities nwCapabilities) {
-        return nwCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
-                nwCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+        return nwCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                && nwCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
     }
 
     /**
-     * A simplified list of connectivity statuses.
-     * See {@link ConnectivityManager}'s {@code TYPE_*} for a full list.
+     * A simplified list of connectivity statuses. See {@link ConnectivityManager}'s {@code TYPE_*}
+     * for a full list.
      */
     private enum Status {
-        /**
-         * Operating on a wireless connection.
-         */
+        /** Operating on a wireless connection. */
         WIFI,
-        /**
-         * Operating on 3G, 4G, 4G LTE, etc.
-         */
+        /** Operating on 3G, 4G, 4G LTE, etc. */
         MOBILE,
-        /**
-         * No connection present.
-         */
+        /** No connection present. */
         NONE
     }
 }

@@ -6,11 +6,6 @@ import android.widget.EditText;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import net.dean.jraw.models.CommentNode;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import me.edgan.redditslide.Adapters.CommentAdapterSearch;
 import me.edgan.redditslide.Adapters.CommentItem;
 import me.edgan.redditslide.Adapters.CommentObject;
@@ -19,10 +14,15 @@ import me.edgan.redditslide.R;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
 
+import net.dean.jraw.models.CommentNode;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by ccrama on 9/17/2015.
- * <p/>
- * This activity takes the shared comment data and allows for searching through the text of the
+ *
+ * <p>This activity takes the shared comment data and allows for searching through the text of the
  * CommentNodes.
  */
 public class CommentSearch extends BaseActivityAnim {
@@ -43,20 +43,19 @@ public class CommentSearch extends BaseActivityAnim {
         List<CommentObject> commentsOld = DataShare.sharedComments;
         if (commentsOld != null && !commentsOld.isEmpty())
             for (CommentObject o : commentsOld) {
-                if (o instanceof CommentItem)
-                    comments.add(o.comment);
+                if (o instanceof CommentItem) comments.add(o.comment);
             }
-        else
-            finish();
+        else finish();
         final CommentAdapterSearch adapter = new CommentAdapterSearch(this, comments);
         rv.setAdapter(adapter);
-        search.addTextChangedListener(new SimpleTextWatcher() {
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String result = search.getText().toString();
-                adapter.setResult(result);
-                adapter.getFilter().filter(result);
-            }
-        });
+        search.addTextChangedListener(
+                new SimpleTextWatcher() {
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        String result = search.getText().toString();
+                        adapter.setResult(result);
+                        adapter.getFilter().filter(result);
+                    }
+                });
     }
 }

@@ -10,9 +10,7 @@ import me.edgan.redditslide.R;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.Views.CommentOverflow;
 
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class MessageViewHolder extends RecyclerView.ViewHolder {
     public final TextView title;
     public final SpoilerRobotoTextView content;
@@ -30,6 +28,4 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
         commentOverflow = v.findViewById(R.id.commentOverflow);
         user = v.findViewById(R.id.user);
     }
-
-
 }

@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-/**
- * Created by Deadl on 26/11/2015.
- */
+/** Created by Deadl on 26/11/2015. */
 public class SecretConstants {
     private static String apiKey;
 
@@ -26,10 +24,10 @@ public class SecretConstants {
                 // file not found
                 base64EncodedPublicKey = "";
             }
-
         }
         return base64EncodedPublicKey;
     }
+
     public static String getApiKey(Context context) {
         if (apiKey == null) {
             InputStream input;
@@ -42,10 +40,10 @@ public class SecretConstants {
                 // file not found
                 apiKey = "";
             }
-
         }
         return apiKey;
     }
+
     public static String getImgurApiKey(Context context) {
         if (apiKey == null) {
             InputStream input;
@@ -56,9 +54,11 @@ public class SecretConstants {
                 apiKey = properties.getProperty("imgur");
             } catch (IOException e) {
                 // file not found
-                apiKey = "3P3GlZj91emshgWU6YuQL98Q9Zihp1c2vCSjsnOQLIchXPzDLh"; // Testing key, will not work in production
+                apiKey =
+                        "3P3GlZj91emshgWU6YuQL98Q9Zihp1c2vCSjsnOQLIchXPzDLh"; // Testing key, will
+                                                                              // not work in
+                                                                              // production
             }
-
         }
         return apiKey;
     }

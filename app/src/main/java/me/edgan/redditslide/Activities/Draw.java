@@ -21,10 +21,6 @@ import com.canhub.cropper.CropImageContractOptions;
 import com.canhub.cropper.CropImageOptions;
 import com.canhub.cropper.CropImageView;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.Views.CanvasView;
@@ -33,10 +29,11 @@ import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.FileUtil;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-/**
- * Created by ccrama on 5/27/2015.
- */
+/** Created by ccrama on 5/27/2015. */
 public class Draw extends BaseActivity implements ColorChooserDialog.ColorCallback {
 
     public static Uri uri;
@@ -58,8 +55,9 @@ public class Draw extends BaseActivity implements ColorChooserDialog.ColorCallba
         drawView = (CanvasView) findViewById(R.id.paintView);
         drawView.setBaseColor(Color.parseColor("#303030"));
         color = findViewById(R.id.color);
-        final CropImageContractOptions options = new CropImageContractOptions(uri, new CropImageOptions())
-                .setGuidelines(CropImageView.Guidelines.ON);
+        final CropImageContractOptions options =
+                new CropImageContractOptions(uri, new CropImageOptions())
+                        .setGuidelines(CropImageView.Guidelines.ON);
         cropImageLauncher.launch(options);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupAppBar(R.id.toolbar, "", true, Color.parseColor("#212121"), R.id.toolbar);
@@ -79,8 +77,8 @@ public class Draw extends BaseActivity implements ColorChooserDialog.ColorCallba
         if (id == R.id.done && enabled) {
             File image; // image to share
             // check to see if the cache/shared_images directory is present
-            final File imagesDir = new File(
-                    Draw.this.getCacheDir().toString() + File.separator + "shared_image");
+            final File imagesDir =
+                    new File(Draw.this.getCacheDir().toString() + File.separator + "shared_image");
             if (!imagesDir.exists()) {
                 imagesDir.mkdir(); // create the folder if it doesn't exist
             } else {
@@ -88,15 +86,20 @@ public class Draw extends BaseActivity implements ColorChooserDialog.ColorCallba
             }
 
             try {
-                // creates a file in the cache; filename will be prefixed with "img" and end with ".png"
+                // creates a file in the cache; filename will be prefixed with "img" and end with
+                // ".png"
                 image = File.createTempFile("img", ".png", imagesDir);
                 FileOutputStream out = null;
 
                 try {
                     // convert image to png
                     out = new FileOutputStream(image);
-                    Bitmap.createBitmap(drawView.getBitmap(), 0, (int) drawView.height,
-                            (int) drawView.right, (int) (drawView.bottom - drawView.height))
+                    Bitmap.createBitmap(
+                                    drawView.getBitmap(),
+                                    0,
+                                    (int) drawView.height,
+                                    (int) drawView.right,
+                                    (int) (drawView.bottom - drawView.height))
                             .compress(Bitmap.CompressFormat.JPEG, 100, out);
                 } finally {
                     if (out != null) {
@@ -107,14 +110,16 @@ public class Draw extends BaseActivity implements ColorChooserDialog.ColorCallba
                             Intent intent = FileUtil.getFileIntent(image, new Intent(), this);
                             setResult(RESULT_OK, intent);
                         } else {
-                            // todo error Toast.makeText(this, getString(R.string.err_share_image), Toast.LENGTH_LONG).show();
+                            // todo error Toast.makeText(this, getString(R.string.err_share_image),
+                            // Toast.LENGTH_LONG).show();
                         }
                         finish();
                     }
                 }
             } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
-                // todo error Toast.makeText(this, getString(R.string.err_share_image), Toast.LENGTH_LONG).show();
+                // todo error Toast.makeText(this, getString(R.string.err_share_image),
+                // Toast.LENGTH_LONG).show();
             }
         }
         if (id == R.id.undo) {
@@ -132,13 +137,13 @@ public class Draw extends BaseActivity implements ColorChooserDialog.ColorCallba
 
     private void cropImageResult(final CropImageView.CropResult result) {
         if (result.isSuccessful()) {
-            bitmap = result.getBitmap(this)
-                    .copy(Bitmap.Config.RGB_565, true);
+            bitmap = result.getBitmap(this).copy(Bitmap.Config.RGB_565, true);
             BlendModeUtil.tintDrawableAsModulate(color.getBackground(), getLastColor());
-            color.setOnClickListener(v ->
-                    new ColorChooserDialog.Builder(Draw.this, R.string.choose_color_title)
-                            .allowUserColorInput(true)
-                            .show(Draw.this));
+            color.setOnClickListener(
+                    v ->
+                            new ColorChooserDialog.Builder(Draw.this, R.string.choose_color_title)
+                                    .allowUserColorInput(true)
+                                    .show(Draw.this));
             drawView.drawBitmap(bitmap);
             drawView.setPaintStrokeColor(getLastColor());
             drawView.setPaintStrokeWidth(20f);
@@ -157,6 +162,5 @@ public class Draw extends BaseActivity implements ColorChooserDialog.ColorCallba
     }
 
     @Override
-    public void onColorChooserDismissed(@NonNull ColorChooserDialog dialog) {
-    }
+    public void onColorChooserDismissed(@NonNull ColorChooserDialog dialog) {}
 }

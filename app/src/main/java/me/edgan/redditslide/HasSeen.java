@@ -1,11 +1,19 @@
 package me.edgan.redditslide;
 
+import static com.lusfold.androidkeyvaluestore.core.KVManagerImpl.COLUMN_KEY;
+import static com.lusfold.androidkeyvaluestore.core.KVManagerImpl.TABLE_NAME;
+
+import static me.edgan.redditslide.OpenRedditLink.formatRedditUrl;
+import static me.edgan.redditslide.OpenRedditLink.getRedditLinkType;
+
 import android.database.Cursor;
 import android.net.Uri;
 
 import com.lusfold.androidkeyvaluestore.KVStore;
 import com.lusfold.androidkeyvaluestore.core.KVManger;
 import com.lusfold.androidkeyvaluestore.utils.CursorUtils;
+
+import me.edgan.redditslide.Synccit.SynccitRead;
 
 import net.dean.jraw.models.Contribution;
 import net.dean.jraw.models.Submission;
@@ -15,16 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import me.edgan.redditslide.Synccit.SynccitRead;
-
-import static com.lusfold.androidkeyvaluestore.core.KVManagerImpl.COLUMN_KEY;
-import static com.lusfold.androidkeyvaluestore.core.KVManagerImpl.TABLE_NAME;
-import static me.edgan.redditslide.OpenRedditLink.formatRedditUrl;
-import static me.edgan.redditslide.OpenRedditLink.getRedditLinkType;
-
-/**
- * Created by ccrama on 7/19/2015.
- */
+/** Created by ccrama on 7/19/2015. */
 public class HasSeen {
 
     public static HashSet<String> hasSeen;
@@ -61,9 +60,12 @@ public class HasSeen {
         }
 
         // Check if KVStore has a key containing the fullname
-        // This is necessary because the KVStore library is limited and Carlos didn't realize the performance impact
-        Cursor cur = m.execQuery("SELECT * FROM ? WHERE ? LIKE '%?%' LIMIT 1",
-                new String[]{TABLE_NAME, COLUMN_KEY, fullname});
+        // This is necessary because the KVStore library is limited and Carlos didn't realize the
+        // performance impact
+        Cursor cur =
+                m.execQuery(
+                        "SELECT * FROM ? WHERE ? LIKE '%?%' LIMIT 1",
+                        new String[] {TABLE_NAME, COLUMN_KEY, fullname});
         boolean contains = cur != null && cur.getCount() > 0;
         CursorUtils.closeCursorQuietly(cur);
 
@@ -112,19 +114,22 @@ public class HasSeen {
             List<String> parts = uri.getPathSegments();
 
             switch (type) {
-                case SHORTENED: {
-                    fullname = parts.get(0);
-                    break;
-                }
+                case SHORTENED:
+                    {
+                        fullname = parts.get(0);
+                        break;
+                    }
                 case COMMENT_PERMALINK:
-                case SUBMISSION: {
-                    fullname = parts.get(3);
-                    break;
-                }
-                case SUBMISSION_WITHOUT_SUB: {
-                    fullname = parts.get(1);
-                    break;
-                }
+                case SUBMISSION:
+                    {
+                        fullname = parts.get(3);
+                        break;
+                    }
+                case SUBMISSION_WITHOUT_SUB:
+                    {
+                        fullname = parts.get(1);
+                        break;
+                    }
             }
         }
 

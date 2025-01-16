@@ -29,21 +29,27 @@ import java.util.TreeMap;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
-/**
- * A group of usernotes for a subreddit
- */
+/** A group of usernotes for a subreddit */
 public class Usernotes {
-    @SerializedName("ver") private int schema;
-    private UsernotesConstants constants;
-    @SerializedName("blob") private Map<String, List<Usernote>> notes;
+    @SerializedName("ver")
+    private int schema;
 
-    transient private String subreddit;
+    private UsernotesConstants constants;
+
+    @SerializedName("blob")
+    private Map<String, List<Usernote>> notes;
+
+    private transient String subreddit;
 
     public Usernotes() {
         // for GSON
     }
 
-    public Usernotes(int schema, UsernotesConstants constants, Map<String, List<Usernote>> notes, String subreddit) {
+    public Usernotes(
+            int schema,
+            UsernotesConstants constants,
+            Map<String, List<Usernote>> notes,
+            String subreddit) {
         this.schema = schema;
         this.constants = constants;
         this.notes = notes;
@@ -53,7 +59,7 @@ public class Usernotes {
     /**
      * Add a usernote to this usernotes object
      *
-     * Make sure to persist back to the wiki after doing this!
+     * <p>Make sure to persist back to the wiki after doing this!
      *
      * @param user User to add note for
      * @param noteText Note text
@@ -62,7 +68,8 @@ public class Usernotes {
      * @param mod Mod making the note
      * @param type optional warning type
      */
-    public void createNote(String user, String noteText, String link, long time, String mod, String type) {
+    public void createNote(
+            String user, String noteText, String link, long time, String mod, String type) {
         boolean modExists = false;
         int modIndex = -1;
         boolean typeExists = false;
@@ -105,7 +112,7 @@ public class Usernotes {
     /**
      * Remove a usernote for a user
      *
-     * Make sure to persist back to the wiki after doing this!
+     * <p>Make sure to persist back to the wiki after doing this!
      *
      * @param user User to remove note from
      * @param note Note to remove
@@ -113,7 +120,8 @@ public class Usernotes {
     public void removeNote(String user, Usernote note) {
         if (notes.get(user) != null) {
             notes.get(user).remove(note);
-            if (notes.get(user).isEmpty()) { // if we just removed the last note, remove the user too
+            if (notes.get(user)
+                    .isEmpty()) { // if we just removed the last note, remove the user too
                 notes.remove(user);
             }
         }
@@ -133,6 +141,7 @@ public class Usernotes {
 
     /**
      * Get the list of usernotes for a user
+     *
      * @param user User to get notes for
      * @return List of usernotes
      */
@@ -142,6 +151,7 @@ public class Usernotes {
 
     /**
      * Gets the display text for a user using same logic as toolbox
+     *
      * @param user User
      * @return (Shortened) usernote text (plus count if additional notes)
      */
@@ -150,7 +160,8 @@ public class Usernotes {
         if (count == 0) {
             return "";
         }
-        String noteText = StringUtils.abbreviate(getNotesForUser(user).get(0).getNoteText(), "…", 20);
+        String noteText =
+                StringUtils.abbreviate(getNotesForUser(user).get(0).getNoteText(), "…", 20);
         if (count > 1) {
             noteText += " (+" + (count - 1) + ")";
         }
@@ -159,6 +170,7 @@ public class Usernotes {
 
     /**
      * Get the color for the primary displayed usernote of a user
+     *
      * @param user User
      * @return A color int
      */
@@ -173,6 +185,7 @@ public class Usernotes {
 
     /**
      * Get a color from a warning index
+     *
      * @param index Index
      * @return A color int
      */
@@ -214,7 +227,8 @@ public class Usernotes {
         StringBuilder result = new StringBuilder(bracket ? "[" : "");
         if (Toolbox.getConfig(subreddit) != null) {
             if (constants.getTypeName(index) != null) {
-                String text = Toolbox.getConfig(subreddit).getUsernoteText(constants.getTypeName(index));
+                String text =
+                        Toolbox.getConfig(subreddit).getUsernoteText(constants.getTypeName(index));
                 if (!text.isEmpty()) {
                     result.append(text);
                 } else {
@@ -225,7 +239,10 @@ public class Usernotes {
             }
         } else {
             if (constants.getTypeName(index) != null) {
-                String def = Toolbox.DEFAULT_USERNOTE_TYPES.get(constants.getTypeName(index)).get("text");
+                String def =
+                        Toolbox.DEFAULT_USERNOTE_TYPES
+                                .get(constants.getTypeName(index))
+                                .get("text");
                 if (def != null) {
                     result.append(def);
                 } else {
@@ -245,19 +262,19 @@ public class Usernotes {
 
     /**
      * Sets the Usernotes object's subreddit
+     *
      * @param subreddit
      */
     public void setSubreddit(String subreddit) {
         this.subreddit = subreddit;
     }
 
-    /**
-     * Allows GSON to deserialize the "blob" into an object
-     */
+    /** Allows GSON to deserialize the "blob" into an object */
     public static class BlobDeserializer implements JsonDeserializer<Map<String, List<Usernote>>> {
         @Override
-        public Map<String, List<Usernote>> deserialize(JsonElement json, Type typeOfT,
-                JsonDeserializationContext context) throws JsonParseException {
+        public Map<String, List<Usernote>> deserialize(
+                JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                throws JsonParseException {
 
             String decodedBlob = blobToJson(json.getAsString());
             if (decodedBlob == null) {
@@ -266,9 +283,11 @@ public class Usernotes {
             JsonElement jsonBlob = JsonParser.parseString(decodedBlob);
             Map<String, List<Usernote>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
-            for (Map.Entry<String, JsonElement> userAndNotes : jsonBlob.getAsJsonObject().entrySet()) {
+            for (Map.Entry<String, JsonElement> userAndNotes :
+                    jsonBlob.getAsJsonObject().entrySet()) {
                 List<Usernote> notesList = new ArrayList<>();
-                for (JsonElement notesArray : userAndNotes.getValue().getAsJsonObject().get("ns").getAsJsonArray()) {
+                for (JsonElement notesArray :
+                        userAndNotes.getValue().getAsJsonObject().get("ns").getAsJsonArray()) {
                     notesList.add(context.deserialize(notesArray, Usernote.class));
                 }
                 result.put(userAndNotes.getKey().toLowerCase(), notesList);
@@ -279,6 +298,7 @@ public class Usernotes {
 
         /**
          * Converts a base64 encoded and zlib compressed blob into a String.
+         *
          * @param blob Blob to convert to string
          * @return Decoded blob
          */
@@ -303,12 +323,11 @@ public class Usernotes {
         }
     }
 
-    /**
-     * Allows GSON to serialize the usernotes map into a blob
-     */
+    /** Allows GSON to serialize the usernotes map into a blob */
     public static class BlobSerializer implements JsonSerializer<Map<String, List<Usernote>>> {
         @Override
-        public JsonElement serialize(Map<String, List<Usernote>> src, Type srcType, JsonSerializationContext context) {
+        public JsonElement serialize(
+                Map<String, List<Usernote>> src, Type srcType, JsonSerializationContext context) {
             Map<String, Map<String, List<Usernote>>> notes = new HashMap<>();
             for (Map.Entry<String, List<Usernote>> entry : src.entrySet()) {
                 Map<String, List<Usernote>> newNotes = new HashMap<>();
@@ -341,12 +360,15 @@ public class Usernotes {
         }
     }
 
-    /**
-     * Class describing the "constants" field of a usernotes config
-     */
+    /** Class describing the "constants" field of a usernotes config */
     public static class UsernotesConstants {
-        @SerializedName("users") private String[] mods; // String array of mods. Usernote mod is index in this
-        @SerializedName("warnings") private String[] types; // String array of used type names corresponding to types in the config/defaults. Usernote warning is index in this
+        @SerializedName("users")
+        private String[] mods; // String array of mods. Usernote mod is index in this
+
+        @SerializedName("warnings")
+        private String[]
+                types; // String array of used type names corresponding to types in the
+                       // config/defaults. Usernote warning is index in this
 
         public UsernotesConstants() {
             // for GSON
@@ -364,7 +386,7 @@ public class Usernotes {
         /**
          * Add a new user to the mods array
          *
-         * Does not check for duplicates!
+         * <p>Does not check for duplicates!
          *
          * @param user User to add
          * @return Index of added mod
@@ -384,7 +406,7 @@ public class Usernotes {
         /**
          * Adds a type to the warnings array
          *
-         * Does not check for duplicates!
+         * <p>Does not check for duplicates!
          *
          * @param type Type to add
          * @return Index of added type

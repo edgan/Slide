@@ -10,7 +10,6 @@ import me.edgan.redditslide.R;
 import me.edgan.redditslide.SwipeLayout.SwipeBackLayout;
 import me.edgan.redditslide.SwipeLayout.Utils;
 
-
 /**
  * @author Yrom
  */
@@ -26,23 +25,22 @@ public class SwipeBackActivityHelper {
     public void onActivityCreate() {
         mActivity.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mActivity.getWindow().getDecorView().setBackground(null);
-        mSwipeBackLayout = (SwipeBackLayout) LayoutInflater.from(mActivity).inflate(
-                R.layout.swipeback_layout, null);
-        mSwipeBackLayout.addSwipeListener(new SwipeBackLayout.SwipeListener() {
-            @Override
-            public void onScrollStateChange(int state, float scrollPercent) {
-            }
+        mSwipeBackLayout =
+                (SwipeBackLayout)
+                        LayoutInflater.from(mActivity).inflate(R.layout.swipeback_layout, null);
+        mSwipeBackLayout.addSwipeListener(
+                new SwipeBackLayout.SwipeListener() {
+                    @Override
+                    public void onScrollStateChange(int state, float scrollPercent) {}
 
-            @Override
-            public void onEdgeTouch(int edgeFlag) {
-                Utils.convertActivityToTranslucent(mActivity);
-            }
+                    @Override
+                    public void onEdgeTouch(int edgeFlag) {
+                        Utils.convertActivityToTranslucent(mActivity);
+                    }
 
-            @Override
-            public void onScrollOverThreshold() {
-
-            }
-        });
+                    @Override
+                    public void onScrollOverThreshold() {}
+                });
     }
 
     public void onPostCreate() {

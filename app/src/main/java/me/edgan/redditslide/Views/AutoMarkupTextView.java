@@ -7,10 +7,7 @@ import android.util.AttributeSet;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.text.util.LinkifyCompat;
 
-
-/**
- * Created by ccrama on 5/5/2015.
- */
+/** Created by ccrama on 5/5/2015. */
 public class AutoMarkupTextView extends AppCompatTextView {
 
     public AutoMarkupTextView(Context context, AttributeSet attrs, int defStyle) {
@@ -19,7 +16,6 @@ public class AutoMarkupTextView extends AppCompatTextView {
 
     public AutoMarkupTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
     }
 
     public AutoMarkupTextView(Context context) {
@@ -32,7 +28,6 @@ public class AutoMarkupTextView extends AppCompatTextView {
 
     private void parseLinks(String s) {
 
-
         setText(s);
         int mask = Linkify.WEB_URLS;
         LinkifyCompat.addLinks(this, mask);
@@ -40,6 +35,4 @@ public class AutoMarkupTextView extends AppCompatTextView {
         // todo this setMovementMethod(new CommentMovementMethod());
 
     }
-
-
 }

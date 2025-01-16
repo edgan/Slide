@@ -1,19 +1,17 @@
 package me.edgan.redditslide.Adapters;
 
+import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.HasSeen;
+import me.edgan.redditslide.PostMatch;
+import me.edgan.redditslide.SettingValues;
+
 import net.dean.jraw.models.Contribution;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.paginators.UserSavedPaginator;
 
 import java.util.ArrayList;
 
-import me.edgan.redditslide.Authentication;
-import me.edgan.redditslide.HasSeen;
-import me.edgan.redditslide.PostMatch;
-import me.edgan.redditslide.SettingValues;
-
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class ContributionPostsSaved extends ContributionPosts {
     private final String category;
 
@@ -48,8 +46,7 @@ public class ContributionPostsSaved extends ContributionPosts {
                     paginator = new UserSavedPaginator(Authentication.reddit, where, subreddit);
                     paginator.setSorting(SettingValues.getSubmissionSort(subreddit));
                     paginator.setTimePeriod(SettingValues.getSubmissionTimePeriod(subreddit));
-                    if(category != null)
-                        paginator.setCategory(category);
+                    if (category != null) paginator.setCategory(category);
                 }
 
                 if (!paginator.hasNext()) {
@@ -74,7 +71,5 @@ public class ContributionPostsSaved extends ContributionPosts {
                 return null;
             }
         }
-
     }
-
 }

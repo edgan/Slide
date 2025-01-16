@@ -32,7 +32,6 @@ public class Related extends BaseActivityAnim {
 
     private SubredditSearchPosts posts;
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -52,19 +51,19 @@ public class Related extends BaseActivityAnim {
         applyColorTheme("");
         setContentView(R.layout.activity_search);
         Intent intent = getIntent();
-        if (intent.hasExtra(Intent.EXTRA_TEXT) && !intent.getExtras().getString(Intent.EXTRA_TEXT, "").isEmpty()) {
+        if (intent.hasExtra(Intent.EXTRA_TEXT)
+                && !intent.getExtras().getString(Intent.EXTRA_TEXT, "").isEmpty()) {
             url = intent.getStringExtra(Intent.EXTRA_TEXT);
         }
-        if(intent.hasExtra(EXTRA_URL)){
+        if (intent.hasExtra(EXTRA_URL)) {
             url = intent.getStringExtra(EXTRA_URL);
         }
-        if(url == null || url.isEmpty()){
+        if (url == null || url.isEmpty()) {
             new AlertDialog.Builder(this)
                     .setTitle("URL is empty")
                     .setMessage("Try again with a different link!")
                     .setCancelable(false)
-                    .setPositiveButton(R.string.btn_ok, (dialogInterface, i) ->
-                            finish())
+                    .setPositiveButton(R.string.btn_ok, (dialogInterface, i) -> finish())
                     .show();
         }
 
@@ -77,46 +76,54 @@ public class Related extends BaseActivityAnim {
         final PreCachingLayoutManager mLayoutManager = new PreCachingLayoutManager(this);
         rv.setLayoutManager(mLayoutManager);
 
-        rv.addOnScrollListener(new ToolbarScrollHideHandler(mToolbar, findViewById(R.id.header)) {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
+        rv.addOnScrollListener(
+                new ToolbarScrollHideHandler(mToolbar, findViewById(R.id.header)) {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
 
-                visibleItemCount = rv.getLayoutManager().getChildCount();
-                totalItemCount = rv.getLayoutManager().getItemCount();
-                if (rv.getLayoutManager() instanceof PreCachingLayoutManager) {
-                    pastVisiblesItems = ((PreCachingLayoutManager) rv.getLayoutManager()).findFirstVisibleItemPosition();
-                } else {
-                    int[] firstVisibleItems = null;
-                    firstVisibleItems = ((CatchStaggeredGridLayoutManager) rv.getLayoutManager()).findFirstVisibleItemPositions(firstVisibleItems);
-                    if (firstVisibleItems != null && firstVisibleItems.length > 0) {
-                        pastVisiblesItems = firstVisibleItems[0];
+                        visibleItemCount = rv.getLayoutManager().getChildCount();
+                        totalItemCount = rv.getLayoutManager().getItemCount();
+                        if (rv.getLayoutManager() instanceof PreCachingLayoutManager) {
+                            pastVisiblesItems =
+                                    ((PreCachingLayoutManager) rv.getLayoutManager())
+                                            .findFirstVisibleItemPosition();
+                        } else {
+                            int[] firstVisibleItems = null;
+                            firstVisibleItems =
+                                    ((CatchStaggeredGridLayoutManager) rv.getLayoutManager())
+                                            .findFirstVisibleItemPositions(firstVisibleItems);
+                            if (firstVisibleItems != null && firstVisibleItems.length > 0) {
+                                pastVisiblesItems = firstVisibleItems[0];
+                            }
+                        }
+
+                        if (!posts.loading
+                                && (visibleItemCount + pastVisiblesItems) + 5 >= totalItemCount) {
+                            posts.loading = true;
+                            posts.loadMore(adapter, "", "url:" + url, false);
+                        }
                     }
-                }
-
-                if (!posts.loading && (visibleItemCount + pastVisiblesItems) + 5>= totalItemCount) {
-                    posts.loading = true;
-                    posts.loadMore(adapter, "", "url:" + url, false);
-
-                }
-            }
-        });
-        final SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
+                });
+        final SwipeRefreshLayout mSwipeRefreshLayout =
+                (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
 
         mSwipeRefreshLayout.setColorSchemeColors(Palette.getColors("", this));
 
         // If we use 'findViewById(R.id.header).getMeasuredHeight()', 0 is always returned.
         // So, we estimate the height of the header in dp.
-        mSwipeRefreshLayout.setProgressViewOffset(false,
+        mSwipeRefreshLayout.setProgressViewOffset(
+                false,
                 Constants.SINGLE_HEADER_VIEW_OFFSET - Constants.PTR_OFFSET_TOP,
                 Constants.SINGLE_HEADER_VIEW_OFFSET + Constants.PTR_OFFSET_BOTTOM);
 
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
+        mSwipeRefreshLayout.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                    }
+                });
 
         posts = new SubredditSearchPosts("", "url:" + url, this, false);
         adapter = new ContributionAdapter(this, posts, rv);
@@ -131,7 +138,6 @@ public class Related extends BaseActivityAnim {
                         posts.loadMore(adapter, "", "url:" + url, true);
                         // TODO catch errors
                     }
-                }
-        );
+                });
     }
 }

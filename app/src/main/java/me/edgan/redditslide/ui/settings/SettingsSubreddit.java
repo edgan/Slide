@@ -14,12 +14,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import net.dean.jraw.models.Subreddit;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.R;
@@ -31,16 +25,18 @@ import me.edgan.redditslide.Visuals.GetClosestColor;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LayoutUtils;
 
+import net.dean.jraw.models.Subreddit;
 
-/**
- * Created by ccrama on 3/5/2015.
- */
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+/** Created by ccrama on 3/5/2015. */
 public class SettingsSubreddit extends BaseActivityAnim {
     public SettingsSubAdapter mSettingsSubAdapter;
     ArrayList<String> changedSubs = new ArrayList<>();
 
     private RecyclerView recycler;
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -72,111 +68,192 @@ public class SettingsSubreddit extends BaseActivityAnim {
 
         reloadSubList();
 
-        findViewById(R.id.reset).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(SettingsSubreddit.this)
-                        .setTitle(R.string.clear_all_sub_themes)
-                        .setMessage(R.string.clear_all_sub_themes_msg)
-                        .setPositiveButton(R.string.btn_yes, (dialog, which) -> {
-                            for (String s : changedSubs) {
-                                Palette.removeColor(s);
-                                SettingValues.prefs.edit().remove(Reddit.PREF_LAYOUT + s).apply();
-                                new ColorPreferences(SettingsSubreddit.this).removeFontStyle(s);
-                                SettingValues.resetPicsEnabled(s);
-                            }
-                            reloadSubList();
-                        })
-                        .setNegativeButton(R.string.btn_no, null)
-                        .show();
-            }
-        });
-        findViewById(R.id.post_floating_action_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final ArrayList<String> subs = UserSubscriptions.sort(UserSubscriptions.getSubscriptions(SettingsSubreddit.this));
-                final CharSequence[] subsAsChar = subs.toArray(new CharSequence[0]);
-
-                MaterialDialog.Builder builder = new MaterialDialog.Builder(SettingsSubreddit.this);
-                builder.title(R.string.dialog_choose_subreddits_to_edit)
-                        .items(subsAsChar)
-                        .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+        findViewById(R.id.reset)
+                .setOnClickListener(
+                        new View.OnClickListener() {
                             @Override
-                            public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                                ArrayList<String> selectedSubs = new ArrayList<>();
-                                for (int i : which) {
-                                    selectedSubs.add(subsAsChar[i].toString());
-                                }
-                                if (mSettingsSubAdapter != null)
-                                    mSettingsSubAdapter.prepareAndShowSubEditor(selectedSubs);
-                                return true;
+                            public void onClick(View v) {
+                                new AlertDialog.Builder(SettingsSubreddit.this)
+                                        .setTitle(R.string.clear_all_sub_themes)
+                                        .setMessage(R.string.clear_all_sub_themes_msg)
+                                        .setPositiveButton(
+                                                R.string.btn_yes,
+                                                (dialog, which) -> {
+                                                    for (String s : changedSubs) {
+                                                        Palette.removeColor(s);
+                                                        SettingValues.prefs
+                                                                .edit()
+                                                                .remove(Reddit.PREF_LAYOUT + s)
+                                                                .apply();
+                                                        new ColorPreferences(SettingsSubreddit.this)
+                                                                .removeFontStyle(s);
+                                                        SettingValues.resetPicsEnabled(s);
+                                                    }
+                                                    reloadSubList();
+                                                })
+                                        .setNegativeButton(R.string.btn_no, null)
+                                        .show();
                             }
-                        })
-                        .positiveText(R.string.btn_select)
-                        .negativeText(R.string.btn_cancel)
-                        .show();
-            }
-        });
-        findViewById(R.id.color).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Authentication.isLoggedIn) {
-                    new AlertDialog.Builder(SettingsSubreddit.this)
-                            .setTitle(R.string.dialog_color_sync_title)
-                            .setMessage(R.string.dialog_color_sync_message)
-                            .setPositiveButton(R.string.misc_continue, (dialog, which) -> {
-                                final MaterialDialog d =
-                                        new MaterialDialog.Builder(SettingsSubreddit.this)
-                                                .title(R.string.general_sub_sync)
-                                                .content(R.string.misc_please_wait)
-                                                .progress(false, 100)
-                                                .cancelable(false).show();
+                        });
+        findViewById(R.id.post_floating_action_button)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                final ArrayList<String> subs =
+                                        UserSubscriptions.sort(
+                                                UserSubscriptions.getSubscriptions(
+                                                        SettingsSubreddit.this));
+                                final CharSequence[] subsAsChar = subs.toArray(new CharSequence[0]);
 
-                                new AsyncTask<Void, Void, Void>() {
-                                    @Override
-                                    protected Void doInBackground(Void... params) {
-                                        ArrayList<Subreddit> subColors = UserSubscriptions.syncSubredditsGetObject();
-                                        d.setMaxProgress(subColors.size());
-                                        int i = 0;
-                                        done = 0;
-                                        for (Subreddit s : subColors) {
-                                            if (s.getDataNode().has("key_color") && !s.getDataNode().get("key_color").asText().isEmpty() && Palette.getColor(s.getDisplayName().toLowerCase(Locale.ENGLISH)) == Palette.getDefaultColor()) {
-                                                Palette.setColor(s.getDisplayName().toLowerCase(Locale.ENGLISH), GetClosestColor.getClosestColor(s.getDataNode().get("key_color").asText(), SettingsSubreddit.this));
-                                                done++;
-                                            }
-                                            d.setProgress(i);
+                                MaterialDialog.Builder builder =
+                                        new MaterialDialog.Builder(SettingsSubreddit.this);
+                                builder.title(R.string.dialog_choose_subreddits_to_edit)
+                                        .items(subsAsChar)
+                                        .itemsCallbackMultiChoice(
+                                                null,
+                                                new MaterialDialog.ListCallbackMultiChoice() {
+                                                    @Override
+                                                    public boolean onSelection(
+                                                            MaterialDialog dialog,
+                                                            Integer[] which,
+                                                            CharSequence[] text) {
+                                                        ArrayList<String> selectedSubs =
+                                                                new ArrayList<>();
+                                                        for (int i : which) {
+                                                            selectedSubs.add(
+                                                                    subsAsChar[i].toString());
+                                                        }
+                                                        if (mSettingsSubAdapter != null)
+                                                            mSettingsSubAdapter
+                                                                    .prepareAndShowSubEditor(
+                                                                            selectedSubs);
+                                                        return true;
+                                                    }
+                                                })
+                                        .positiveText(R.string.btn_select)
+                                        .negativeText(R.string.btn_cancel)
+                                        .show();
+                            }
+                        });
+        findViewById(R.id.color)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (Authentication.isLoggedIn) {
+                                    new AlertDialog.Builder(SettingsSubreddit.this)
+                                            .setTitle(R.string.dialog_color_sync_title)
+                                            .setMessage(R.string.dialog_color_sync_message)
+                                            .setPositiveButton(
+                                                    R.string.misc_continue,
+                                                    (dialog, which) -> {
+                                                        final MaterialDialog d =
+                                                                new MaterialDialog.Builder(
+                                                                                SettingsSubreddit
+                                                                                        .this)
+                                                                        .title(
+                                                                                R.string
+                                                                                        .general_sub_sync)
+                                                                        .content(
+                                                                                R.string
+                                                                                        .misc_please_wait)
+                                                                        .progress(false, 100)
+                                                                        .cancelable(false)
+                                                                        .show();
 
-                                            i++;
-                                            if (i == d.getMaxProgress()) {
-                                                d.dismiss();
+                                                        new AsyncTask<Void, Void, Void>() {
+                                                            @Override
+                                                            protected Void doInBackground(
+                                                                    Void... params) {
+                                                                ArrayList<Subreddit> subColors =
+                                                                        UserSubscriptions
+                                                                                .syncSubredditsGetObject();
+                                                                d.setMaxProgress(subColors.size());
+                                                                int i = 0;
+                                                                done = 0;
+                                                                for (Subreddit s : subColors) {
+                                                                    if (s.getDataNode()
+                                                                                    .has(
+                                                                                            "key_color")
+                                                                            && !s.getDataNode()
+                                                                                    .get(
+                                                                                            "key_color")
+                                                                                    .asText()
+                                                                                    .isEmpty()
+                                                                            && Palette.getColor(
+                                                                                            s.getDisplayName()
+                                                                                                    .toLowerCase(
+                                                                                                            Locale
+                                                                                                                    .ENGLISH))
+                                                                                    == Palette
+                                                                                            .getDefaultColor()) {
+                                                                        Palette.setColor(
+                                                                                s.getDisplayName()
+                                                                                        .toLowerCase(
+                                                                                                Locale
+                                                                                                        .ENGLISH),
+                                                                                GetClosestColor
+                                                                                        .getClosestColor(
+                                                                                                s.getDataNode()
+                                                                                                        .get(
+                                                                                                                "key_color")
+                                                                                                        .asText(),
+                                                                                                SettingsSubreddit
+                                                                                                        .this));
+                                                                        done++;
+                                                                    }
+                                                                    d.setProgress(i);
 
-                                            }
+                                                                    i++;
+                                                                    if (i == d.getMaxProgress()) {
+                                                                        d.dismiss();
+                                                                    }
+                                                                }
+                                                                return null;
+                                                            }
 
-                                        }
-                                        return null;
-                                    }
+                                                            @Override
+                                                            protected void onPostExecute(
+                                                                    Void aVoid) {
 
-                                    @Override
-                                    protected void onPostExecute(Void aVoid) {
+                                                                reloadSubList();
+                                                                Resources res = getResources();
 
-                                        reloadSubList();
-                                        Resources res = getResources();
-
-                                        new AlertDialog.Builder(SettingsSubreddit.this)
-                                                .setTitle(R.string.color_sync_complete)
-                                                .setMessage(res.getQuantityString(R.plurals.color_sync_colored, done, done))
-                                                .setPositiveButton(R.string.btn_ok, null)
-                                                .show();
-                                    }
-                                }.execute();
-                                d.show();
-                            }).setNegativeButton(R.string.btn_cancel, null).show();
-                } else {
-                    Snackbar s = Snackbar.make(mToolbar, R.string.err_color_sync_login, Snackbar.LENGTH_SHORT);
-                    LayoutUtils.showSnackbar(s);
-                }
-            }
-        });
+                                                                new AlertDialog.Builder(
+                                                                                SettingsSubreddit
+                                                                                        .this)
+                                                                        .setTitle(
+                                                                                R.string
+                                                                                        .color_sync_complete)
+                                                                        .setMessage(
+                                                                                res
+                                                                                        .getQuantityString(
+                                                                                                R
+                                                                                                        .plurals
+                                                                                                        .color_sync_colored,
+                                                                                                done,
+                                                                                                done))
+                                                                        .setPositiveButton(
+                                                                                R.string.btn_ok,
+                                                                                null)
+                                                                        .show();
+                                                            }
+                                                        }.execute();
+                                                        d.show();
+                                                    })
+                                            .setNegativeButton(R.string.btn_cancel, null)
+                                            .show();
+                                } else {
+                                    Snackbar s =
+                                            Snackbar.make(
+                                                    mToolbar,
+                                                    R.string.err_color_sync_login,
+                                                    Snackbar.LENGTH_SHORT);
+                                    LayoutUtils.showSnackbar(s);
+                                }
+                            }
+                        });
     }
 
     public void reloadSubList() {
@@ -191,31 +268,32 @@ public class SettingsSubreddit extends BaseActivityAnim {
             if (Palette.getColor(s) != Palette.getDefaultColor()
                     || SettingValues.prefs.contains(Reddit.PREF_LAYOUT + s)
                     || colorPrefs.getFontStyleSubreddit(s).getColor() != defaultFont
-                    || SettingValues.prefs.contains("picsenabled" + s.toLowerCase(Locale.ENGLISH))) {
+                    || SettingValues.prefs.contains(
+                            "picsenabled" + s.toLowerCase(Locale.ENGLISH))) {
                 changedSubs.add(s);
             }
         }
 
         mSettingsSubAdapter = new SettingsSubAdapter(this, changedSubs);
         recycler.setAdapter(mSettingsSubAdapter);
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.post_floating_action_button);
-        recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy <= 0 && fab.getId() != 0) {
-                    fab.show();
-                } else {
-                    fab.hide();
-                }
-            }
+        final FloatingActionButton fab =
+                (FloatingActionButton) findViewById(R.id.post_floating_action_button);
+        recycler.addOnScrollListener(
+                new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                        if (dy <= 0 && fab.getId() != 0) {
+                            fab.show();
+                        } else {
+                            fab.hide();
+                        }
+                    }
 
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-        });
+                    @Override
+                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                        super.onScrollStateChanged(recyclerView, newState);
+                    }
+                });
         fab.show();
     }
-
-
 }

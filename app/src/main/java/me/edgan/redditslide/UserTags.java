@@ -4,7 +4,6 @@ import java.util.Locale;
 
 public class UserTags {
 
-
     /**
      * Gets the tag for a specific username.
      *
@@ -25,9 +24,11 @@ public class UserTags {
         return Reddit.tags.contains("user-tag" + username.toLowerCase(Locale.ENGLISH));
     }
 
-
     public static void setUserTag(final String username, String tag) {
-        Reddit.tags.edit().putString("user-tag" + username.toLowerCase(Locale.ENGLISH), tag).apply();
+        Reddit.tags
+                .edit()
+                .putString("user-tag" + username.toLowerCase(Locale.ENGLISH), tag)
+                .apply();
     }
 
     public static void removeUserTag(final String username) {

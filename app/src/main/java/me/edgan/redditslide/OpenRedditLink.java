@@ -4,19 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.StrictMode;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import java.io.IOException;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import java.util.List;
-import java.util.Objects;
-
-import android.os.StrictMode;
 
 import me.edgan.redditslide.Activities.CommentsScreenSingle;
 import me.edgan.redditslide.Activities.LiveThread;
@@ -34,6 +25,11 @@ import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.LogUtil;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
+import java.util.Objects;
+
 public class OpenRedditLink {
 
     /**
@@ -41,9 +37,9 @@ public class OpenRedditLink {
      * query paramter value as a String.
      *
      * @param intent The intent to put the data into
-     * @param uri    The uri to look up the query parameter from
-     * @param name   The name of the data to add to the intent. e.g. {@link Intent#EXTRA_SUBJECT}
-     * @param key    The query parameter key, e.g. selftext in ?selftext=true
+     * @param uri The uri to look up the query parameter from
+     * @param name The name of the data to add to the intent. e.g. {@link Intent#EXTRA_SUBJECT}
+     * @param key The query parameter key, e.g. selftext in ?selftext=true
      * @see Intent#putExtra(String, String)
      */
     private static void putExtraIfParamExists(Intent intent, Uri uri, String name, String key) {
@@ -58,15 +54,15 @@ public class OpenRedditLink {
      * If the Uri has a query parameter called key, and it equals toCompare, call intent.putExtra
      * with true.
      *
-     * @param intent    The intent to put the data into
-     * @param uri       The uri to look up the query parameter from
-     * @param name      The name of the data to add to the intent. e.g. {@link Intent#EXTRA_SUBJECT}
-     * @param key       The query parameter key, e.g. selftext in ?selftext=true
+     * @param intent The intent to put the data into
+     * @param uri The uri to look up the query parameter from
+     * @param name The name of the data to add to the intent. e.g. {@link Intent#EXTRA_SUBJECT}
+     * @param key The query parameter key, e.g. selftext in ?selftext=true
      * @param toCompare The value to compare the query parameter value to
      * @see Intent#putExtra(String, boolean)
      */
-    private static void putExtraIfParamEquals(Intent intent, Uri uri, String name, String key,
-            String toCompare) {
+    private static void putExtraIfParamEquals(
+            Intent intent, Uri uri, String name, String key, String toCompare) {
         String param = uri.getQueryParameter(key);
 
         if (param != null && param.equals(toCompare)) {
@@ -74,7 +70,8 @@ public class OpenRedditLink {
         }
     }
 
-    // Returns true if link was in fact handled by this method. If false, further action should be taken
+    // Returns true if link was in fact handled by this method. If false, further action should be
+    // taken
     public static boolean openUrl(Context context, String url, boolean openIfOther) {
         boolean np = false;
 
@@ -91,17 +88,18 @@ public class OpenRedditLink {
             uri = uri.buildUpon().authority("reddit.com").build();
         }
 
-       String path = Objects.requireNonNull(uri.getPath());
+        String path = Objects.requireNonNull(uri.getPath());
 
-       if (path.matches("(?i)/r/[a-z0-9-_.]+/s/.*")) {
-           try {
-                StrictMode.ThreadPolicy gfgPolicy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        if (path.matches("(?i)/r/[a-z0-9-_.]+/s/.*")) {
+            try {
+                StrictMode.ThreadPolicy gfgPolicy =
+                        new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(gfgPolicy);
                 URL newUrl = new URL(url);
                 HttpURLConnection ucon = (HttpURLConnection) newUrl.openConnection();
                 ucon.setInstanceFollowRedirects(false);
                 url = new URL(ucon.getHeaderField("location")).toString();
-               uri = formatRedditUrl(ucon.getHeaderField("location"));
+                uri = formatRedditUrl(ucon.getHeaderField("location"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -113,167 +111,192 @@ public class OpenRedditLink {
 
         Intent i = null;
         switch (type) {
-            case SHORTENED: {
-                i = new Intent(context, CommentsScreenSingle.class);
-                i.putExtra(CommentsScreenSingle.EXTRA_SUBREDDIT, Reddit.EMPTY_STRING);
-                i.putExtra(CommentsScreenSingle.EXTRA_CONTEXT, Reddit.EMPTY_STRING);
-                i.putExtra(CommentsScreenSingle.EXTRA_NP, np);
-                i.putExtra(CommentsScreenSingle.EXTRA_SUBMISSION, parts.get(0));
-                break;
-            }
-            case LIVE: {
-                i = new Intent(context, LiveThread.class);
-                i.putExtra(LiveThread.EXTRA_LIVEURL, parts.get(1));
-                break;
-            }
-            case WIKI: {
-                i = new Intent(context, Wiki.class);
-                i.putExtra(Wiki.EXTRA_SUBREDDIT, parts.get(1));
-
-                if (parts.size() >= 4) {
-                    i.putExtra(Wiki.EXTRA_PAGE, parts.get(3));
+            case SHORTENED:
+                {
+                    i = new Intent(context, CommentsScreenSingle.class);
+                    i.putExtra(CommentsScreenSingle.EXTRA_SUBREDDIT, Reddit.EMPTY_STRING);
+                    i.putExtra(CommentsScreenSingle.EXTRA_CONTEXT, Reddit.EMPTY_STRING);
+                    i.putExtra(CommentsScreenSingle.EXTRA_NP, np);
+                    i.putExtra(CommentsScreenSingle.EXTRA_SUBMISSION, parts.get(0));
+                    break;
                 }
-                break;
-            }
-            case SEARCH: {
-                i = new Intent(context, Search.class);
-
-                String restrictSub = uri.getQueryParameter("restrict_sr");
-                if (restrictSub != null && restrictSub.equals("on")) {
-                    i.putExtra(Search.EXTRA_SUBREDDIT, parts.get(1));
-                } else {
-                    i.putExtra(Search.EXTRA_SUBREDDIT, "all");
+            case LIVE:
+                {
+                    i = new Intent(context, LiveThread.class);
+                    i.putExtra(LiveThread.EXTRA_LIVEURL, parts.get(1));
+                    break;
                 }
+            case WIKI:
+                {
+                    i = new Intent(context, Wiki.class);
+                    i.putExtra(Wiki.EXTRA_SUBREDDIT, parts.get(1));
 
-                putExtraIfParamExists(i, uri, Search.EXTRA_TERM, "q");
-                putExtraIfParamExists(i, uri, Search.EXTRA_AUTHOR, "author");
-                putExtraIfParamExists(i, uri, Search.EXTRA_URL, "url");
-                putExtraIfParamExists(i, uri, Search.EXTRA_SITE, "site");
-                putExtraIfParamExists(i, uri, Search.EXTRA_TIME, "t");
-
-                putExtraIfParamEquals(i, uri, Search.EXTRA_NSFW, "nsfw", "yes");
-                putExtraIfParamEquals(i, uri, Search.EXTRA_SELF, "self", "yes");
-                putExtraIfParamEquals(i, uri, Search.EXTRA_SELF, "selftext", "yes");
-
-                break;
-            }
-            case SUBMIT: {
-                i = new Intent(context, Submit.class);
-                i.putExtra(Submit.EXTRA_SUBREDDIT, parts.get(1));
-
-                // Submit already uses EXTRA_SUBJECT for title and EXTRA_TEXT for URL for sharing so we use those
-                putExtraIfParamExists(i, uri, Intent.EXTRA_SUBJECT, "title");
-
-                // Reddit behavior: If selftext is true or if selftext doesn't exist and text does exist then page
-                // defaults to showing self post page. If selftext is false, or doesn't exist and no text then the page
-                // defaults to showing the link post page.
-                // We say isSelfText=true for the "no selftext, no text, no url" condition because that's slide's
-                // default behavior for the submit page, whereas reddit's behavior would say isSelfText=false.
-                boolean isSelfText = uri.getBooleanQueryParameter("selftext", false)
-                        || uri.getQueryParameter("text") != null
-                        || !uri.getBooleanQueryParameter("url", false);
-
-                i.putExtra(Submit.EXTRA_IS_SELF, isSelfText);
-
-                putExtraIfParamExists(i, uri, Submit.EXTRA_BODY, "text");
-                putExtraIfParamExists(i, uri, Intent.EXTRA_TEXT, "url");
-
-                break;
-            }
-            case COMMENT_PERMALINK: {
-                i = new Intent(context, CommentsScreenSingle.class);
-                if (parts.get(0).equalsIgnoreCase("u") || parts.get(0).equalsIgnoreCase("user")) {
-                    // Prepend u_ because user profile posts are made to /r/u_username
-                    i.putExtra(CommentsScreenSingle.EXTRA_SUBREDDIT, "u_" + parts.get(2));
-                } else {
-                    i.putExtra(CommentsScreenSingle.EXTRA_SUBREDDIT, parts.get(1));
-                }
-                i.putExtra(CommentsScreenSingle.EXTRA_SUBMISSION, parts.get(3));
-                i.putExtra(CommentsScreenSingle.EXTRA_NP, np);
-                if (parts.size() >= 6) {
-                    i.putExtra(CommentsScreenSingle.EXTRA_LOADMORE, true);
-                    String end = parts.get(5);
-
-                    if (end.length() >= 3) i.putExtra(CommentsScreenSingle.EXTRA_CONTEXT, end);
-
-                    putExtraIfParamExists(i, uri, CommentsScreenSingle.EXTRA_CONTEXT_NUMBER,"context");
-
-                    try {
-                        String contextNumber = uri.getQueryParameter("context");
-                        if (contextNumber != null) {
-                            i.putExtra(CommentsScreenSingle.EXTRA_CONTEXT_NUMBER, Integer.parseInt(contextNumber));
-                        }
-                    } catch (NumberFormatException ignored) {
-
+                    if (parts.size() >= 4) {
+                        i.putExtra(Wiki.EXTRA_PAGE, parts.get(3));
                     }
+                    break;
                 }
-                break;
-            }
-            case SUBMISSION: {
-                i = new Intent(context, CommentsScreenSingle.class);
-                if (parts.get(0).equalsIgnoreCase("u") || parts.get(0).equalsIgnoreCase("user")) {
-                    // Prepend u_ because user profile posts are made to /r/u_username
-                    i.putExtra(CommentsScreenSingle.EXTRA_SUBREDDIT, "u_" + parts.get(1));
-                } else {
-                    i.putExtra(CommentsScreenSingle.EXTRA_SUBREDDIT, parts.get(1));
-                }
-                i.putExtra(CommentsScreenSingle.EXTRA_CONTEXT, Reddit.EMPTY_STRING);
-                i.putExtra(CommentsScreenSingle.EXTRA_NP, np);
-                i.putExtra(CommentsScreenSingle.EXTRA_SUBMISSION, parts.get(3));
-                break;
-            }
-            case SUBMISSION_WITHOUT_SUB: {
-                i = new Intent(context, CommentsScreenSingle.class);
-                i.putExtra(CommentsScreenSingle.EXTRA_SUBREDDIT, Reddit.EMPTY_STRING);
-                i.putExtra(CommentsScreenSingle.EXTRA_CONTEXT, Reddit.EMPTY_STRING);
-                i.putExtra(CommentsScreenSingle.EXTRA_NP, np);
-                i.putExtra(CommentsScreenSingle.EXTRA_SUBMISSION, parts.get(1));
-                break;
-            }
-            case SUBREDDIT: {
-                i = new Intent(context, SubredditView.class);
-                i.putExtra(SubredditView.EXTRA_SUBREDDIT, parts.get(1));
-                break;
-            }
-            case MULTIREDDIT: {
-                i = new Intent(context, MultiredditOverview.class);
-                i.putExtra(MultiredditOverview.EXTRA_PROFILE, parts.get(1));
-                i.putExtra(MultiredditOverview.EXTRA_MULTI, parts.get(3));
-                break;
-            }
-            case MESSAGE: {
-                i = new Intent(context, SendMessage.class);
+            case SEARCH:
+                {
+                    i = new Intent(context, Search.class);
 
-                putExtraIfParamExists(i, uri, SendMessage.EXTRA_NAME, "to");
-                putExtraIfParamExists(i, uri, SendMessage.EXTRA_SUBJECT, "subject");
-                putExtraIfParamExists(i, uri, SendMessage.EXTRA_MESSAGE, "message");
-
-                break;
-            }
-            case USER: {
-                String name = parts.get(1);
-                if (name.equals("me") && Authentication.isLoggedIn) name = Authentication.name;
-                i = new Intent(context, Profile.class);
-                i.putExtra(Profile.EXTRA_PROFILE, name);
-                break;
-            }
-            case HOME: {
-                i = new Intent(context, MainActivity.class);
-                break;
-            }
-            case OTHER: {
-                if (openIfOther) {
-                    if (context instanceof Activity) {
-                        LinkUtil.openUrl(url, Palette.getStatusBarColor(), (Activity) context);
+                    String restrictSub = uri.getQueryParameter("restrict_sr");
+                    if (restrictSub != null && restrictSub.equals("on")) {
+                        i.putExtra(Search.EXTRA_SUBREDDIT, parts.get(1));
                     } else {
-                        i = new Intent(context, Website.class);
-                        i.putExtra(LinkUtil.EXTRA_URL, url);
+                        i.putExtra(Search.EXTRA_SUBREDDIT, "all");
                     }
-                } else {
-                    return false;
+
+                    putExtraIfParamExists(i, uri, Search.EXTRA_TERM, "q");
+                    putExtraIfParamExists(i, uri, Search.EXTRA_AUTHOR, "author");
+                    putExtraIfParamExists(i, uri, Search.EXTRA_URL, "url");
+                    putExtraIfParamExists(i, uri, Search.EXTRA_SITE, "site");
+                    putExtraIfParamExists(i, uri, Search.EXTRA_TIME, "t");
+
+                    putExtraIfParamEquals(i, uri, Search.EXTRA_NSFW, "nsfw", "yes");
+                    putExtraIfParamEquals(i, uri, Search.EXTRA_SELF, "self", "yes");
+                    putExtraIfParamEquals(i, uri, Search.EXTRA_SELF, "selftext", "yes");
+
+                    break;
                 }
-                break;
-            }
+            case SUBMIT:
+                {
+                    i = new Intent(context, Submit.class);
+                    i.putExtra(Submit.EXTRA_SUBREDDIT, parts.get(1));
+
+                    // Submit already uses EXTRA_SUBJECT for title and EXTRA_TEXT for URL for
+                    // sharing so we use those
+                    putExtraIfParamExists(i, uri, Intent.EXTRA_SUBJECT, "title");
+
+                    // Reddit behavior: If selftext is true or if selftext doesn't exist and text
+                    // does exist then page
+                    // defaults to showing self post page. If selftext is false, or doesn't exist
+                    // and no text then the page
+                    // defaults to showing the link post page.
+                    // We say isSelfText=true for the "no selftext, no text, no url" condition
+                    // because that's slide's
+                    // default behavior for the submit page, whereas reddit's behavior would say
+                    // isSelfText=false.
+                    boolean isSelfText =
+                            uri.getBooleanQueryParameter("selftext", false)
+                                    || uri.getQueryParameter("text") != null
+                                    || !uri.getBooleanQueryParameter("url", false);
+
+                    i.putExtra(Submit.EXTRA_IS_SELF, isSelfText);
+
+                    putExtraIfParamExists(i, uri, Submit.EXTRA_BODY, "text");
+                    putExtraIfParamExists(i, uri, Intent.EXTRA_TEXT, "url");
+
+                    break;
+                }
+            case COMMENT_PERMALINK:
+                {
+                    i = new Intent(context, CommentsScreenSingle.class);
+                    if (parts.get(0).equalsIgnoreCase("u")
+                            || parts.get(0).equalsIgnoreCase("user")) {
+                        // Prepend u_ because user profile posts are made to /r/u_username
+                        i.putExtra(CommentsScreenSingle.EXTRA_SUBREDDIT, "u_" + parts.get(2));
+                    } else {
+                        i.putExtra(CommentsScreenSingle.EXTRA_SUBREDDIT, parts.get(1));
+                    }
+                    i.putExtra(CommentsScreenSingle.EXTRA_SUBMISSION, parts.get(3));
+                    i.putExtra(CommentsScreenSingle.EXTRA_NP, np);
+                    if (parts.size() >= 6) {
+                        i.putExtra(CommentsScreenSingle.EXTRA_LOADMORE, true);
+                        String end = parts.get(5);
+
+                        if (end.length() >= 3) i.putExtra(CommentsScreenSingle.EXTRA_CONTEXT, end);
+
+                        putExtraIfParamExists(
+                                i, uri, CommentsScreenSingle.EXTRA_CONTEXT_NUMBER, "context");
+
+                        try {
+                            String contextNumber = uri.getQueryParameter("context");
+                            if (contextNumber != null) {
+                                i.putExtra(
+                                        CommentsScreenSingle.EXTRA_CONTEXT_NUMBER,
+                                        Integer.parseInt(contextNumber));
+                            }
+                        } catch (NumberFormatException ignored) {
+
+                        }
+                    }
+                    break;
+                }
+            case SUBMISSION:
+                {
+                    i = new Intent(context, CommentsScreenSingle.class);
+                    if (parts.get(0).equalsIgnoreCase("u")
+                            || parts.get(0).equalsIgnoreCase("user")) {
+                        // Prepend u_ because user profile posts are made to /r/u_username
+                        i.putExtra(CommentsScreenSingle.EXTRA_SUBREDDIT, "u_" + parts.get(1));
+                    } else {
+                        i.putExtra(CommentsScreenSingle.EXTRA_SUBREDDIT, parts.get(1));
+                    }
+                    i.putExtra(CommentsScreenSingle.EXTRA_CONTEXT, Reddit.EMPTY_STRING);
+                    i.putExtra(CommentsScreenSingle.EXTRA_NP, np);
+                    i.putExtra(CommentsScreenSingle.EXTRA_SUBMISSION, parts.get(3));
+                    break;
+                }
+            case SUBMISSION_WITHOUT_SUB:
+                {
+                    i = new Intent(context, CommentsScreenSingle.class);
+                    i.putExtra(CommentsScreenSingle.EXTRA_SUBREDDIT, Reddit.EMPTY_STRING);
+                    i.putExtra(CommentsScreenSingle.EXTRA_CONTEXT, Reddit.EMPTY_STRING);
+                    i.putExtra(CommentsScreenSingle.EXTRA_NP, np);
+                    i.putExtra(CommentsScreenSingle.EXTRA_SUBMISSION, parts.get(1));
+                    break;
+                }
+            case SUBREDDIT:
+                {
+                    i = new Intent(context, SubredditView.class);
+                    i.putExtra(SubredditView.EXTRA_SUBREDDIT, parts.get(1));
+                    break;
+                }
+            case MULTIREDDIT:
+                {
+                    i = new Intent(context, MultiredditOverview.class);
+                    i.putExtra(MultiredditOverview.EXTRA_PROFILE, parts.get(1));
+                    i.putExtra(MultiredditOverview.EXTRA_MULTI, parts.get(3));
+                    break;
+                }
+            case MESSAGE:
+                {
+                    i = new Intent(context, SendMessage.class);
+
+                    putExtraIfParamExists(i, uri, SendMessage.EXTRA_NAME, "to");
+                    putExtraIfParamExists(i, uri, SendMessage.EXTRA_SUBJECT, "subject");
+                    putExtraIfParamExists(i, uri, SendMessage.EXTRA_MESSAGE, "message");
+
+                    break;
+                }
+            case USER:
+                {
+                    String name = parts.get(1);
+                    if (name.equals("me") && Authentication.isLoggedIn) name = Authentication.name;
+                    i = new Intent(context, Profile.class);
+                    i.putExtra(Profile.EXTRA_PROFILE, name);
+                    break;
+                }
+            case HOME:
+                {
+                    i = new Intent(context, MainActivity.class);
+                    break;
+                }
+            case OTHER:
+                {
+                    if (openIfOther) {
+                        if (context instanceof Activity) {
+                            LinkUtil.openUrl(url, Palette.getStatusBarColor(), (Activity) context);
+                        } else {
+                            i = new Intent(context, Website.class);
+                            i.putExtra(LinkUtil.EXTRA_URL, url);
+                        }
+                    } else {
+                        return false;
+                    }
+                    break;
+                }
         }
         if (i != null) {
             if (context instanceof OpenContent) {
@@ -299,7 +322,6 @@ public class OpenRedditLink {
      *
      * @param builder Uri builder to append the path segments to
      * @param segments A list of path segments to append to the builder
-     *
      * @see Uri#getPathSegments()
      */
     private static void appendPathSegments(Uri.Builder builder, List<String> segments) {
@@ -340,7 +362,6 @@ public class OpenRedditLink {
 
                 uri = builder.build();
             }
-
         }
 
         if (uri.getHost().matches("(?i).+\\.reddit\\.com")) { // tests for subdomain
@@ -414,13 +435,16 @@ public class OpenRedditLink {
             // Submit post link. Format: reddit.com/r/$subreddit/submit
             return RedditLinkType.SUBMIT;
         } else if (path.matches("(?i)/(?:r|u(?:ser)?)/[a-z0-9-_.]+/comments/\\w+/[\\w-]*/.+")) {
-            // Permalink to comments. Format: reddit.com/r [or u or user]/$subreddit/comments/$post_id/$post_title [can be empty]/$comment_id
+            // Permalink to comments. Format: reddit.com/r [or u or
+            // user]/$subreddit/comments/$post_id/$post_title [can be empty]/$comment_id
             return RedditLinkType.COMMENT_PERMALINK;
         } else if (path.matches("(?i)/(?:r|u(?:ser)?)/[a-z0-9-_.]+/comments/\\w+.*")) {
-            // Submission. Format: reddit.com/r [or u or user]/$subreddit/comments/$post_id/$post_title [optional]
+            // Submission. Format: reddit.com/r [or u or
+            // user]/$subreddit/comments/$post_id/$post_title [optional]
             return RedditLinkType.SUBMISSION;
         } else if (path.matches("(?i)/comments/\\w+.*")) {
-            // Submission without a given subreddit. Format: reddit.com/comments/$post_id/$post_title [optional]
+            // Submission without a given subreddit. Format:
+            // reddit.com/comments/$post_id/$post_title [optional]
             return RedditLinkType.SUBMISSION_WITHOUT_SUB;
         } else if (path.matches("(?i)/r/[a-z0-9-_.]+.*")) {
             // Subreddit. Format: reddit.com/r/$subreddit/$sort [optional]
@@ -456,6 +480,4 @@ public class OpenRedditLink {
         HOME,
         OTHER
     }
-
-
 }

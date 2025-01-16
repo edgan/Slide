@@ -3,9 +3,7 @@ package me.edgan.redditslide;
 import android.content.Intent;
 import android.widget.RemoteViewsService;
 
-/**
- * Created by ccrama on 10/2/2015.
- */
+/** Created by ccrama on 10/2/2015. */
 public class StackWidgetService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {

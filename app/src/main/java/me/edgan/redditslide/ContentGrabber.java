@@ -2,11 +2,8 @@ package me.edgan.redditslide;
 
 import java.util.Locale;
 
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class ContentGrabber {
-
 
     /*Inbox Data*/
     public enum InboxValue {
@@ -29,11 +26,15 @@ public class ContentGrabber {
         public String getWhereName() {
             return this.name().toLowerCase(Locale.ENGLISH);
         }
-
     }
 
     public enum ModValue {
-        NODMAIL("Mod Mail"), MODQUEUE("Modqueue"), REPORTS("Reports"), UNMODERATED("Unmoderated"), SPAM("Spam"), EDITED("Edited");
+        NODMAIL("Mod Mail"),
+        MODQUEUE("Modqueue"),
+        REPORTS("Reports"),
+        UNMODERATED("Unmoderated"),
+        SPAM("Spam"),
+        EDITED("Edited");
         final String displayName;
 
         ModValue(String s) {
@@ -47,6 +48,5 @@ public class ContentGrabber {
         public String getWhereName() {
             return displayName.toLowerCase(Locale.ENGLISH);
         }
-
     }
 }

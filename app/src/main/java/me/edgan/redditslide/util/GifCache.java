@@ -13,12 +13,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-/**
- * Created by carlo_000 on 5/5/2016.
- */
+/** Created by carlo_000 on 5/5/2016. */
 public class GifCache {
 
-    public static long discCacheSize = 100000000L; //100mb
+    public static long discCacheSize = 100000000L; // 100mb
     public static DiskCache discCache;
 
     public static void init(Context c) {

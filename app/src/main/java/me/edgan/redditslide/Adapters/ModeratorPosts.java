@@ -4,17 +4,15 @@ import android.os.AsyncTask;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import me.edgan.redditslide.Authentication;
+
 import net.dean.jraw.models.PublicContribution;
 import net.dean.jraw.paginators.ModeratorPaginator;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
-import me.edgan.redditslide.Authentication;
-
-/**
- * Created by ccrama on 9/17/2015.
- */
+/** Created by ccrama on 9/17/2015. */
 public class ModeratorPosts {
     public ArrayList<PublicContribution> posts;
     public boolean loading;
@@ -52,7 +50,7 @@ public class ModeratorPosts {
         public void onPostExecute(ArrayList<PublicContribution> subs) {
             if (subs != null) {
 
-                if(reset || posts == null){
+                if (reset || posts == null) {
                     posts = new ArrayList<>(new LinkedHashSet<>(subs));
                 } else {
                     posts.addAll(subs);
@@ -65,7 +63,6 @@ public class ModeratorPosts {
             } else {
                 adapter.setError(true);
                 refreshLayout.setRefreshing(false);
-
             }
         }
 
@@ -81,7 +78,6 @@ public class ModeratorPosts {
                 if (paginator.hasNext()) {
 
                     return new ArrayList<>(paginator.next());
-
                 }
                 return null;
             } catch (Exception e) {

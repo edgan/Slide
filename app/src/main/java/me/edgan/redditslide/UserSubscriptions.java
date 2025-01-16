@@ -7,6 +7,15 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import me.edgan.redditslide.Activities.Login;
+import me.edgan.redditslide.Activities.MainActivity;
+import me.edgan.redditslide.Activities.MultiredditOverview;
+import me.edgan.redditslide.Activities.NewsActivity;
+import me.edgan.redditslide.Toolbox.Toolbox;
+import me.edgan.redditslide.ui.settings.dragSort.ReorderSubreddits;
+import me.edgan.redditslide.util.NetworkUtil;
+import me.edgan.redditslide.util.StringUtil;
+
 import net.dean.jraw.ApiException;
 import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.managers.AccountManager;
@@ -26,33 +35,72 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import me.edgan.redditslide.Activities.Login;
-import me.edgan.redditslide.Activities.MainActivity;
-import me.edgan.redditslide.Activities.MultiredditOverview;
-import me.edgan.redditslide.Activities.NewsActivity;
-import me.edgan.redditslide.Toolbox.Toolbox;
-import me.edgan.redditslide.ui.settings.dragSort.ReorderSubreddits;
-import me.edgan.redditslide.util.NetworkUtil;
-import me.edgan.redditslide.util.StringUtil;
-
-/**
- * Created by carlo_000 on 1/16/2016.
- */
+/** Created by carlo_000 on 1/16/2016. */
 public class UserSubscriptions {
-    public static final String       SUB_NAME_TO_PROPERTIES = "multiNameToSubs";
-    public static final List<String> defaultSubs            =
-            Arrays.asList("frontpage", "all", "announcements", "Art", "AskReddit", "askscience",
-                    "aww", "blog", "books", "creepy", "dataisbeautiful", "DIY", "Documentaries",
-                    "EarthPorn", "explainlikeimfive", "Fitness", "food", "funny", "Futurology",
-                    "gadgets", "gaming", "GetMotivated", "gifs", "history", "IAmA",
-                    "InternetIsBeautiful", "Jokes", "LifeProTips", "listentothis",
-                    "mildlyinteresting", "movies", "Music", "news", "nosleep", "nottheonion",
-                    "OldSchoolCool", "personalfinance", "philosophy", "photoshopbattles", "pics",
-                    "science", "Showerthoughts", "space", "sports", "television", "tifu",
-                    "todayilearned", "TwoXChromosomes", "UpliftingNews", "videos", "worldnews",
+    public static final String SUB_NAME_TO_PROPERTIES = "multiNameToSubs";
+    public static final List<String> defaultSubs =
+            Arrays.asList(
+                    "frontpage",
+                    "all",
+                    "announcements",
+                    "Art",
+                    "AskReddit",
+                    "askscience",
+                    "aww",
+                    "blog",
+                    "books",
+                    "creepy",
+                    "dataisbeautiful",
+                    "DIY",
+                    "Documentaries",
+                    "EarthPorn",
+                    "explainlikeimfive",
+                    "Fitness",
+                    "food",
+                    "funny",
+                    "Futurology",
+                    "gadgets",
+                    "gaming",
+                    "GetMotivated",
+                    "gifs",
+                    "history",
+                    "IAmA",
+                    "InternetIsBeautiful",
+                    "Jokes",
+                    "LifeProTips",
+                    "listentothis",
+                    "mildlyinteresting",
+                    "movies",
+                    "Music",
+                    "news",
+                    "nosleep",
+                    "nottheonion",
+                    "OldSchoolCool",
+                    "personalfinance",
+                    "philosophy",
+                    "photoshopbattles",
+                    "pics",
+                    "science",
+                    "Showerthoughts",
+                    "space",
+                    "sports",
+                    "television",
+                    "tifu",
+                    "todayilearned",
+                    "TwoXChromosomes",
+                    "UpliftingNews",
+                    "videos",
+                    "worldnews",
                     "WritingPrompts");
-    public static final List<String> specialSubreddits      =
-            Arrays.asList("frontpage", "all", "random", "randnsfw", "myrandom", "friends", "mod",
+    public static final List<String> specialSubreddits =
+            Arrays.asList(
+                    "frontpage",
+                    "all",
+                    "random",
+                    "randnsfw",
+                    "myrandom",
+                    "friends",
+                    "mod",
                     "popular");
     public static SharedPreferences subscriptions;
     public static SharedPreferences multiNameToSubs;
@@ -85,12 +133,12 @@ public class UserSubscriptions {
         Map<String, String> multiNameToSubsMap = new HashMap<>();
 
         for (Map.Entry<String, String> entries : multiNameToSubsMapBase.entrySet()) {
-            multiNameToSubsMap.put(entries.getKey().toLowerCase(Locale.ENGLISH), entries.getValue());
+            multiNameToSubsMap.put(
+                    entries.getKey().toLowerCase(Locale.ENGLISH), entries.getValue());
         }
 
         return multiNameToSubsMap;
     }
-
 
     private static Map<String, String> getSubsNameToMulti() {
         Map<String, String> multiNameToSubsMap = new HashMap<>();
@@ -197,7 +245,8 @@ public class UserSubscriptions {
     }
 
     public static void cacheModOf() {
-        subscriptions.edit()
+        subscriptions
+                .edit()
                 .putString(Authentication.name + "mod", StringUtil.arrayToString(modOf))
                 .apply();
     }
@@ -276,7 +325,7 @@ public class UserSubscriptions {
     }
 
     public static CaseInsensitiveArrayList modOf;
-    public static ArrayList<MultiReddit>   multireddits;
+    public static ArrayList<MultiReddit> multireddits;
     public static HashMap<String, List<MultiReddit>> public_multireddits =
             new HashMap<String, List<MultiReddit>>();
 
@@ -329,8 +378,8 @@ public class UserSubscriptions {
                         toReturn.add(s.getDisplayName().toLowerCase(Locale.ENGLISH));
                     }
                 }
-                if (toReturn.isEmpty() && subscriptions.getString(Authentication.name, "")
-                        .isEmpty()) {
+                if (toReturn.isEmpty()
+                        && subscriptions.getString(Authentication.name, "").isEmpty()) {
                     toreturn.addAll(defaultSubs);
                 }
             } catch (Exception e) {
@@ -411,8 +460,9 @@ public class UserSubscriptions {
     }
 
     public static void loadMultireddits() {
-        if (Authentication.isLoggedIn && Authentication.didOnline && (multireddits == null
-                || multireddits.isEmpty())) {
+        if (Authentication.isLoggedIn
+                && Authentication.didOnline
+                && (multireddits == null || multireddits.isEmpty())) {
             try {
                 multireddits =
                         new ArrayList<>(new MultiRedditManager(Authentication.reddit).mine());
@@ -447,8 +497,11 @@ public class UserSubscriptions {
             @Override
             protected List<MultiReddit> doInBackground(Void... params) {
                 try {
-                    public_multireddits.put(profile, new ArrayList(
-                            new MultiRedditManager(Authentication.reddit).getPublicMultis(profile)));
+                    public_multireddits.put(
+                            profile,
+                            new ArrayList(
+                                    new MultiRedditManager(Authentication.reddit)
+                                            .getPublicMultis(profile)));
                 } catch (Exception e) {
                     public_multireddits.put(profile, null);
                     e.printStackTrace();
@@ -525,8 +578,8 @@ public class UserSubscriptions {
         return null;
     }
 
-    public static MultiReddit getPublicMultiredditByDisplayName(String profile,
-            String displayName) {
+    public static MultiReddit getPublicMultiredditByDisplayName(
+            String profile, String displayName) {
         if (profile.isEmpty()) {
             return getMultiredditByDisplayName(displayName);
         }
@@ -577,7 +630,8 @@ public class UserSubscriptions {
     }
 
     public static CaseInsensitiveArrayList getHistory() {
-        String[] hist = subscriptions.getString("subhistory", "").toLowerCase(Locale.ENGLISH).split(",");
+        String[] hist =
+                subscriptions.getString("subhistory", "").toLowerCase(Locale.ENGLISH).split(",");
         CaseInsensitiveArrayList history = new CaseInsensitiveArrayList();
         Collections.addAll(history, hist);
         return history;
@@ -628,7 +682,9 @@ public class UserSubscriptions {
 
     // Sets a list of subreddits as "searched for", will apply to all accounts
     public static void addSubsToHistory(ArrayList<Subreddit> s2) {
-        StringBuilder history = new StringBuilder(subscriptions.getString("subhistory", "").toLowerCase(Locale.ENGLISH));
+        StringBuilder history =
+                new StringBuilder(
+                        subscriptions.getString("subhistory", "").toLowerCase(Locale.ENGLISH));
         for (Subreddit s : s2) {
             if (!history.toString().contains(s.getDisplayName().toLowerCase(Locale.ENGLISH))) {
                 history.append(",").append(s.getDisplayName().toLowerCase(Locale.ENGLISH));
@@ -638,7 +694,9 @@ public class UserSubscriptions {
     }
 
     public static void addSubsToHistory(CaseInsensitiveArrayList s2) {
-        StringBuilder history = new StringBuilder(subscriptions.getString("subhistory", "").toLowerCase(Locale.ENGLISH));
+        StringBuilder history =
+                new StringBuilder(
+                        subscriptions.getString("subhistory", "").toLowerCase(Locale.ENGLISH));
         for (String s : s2) {
             if (!history.toString().contains(s.toLowerCase(Locale.ENGLISH))) {
                 history.append(",").append(s.toLowerCase(Locale.ENGLISH));
@@ -654,12 +712,10 @@ public class UserSubscriptions {
                     new UserSubredditsPaginator(Authentication.reddit, "subscriber");
             pag.setLimit(100);
 
-
             try {
                 while (pag.hasNext()) {
                     toReturn.addAll(pag.next());
                 }
-
 
             } catch (Exception e) {
                 // failed;
@@ -682,12 +738,10 @@ public class UserSubscriptions {
                             new UserSubredditsPaginator(Authentication.reddit, "subscriber");
                     pag.setLimit(100);
 
-
                     try {
                         while (pag.hasNext()) {
                             toReturn.addAll(pag.next());
                         }
-
 
                     } catch (Exception e) {
                         // failed;
@@ -695,7 +749,6 @@ public class UserSubscriptions {
                     }
                 }
                 return null;
-
             }
 
             @Override
@@ -753,7 +806,6 @@ public class UserSubscriptions {
             }
         }
 
-
         java.util.Collections.sort(subs, String.CASE_INSENSITIVE_ORDER);
         finals.addAll(subs);
         return finals;
@@ -761,7 +813,8 @@ public class UserSubscriptions {
 
     public static class SubscribeTask extends AsyncTask<String, Void, Void> {
         Context context;
-        public SubscribeTask(Context context){
+
+        public SubscribeTask(Context context) {
             this.context = context;
         }
 
@@ -771,8 +824,13 @@ public class UserSubscriptions {
             for (String subreddit : subreddits) {
                 try {
                     m.subscribe(Authentication.reddit.getSubreddit(subreddit));
-                } catch(Exception e){
-                    Toast.makeText(context, "Couldn't subscribe, subreddit is private, quarantined, or invite only", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(
+                                    context,
+                                    "Couldn't subscribe, subreddit is private, quarantined, or"
+                                        + " invite only",
+                                    Toast.LENGTH_SHORT)
+                            .show();
                 }
             }
             return null;
@@ -787,7 +845,7 @@ public class UserSubscriptions {
                 for (String subreddit : subreddits) {
                     m.unsubscribe(Authentication.reddit.getSubreddit(subreddit));
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
 
             }
             return null;

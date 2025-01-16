@@ -8,43 +8,39 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
-import net.dean.jraw.models.Submission;
-
 import me.edgan.redditslide.Activities.CommentsScreen;
 import me.edgan.redditslide.Activities.Shadowbox;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.SubmissionViews.PopulateShadowboxInfo;
 
+import net.dean.jraw.models.Submission;
 
-/**
- * Created by ccrama on 6/2/2015.
- */
+/** Created by ccrama on 6/2/2015. */
 public class TitleFull extends Fragment {
 
     private int i = 0;
     private Submission s;
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView =
                 (ViewGroup) inflater.inflate(R.layout.submission_titlecard, container, false);
 
-
         PopulateShadowboxInfo.doActionbar(s, rootView, getActivity(), true);
 
-        rootView.findViewById(R.id.desc).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        rootView.findViewById(R.id.desc)
+                .setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                Intent i2 = new Intent(getActivity(), CommentsScreen.class);
-                i2.putExtra(CommentsScreen.EXTRA_PAGE, i);
-                i2.putExtra(CommentsScreen.EXTRA_SUBREDDIT, sub);
-                (getActivity()).startActivity(i2);
-
-            }
-        });
+                                Intent i2 = new Intent(getActivity(), CommentsScreen.class);
+                                i2.putExtra(CommentsScreen.EXTRA_PAGE, i);
+                                i2.putExtra(CommentsScreen.EXTRA_SUBREDDIT, sub);
+                                (getActivity()).startActivity(i2);
+                            }
+                        });
         return rootView;
     }
 
@@ -57,12 +53,11 @@ public class TitleFull extends Fragment {
         i = bundle.getInt("page", 0);
         sub = bundle.getString("sub");
         if (((Shadowbox) getActivity()).subredditPosts == null
-                || ((Shadowbox) getActivity()).subredditPosts.getPosts().size() < bundle.getInt(
-                "page", 0)) {
+                || ((Shadowbox) getActivity()).subredditPosts.getPosts().size()
+                        < bundle.getInt("page", 0)) {
             getActivity().finish();
         } else {
             s = ((Shadowbox) getActivity()).subredditPosts.getPosts().get(bundle.getInt("page", 0));
         }
     }
-
 }

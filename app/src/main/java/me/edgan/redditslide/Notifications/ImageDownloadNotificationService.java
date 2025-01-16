@@ -17,24 +17,21 @@ import androidx.documentfile.provider.DocumentFile;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Locale;
 
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.util.FileUtil;
 import me.edgan.redditslide.util.LogUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Locale;
 
 public class ImageDownloadNotificationService extends Service {
 
@@ -54,8 +51,8 @@ public class ImageDownloadNotificationService extends Service {
             return;
         }
 
-        if (actuallyLoaded.contains("imgur.com") && (!actuallyLoaded.contains(".png")
-                && !actuallyLoaded.contains(".jpg"))) {
+        if (actuallyLoaded.contains("imgur.com")
+                && (!actuallyLoaded.contains(".png") && !actuallyLoaded.contains(".jpg"))) {
             actuallyLoaded = actuallyLoaded + ".png";
         }
 
@@ -64,12 +61,13 @@ public class ImageDownloadNotificationService extends Service {
             subreddit = intent.getStringExtra("subreddit");
         }
 
-        new PollTask(actuallyLoaded,
-                Uri.parse(downloadUriString),
-                intent.getIntExtra("index", -1),
-                subreddit,
-                intent.getStringExtra(EXTRA_SUBMISSION_TITLE)).executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR);
+        new PollTask(
+                        actuallyLoaded,
+                        Uri.parse(downloadUriString),
+                        intent.getIntExtra("index", -1),
+                        subreddit,
+                        intent.getStringExtra(EXTRA_SUBMISSION_TITLE))
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private class PollTask extends AsyncTask<Void, Void, Void> {
@@ -83,7 +81,12 @@ public class ImageDownloadNotificationService extends Service {
         private int id;
         private int percentDone, latestPercentDone;
 
-        public PollTask(String actuallyLoaded, Uri baseUri, int index, String subreddit, String submissionTitle) {
+        public PollTask(
+                String actuallyLoaded,
+                Uri baseUri,
+                int index,
+                String subreddit,
+                String submissionTitle) {
             this.actuallyLoaded = actuallyLoaded;
             this.baseUri = baseUri;
             this.index = index;
@@ -93,21 +96,27 @@ public class ImageDownloadNotificationService extends Service {
 
         private void startNotification() {
             id = (int) (System.currentTimeMillis() / 1000);
-            mNotifyManager = ContextCompat.getSystemService(ImageDownloadNotificationService.this,
-                    NotificationManager.class);
-            mBuilder = new NotificationCompat.Builder(getApplicationContext(), Reddit.CHANNEL_IMG)
-                    .setContentTitle(getString(R.string.mediaview_notif_title))
-                    .setContentText(getString(R.string.mediaview_notif_text))
-                    .setSmallIcon(R.drawable.ic_save);
+            mNotifyManager =
+                    ContextCompat.getSystemService(
+                            ImageDownloadNotificationService.this, NotificationManager.class);
+            mBuilder =
+                    new NotificationCompat.Builder(getApplicationContext(), Reddit.CHANNEL_IMG)
+                            .setContentTitle(getString(R.string.mediaview_notif_title))
+                            .setContentText(getString(R.string.mediaview_notif_text))
+                            .setSmallIcon(R.drawable.ic_save);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             try {
-                Toast.makeText(ImageDownloadNotificationService.this,
-                        getString(R.string.mediaview_downloading), Toast.LENGTH_SHORT).show();
-            } catch (Exception ignored) {}
+                Toast.makeText(
+                                ImageDownloadNotificationService.this,
+                                getString(R.string.mediaview_downloading),
+                                Toast.LENGTH_SHORT)
+                        .show();
+            } catch (Exception ignored) {
+            }
 
             startNotification();
             mBuilder.setProgress(100, 0, false);
@@ -119,8 +128,11 @@ public class ImageDownloadNotificationService extends Service {
             Exception saveError;
 
             try {
-                ((Reddit) getApplication()).getImageLoader()
-                        .loadImage(actuallyLoaded, null,
+                ((Reddit) getApplication())
+                        .getImageLoader()
+                        .loadImage(
+                                actuallyLoaded,
+                                null,
                                 new DisplayImageOptions.Builder()
                                         .imageScaleType(ImageScaleType.NONE)
                                         .cacheInMemory(false)
@@ -128,54 +140,72 @@ public class ImageDownloadNotificationService extends Service {
                                         .build(),
                                 new SimpleImageLoadingListener() {
                                     @Override
-                                    public void onLoadingComplete(String imageUri, android.view.View view,
+                                    public void onLoadingComplete(
+                                            String imageUri,
+                                            android.view.View view,
                                             final Bitmap loadedImage) {
                                         try {
-                                            File cachedFile = ((Reddit) getApplicationContext())
-                                                    .getImageLoader()
-                                                    .getDiskCache()
-                                                    .get(actuallyLoaded);
+                                            File cachedFile =
+                                                    ((Reddit) getApplicationContext())
+                                                            .getImageLoader()
+                                                            .getDiskCache()
+                                                            .get(actuallyLoaded);
 
-                        Context activity = ImageDownloadNotificationService.this;
-                        DocumentFile parentDir = DocumentFile.fromTreeUri(activity, baseUri);
-                        // Create subreddit subfolder if needed
-                        if (SettingValues.imageSubfolders && !subreddit.isEmpty()) {
-                            DocumentFile subFolder = parentDir.findFile(subreddit);
-                            if (subFolder == null) {
-                                subFolder = parentDir.createDirectory(subreddit);
-                            }
-                            parentDir = subFolder;
-                        }
+                                            Context activity =
+                                                    ImageDownloadNotificationService.this;
+                                            DocumentFile parentDir =
+                                                    DocumentFile.fromTreeUri(activity, baseUri);
+                                            // Create subreddit subfolder if needed
+                                            if (SettingValues.imageSubfolders
+                                                    && !subreddit.isEmpty()) {
+                                                DocumentFile subFolder =
+                                                        parentDir.findFile(subreddit);
+                                                if (subFolder == null) {
+                                                    subFolder =
+                                                            parentDir.createDirectory(subreddit);
+                                                }
+                                                parentDir = subFolder;
+                                            }
 
                                             if (cachedFile != null && cachedFile.exists()) {
                                                 String fileName = getFileName(actuallyLoaded);
                                                 String mimeType = getMimeType(fileName);
-                                                DocumentFile outDocFile = parentDir.createFile(mimeType, fileName);
+                                                DocumentFile outDocFile =
+                                                        parentDir.createFile(mimeType, fileName);
 
                                                 if (outDocFile != null) {
-                                                    OutputStream out = getContentResolver()
-                                                            .openOutputStream(outDocFile.getUri());
+                                                    OutputStream out =
+                                                            getContentResolver()
+                                                                    .openOutputStream(
+                                                                            outDocFile.getUri());
                                                     if (out != null) {
                                                         FileUtil.copyFile(cachedFile, out);
                                                         out.close();
-                                                        showSuccessNotification(outDocFile.getUri(), loadedImage);
+                                                        showSuccessNotification(
+                                                                outDocFile.getUri(), loadedImage);
                                                     }
                                                 }
                                             } else {
                                                 String fileName = getFileName(actuallyLoaded);
                                                 String mimeType = getMimeType(fileName);
-                                                DocumentFile outDocFile = parentDir.createFile(mimeType, fileName);
+                                                DocumentFile outDocFile =
+                                                        parentDir.createFile(mimeType, fileName);
 
                                                 if (outDocFile != null) {
-                                                    OutputStream out = getContentResolver()
-                                                            .openOutputStream(outDocFile.getUri());
+                                                    OutputStream out =
+                                                            getContentResolver()
+                                                                    .openOutputStream(
+                                                                            outDocFile.getUri());
                                                     if (out != null) {
-                                                        Bitmap.CompressFormat format = mimeType.contains("png") ?
-                                                                Bitmap.CompressFormat.PNG :
-                                                                Bitmap.CompressFormat.JPEG;
+                                                        Bitmap.CompressFormat format =
+                                                                mimeType.contains("png")
+                                                                        ? Bitmap.CompressFormat.PNG
+                                                                        : Bitmap.CompressFormat
+                                                                                .JPEG;
                                                         loadedImage.compress(format, 100, out);
                                                         out.close();
-                                                        showSuccessNotification(outDocFile.getUri(), loadedImage);
+                                                        showSuccessNotification(
+                                                                outDocFile.getUri(), loadedImage);
                                                     }
                                                 }
                                             }
@@ -186,8 +216,11 @@ public class ImageDownloadNotificationService extends Service {
                                 },
                                 new ImageLoadingProgressListener() {
                                     @Override
-                                    public void onProgressUpdate(String imageUri, android.view.View view,
-                                            int current, int total) {
+                                    public void onProgressUpdate(
+                                            String imageUri,
+                                            android.view.View view,
+                                            int current,
+                                            int total) {
                                         latestPercentDone = (int) ((current / (float) total) * 100);
                                         if (percentDone <= latestPercentDone + 30
                                                 || latestPercentDone == 100) {
@@ -226,7 +259,8 @@ public class ImageDownloadNotificationService extends Service {
                     existingFile.delete(); // Delete if already exists to avoid conflict
                 }
 
-                DocumentFile newFile = pickedDir.createFile(FileUtil.getMimeType(fileName), fileName);
+                DocumentFile newFile =
+                        pickedDir.createFile(FileUtil.getMimeType(fileName), fileName);
 
                 if (newFile == null) {
                     throw new IOException("Failed to create the file: " + fileName);
@@ -242,8 +276,8 @@ public class ImageDownloadNotificationService extends Service {
         private String getMimeType(String fileName) {
             String mimeType = "image/png";
 
-           if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
-               mimeType = "image/jpeg";
+            if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+                mimeType = "image/jpeg";
             }
 
             return mimeType;
@@ -261,7 +295,7 @@ public class ImageDownloadNotificationService extends Service {
                     throw new MalformedURLException();
                 }
             } catch (MalformedURLException e) {
-                extension = ".png";  // Default to PNG if we can't determine the extension
+                extension = ".png"; // Default to PNG if we can't determine the extension
             }
 
             // Prepare the file index string (e.g., "_001" for series of images)
@@ -269,30 +303,32 @@ public class ImageDownloadNotificationService extends Service {
 
             // Get a valid, safe filename using FileUtil's built-in method
             String title = submissionTitle != null ? submissionTitle : "download";
-            String subfolderPath = subreddit != null && !subreddit.isEmpty() ? File.separator + subreddit : "/";
+            String subfolderPath =
+                    subreddit != null && !subreddit.isEmpty() ? File.separator + subreddit : "/";
 
             // Generate a temporary path just to get the filename
             String tempPath = getApplicationContext().getCacheDir().getAbsolutePath();
-            File validFile = FileUtil.getValidFile(
-                tempPath,     // We'll use a temp path since we're only interested in the filename
-                subfolderPath,
-                title,
-                fileIndex,
-                extension
-            );
+            File validFile =
+                    FileUtil.getValidFile(
+                            tempPath, // We'll use a temp path since we're only interested in the
+                                      // filename
+                            subfolderPath,
+                            title,
+                            fileIndex,
+                            extension);
 
             // Return just the filename part
             return validFile.getName();
         }
 
         private void showSuccessNotification(Uri fileUri, Bitmap thumbnail) {
-            Notification notif = new NotificationCompat.Builder(
-                    getApplicationContext(), Reddit.CHANNEL_IMG)
-                    .setContentTitle(getString(R.string.info_photo_saved))
-                    .setSmallIcon(R.drawable.ic_save)
-                    .setLargeIcon(thumbnail)
-                    .setAutoCancel(true)
-                    .build();
+            Notification notif =
+                    new NotificationCompat.Builder(getApplicationContext(), Reddit.CHANNEL_IMG)
+                            .setContentTitle(getString(R.string.info_photo_saved))
+                            .setSmallIcon(R.drawable.ic_save)
+                            .setLargeIcon(thumbnail)
+                            .setAutoCancel(true)
+                            .build();
 
             if (mNotifyManager != null) {
                 mNotifyManager.cancel(id);
@@ -307,9 +343,13 @@ public class ImageDownloadNotificationService extends Service {
             mNotifyManager.cancel(id);
             stopSelf();
             try {
-                Toast.makeText(getBaseContext(), getString(R.string.err_save_image),
-                        Toast.LENGTH_LONG).show();
-            } catch (Exception ignored) {}
+                Toast.makeText(
+                                getBaseContext(),
+                                getString(R.string.err_save_image),
+                                Toast.LENGTH_LONG)
+                        .show();
+            } catch (Exception ignored) {
+            }
         }
 
         @Override

@@ -7,16 +7,14 @@ import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import me.edgan.redditslide.util.LayoutUtils;
+
 import net.dean.jraw.ApiException;
 import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.models.PublicContribution;
 import net.dean.jraw.models.VoteDirection;
 
-import me.edgan.redditslide.util.LayoutUtils;
-
-/**
- * Created by ccrama on 9/19/2015.
- */
+/** Created by ccrama on 9/19/2015. */
 public class Vote extends AsyncTask<PublicContribution, Void, Void> {
 
     private final VoteDirection direction;
@@ -53,16 +51,18 @@ public class Vote extends AsyncTask<PublicContribution, Void, Void> {
     }
 
     private void createVoteSnackbar(final int i) {
-        ((Activity) c).runOnUiThread(() -> {
-            try {
-                if (v != null && c != null && v.getContext() != null) {
-                    Snackbar snackbar = Snackbar.make(v, i, Snackbar.LENGTH_SHORT);
-                    LayoutUtils.showSnackbar(snackbar);
-                }
-            } catch (Exception ignored) {
-            }
-            c = null;
-            v = null;
-        });
+        ((Activity) c)
+                .runOnUiThread(
+                        () -> {
+                            try {
+                                if (v != null && c != null && v.getContext() != null) {
+                                    Snackbar snackbar = Snackbar.make(v, i, Snackbar.LENGTH_SHORT);
+                                    LayoutUtils.showSnackbar(snackbar);
+                                }
+                            } catch (Exception ignored) {
+                            }
+                            c = null;
+                            v = null;
+                        });
     }
 }

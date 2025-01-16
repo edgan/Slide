@@ -16,12 +16,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import net.dean.jraw.models.Submission;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Autocache.AutoCacheScheduler;
 import me.edgan.redditslide.Fragments.CommentPage;
@@ -33,24 +27,29 @@ import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SwipeLayout.Utils;
 import me.edgan.redditslide.UserSubscriptions;
-import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LogUtil;
+
+import net.dean.jraw.models.Submission;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by ccrama on 9/17/2015.
- * <p/>
- * This activity takes parameters for a submission id (through intent or direct link), retrieves the
- * Submission object, and then displays the submission with its comments.
+ *
+ * <p>This activity takes parameters for a submission id (through intent or direct link), retrieves
+ * the Submission object, and then displays the submission with its comments.
  */
 public class CommentsScreenSingle extends BaseActivityAnim {
     CommentsScreenSinglePagerAdapter comments;
-    boolean              np;
+    boolean np;
     private ViewPager pager;
-    private String    subreddit;
-    private String    name;
-    private String    context;
-    private int       contextNumber;
-    private Boolean   doneTranslucent = false;
+    private String subreddit;
+    private String name;
+    private String context;
+    private int contextNumber;
+    private Boolean doneTranslucent = false;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -61,12 +60,12 @@ public class CommentsScreenSingle extends BaseActivityAnim {
         }
     }
 
-    public static final String EXTRA_SUBREDDIT  = "subreddit";
-    public static final String EXTRA_CONTEXT    = "context";
-    public static final String EXTRA_CONTEXT_NUMBER    = "contextNumber";
+    public static final String EXTRA_SUBREDDIT = "subreddit";
+    public static final String EXTRA_CONTEXT = "context";
+    public static final String EXTRA_CONTEXT_NUMBER = "contextNumber";
     public static final String EXTRA_SUBMISSION = "submission";
-    public static final String EXTRA_NP         = "np";
-    public static final String EXTRA_LOADMORE   = "loadmore";
+    public static final String EXTRA_NP = "np";
+    public static final String EXTRA_LOADMORE = "loadmore";
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -121,17 +120,20 @@ public class CommentsScreenSingle extends BaseActivityAnim {
                             Authentication.me = Authentication.reddit.me();
                             Authentication.mod = Authentication.me.isMod();
 
-                            Authentication.authentication.edit()
+                            Authentication.authentication
+                                    .edit()
                                     .putBoolean(Reddit.SHARED_PREF_IS_MOD, Authentication.mod)
                                     .apply();
 
                             if (Reddit.notificationTime != -1) {
-                                Reddit.notifications = new NotificationJobScheduler(CommentsScreenSingle.this);
+                                Reddit.notifications =
+                                        new NotificationJobScheduler(CommentsScreenSingle.this);
                                 Reddit.notifications.start();
                             }
 
                             if (Reddit.cachedData.contains("toCache")) {
-                                Reddit.autoCache = new AutoCacheScheduler(CommentsScreenSingle.this);
+                                Reddit.autoCache =
+                                        new AutoCacheScheduler(CommentsScreenSingle.this);
                                 Reddit.autoCache.start();
                             }
 
@@ -142,18 +144,20 @@ public class CommentsScreenSingle extends BaseActivityAnim {
 
                             if (Authentication.reddit.isAuthenticated()) {
                                 final Set<String> accounts =
-                                        Authentication.authentication.getStringSet("accounts", new HashSet<String>());
+                                        Authentication.authentication.getStringSet(
+                                                "accounts", new HashSet<String>());
                                 if (accounts.contains(name)) { // convert to new system
                                     accounts.remove(name);
                                     accounts.add(name + ":" + Authentication.refresh);
-                                    Authentication.authentication.edit()
+                                    Authentication.authentication
+                                            .edit()
                                             .putStringSet("accounts", accounts)
                                             .apply(); // force commit
                                 }
                                 Authentication.isLoggedIn = true;
                                 Reddit.notFirst = true;
                             }
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             new Authentication(getApplicationContext());
                         }
                     }
@@ -172,15 +176,16 @@ public class CommentsScreenSingle extends BaseActivityAnim {
         pager.setAdapter(comments);
         pager.setBackgroundColor(Color.TRANSPARENT);
         pager.setCurrentItem(1);
-        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                if(!doneTranslucent) {
-                    doneTranslucent = true;
-                    Utils.convertActivityToTranslucent(CommentsScreenSingle.this);
-                }
-            }
-        });
+        pager.addOnPageChangeListener(
+                new ViewPager.SimpleOnPageChangeListener() {
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+                        if (!doneTranslucent) {
+                            doneTranslucent = true;
+                            Utils.convertActivityToTranslucent(CommentsScreenSingle.this);
+                        }
+                    }
+                });
     }
 
     boolean locked;
@@ -205,13 +210,16 @@ public class CommentsScreenSingle extends BaseActivityAnim {
                     }
                     LastComments.setComments(s);
                 }
-                HasSeen.setHasSeenSubmission(new ArrayList<Submission>() {{
-                    this.add(s);
-                }});
+                HasSeen.setHasSeenSubmission(
+                        new ArrayList<Submission>() {
+                            {
+                                this.add(s);
+                            }
+                        });
                 locked = s.isLocked();
                 archived = s.isArchived();
                 contest = s.getDataNode().get("contest_mode").asBoolean();
-                if(s.getSubredditName() == null){
+                if (s.getSubredditName() == null) {
                     subreddit = "Promoted";
                 } else {
                     subreddit = s.getSubredditName();
@@ -220,31 +228,29 @@ public class CommentsScreenSingle extends BaseActivityAnim {
 
             } catch (Exception e) {
                 try {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            new AlertDialog.Builder(CommentsScreenSingle.this)
-                                    .setTitle(R.string.submission_not_found)
-                                    .setMessage(R.string.submission_not_found_msg)
-                                    .setPositiveButton(R.string.btn_ok, (dialog, which) ->
-                                            finish())
-                                    .setOnDismissListener(dialog ->
-                                            finish())
-                                    .show();
-                        }
-                    });
+                    runOnUiThread(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    new AlertDialog.Builder(CommentsScreenSingle.this)
+                                            .setTitle(R.string.submission_not_found)
+                                            .setMessage(R.string.submission_not_found_msg)
+                                            .setPositiveButton(
+                                                    R.string.btn_ok, (dialog, which) -> finish())
+                                            .setOnDismissListener(dialog -> finish())
+                                            .show();
+                                }
+                            });
                 } catch (Exception ignored) {
 
                 }
                 return null;
             }
-
-
         }
     }
 
     private class CommentsScreenSinglePagerAdapter extends FragmentStatePagerAdapter {
-        private Fragment      mCurrentFragment;
+        private Fragment mCurrentFragment;
 
         CommentsScreenSinglePagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -255,7 +261,8 @@ public class CommentsScreenSingle extends BaseActivityAnim {
         }
 
         @Override
-        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        public void setPrimaryItem(
+                @NonNull ViewGroup container, int position, @NonNull Object object) {
             if (mCurrentFragment != object) {
                 mCurrentFragment = (Fragment) object;
             }
@@ -272,8 +279,7 @@ public class CommentsScreenSingle extends BaseActivityAnim {
             args.putString("id", name);
             args.putString("context", context);
             if (SettingValues.storeHistory) {
-                if (context != null && !context.isEmpty() && !context.equals(
-                        Reddit.EMPTY_STRING)) {
+                if (context != null && !context.isEmpty() && !context.equals(Reddit.EMPTY_STRING)) {
                     HasSeen.addSeen("t1_" + context);
                 } else {
                     HasSeen.addSeen(name);

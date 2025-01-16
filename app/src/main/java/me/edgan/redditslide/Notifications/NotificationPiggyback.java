@@ -11,10 +11,7 @@ import android.text.TextUtils;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
-/**
- * Created by Carlos on 9/27/2017.
- */
-
+/** Created by Carlos on 9/27/2017. */
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class NotificationPiggyback extends NotificationListenerService {
 
@@ -29,11 +26,13 @@ public class NotificationPiggyback extends NotificationListenerService {
             }
             Intent alarmIntent = new Intent(getApplicationContext(), CheckForMailSingle.class);
             PendingIntent pendingIntent =
-                    PendingIntent.getBroadcast(getApplicationContext(), 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
+                    PendingIntent.getBroadcast(
+                            getApplicationContext(), 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE);
             AlarmManager manager =
                     ContextCompat.getSystemService(getApplication(), AlarmManager.class);
             if (manager != null) {
-                manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 100, pendingIntent);
+                manager.set(
+                        AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 100, pendingIntent);
             }
         }
     }
@@ -43,4 +42,3 @@ public class NotificationPiggyback extends NotificationListenerService {
         // Nothing to do
     }
 }
-

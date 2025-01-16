@@ -1,14 +1,14 @@
 package me.edgan.redditslide.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.ArrayList;
-import org.apache.commons.text.StringEscapeUtils;
 
 import me.edgan.redditslide.Activities.GalleryImage;
 
-/**
- * Created by TacoTheDank on 04/04/2021.
- */
+import org.apache.commons.text.StringEscapeUtils;
+
+import java.util.ArrayList;
+
+/** Created by TacoTheDank on 04/04/2021. */
 public class JsonUtil {
     public static void getGalleryData(final JsonNode data, final ArrayList<GalleryImage> urls) {
         for (JsonNode identifier : data.get("gallery_data").get("items")) {
@@ -28,10 +28,12 @@ public class JsonUtil {
                 image.metadata.source = new GalleryImage.MediaMetadata.Source();
                 JsonNode s = mediaNode.get("s");
                 if (s.has("mp4")) {
-                    image.metadata.source.mp4 = StringEscapeUtils.unescapeHtml4(s.get("mp4").asText());
+                    image.metadata.source.mp4 =
+                            StringEscapeUtils.unescapeHtml4(s.get("mp4").asText());
                 }
                 if (s.has("gif")) {
-                    image.metadata.source.gif = StringEscapeUtils.unescapeHtml4(s.get("gif").asText());
+                    image.metadata.source.gif =
+                            StringEscapeUtils.unescapeHtml4(s.get("gif").asText());
                 }
                 if (s.has("u")) {
                     image.metadata.source.u = StringEscapeUtils.unescapeHtml4(s.get("u").asText());

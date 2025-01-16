@@ -35,16 +35,6 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 
-import net.dean.jraw.managers.LiveThreadManager;
-import net.dean.jraw.models.LiveUpdate;
-import net.dean.jraw.paginators.LiveThreadPaginator;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.R;
@@ -60,13 +50,23 @@ import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.SubmissionParser;
 import me.edgan.redditslide.util.TimeUtils;
 import me.edgan.redditslide.util.TwitterObject;
+
+import net.dean.jraw.managers.LiveThreadManager;
+import net.dean.jraw.models.LiveUpdate;
+import net.dean.jraw.paginators.LiveThreadPaginator;
+
 import okhttp3.OkHttpClient;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class LiveThread extends BaseActivityAnim {
 
     public static final String EXTRA_LIVEURL = "liveurl";
     public net.dean.jraw.models.LiveThread thread;
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -98,7 +98,6 @@ public class LiveThread extends BaseActivityAnim {
         super.onDestroy();
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         overrideSwipeFromAnywhere();
@@ -116,19 +115,22 @@ public class LiveThread extends BaseActivityAnim {
 
             @Override
             public void onPreExecute() {
-                d = new MaterialDialog.Builder(LiveThread.this)
-                        .title(R.string.livethread_loading_title)
-                        .content(R.string.misc_please_wait)
-                        .progress(true, 100)
-                        .cancelable(false)
-                        .show();
+                d =
+                        new MaterialDialog.Builder(LiveThread.this)
+                                .title(R.string.livethread_loading_title)
+                                .content(R.string.misc_please_wait)
+                                .progress(true, 100)
+                                .cancelable(false)
+                                .show();
             }
 
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    thread = new LiveThreadManager(Authentication.reddit).get(getIntent().getStringExtra(EXTRA_LIVEURL));
-                } catch(Exception e){
+                    thread =
+                            new LiveThreadManager(Authentication.reddit)
+                                    .get(getIntent().getStringExtra(EXTRA_LIVEURL));
+                } catch (Exception e) {
 
                 }
                 return null;
@@ -136,14 +138,12 @@ public class LiveThread extends BaseActivityAnim {
 
             @Override
             public void onPostExecute(Void aVoid) {
-                if(thread == null){
+                if (thread == null) {
                     new AlertDialog.Builder(LiveThread.this)
                             .setTitle(R.string.livethread_not_found)
                             .setMessage(R.string.misc_please_try_again_soon)
-                            .setPositiveButton(R.string.btn_ok, (dialog, which) ->
-                                    finish())
-                            .setOnDismissListener(dialog ->
-                                    finish())
+                            .setPositiveButton(R.string.btn_ok, (dialog, which) -> finish())
+                            .setOnDismissListener(dialog -> finish())
                             .setCancelable(false)
                             .show();
                 } else {
@@ -151,8 +151,11 @@ public class LiveThread extends BaseActivityAnim {
                     setupAppBar(R.id.toolbar, thread.getTitle(), true, false);
                     (findViewById(R.id.toolbar)).setBackgroundResource(R.color.md_red_300);
                     (findViewById(R.id.header_sub)).setBackgroundResource(R.color.md_red_300);
-                    themeSystemBars(Palette.getDarkerColor(getResources().getColor(R.color.md_red_300)));
-                    setRecentBar(getString(R.string.livethread_recents_title, thread.getTitle()), getResources().getColor(R.color.md_red_300));
+                    themeSystemBars(
+                            Palette.getDarkerColor(getResources().getColor(R.color.md_red_300)));
+                    setRecentBar(
+                            getString(R.string.livethread_recents_title, thread.getTitle()),
+                            getResources().getColor(R.color.md_red_300));
 
                     doPaginator();
                 }
@@ -191,49 +194,63 @@ public class LiveThread extends BaseActivityAnim {
                     final ObjectReader o = new ObjectMapper().reader();
 
                     try {
-                        WebSocket ws = new WebSocketFactory().createSocket(thread.getWebsocketUrl());
-                        ws.addListener(new WebSocketAdapter() {
-                            @Override
-                            public void onTextMessage(
-                                    WebSocket websocket, String s) {
-                                LogUtil.v("Recieved" + s);
-                                if (s.contains("\"type\": \"update\"")) {
-                                    try {
-                                        LiveUpdate u = new LiveUpdate(o.readTree(s).get("payload").get("data"));
-                                        updates.add(0, u);
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                adapter.notifyItemInserted(0);
-                                                baseRecycler.smoothScrollToPosition(0);
+                        WebSocket ws =
+                                new WebSocketFactory().createSocket(thread.getWebsocketUrl());
+                        ws.addListener(
+                                new WebSocketAdapter() {
+                                    @Override
+                                    public void onTextMessage(WebSocket websocket, String s) {
+                                        LogUtil.v("Recieved" + s);
+                                        if (s.contains("\"type\": \"update\"")) {
+                                            try {
+                                                LiveUpdate u =
+                                                        new LiveUpdate(
+                                                                o.readTree(s)
+                                                                        .get("payload")
+                                                                        .get("data"));
+                                                updates.add(0, u);
+                                                runOnUiThread(
+                                                        new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                adapter.notifyItemInserted(0);
+                                                                baseRecycler.smoothScrollToPosition(
+                                                                        0);
+                                                            }
+                                                        });
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
                                             }
-                                        });
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                } else if (s.contains("embeds_ready")) {
-                                    String node = updates.get(0).getDataNode().toString();
-                                    LogUtil.v("Getting");
-                                    try {
-                                        node = node.replace("\"embeds\":[]", "\"embeds\":" + o.readTree(s).get("payload").get("media_embeds").toString());
-                                        LiveUpdate u = new LiveUpdate(o.readTree(node));
-                                        updates.set(0, u);
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                adapter.notifyItemChanged(0);
+                                        } else if (s.contains("embeds_ready")) {
+                                            String node = updates.get(0).getDataNode().toString();
+                                            LogUtil.v("Getting");
+                                            try {
+                                                node =
+                                                        node.replace(
+                                                                "\"embeds\":[]",
+                                                                "\"embeds\":"
+                                                                        + o.readTree(s)
+                                                                                .get("payload")
+                                                                                .get("media_embeds")
+                                                                                .toString());
+                                                LiveUpdate u = new LiveUpdate(o.readTree(node));
+                                                updates.set(0, u);
+                                                runOnUiThread(
+                                                        new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                adapter.notifyItemChanged(0);
+                                                            }
+                                                        });
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
                                             }
-                                        });
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
+                                        } /* todoelse if(s.contains("delete")){
+                                              updates.remove(0);
+                                              adapter.notifyItemRemoved(0);
+                                          }*/
                                     }
-
-                                } /* todoelse if(s.contains("delete")){
-                                    updates.remove(0);
-                                    adapter.notifyItemRemoved(0);
-                                }*/
-                            }
-                        });
+                                });
                         ws.connect();
                     } catch (IOException | WebSocketException e) {
                         e.printStackTrace();
@@ -241,7 +258,6 @@ public class LiveThread extends BaseActivityAnim {
                     return null;
                 }
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
         }
     }
 
@@ -263,21 +279,28 @@ public class LiveThread extends BaseActivityAnim {
         public void onBindViewHolder(final PaginatorAdapter.ItemHolder holder, int position) {
             final LiveUpdate u = updates.get(position);
 
-            holder.title.setText("/u/" + u.getAuthor() + " " + TimeUtils.getTimeAgo(u.getCreated().getTime(), LiveThread.this));
+            holder.title.setText(
+                    "/u/"
+                            + u.getAuthor()
+                            + " "
+                            + TimeUtils.getTimeAgo(u.getCreated().getTime(), LiveThread.this));
             if (u.getBody().isEmpty()) {
                 holder.info.setVisibility(View.GONE);
             } else {
                 holder.info.setVisibility(View.VISIBLE);
-                holder.info.setTextHtml(CompatUtil.fromHtml(u.getDataNode().get("body_html").asText()), "NO SUBREDDIT");
+                holder.info.setTextHtml(
+                        CompatUtil.fromHtml(u.getDataNode().get("body_html").asText()),
+                        "NO SUBREDDIT");
             }
-            holder.title.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(LiveThread.this, Profile.class);
-                    i.putExtra(Profile.EXTRA_PROFILE, u.getAuthor());
-                    startActivity(i);
-                }
-            });
+            holder.title.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent i = new Intent(LiveThread.this, Profile.class);
+                            i.putExtra(Profile.EXTRA_PROFILE, u.getAuthor());
+                            startActivity(i);
+                        }
+                    });
             holder.imageArea.setVisibility(View.GONE);
             holder.twitterArea.setVisibility(View.GONE);
             holder.twitterArea.stopLoading();
@@ -286,34 +309,38 @@ public class LiveThread extends BaseActivityAnim {
             } else {
                 final String url = u.getEmbeds().get(0).getUrl();
                 holder.go.setVisibility(View.VISIBLE);
-                holder.go.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(LiveThread.this, Website.class);
-                        i.putExtra(LinkUtil.EXTRA_URL, url);
-                        startActivity(i);
-                    }
-                });
+                holder.go.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent i = new Intent(LiveThread.this, Website.class);
+                                i.putExtra(LinkUtil.EXTRA_URL, url);
+                                startActivity(i);
+                            }
+                        });
                 final String host = URI.create(url).getHost().toLowerCase(Locale.ENGLISH);
 
                 if (ContentType.hostContains(host, "imgur.com")) {
                     LogUtil.v("Imgur");
                     holder.imageArea.setVisibility(View.VISIBLE);
-                    holder.imageArea.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            holder.go.callOnClick();
-                        }
-                    });
-                    ((Reddit) getApplicationContext()).getImageLoader().displayImage(url, holder.imageArea);
+                    holder.imageArea.setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    holder.go.callOnClick();
+                                }
+                            });
+                    ((Reddit) getApplicationContext())
+                            .getImageLoader()
+                            .displayImage(url, holder.imageArea);
                 } else if (ContentType.hostContains(host, "twitter.com")) {
                     LogUtil.v("Twitter");
 
                     holder.twitterArea.setVisibility(View.VISIBLE);
-                    new LoadTwitter(holder.twitterArea, url).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    new LoadTwitter(holder.twitterArea, url)
+                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
-
         }
 
         public class LoadTwitter extends AsyncTask<String, Void, Void> {
@@ -333,7 +360,12 @@ public class LiveThread extends BaseActivityAnim {
 
             public void parseJson() {
                 try {
-                    JsonObject result = HttpUtil.getJsonObject(client, gson, "https://publish.twitter.com/oembed?url=" + url, null);
+                    JsonObject result =
+                            HttpUtil.getJsonObject(
+                                    client,
+                                    gson,
+                                    "https://publish.twitter.com/oembed?url=" + url,
+                                    null);
                     LogUtil.v("Got " + CompatUtil.fromHtml(result.toString()));
                     twitter = new ObjectMapper().readValue(result.toString(), TwitterObject.class);
                 } catch (Exception e) {
@@ -350,13 +382,14 @@ public class LiveThread extends BaseActivityAnim {
             @Override
             public void onPostExecute(Void aVoid) {
                 if (twitter != null && twitter.getHtml() != null) {
-                    view.loadData(twitter.getHtml().replace("//platform.twitter", "https://platform.twitter"), "text/html", "UTF-8");
+                    view.loadData(
+                            twitter.getHtml()
+                                    .replace("//platform.twitter", "https://platform.twitter"),
+                            "text/html",
+                            "UTF-8");
                 }
             }
-
-
         }
-
 
         @Override
         public int getItemCount() {
@@ -371,7 +404,6 @@ public class LiveThread extends BaseActivityAnim {
             WebView twitterArea;
             View go;
 
-
             public ItemHolder(View itemView) {
                 super(itemView);
                 title = itemView.findViewById(R.id.title);
@@ -383,9 +415,7 @@ public class LiveThread extends BaseActivityAnim {
                 twitterArea.getSettings().setJavaScriptEnabled(true);
                 twitterArea.setBackgroundColor(Color.TRANSPARENT);
                 twitterArea.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
-
             }
-
         }
     }
 
@@ -396,13 +426,17 @@ public class LiveThread extends BaseActivityAnim {
 
         dialoglayout.findViewById(R.id.sub_stuff).setVisibility(View.GONE);
 
-        ((TextView) dialoglayout.findViewById(R.id.sub_infotitle)).setText((thread.getState() ? "LIVE: " : "") + thread.getTitle());
-        ((TextView) dialoglayout.findViewById(R.id.active_users)).setText(thread.getLocalizedViewerCount() + " viewing");
-        ((TextView) dialoglayout.findViewById(R.id.active_users)).setText(thread.getLocalizedViewerCount());
+        ((TextView) dialoglayout.findViewById(R.id.sub_infotitle))
+                .setText((thread.getState() ? "LIVE: " : "") + thread.getTitle());
+        ((TextView) dialoglayout.findViewById(R.id.active_users))
+                .setText(thread.getLocalizedViewerCount() + " viewing");
+        ((TextView) dialoglayout.findViewById(R.id.active_users))
+                .setText(thread.getLocalizedViewerCount());
 
         {
             final String text = thread.getDataNode().get("resources_html").asText();
-            final SpoilerRobotoTextView body = (SpoilerRobotoTextView) findViewById(R.id.sidebar_text);
+            final SpoilerRobotoTextView body =
+                    (SpoilerRobotoTextView) findViewById(R.id.sidebar_text);
             CommentOverflow overflow = (CommentOverflow) findViewById(R.id.commentOverflow);
             setViews(text, "none", body, overflow);
         }
@@ -414,7 +448,11 @@ public class LiveThread extends BaseActivityAnim {
         }
     }
 
-    private void setViews(String rawHTML, String subreddit, SpoilerRobotoTextView firstTextView, CommentOverflow commentOverflow) {
+    private void setViews(
+            String rawHTML,
+            String subreddit,
+            SpoilerRobotoTextView firstTextView,
+            CommentOverflow commentOverflow) {
         if (rawHTML.isEmpty()) {
             return;
         }
@@ -449,5 +487,4 @@ public class LiveThread extends BaseActivityAnim {
             commentOverflow.removeAllViews();
         }
     }
-
 }

@@ -22,6 +22,10 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 
+import me.edgan.redditslide.Activities.SendMessage;
+import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.OkHttpImageDownloader;
+
 import net.dean.jraw.http.HttpRequest;
 import net.dean.jraw.http.MediaTypes;
 import net.dean.jraw.http.RestResponse;
@@ -35,14 +39,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import me.edgan.redditslide.Activities.SendMessage;
-import me.edgan.redditslide.util.LogUtil;
-import me.edgan.redditslide.util.OkHttpImageDownloader;
-
-/**
- * Created by Carlos on 4/15/2017.
- */
-
+/** Created by Carlos on 4/15/2017. */
 public class ImageFlairs {
     public static void syncFlairs(final Context context, final String subreddit) {
         new StylesheetFetchTask(subreddit, context) {
@@ -52,49 +49,65 @@ public class ImageFlairs {
                 d.dismiss();
                 if (flairStylesheet != null) {
                     flairs.edit().putBoolean(subreddit.toLowerCase(Locale.ENGLISH), true).commit();
-                    d = new AlertDialog.Builder(context)
-                            .setTitle("Subreddit flairs synced")
-                            .setMessage("Slide found and synced " + flairStylesheet.count + " image flairs")
-                            .setPositiveButton(R.string.btn_ok, null)
-                            .show();
+                    d =
+                            new AlertDialog.Builder(context)
+                                    .setTitle("Subreddit flairs synced")
+                                    .setMessage(
+                                            "Slide found and synced "
+                                                    + flairStylesheet.count
+                                                    + " image flairs")
+                                    .setPositiveButton(R.string.btn_ok, null)
+                                    .show();
                 } else {
-                    final AlertDialog.Builder b = new AlertDialog.Builder(context)
-                            .setTitle("Error syncing subreddit flairs")
-                            .setMessage("Slide could not find any subreddit flairs to sync from /r/"
-                                    + subreddit
-                                    + "'s stylesheet.")
-                            .setPositiveButton(R.string.btn_ok, null);
-                    if(Authentication.isLoggedIn){
-                        b.setNeutralButton("Report no flairs", (dialog, which) -> {
-                            Toast.makeText(context, "Not all subreddits can be parsed, but send a message to SlideBot and hopefully we can add support for this subreddit :)\n\nPlease, only send one report.", Toast.LENGTH_LONG);
-                            Intent i = new Intent(context, SendMessage.class);
-                            i.putExtra(SendMessage.EXTRA_NAME, "slidebot");
-                            i.putExtra(SendMessage.EXTRA_MESSAGE, "/r/" + subreddit);
-                            i.putExtra(SendMessage.EXTRA_REPLY, "Subreddit flair");
-                            context.startActivity(i);
-                        });
+                    final AlertDialog.Builder b =
+                            new AlertDialog.Builder(context)
+                                    .setTitle("Error syncing subreddit flairs")
+                                    .setMessage(
+                                            "Slide could not find any subreddit flairs to sync from"
+                                                + " /r/"
+                                                    + subreddit
+                                                    + "'s stylesheet.")
+                                    .setPositiveButton(R.string.btn_ok, null);
+                    if (Authentication.isLoggedIn) {
+                        b.setNeutralButton(
+                                "Report no flairs",
+                                (dialog, which) -> {
+                                    Toast.makeText(
+                                            context,
+                                            "Not all subreddits can be parsed, but send a message"
+                                                + " to SlideBot and hopefully we can add support"
+                                                + " for this subreddit :)\n\n"
+                                                + "Please, only send one report.",
+                                            Toast.LENGTH_LONG);
+                                    Intent i = new Intent(context, SendMessage.class);
+                                    i.putExtra(SendMessage.EXTRA_NAME, "slidebot");
+                                    i.putExtra(SendMessage.EXTRA_MESSAGE, "/r/" + subreddit);
+                                    i.putExtra(SendMessage.EXTRA_REPLY, "Subreddit flair");
+                                    context.startActivity(i);
+                                });
                     }
 
                     d = b.show();
                 }
             }
 
-
             @Override
             protected void onPreExecute() {
-                d = new MaterialDialog.Builder(context).progress(true, 100)
-                        .content(R.string.misc_please_wait)
-                        .title("Syncing flairs...")
-                        .cancelable(false)
-                        .show();
+                d =
+                        new MaterialDialog.Builder(context)
+                                .progress(true, 100)
+                                .content(R.string.misc_please_wait)
+                                .title("Syncing flairs...")
+                                .cancelable(false)
+                                .show();
             }
         }.execute();
     }
 
     static class StylesheetFetchTask extends AsyncTask<Void, Void, FlairStylesheet> {
-        String  subreddit;
+        String subreddit;
         Context context;
-        Dialog  d;
+        Dialog d;
 
         StylesheetFetchTask(String subreddit, Context context) {
             super();
@@ -105,11 +118,12 @@ public class ImageFlairs {
         @Override
         protected FlairStylesheet doInBackground(Void... params) {
             try {
-                HttpRequest r = new HttpRequest.Builder().host("old.reddit.com")
-                        .path("/r/" + subreddit + "/stylesheet")
-                        .expected(MediaTypes.CSS.type())
-                        .build();
-
+                HttpRequest r =
+                        new HttpRequest.Builder()
+                                .host("old.reddit.com")
+                                .path("/r/" + subreddit + "/stylesheet")
+                                .expected(MediaTypes.CSS.type())
+                                .build();
 
                 RestResponse response = Authentication.reddit.execute(r);
 
@@ -117,8 +131,9 @@ public class ImageFlairs {
                 ArrayList<String> allImages = new ArrayList<>();
                 FlairStylesheet flairStylesheet = new FlairStylesheet(stylesheet);
                 for (String s : flairStylesheet.getListOfFlairIds()) {
-                    String classDef = flairStylesheet.getClass(flairStylesheet.stylesheetString,
-                            "flair-" + s);
+                    String classDef =
+                            flairStylesheet.getClass(
+                                    flairStylesheet.stylesheetString, "flair-" + s);
                     try {
                         String backgroundURL = flairStylesheet.getBackgroundURL(classDef);
                         if (backgroundURL == null) backgroundURL = flairStylesheet.defaultURL;
@@ -172,38 +187,41 @@ public class ImageFlairs {
                 nY = Math.max(0, Math.min(bitmap.getHeight() - 1, y));
             }
 
-            int nWidth = Math.max(1, Math.min(bitmap.getWidth() - nX - 1, width)), nHeight =
-                    Math.max(1, Math.min(bitmap.getHeight() - nY - 1, height));
+            int nWidth = Math.max(1, Math.min(bitmap.getWidth() - nX - 1, width)),
+                    nHeight = Math.max(1, Math.min(bitmap.getHeight() - nY - 1, height));
 
-            LogUtil.v("Flair loaded: "
-                    + id
-                    + " size: "
-                    + nWidth
-                    + "x"
-                    + nHeight
-                    + " location: "
-                    + nX
-                    + ":"
-                    + nY + " and bit is " + bitmap.getWidth() + ":" + bitmap.getHeight());
+            LogUtil.v(
+                    "Flair loaded: "
+                            + id
+                            + " size: "
+                            + nWidth
+                            + "x"
+                            + nHeight
+                            + " location: "
+                            + nX
+                            + ":"
+                            + nY
+                            + " and bit is "
+                            + bitmap.getWidth()
+                            + ":"
+                            + bitmap.getHeight());
 
             return Bitmap.createBitmap(bitmap, nX, nY, nWidth, nHeight);
         }
-
     }
-
 
     static class FlairStylesheet {
         String stylesheetString;
         Dimensions defaultDimension = new Dimensions();
-        Location   defaultLocation  = new Location();
-        String     defaultURL       = "";
+        Location defaultLocation = new Location();
+        String defaultURL = "";
         int count;
 
         Dimensions prevDimension = null;
 
         static class Dimensions {
             int width, height;
-            Boolean scale   = false;
+            Boolean scale = false;
             Boolean missing = true;
 
             Dimensions(int width, int height) {
@@ -215,14 +233,13 @@ public class ImageFlairs {
                 missing = false;
             }
 
-            Dimensions() {
-            }
+            Dimensions() {}
         }
 
         static class Location {
             int x, y;
             Boolean isPercentage = false;
-            Boolean missing      = true;
+            Boolean missing = true;
 
             Location(int x, int y) {
                 this.x = x;
@@ -237,8 +254,7 @@ public class ImageFlairs {
                 missing = false;
             }
 
-            Location() {
-            }
+            Location() {}
         }
 
         FlairStylesheet(String stylesheetString) {
@@ -253,7 +269,8 @@ public class ImageFlairs {
             LogUtil.v("Base is " + baseFlairDef);
             // Attempts to find default dimension, offset and image URL
             defaultDimension = getBackgroundSize(baseFlairDef);
-            LogUtil.v("Default dimens are " + defaultDimension.width + ":" + defaultDimension.height);
+            LogUtil.v(
+                    "Default dimens are " + defaultDimension.width + ":" + defaultDimension.height);
             defaultLocation = getBackgroundPosition(baseFlairDef);
             defaultURL = getBackgroundURL(baseFlairDef);
             count = 0;
@@ -267,16 +284,21 @@ public class ImageFlairs {
          * @return
          */
         String getClass(String cssDefinitionString, String className) {
-            Pattern propertyDefinition = Pattern.compile(
-                    "(?<! )\\." + className + "(?!-|\\[|[A-Za-z0-9_.])([^\\{]*)*\\{(.+?)\\}");
+            Pattern propertyDefinition =
+                    Pattern.compile(
+                            "(?<! )\\."
+                                    + className
+                                    + "(?!-|\\[|[A-Za-z0-9_.])([^\\{]*)*\\{(.+?)\\}");
             Matcher matches = propertyDefinition.matcher(cssDefinitionString);
 
             StringBuilder properties = null;
 
             while (matches.find()) {
                 if (properties == null) properties = new StringBuilder();
-                properties.insert(0, matches.group(2)
-                        + ";");   // append properties to simulate property overriding
+                properties.insert(
+                        0,
+                        matches.group(2)
+                                + ";"); // append properties to simulate property overriding
             }
 
             return properties == null ? null : properties.toString();
@@ -290,7 +312,8 @@ public class ImageFlairs {
          * @return
          */
         String getProperty(String classDefinitionsString, String property) {
-            Pattern propertyDefinition = Pattern.compile("(?<!-)" + property + "\\s*:\\s*(.+?)(;|$)");
+            Pattern propertyDefinition =
+                    Pattern.compile("(?<!-)" + property + "\\s*:\\s*(.+?)(;|$)");
             Matcher matches = propertyDefinition.matcher(classDefinitionsString);
 
             if (matches.find()) {
@@ -302,7 +325,8 @@ public class ImageFlairs {
 
         // Attempts to get a real integer value instead of "auto", if possible
         String getPropertyTryNoAuto(String classDefinitionsString, String property) {
-            Pattern propertyDefinition = Pattern.compile("(?<!-)" + property + "\\s*:\\s*(.+?)(;|$)");
+            Pattern propertyDefinition =
+                    Pattern.compile("(?<!-)" + property + "\\s*:\\s*(.+?)(;|$)");
             Matcher matches = propertyDefinition.matcher(classDefinitionsString);
 
             String defaultString;
@@ -312,13 +336,14 @@ public class ImageFlairs {
                 return null;
             }
             LogUtil.v("Has auto");
-            while((defaultString.contains("auto")||(!defaultString.contains("%") || !defaultString.contains("px"))) && matches.find()){
+            while ((defaultString.contains("auto")
+                            || (!defaultString.contains("%") || !defaultString.contains("px")))
+                    && matches.find()) {
                 defaultString = matches.group(1);
             }
             LogUtil.v("Returning " + defaultString);
             return defaultString;
         }
-
 
         String getPropertyBackgroundUrl(String classDefinitionsString) {
             Pattern propertyDefinition = Pattern.compile("background:url\\([\"'](.+?)[\"']\\)");
@@ -342,9 +367,9 @@ public class ImageFlairs {
             String backgroundProperty = getPropertyBackgroundUrl(classDefinitionString);
             if (backgroundProperty != null) {
                 // check "background"
-                    String url = backgroundProperty;
-                    if (url.startsWith("//")) url = "https:" + url;
-                    return url;
+                String url = backgroundProperty;
+                if (url.startsWith("//")) url = "https:" + url;
+                return url;
             }
             // either backgroundProperty is null or url cannot be found
             String backgroundImageProperty = getProperty(classDefinitionString, "background-image");
@@ -438,19 +463,19 @@ public class ImageFlairs {
 
             if (backgroundPositionProperty == null && backgroundPositionPropertySecondary == null
                     || backgroundPositionProperty == null
-                    && !backgroundPositionPropertySecondary.contains("px ")
-                    && !backgroundPositionPropertySecondary.contains("px;")) {
+                            && !backgroundPositionPropertySecondary.contains("px ")
+                            && !backgroundPositionPropertySecondary.contains("px;")) {
                 return new Dimensions();
             }
 
             Matcher matches = positionDefinitionPx.matcher(backgroundPositionProperty);
             if (matches.find()) {
-                return new Dimensions(Integer.parseInt(matches.group(1)),
+                return new Dimensions(
+                        Integer.parseInt(matches.group(1)),
                         matches.groupCount() < 2 ? Integer.parseInt(matches.group(3)) : -1);
             } else {
                 return new Dimensions();
             }
-
         }
 
         /**
@@ -460,8 +485,9 @@ public class ImageFlairs {
          * @return
          */
         Location getBackgroundPosition(String classDefinitionString) {
-            Pattern positionDefinitionPx =
-                    Pattern.compile("([+-]?\\d+|0)(px\\s|\\s)+([+-]?\\d+|0)(px|)"),
+            Pattern
+                    positionDefinitionPx =
+                            Pattern.compile("([+-]?\\d+|0)(px\\s|\\s)+([+-]?\\d+|0)(px|)"),
                     positionDefinitionPercentage =
                             Pattern.compile("([+-]?\\d+|0)(%\\s|\\s)+([+-]?\\d+|0)(%|)");
 
@@ -477,14 +503,16 @@ public class ImageFlairs {
             Matcher matches = positionDefinitionPx.matcher(backgroundPositionProperty);
             try {
                 if (matches.find()) {
-                    return new Location(-Integer.parseInt(matches.group(1)),
+                    return new Location(
+                            -Integer.parseInt(matches.group(1)),
                             -Integer.parseInt(matches.group(3)));
                 } else {
                     matches = positionDefinitionPercentage.matcher(backgroundPositionProperty);
                     if (matches.find()) {
                         return new Location(
                                 Integer.parseInt(matches.group(1)),
-                                Integer.parseInt(matches.group(3)), true);
+                                Integer.parseInt(matches.group(3)),
+                                true);
                     }
                 }
             } catch (NumberFormatException ignored) {
@@ -494,26 +522,23 @@ public class ImageFlairs {
         }
 
         Dimensions getBackgroundOffset(String classDefinitionString) {
-            Pattern positionDefinitionPx =
-                    Pattern.compile("([+-]?\\d+|0)\\/+([+-]?\\d+|0)(px|)");
-           String backgroundPositionProperty = getProperty(classDefinitionString, "background");
+            Pattern positionDefinitionPx = Pattern.compile("([+-]?\\d+|0)\\/+([+-]?\\d+|0)(px|)");
+            String backgroundPositionProperty = getProperty(classDefinitionString, "background");
             if (backgroundPositionProperty == null) {
                 return new Dimensions();
             }
 
-
             Matcher matches = positionDefinitionPx.matcher(backgroundPositionProperty);
             try {
                 if (matches.find()) {
-                    return new Dimensions(Integer.parseInt(matches.group(2)),
-                            Integer.parseInt(matches.group(2)));
+                    return new Dimensions(
+                            Integer.parseInt(matches.group(2)), Integer.parseInt(matches.group(2)));
                 }
             } catch (NumberFormatException ignored) {
 
             }
             return new Dimensions();
         }
-
 
         /**
          * Request a flair by flair id. `.into` can be chained onto this method call.
@@ -547,17 +572,21 @@ public class ImageFlairs {
                 backScaling = new Dimensions();
                 offset = new Dimensions();
             }
-            if ((!backScaling.missing && !backScaling.scale) || (!offset.missing && !offset.scale)) {
-                Bitmap loaded = getFlairImageLoader(context).loadImageSync(filename,
-                        new ImageSize(backScaling.width, backScaling.height));
+            if ((!backScaling.missing && !backScaling.scale)
+                    || (!offset.missing && !offset.scale)) {
+                Bitmap loaded =
+                        getFlairImageLoader(context)
+                                .loadImageSync(
+                                        filename,
+                                        new ImageSize(backScaling.width, backScaling.height));
                 if (loaded != null) {
                     Bitmap b;
-                    if(backScaling.missing || backScaling.width < offset.width) {
-                        b = Bitmap.createScaledBitmap(loaded, offset.width, offset.height,
-                                false);
+                    if (backScaling.missing || backScaling.width < offset.width) {
+                        b = Bitmap.createScaledBitmap(loaded, offset.width, offset.height, false);
                     } else {
-                        b = Bitmap.createScaledBitmap(loaded, backScaling.width, backScaling.height,
-                                false);
+                        b =
+                                Bitmap.createScaledBitmap(
+                                        loaded, backScaling.width, backScaling.height, false);
                     }
                     loadingComplete(b, sub, context, filename, flairsToGet);
                     loaded.recycle();
@@ -570,8 +599,11 @@ public class ImageFlairs {
                         int height = loadedB.getHeight();
                         int scaledHeight = (height * width) / loadedB.getWidth();
                         loadingComplete(
-                                Bitmap.createScaledBitmap(loadedB, width, scaledHeight, false), sub,
-                                context, filename, flairsToGet);
+                                Bitmap.createScaledBitmap(loadedB, width, scaledHeight, false),
+                                sub,
+                                context,
+                                filename,
+                                flairsToGet);
                         loadedB.recycle();
                     } else {
                         loadingComplete(loadedB, sub, context, filename, flairsToGet);
@@ -580,8 +612,12 @@ public class ImageFlairs {
             }
         }
 
-        private void loadingComplete(Bitmap loadedImage, String sub, Context context,
-                String filename, ArrayList<String> flairsToGet) {
+        private void loadingComplete(
+                Bitmap loadedImage,
+                String sub,
+                Context context,
+                String filename,
+                ArrayList<String> flairsToGet) {
             if (loadedImage != null) {
                 for (String id : flairsToGet) {
                     Bitmap newBit = null;
@@ -599,26 +635,37 @@ public class ImageFlairs {
                     Location flairLocation = getBackgroundPosition(classDef);
                     if (flairLocation.missing) flairLocation = defaultLocation;
 
-                    LogUtil.v("Flair: "
-                            + id
-                            + " size: "
-                            + flairDimensions.width
-                            + "x"
-                            + flairDimensions.height
-                            + " location: "
-                            + flairLocation.x
-                            + ":"
-                            + flairLocation.y);
+                    LogUtil.v(
+                            "Flair: "
+                                    + id
+                                    + " size: "
+                                    + flairDimensions.width
+                                    + "x"
+                                    + flairDimensions.height
+                                    + " location: "
+                                    + flairLocation.x
+                                    + ":"
+                                    + flairLocation.y);
                     try {
-                        newBit = new CropTransformation(id, flairDimensions.width,
-                                flairDimensions.height, flairLocation.x, flairLocation.y).transform(
-                                loadedImage, flairLocation.isPercentage);
+                        newBit =
+                                new CropTransformation(
+                                                id,
+                                                flairDimensions.width,
+                                                flairDimensions.height,
+                                                flairLocation.x,
+                                                flairLocation.y)
+                                        .transform(loadedImage, flairLocation.isPercentage);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     try {
-                        getFlairImageLoader(context).getDiskCache()
-                                .save(sub.toLowerCase(Locale.ENGLISH) + ":" + id.toLowerCase(Locale.ENGLISH), newBit);
+                        getFlairImageLoader(context)
+                                .getDiskCache()
+                                .save(
+                                        sub.toLowerCase(Locale.ENGLISH)
+                                                + ":"
+                                                + id.toLowerCase(Locale.ENGLISH),
+                                        newBit);
                         count += 1;
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -651,7 +698,7 @@ public class ImageFlairs {
 
     public static class FlairImageLoader extends ImageLoader {
 
-        private volatile static FlairImageLoader instance;
+        private static volatile FlairImageLoader instance;
 
         /** Returns singleton class instance */
         public static FlairImageLoader getInstance() {
@@ -676,7 +723,6 @@ public class ImageFlairs {
 
     public static FlairImageLoader imageLoader;
 
-
     public static File getCacheDirectory(Context context) {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)
                 && context.getExternalCacheDir() != null) {
@@ -686,7 +732,7 @@ public class ImageFlairs {
     }
 
     public static FlairImageLoader initFlairImageLoader(Context context) {
-        long discCacheSize = 1024 * 1024 * 100; //100 MB limit
+        long discCacheSize = 1024 * 1024 * 100; // 100 MB limit
         DiskCache discCache;
         File dir = getCacheDirectory(context);
         discCacheSize *= 100;
@@ -702,13 +748,16 @@ public class ImageFlairs {
             discCache = new UnlimitedDiskCache(dir);
         }
 
-        options = new DisplayImageOptions.Builder().cacheOnDisk(true)
-                .imageScaleType(ImageScaleType.NONE)
-                .cacheInMemory(false)
-                .resetViewBeforeLoading(false)
-                .build();
+        options =
+                new DisplayImageOptions.Builder()
+                        .cacheOnDisk(true)
+                        .imageScaleType(ImageScaleType.NONE)
+                        .cacheInMemory(false)
+                        .resetViewBeforeLoading(false)
+                        .build();
         ImageLoaderConfiguration config =
-                new ImageLoaderConfiguration.Builder(context).threadPoolSize(threadPoolSize)
+                new ImageLoaderConfiguration.Builder(context)
+                        .threadPoolSize(threadPoolSize)
                         .denyCacheImageMultipleSizesInMemory()
                         .diskCache(discCache)
                         .threadPoolSize(4)
@@ -723,7 +772,6 @@ public class ImageFlairs {
         imageLoader = FlairImageLoader.getInstance();
         imageLoader.init(config);
         return imageLoader;
-
     }
 
     public static DisplayImageOptions options;

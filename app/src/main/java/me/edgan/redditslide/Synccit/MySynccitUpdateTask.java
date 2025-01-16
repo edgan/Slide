@@ -2,9 +2,7 @@ package me.edgan.redditslide.Synccit;
 
 import me.edgan.redditslide.SettingValues;
 
-/**
- * Created by carlo_000 on 2/16/2016.
- */
+/** Created by carlo_000 on 2/16/2016. */
 public class MySynccitUpdateTask extends SynccitUpdateTask {
 
     private static final String MY_DEV_NAME = "slide_for_reddit";
@@ -27,5 +25,4 @@ public class MySynccitUpdateTask extends SynccitUpdateTask {
     protected String getUserAgent() {
         return "slide_for_reddit";
     }
-
 }

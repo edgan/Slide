@@ -24,12 +24,10 @@ public class ToggleSwipeViewPager extends ViewPager {
         super(context, attrs);
     }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         return (mEnableSwiping || swipeLeftOnly) && super.onTouchEvent(ev);
     }
-
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -59,5 +57,4 @@ public class ToggleSwipeViewPager extends ViewPager {
         mEnableSwiping = false;
         mSwipeDisabledUntilRelease = true;
     }
-
 }
