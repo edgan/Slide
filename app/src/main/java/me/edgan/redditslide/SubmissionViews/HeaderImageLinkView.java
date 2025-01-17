@@ -202,6 +202,11 @@ public class HeaderImageLinkView extends RelativeLayout {
                 } else {
                     forceThumb = true;
                 }
+            } else if (type == ContentType.Type.REDDIT_GALLERY) {
+                backdrop.setLayoutParams(
+                        new RelativeLayout.LayoutParams(
+                                LayoutParams.MATCH_PARENT, dpToPx(200)));
+
             }
 
             JsonNode thumbnail = submission.getDataNode().get("thumbnail");
