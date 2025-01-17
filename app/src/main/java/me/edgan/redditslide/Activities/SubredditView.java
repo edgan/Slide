@@ -1159,13 +1159,14 @@ public class SubredditView extends BaseActivity {
     public void filterContent(final String subreddit) {
         final boolean[] chosen =
                 new boolean[] {
-                    PostMatch.isImage(subreddit.toLowerCase(Locale.ENGLISH)),
                     PostMatch.isAlbums(subreddit.toLowerCase(Locale.ENGLISH)),
+                    PostMatch.isGallery(subreddit.toLowerCase(Locale.ENGLISH)),
                     PostMatch.isGif(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isVideo(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isUrls(subreddit.toLowerCase(Locale.ENGLISH)),
+                    PostMatch.isImage(subreddit.toLowerCase(Locale.ENGLISH)),
+                    PostMatch.isNsfw(subreddit.toLowerCase(Locale.ENGLISH)),
                     PostMatch.isSelftext(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isNsfw(subreddit.toLowerCase(Locale.ENGLISH))
+                    PostMatch.isUrls(subreddit.toLowerCase(Locale.ENGLISH)),
+                    PostMatch.isVideo(subreddit.toLowerCase(Locale.ENGLISH))
                 };
 
         final String FILTER_TITLE =
@@ -1177,10 +1178,10 @@ public class SubredditView extends BaseActivity {
                 .setTitle(FILTER_TITLE)
                 .setMultiChoiceItems(
                         new String[] {
-                            getString(R.string.image_downloads), getString(R.string.type_albums),
-                            getString(R.string.type_gifs), getString(R.string.type_videos),
-                            getString(R.string.type_links), getString(R.string.type_selftext),
-                            getString(R.string.type_nsfw_content)
+                            getString(R.string.type_albums), getString(R.string.type_gallery),
+                            getString(R.string.type_gifs), getString(R.string.image_downloads),
+                            getString(R.string.type_nsfw_content),  getString(R.string.type_selftext),
+                            getString(R.string.type_links), getString(R.string.type_videos)
                         },
                         chosen,
                         (dialog, which, isChecked) -> chosen[which] = isChecked)
@@ -1225,7 +1226,7 @@ public class SubredditView extends BaseActivity {
                                     .findFirstCompletelyVisibleItemPosition()
                             - 1;
         }
-        return position;
+        return Math.max(0, position);
     }
 
     TimePeriod time = TimePeriod.DAY;

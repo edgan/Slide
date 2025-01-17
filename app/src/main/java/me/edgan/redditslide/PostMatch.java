@@ -118,10 +118,11 @@ public class PostMatch {
         }
 
         baseSubreddit = baseSubreddit.toLowerCase(Locale.ENGLISH);
+        boolean albums = isAlbums(baseSubreddit);
+        boolean gallery = isGallery(baseSubreddit);
         boolean gifs = isGif(baseSubreddit);
         boolean images = isImage(baseSubreddit);
         boolean nsfw = isNsfw(baseSubreddit);
-        boolean albums = isAlbums(baseSubreddit);
         boolean urls = isUrls(baseSubreddit);
         boolean selftext = isSelftext(baseSubreddit);
         boolean videos = isVideo(baseSubreddit);
@@ -138,6 +139,27 @@ public class PostMatch {
             }
         }
         switch (ContentType.getContentType(s)) {
+            case ALBUM:
+                if (albums) {
+                    contentMatch = true;
+                }
+                break;
+            case DEVIANTART:
+            case GIF:
+                if (gifs) {
+                    contentMatch = true;
+                }
+                break;
+            case IMAGE:
+                if (images) {
+                    contentMatch = true;
+                }
+                break;
+            case IMGUR:
+                if (images) {
+                    contentMatch = true;
+                }
+                break;
             case REDDIT:
             case EMBEDDED:
             case LINK:
@@ -146,31 +168,26 @@ public class PostMatch {
                 }
                 break;
             case SELF:
+                if (selftext) {
+                    contentMatch = true;
+                }
+                break;
             case NONE:
                 if (selftext) {
                     contentMatch = true;
                 }
                 break;
             case REDDIT_GALLERY:
-            case ALBUM:
-                if (albums) {
+                if (gallery) {
                     contentMatch = true;
                 }
                 break;
-            case IMAGE:
-            case DEVIANTART:
-            case IMGUR:
             case XKCD:
                 if (images) {
                     contentMatch = true;
                 }
                 break;
             case VREDDIT_REDIRECT:
-            case GIF:
-                if (gifs) {
-                    contentMatch = true;
-                }
-                break;
             case STREAMABLE:
             case VIDEO:
                 if (videos) {
@@ -223,14 +240,23 @@ public class PostMatch {
     public static void setChosen(boolean[] values, String subreddit) {
         subreddit = subreddit.toLowerCase(Locale.ENGLISH);
         SharedPreferences.Editor e = filters.edit();
+        e.putBoolean(subreddit + "_albumsFilter", values[0]);
+        e.putBoolean(subreddit + "_galleryFilter", values[1]);
         e.putBoolean(subreddit + "_gifsFilter", values[2]);
-        e.putBoolean(subreddit + "_albumsFilter", values[1]);
-        e.putBoolean(subreddit + "_imagesFilter", values[0]);
-        e.putBoolean(subreddit + "_nsfwFilter", values[6]);
+        e.putBoolean(subreddit + "_imagesFilter", values[3]);
+        e.putBoolean(subreddit + "_nsfwFilter", values[4]);
         e.putBoolean(subreddit + "_selftextFilter", values[5]);
-        e.putBoolean(subreddit + "_urlsFilter", values[4]);
-        e.putBoolean(subreddit + "_videoFilter", values[3]);
+        e.putBoolean(subreddit + "_urlsFilter", values[6]);
+        e.putBoolean(subreddit + "_videoFilter", values[7]);
         e.apply();
+    }
+
+    public static boolean isAlbums(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_albumsFilter", false);
+    }
+
+    public static boolean isGallery(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_galleryFilter", false);
     }
 
     public static boolean isGif(String baseSubreddit) {
@@ -239,10 +265,6 @@ public class PostMatch {
 
     public static boolean isImage(String baseSubreddit) {
         return filters.getBoolean(baseSubreddit + "_imagesFilter", false);
-    }
-
-    public static boolean isAlbums(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_albumsFilter", false);
     }
 
     public static boolean isNsfw(String baseSubreddit) {

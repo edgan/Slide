@@ -3911,13 +3911,14 @@ public class MainActivity extends BaseActivity
     public void filterContent(final String subreddit) {
         final boolean[] chosen =
                 new boolean[] {
-                    PostMatch.isImage(subreddit.toLowerCase(Locale.ENGLISH)),
                     PostMatch.isAlbums(subreddit.toLowerCase(Locale.ENGLISH)),
+                    PostMatch.isGallery(subreddit.toLowerCase(Locale.ENGLISH)),
                     PostMatch.isGif(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isVideo(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isUrls(subreddit.toLowerCase(Locale.ENGLISH)),
+                    PostMatch.isImage(subreddit.toLowerCase(Locale.ENGLISH)),
+                    PostMatch.isNsfw(subreddit.toLowerCase(Locale.ENGLISH)),
                     PostMatch.isSelftext(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isNsfw(subreddit.toLowerCase(Locale.ENGLISH))
+                    PostMatch.isUrls(subreddit.toLowerCase(Locale.ENGLISH)),
+                    PostMatch.isVideo(subreddit.toLowerCase(Locale.ENGLISH))
                 };
 
         final String currentSubredditName = usedArray.get(Reddit.currentPosition);
@@ -3938,10 +3939,10 @@ public class MainActivity extends BaseActivity
                 .setTitle(filterTitle)
                 .setMultiChoiceItems(
                         new String[] {
-                            getString(R.string.image_downloads), getString(R.string.type_albums),
-                            getString(R.string.type_gifs), getString(R.string.type_videos),
-                            getString(R.string.type_links), getString(R.string.type_selftext),
-                            getString(R.string.type_nsfw_content)
+                            getString(R.string.type_albums), getString(R.string.type_gallery),
+                            getString(R.string.type_gifs), getString(R.string.image_downloads),
+                            getString(R.string.type_nsfw_content), getString(R.string.type_selftext),
+                            getString(R.string.type_links), getString(R.string.type_videos)
                         },
                         chosen,
                         (dialog, which, isChecked) -> chosen[which] = isChecked)

@@ -416,35 +416,39 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
 
     public void doAdapter() {
         if (!MainActivity.isRestart) {
-            mSwipeRefreshLayout.post(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            mSwipeRefreshLayout.setRefreshing(true);
-                        }
-                    });
+            mSwipeRefreshLayout.post(() -> {
+                mSwipeRefreshLayout.setRefreshing(true);
+            });
         }
 
         posts = new SubredditPosts(id, getContext());
         adapter = new SubmissionAdapter(getActivity(), posts, rv, id, this);
         adapter.setHasStableIds(true);
+
+        // Force layout manager to recalculate spans before setting adapter
+        if (rv.getLayoutManager() instanceof CatchStaggeredGridLayoutManager) {
+            ((CatchStaggeredGridLayoutManager) rv.getLayoutManager()).invalidateSpanAssignments();
+        }
+
         rv.setAdapter(adapter);
         posts.loadMore(getActivity(), this, true);
         mSwipeRefreshLayout.setOnRefreshListener(this::refresh);
     }
 
     public void doAdapter(boolean force18) {
-        mSwipeRefreshLayout.post(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        mSwipeRefreshLayout.setRefreshing(true);
-                    }
-                });
+        mSwipeRefreshLayout.post(() -> {
+            mSwipeRefreshLayout.setRefreshing(true);
+        });
 
         posts = new SubredditPosts(id, getContext(), force18);
         adapter = new SubmissionAdapter(getActivity(), posts, rv, id, this);
         adapter.setHasStableIds(true);
+
+        // Force layout manager to recalculate spans before setting adapter
+        if (rv.getLayoutManager() instanceof CatchStaggeredGridLayoutManager) {
+            ((CatchStaggeredGridLayoutManager) rv.getLayoutManager()).invalidateSpanAssignments();
+        }
+
         rv.setAdapter(adapter);
         posts.loadMore(getActivity(), this, true);
         mSwipeRefreshLayout.setOnRefreshListener(this::refresh);
@@ -536,30 +540,24 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
     @Override
     public void updateSuccess(final List<Submission> submissions, final int startIndex) {
         if (getActivity() != null) {
-            if (getActivity() instanceof MainActivity) {
-                if (((MainActivity) getActivity()).runAfterLoad != null) {
-                    new Handler().post(((MainActivity) getActivity()).runAfterLoad);
+            getActivity().runOnUiThread(() -> {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(false);
                 }
-            }
-            getActivity()
-                    .runOnUiThread(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (mSwipeRefreshLayout != null) {
-                                        mSwipeRefreshLayout.setRefreshing(false);
-                                    }
 
-                                    if (startIndex != -1 && !forced) {
-                                        adapter.notifyItemRangeInserted(
-                                                startIndex + 1, posts.posts.size());
-                                    } else {
-                                        forced = false;
-                                        rv.scrollToPosition(0);
-                                    }
-                                    adapter.notifyDataSetChanged();
-                                }
-                            });
+                // Ensure layout manager state is consistent
+                CatchStaggeredGridLayoutManager layoutManager =
+                    (CatchStaggeredGridLayoutManager) rv.getLayoutManager();
+                layoutManager.invalidateSpanAssignments();
+
+                if (startIndex != -1 && !forced) {
+                    adapter.notifyItemRangeInserted(startIndex + 1, posts.posts.size());
+                } else {
+                    forced = false;
+                    rv.scrollToPosition(0);
+                }
+                adapter.notifyDataSetChanged();
+            });
 
             if (MainActivity.isRestart) {
                 MainActivity.isRestart = false;
@@ -628,11 +626,15 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
 
     public void resetScroll() {
         if (toolbarScroll == null) {
-            toolbarScroll =
-                    new ToolbarScrollHideHandler(((BaseActivity) getActivity()).mToolbar, header) {
-                        @Override
-                        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                            super.onScrolled(recyclerView, dx, dy);
+            toolbarScroll = new ToolbarScrollHideHandler(((BaseActivity) getActivity()).mToolbar, header) {
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+
+                    // Stabilize layout during scrolling
+                    if (Math.abs(dy) > 0 && rv.getLayoutManager() instanceof CatchStaggeredGridLayoutManager) {
+                        ((CatchStaggeredGridLayoutManager) rv.getLayoutManager()).invalidateSpanAssignments();
+                    }
 
                             if (!posts.loading
                                     && !posts.nomore

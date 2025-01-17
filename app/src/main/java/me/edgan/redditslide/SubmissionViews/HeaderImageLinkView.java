@@ -114,30 +114,6 @@ public class HeaderImageLinkView extends RelativeLayout {
                 (((!NetworkUtil.isConnectedWifi(getContext()) && SettingValues.lowResMobile)
                         || SettingValues.lowResAlways));
 
-        /* todo, maybe if(thumbImage2 != null && thumbImage2 instanceof RoundImageTriangleView)
-            switch (ContentType.getContentType(submission)) {
-            case ALBUM:
-                ((RoundImageTriangleView)(thumbImage2)).setFlagColor(R.color.md_blue_300);
-                break;
-            case EXTERNAL:
-            case LINK:
-            case REDDIT:
-                ((RoundImageTriangleView)(thumbImage2)).setFlagColor(R.color.md_red_300);
-                break;
-            case SELF:
-                ((RoundImageTriangleView)(thumbImage2)).setFlagColor(R.color.md_grey_300);
-                break;
-            case EMBEDDED:
-            case GIF:
-            case STREAMABLE:
-            case VIDEO:
-                ((RoundImageTriangleView)(thumbImage2)).setFlagColor(R.color.md_green_300);
-                break;
-            default:
-                ((RoundImageTriangleView)(thumbImage2)).setFlagColor(Color.TRANSPARENT);
-                break;
-        }*/
-
         if (type == ContentType.Type.SELF && SettingValues.hideSelftextLeadImage
                 || SettingValues.noImages && submission.isSelfPost()) {
             setVisibility(View.GONE);
@@ -203,10 +179,11 @@ public class HeaderImageLinkView extends RelativeLayout {
                     forceThumb = true;
                 }
             } else if (type == ContentType.Type.REDDIT_GALLERY) {
-                backdrop.setLayoutParams(
-                        new RelativeLayout.LayoutParams(
-                                LayoutParams.MATCH_PARENT, dpToPx(200)));
-
+                if (full) {
+                    backdrop.setLayoutParams(
+                            new RelativeLayout.LayoutParams(
+                                    LayoutParams.MATCH_PARENT, dpToPx(200)));
+                }
             }
 
             JsonNode thumbnail = submission.getDataNode().get("thumbnail");
