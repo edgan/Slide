@@ -191,7 +191,7 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
             pager.setAdapter(comments);
             currentPage = firstPage;
 
-            pager.setCurrentItem(0);
+            pager.setCurrentItem(firstPage);
 
             pager.addOnPageChangeListener(
                     new ViewPager.SimpleOnPageChangeListener() {
