@@ -1227,4 +1227,18 @@
     <string name="err_save_image">Error saving image</string>
     <string name="error_no_storage_access">No storage access. Please select a directory to save the file.</string>
     <string name="error_directory_not_selected">No directory selected. Please try again.</string>
+
+
+    <!-- Backup Operations -->
+    <string name="backup_no_prefs_found">No Shared Preferences Found</string>
+    <string name="backup_no_prefs_found_msg">No shared preferences were found to backup.</string>
+    <string name="backup_no_prefs_dir">Preferences Directory Not Found</string>
+    <string name="backup_no_prefs_dir_msg">The shared preferences directory does not exist.</string>
+
+    <!-- Additional Backup Operations -->
+    <string name="select_backup_file">Select Backup File</string>
+    <string name="sign_in_failed">Sign-In Failed</string>
+    <string name="sign_in_failed_msg">Unable to sign in to your Google account. Please try again.</string>
+    <string name="backup_no_files">No Backup Files Found</string>
+    <string name="backup_no_files_msg">There are no backup files available to restore.</string>
 </resources>
