@@ -27,6 +27,7 @@ import me.edgan.redditslide.PostLoader;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.util.CustomViewPager;
 import me.edgan.redditslide.util.KeyboardUtil;
 
 import net.dean.jraw.models.Submission;
@@ -185,13 +186,16 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
         } else {
             updateSubredditAndSubmission(currentPosts.get(firstPage));
 
-            final ViewPager pager = (ViewPager) findViewById(R.id.content_view);
+            final CustomViewPager pager = (CustomViewPager) findViewById(R.id.content_view);
+            //final ViewPager pager = (ViewPager) findViewById(R.id.content_view);
 
             comments = new CommentsScreenPagerAdapter(getSupportFragmentManager());
             pager.setAdapter(comments);
             currentPage = firstPage;
 
             pager.setCurrentItem(firstPage);
+
+            pager.setEntryPageIndex(firstPage);
 
             pager.addOnPageChangeListener(
                     new ViewPager.SimpleOnPageChangeListener() {
