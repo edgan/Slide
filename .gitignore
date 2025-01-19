@@ -8,6 +8,7 @@ keystore.properties
 local.properties
 
 secretconstants.properties
+app/google-services.json
 
 # Gradle generated files
 .gradle/
