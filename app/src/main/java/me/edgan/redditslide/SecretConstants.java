@@ -9,6 +9,8 @@ import java.util.Properties;
 /** Created by Deadl on 26/11/2015. */
 public class SecretConstants {
     private static String apiKey;
+    private static String redGifClientId;
+    private static String redGifClientSecret;
 
     private static String base64EncodedPublicKey;
 
@@ -62,4 +64,43 @@ public class SecretConstants {
         }
         return apiKey;
     }
+
+    public static String getRedGifsClientId(Context context) {
+        if (redGifClientId == null) {
+            InputStream input;
+            try {
+                input = context.getAssets().open("secretconstants.properties");
+                Properties properties = new Properties();
+                properties.load(input);
+                redGifClientId = properties.getProperty("redGifClientId");
+            } catch (IOException e) {
+                // file not found
+                redGifClientId =
+                        "93013a4b39f-2031-b319-3021-c4ea3ba7dc12"; // Example id, will
+                                                                              // not work in
+                                                                              // production
+            }
+        }
+        return redGifClientId;
+    }
+
+    public static String getRedGifsClientSecret(Context context) {
+        if (redGifClientSecret == null) {
+            InputStream input;
+            try {
+                input = context.getAssets().open("secretconstants.properties");
+                Properties properties = new Properties();
+                properties.load(input);
+                redGifClientSecret = properties.getProperty("redGifClientSecret");
+            } catch (IOException e) {
+                // file not found
+                redGifClientSecret =
+                        "OcGrW2TjlEa3N349Vs+gQSKu5vTBx19jC/gDXzIFOe4="; // Example secret, will
+                                                                              // not work in
+                                                                              // production
+            }
+        }
+        return redGifClientSecret;
+    }
+
 }

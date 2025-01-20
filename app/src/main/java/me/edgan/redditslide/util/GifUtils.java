@@ -23,6 +23,10 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 
+import android.os.SystemClock;
+import okhttp3.FormBody;
+import java.util.concurrent.atomic.AtomicReference;
+
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;
 import com.google.android.exoplayer2.source.dash.manifest.AdaptationSet;
@@ -41,6 +45,7 @@ import me.edgan.redditslide.Activities.MediaView;
 import me.edgan.redditslide.Activities.Website;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SecretConstants;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.ExoVideoView;
 
@@ -465,6 +470,7 @@ public class GifUtils {
             DIRECT,
             OTHER,
             VREDDIT,
+            REDGIFS,
             REDDIT_GALLERY;
 
             public boolean shouldLoadPreview() {
@@ -522,6 +528,10 @@ public class GifUtils {
 
             if (realURL.contains("v.redd.it")) {
                 return VideoType.VREDDIT;
+            }
+
+            if (realURL.matches(".*redgifs\\.com/watch/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]")) {
+                return VideoType.REDGIFS;
             }
 
             if (realURL.contains(".mp4")
@@ -583,6 +593,89 @@ public class GifUtils {
         }
 
         OkHttpClient client = Reddit.client;
+
+        private static final AtomicReference<AuthToken> TOKEN = new AtomicReference<>(new AuthToken("", 0));
+
+        private static class AuthToken {
+            @NonNull public final String token;
+            private final long expireAt;
+
+            private AuthToken(@NonNull String token, final long expireAt) {
+                this.token = token;
+                this.expireAt = expireAt;
+            }
+
+            public static AuthToken expireIn10Mins(@NonNull String token) {
+                return new AuthToken(token, SystemClock.uptimeMillis() + 10L * 60 * 1000);
+            }
+
+            public boolean isValid() {
+                return !token.isEmpty() && expireAt > SystemClock.uptimeMillis();
+            }
+        }
+
+        Uri loadRedGifs(String name, String fullUrl) {
+            showProgressBar(c, progressBar, true);
+
+            // Remove leading slash if present
+            if (name.startsWith("/")) name = name.substring(1);
+
+            try {
+                // Check if existing token is valid
+                AuthToken currentToken = TOKEN.get();
+                if (!currentToken.isValid()) {
+                    // Get new auth token
+                    Request tokenRequest = new Request.Builder()
+                        .url("https://api.redgifs.com/v2/oauth/client")
+                        .post(new FormBody.Builder()
+                            .add("grant_type", "client_credentials")
+                            .add("client_id", SecretConstants.getRedGifsClientId(c))
+                            .add("client_secret", SecretConstants.getRedGifsClientSecret(c))
+                            .build())
+                        .build();
+
+                    Response tokenResponse = client.newCall(tokenRequest).execute();
+                    JsonObject tokenResult = gson.fromJson(tokenResponse.body().string(), JsonObject.class);
+
+                    String accessToken = tokenResult.get("access_token").getAsString();
+                    TOKEN.set(AuthToken.expireIn10Mins(accessToken));
+                    currentToken = TOKEN.get();
+                }
+
+                // Call RedGifs API with token
+                Request request = new Request.Builder()
+                    .url("https://api.redgifs.com/v2/gifs/" + name)
+                    .header("Authorization", "Bearer " + currentToken.token)
+                    .build();
+
+                Response response = client.newCall(request).execute();
+                JsonObject result = gson.fromJson(response.body().string(), JsonObject.class);
+
+                if (result == null || !result.has("gif")) {
+                    onError();
+                    if (closeIfNull) {
+                        c.runOnUiThread(() -> {
+                            // Show error dialog
+                        });
+                    }
+                    return null;
+                }
+
+                JsonObject gif = result.getAsJsonObject("gif");
+                String url = !SettingValues.hqgif && gif.getAsJsonObject("urls").has("sd") ?
+                    gif.getAsJsonObject("urls").get("sd").getAsString() :
+                    gif.getAsJsonObject("urls").get("hd").getAsString();
+                return Uri.parse(url);
+
+            } catch (Exception e) {
+                LogUtil.e(e, "Error loading RedGifs video url = [" + fullUrl + "]");
+                onError();
+                if (closeIfNull) {
+                    c.runOnUiThread(() -> openWebsite(fullUrl));
+                }
+                return null;
+            }
+        }
 
         /**
          * Load the correct URL for a gfycat gif
@@ -698,6 +791,23 @@ public class GifUtils {
                 getRemoteFileSize(url, client, size, c);
             }
             switch (videoType) {
+                case REDGIFS:
+                    String id = url.substring(url.lastIndexOf("/"));
+                    String redgifsUrl = "https://api.redgifs.com/v2/gifs/" + id;
+
+                    try {
+                        Uri uri = loadRedGifs(id, url);
+                        return uri;
+                    } catch (Exception e) {
+                        LogUtil.e(
+                                e,
+                                "Error loading redgifs video url = ["
+                                        + url
+                                        + "] redgifsUrl = ["
+                                        + redgifsUrl
+                                        + "]");
+                    }
+                    break;
                 case VREDDIT:
                     return Uri.parse(url);
                 case GFYCAT:

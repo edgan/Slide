@@ -270,6 +270,8 @@ public class HeaderImageLinkView extends RelativeLayout {
                 // Use Reddit preview URL if available
                 if (redditPreviewUrl != null) {
                     url = redditPreviewUrl;
+                } else if (dataNode.has("thumbnail")) {
+                    url = dataNode.get("thumbnail").asText();
                 }
 
                 // Load the URL
