@@ -540,6 +540,11 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
     @Override
     public void updateSuccess(final List<Submission> submissions, final int startIndex) {
         if (getActivity() != null) {
+            if (getActivity() instanceof MainActivity &&
+                ((MainActivity) getActivity()).runAfterLoad != null) {
+                new Handler().post(((MainActivity) getActivity()).runAfterLoad);
+            }
+
             getActivity().runOnUiThread(() -> {
                 if (mSwipeRefreshLayout != null) {
                     mSwipeRefreshLayout.setRefreshing(false);
@@ -556,6 +561,7 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                     forced = false;
                     rv.scrollToPosition(0);
                 }
+
                 adapter.notifyDataSetChanged();
             });
 
