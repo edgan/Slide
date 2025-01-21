@@ -44,21 +44,6 @@
                 android:exported="true"
                 android:windowSoftInputMode="adjustResize">
         </activity>
-        <!--Disable this for now
-        <activity
-                android:name=".Activities.NewsActivity"
-                android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode"
-                android:label="Reddit News"
-                android:icon="@mipmap/ic_launcher"
-                android:roundIcon="@mipmap/icon_round"
-                android:taskAffinity="me.edgan.News"
-                android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
- -->
         <activity-alias
                 android:name=".Activities.SlideDefault"
                 android:enabled="false"
@@ -469,7 +454,12 @@
                 <data android:host="*.reddit.com"/>
                 <data android:host="redd.it"/>
                 <data android:host="*.redd.it"/>
+                <!--Disable this for now
                 <data android:host="reddit.app.link"/>
+                <data android:host="reddit.onelink.me"/>
+                <data android:host="reddit-alternate.app.link"/>
+                <data android:host="click.redditmail.com"/>
+                -->
 
             </intent-filter>
         </activity>

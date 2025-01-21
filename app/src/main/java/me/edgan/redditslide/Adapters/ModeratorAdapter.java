@@ -263,7 +263,7 @@ public class ModeratorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                         } else {
                                                             Reddit.defaultShareText(
                                                                     "",
-                                                                    "https://redd.it/"
+                                                                    "https://reddit.com/"
                                                                             + submission.getId(),
                                                                     mContext);
                                                         }
@@ -300,7 +300,7 @@ public class ModeratorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                                                                     .defaultShareText(
                                                                                                             submission
                                                                                                                     .getTitle(),
-                                                                                                            "https://redd.it/"
+                                                                                                            "https://reddit.com/"
                                                                                                                     + submission
                                                                                                                             .getId(),
                                                                                                             mContext);

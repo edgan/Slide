@@ -411,12 +411,11 @@ public class OpenRedditLink {
      */
     public static RedditLinkType getRedditLinkType(@NonNull Uri uri) {
         String host = Objects.requireNonNull(uri.getHost());
+        String path = Objects.requireNonNull(uri.getPath());
 
-        if (host.equals("redd.it")) {
+        if (host.equals("redd.it") || (host.equals("reddit.com") && path.matches("/[a-z0-9]{6,7}?.*"))) {
             return RedditLinkType.SHORTENED;
         }
-
-        String path = Objects.requireNonNull(uri.getPath());
 
         if (path.matches("(?i)/live/[^/]*")) {
             return RedditLinkType.LIVE;
