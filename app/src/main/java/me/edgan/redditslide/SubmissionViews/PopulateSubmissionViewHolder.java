@@ -1258,7 +1258,7 @@ public class PopulateSubmissionViewHolder {
                                 } else {
                                     Reddit.defaultShareText(
                                             submission.getTitle(),
-                                            "https://reddit.com/" + submission.getId(),
+                                            "https://reddit.com/comments/" + submission.getId(),
                                             mContext);
                                 }
                                 break;
