@@ -106,7 +106,7 @@ public class ContentTypeTest {
         assertThat(ContentType.getContentType("https://www.reddit.com/42wgbg/"), is(Type.REDDIT));
         assertThat(ContentType.getContentType("https://www.reddit.com/r/live/"), is(Type.REDDIT));
         assertThat(ContentType.getContentType("https://www.reddit.com"), is(Type.REDDIT));
-        assertThat(ContentType.getContentType("reddit.com/eorhm"), is(Type.REDDIT));
+        assertThat(ContentType.getContentType("reddit.com/comments/eorhm"), is(Type.REDDIT));
         assertThat(ContentType.getContentType("/r/Android"), is(Type.REDDIT));
         assertThat(ContentType.getContentType("https://www.reddit.com/r/Android/wiki/index"), is(Type.REDDIT));
         assertThat(ContentType.getContentType("https://www.reddit.com/r/Android/help"), is(Type.REDDIT));

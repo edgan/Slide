@@ -255,7 +255,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                                         } else {
                                                             Reddit.defaultShareText(
                                                                     "",
-                                                                    "https://reddit.com/"
+                                                                    "https://reddit.com/comments/"
                                                                             + submission.getId(),
                                                                     mContext);
                                                         }
@@ -292,7 +292,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                                                                                     .defaultShareText(
                                                                                                             submission
                                                                                                                     .getTitle(),
-                                                                                                            "https://reddit.com/"
+                                                                                                            "https://reddit.com/comments/"
                                                                                                                     + submission
                                                                                                                             .getId(),
                                                                                                             mContext);

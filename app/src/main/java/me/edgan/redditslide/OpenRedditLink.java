@@ -413,7 +413,7 @@ public class OpenRedditLink {
         String host = Objects.requireNonNull(uri.getHost());
         String path = Objects.requireNonNull(uri.getPath());
 
-        if (host.equals("redd.it") || (host.equals("reddit.com") && path.matches("/[a-z0-9]{6,7}?.*"))) {
+        if (host.equals("redd.it")) {
             return RedditLinkType.SHORTENED;
         }
 
