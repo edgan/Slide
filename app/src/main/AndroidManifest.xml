@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-          xmlns:android="http://schemas.android.com/apk/res/android">
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.NFC"/>
@@ -21,6 +22,16 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:usesCleartextTraffic="true"
             android:theme="@style/yellow_dark">
+        <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="${applicationId}.provider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/filepaths"
+                    tools:replace="android:resource"/>
+        </provider>
         <activity
                 android:name=".Activities.Slide"
                 android:alwaysRetainTaskState="true"
@@ -44,21 +55,6 @@
                 android:exported="true"
                 android:windowSoftInputMode="adjustResize">
         </activity>
-        <!--Disable this for now
-        <activity
-                android:name=".Activities.NewsActivity"
-                android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|uiMode"
-                android:label="Reddit News"
-                android:icon="@mipmap/ic_launcher"
-                android:roundIcon="@mipmap/icon_round"
-                android:taskAffinity="me.edgan.News"
-                android:windowSoftInputMode="adjustResize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
- -->
         <activity-alias
                 android:name=".Activities.SlideDefault"
                 android:enabled="false"
@@ -469,7 +465,12 @@
                 <data android:host="*.reddit.com"/>
                 <data android:host="redd.it"/>
                 <data android:host="*.redd.it"/>
+                <!--Disable this for now
                 <data android:host="reddit.app.link"/>
+                <data android:host="reddit.onelink.me"/>
+                <data android:host="reddit-alternate.app.link"/>
+                <data android:host="click.redditmail.com"/>
+                -->
 
             </intent-filter>
         </activity>
@@ -646,15 +647,6 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <!--
-         Start of widget code for the future
-         <receiver android:name=".Widget.PostWidgetProvider" >
-             <intent-filter>
-                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-             </intent-filter>
-             <meta-data android:name="android.appwidget.provider"
-                 android:resource="@xml/subreddit_widget" />
-         </receiver> !-->
         <service
             android:name=".Notifications.ImageDownloadNotificationService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>

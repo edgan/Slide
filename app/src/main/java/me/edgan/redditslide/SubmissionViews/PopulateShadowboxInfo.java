@@ -991,7 +991,7 @@ public class PopulateShadowboxInfo {
                                         } else {
                                             Reddit.defaultShareText(
                                                     submission.getTitle(),
-                                                    "https://redd.it/" + submission.getId(),
+                                                    "https://reddit.com/comments/" + submission.getId(),
                                                     mContext);
                                         }
                                         break;
