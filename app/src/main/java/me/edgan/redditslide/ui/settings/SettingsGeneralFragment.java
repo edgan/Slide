@@ -36,6 +36,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.snackbar.Snackbar;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.rey.material.widget.Slider;
 
 import me.edgan.redditslide.Authentication;
@@ -1194,28 +1195,16 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                                                 + (newValue.isEmpty()
                                                                         ? "cleared"
                                                                         : newValue))
-                                                .setPositiveButton("OK", null)
+                                                .setPositiveButton(
+                                                        "OK",
+                                                        (d, w) -> {
+                                                            // Also restart if they press OK
+                                                            ProcessPhoenix.triggerRebirth(context);
+                                                        })
+                                                .setCancelable(false)
                                                 .show();
                                     })
                             .setNegativeButton("Cancel", null)
-                            .setNeutralButton(
-                                    "Clear",
-                                    (dialog, which) -> {
-                                        SettingValues.redditClientIdOverride = "";
-                                        SettingValues.prefs
-                                                .edit()
-                                                .putString(
-                                                        SettingValues
-                                                                .PREF_REDDIT_CLIENT_ID_OVERRIDE,
-                                                        "")
-                                                .commit();
-                                        currentClientId.setText("Click to set custom client ID");
-                                        updateActiveClientId(activeClientId);
-                                        new AlertDialog.Builder(context)
-                                                .setMessage("Client ID override cleared")
-                                                .setPositiveButton("OK", null)
-                                                .show();
-                                    })
                             .show();
                 });
     }

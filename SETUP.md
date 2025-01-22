@@ -49,13 +49,11 @@ in the notes of your entry for Reddit in your password manager.
 ## Slide Client ID steps
 1. Go to `Settings` in the side bar
 1. Select [General](/screenshots/settings.png)
-2. Scroll to the [bottom](screenshots/blank_client_id_override.png) of `General`
-3. Press [Reddit Client ID override](screenshots/enter_client_id_override.png)
-4. Enter your [Client ID](screenshots/pre-saved_client_id_override.png). It is best to copy and paste it.
-5. Press [SAVE](screenshots/pre-saved_client_id_override.png)
-6. Press [OK](screenshots/post-saved_client_id_override.png)
-7. Close Slide
-8. Open Slide
+2. Press [Reddit Client ID override](screenshots/enter_client_id_override.png)
+3. Enter your [Client ID](screenshots/pre-saved_client_id_override.png). It is best to copy and paste it.
+4. Press [SAVE](screenshots/pre-saved_client_id_override.png)
+5. Press [OK](screenshots/post-saved_client_id_override.png)
+6. Wait for Slide to restart
 
 # Common errors
 ## Error: Invalid request to Oauth API
