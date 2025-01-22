@@ -239,8 +239,8 @@ public class TumblrView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             holder.text.getText()
                                     + main.getString(R.string.submission_tap_gif)
                                             .toUpperCase()); // got rid of the \n thing, because it
-                                                             // didnt parse and it was already a new
-                                                             // line so...
+                    // didnt parse and it was already a new
+                    // line so...
                     holder.body.setOnClickListener(onGifImageClickListener);
                 }
             } catch (URISyntaxException e) {

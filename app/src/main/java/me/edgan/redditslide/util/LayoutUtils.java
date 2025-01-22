@@ -29,9 +29,8 @@ public class LayoutUtils {
             final ViewTreeObserver observer = tabLayout.getViewTreeObserver();
 
             if (observer.isAlive()) {
-                observer
-                        .dispatchOnGlobalLayout(); // In case a previous call is waiting when this
-                                                   // call is made
+                observer.dispatchOnGlobalLayout(); // In case a previous call is waiting when this
+                // call is made
                 observer.addOnGlobalLayoutListener(
                         new ViewTreeObserver.OnGlobalLayoutListener() {
                             @Override

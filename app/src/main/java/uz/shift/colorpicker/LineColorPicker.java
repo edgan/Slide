@@ -44,13 +44,18 @@ public class LineColorPicker extends View {
         paint = new Paint();
         paint.setStyle(Style.FILL);
 
-        final TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.LineColorPicker, 0, 0);
+        final TypedArray a =
+                context.getTheme().obtainStyledAttributes(attrs, R.styleable.LineColorPicker, 0, 0);
 
         try {
-            mOrientation = a.getInteger(R.styleable.LineColorPicker_android_orientation, LinearLayout.HORIZONTAL);
+            mOrientation =
+                    a.getInteger(
+                            R.styleable.LineColorPicker_android_orientation,
+                            LinearLayout.HORIZONTAL);
 
             if (!isInEditMode()) {
-                final int colorsArrayResId = a.getResourceId(R.styleable.LineColorPicker_colors, -1);
+                final int colorsArrayResId =
+                        a.getResourceId(R.styleable.LineColorPicker_colors, -1);
 
                 if (colorsArrayResId > 0) {
                     final int[] colors = context.getResources().getIntArray(colorsArrayResId);
@@ -85,7 +90,6 @@ public class LineColorPicker extends View {
         } else {
             drawVerticalPicker(canvas);
         }
-
     }
 
     private void drawVerticalPicker(Canvas canvas) {
@@ -114,7 +118,6 @@ public class LineColorPicker extends View {
 
             canvas.drawRect(rect, paint);
         }
-
     }
 
     private void drawHorizontalPicker(Canvas canvas) {
@@ -192,9 +195,7 @@ public class LineColorPicker extends View {
         return true;
     }
 
-    /**
-     * Return color at x,y coordinate of view.
-     */
+    /** Return color at x,y coordinate of view. */
     private int getColorAtXY(float x, float y) {
 
         // FIXME: colors.length == 0 -> division by ZERO.s
@@ -275,9 +276,7 @@ public class LineColorPicker extends View {
         super.onSizeChanged(w, h, oldw, oldh);
     }
 
-    /**
-     * Return currently selected color.
-     */
+    /** Return currently selected color. */
     public int getColor() {
         return selectedColor;
     }
@@ -290,9 +289,7 @@ public class LineColorPicker extends View {
     // super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     // }
 
-    /**
-     * Set selected color as color value from palette.
-     */
+    /** Set selected color as color value from palette. */
     public void setSelectedColor(int color) {
 
         // not from current palette
@@ -312,9 +309,7 @@ public class LineColorPicker extends View {
         }
     }
 
-    /**
-     * Set selected color as index from palete
-     */
+    /** Set selected color as index from palete */
     public void setSelectedColorPosition(int position) {
         setSelectedColor(colors[position]);
     }
@@ -328,16 +323,12 @@ public class LineColorPicker extends View {
         }
     }
 
-    /**
-     * Return current picker palete
-     */
+    /** Return current picker palete */
     public int[] getColors() {
         return colors;
     }
 
-    /**
-     * Set picker palette
-     */
+    /** Set picker palette */
     public void setColors(int[] colors) {
         // TODO: selected color can be NOT in set of colors
         // FIXME: colors can be null
@@ -352,14 +343,10 @@ public class LineColorPicker extends View {
         invalidate();
     }
 
-    /**
-     * Return true if palette contains this color
-     */
+    /** Return true if palette contains this color */
     private boolean containsColor(int[] colors, int c) {
         for (int color : colors) {
-            if (color == c)
-                return true;
-
+            if (color == c) return true;
         }
 
         return false;
@@ -376,15 +363,16 @@ public class LineColorPicker extends View {
 
     static class SavedState extends BaseSavedState {
         // required field that makes Parcelables from a Parcel
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
+        public static final Parcelable.Creator<SavedState> CREATOR =
+                new Parcelable.Creator<SavedState>() {
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
 
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
         int selectedColor;
         boolean isColorSelected;
 

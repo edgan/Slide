@@ -255,9 +255,9 @@ public class PopulateSubmissionViewHolder {
                                                     JsonUtil.getGalleryData(dataNode, urls);
                                                 } else if (dataNode.has(
                                                         "crosspost_parent_list")) { // Else, try
-                                                                                    // getting
-                                                                                    // crosspost
-                                                                                    // gallery data
+                                                    // getting
+                                                    // crosspost
+                                                    // gallery data
                                                     JsonNode crosspost_parent =
                                                             dataNode.get("crosspost_parent_list")
                                                                     .get(0);
@@ -437,7 +437,7 @@ public class PopulateSubmissionViewHolder {
                     && type
                             != ContentType.Type
                                     .XKCD) { // Load the preview image which has probably already
-                                             // been cached in memory instead of the direct link
+                // been cached in memory instead of the direct link
                 previewUrl =
                         submission
                                 .getDataNode()
@@ -491,9 +491,8 @@ public class PopulateSubmissionViewHolder {
                                                     .getDataNode()
                                                     .get("media")
                                                     .get("reddit_video")
-                                                    .get(
-                                                            "dash_url") // In the future, we could
-                                                                        // load the HLS url as well
+                                                    .get("dash_url") // In the future, we could
+                                                    // load the HLS url as well
                                                     .asText())
                                     .replace("&amp;", "&"));
                 } else if (submission.getDataNode().has("media")
@@ -605,10 +604,9 @@ public class PopulateSubmissionViewHolder {
                             .get("images")
                             .get(0)
                             .get("source")
-                            .has(
-                                    "height")) { // Load the preview image which has probably
-                                                 // already been cached in memory instead of the
-                                                 // direct link
+                            .has("height")) { // Load the preview image which has probably
+                // already been cached in memory instead of the
+                // direct link
                 String previewUrl =
                         submission
                                 .getDataNode()
@@ -1258,7 +1256,7 @@ public class PopulateSubmissionViewHolder {
                                 } else {
                                     Reddit.defaultShareText(
                                             submission.getTitle(),
-                                            "https://redd.it/" + submission.getId(),
+                                            "https://reddit.com/comments/" + submission.getId(),
                                             mContext);
                                 }
                                 break;
@@ -1981,7 +1979,7 @@ public class PopulateSubmissionViewHolder {
                                                 }
                                             });
                                 } else { // Show a Slide reason dialog if we can't show a toolbox or
-                                         // reddit one
+                                    // reddit one
                                     doRemoveSubmissionReason(
                                             mContext, submission, posts, recyclerview, holder);
                                 }
@@ -3438,7 +3436,7 @@ public class PopulateSubmissionViewHolder {
                                                         ? 0
                                                         : SUBMISSION_SCORE
                                                                 - 1; // if a post is at 0 votes,
-                                                                     // keep it at 0 when downvoting
+                                        // keep it at 0 when downvoting
                                         new Vote(false, points, mContext).execute(submission);
                                         ActionStates.setVoteDirection(
                                                 submission, VoteDirection.DOWNVOTE);

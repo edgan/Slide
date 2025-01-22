@@ -36,6 +36,7 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.snackbar.Snackbar;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.rey.material.widget.Slider;
 
 import me.edgan.redditslide.Authentication;
@@ -443,7 +444,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                     if (hasValidPath) {
                         displayPath = StorageUtil.getDisplayPath(context, currentUri);
                     } else {
-                        displayPath = context.getString(R.string.settings_image_location_unset);
+                        displayPath = context.getString(R.string.settings_storage_location_unset);
                     }
 
                     locationView.post(
@@ -491,7 +492,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                                                     context,
                                                                     context.getString(
                                                                             R.string
-                                                                                    .settings_set_image_location,
+                                                                                    .settings_set_storage_location,
                                                                             path),
                                                                     Toast.LENGTH_LONG)
                                                             .show();
@@ -609,7 +610,8 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                             Toast.makeText(
                                             context,
                                             context.getString(
-                                                    R.string.settings_set_image_location, location),
+                                                    R.string.settings_set_storage_location,
+                                                    location),
                                             Toast.LENGTH_LONG)
                                     .show();
                         }
@@ -622,7 +624,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
             String loc =
                     Reddit.appRestart.getString(
                             "imagelocation",
-                            context.getString(R.string.settings_image_location_unset));
+                            context.getString(R.string.settings_storage_location_unset));
             setSaveLocationView.setText(loc);
         }
 
@@ -1193,28 +1195,16 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                                                 + (newValue.isEmpty()
                                                                         ? "cleared"
                                                                         : newValue))
-                                                .setPositiveButton("OK", null)
+                                                .setPositiveButton(
+                                                        "OK",
+                                                        (d, w) -> {
+                                                            // Also restart if they press OK
+                                                            ProcessPhoenix.triggerRebirth(context);
+                                                        })
+                                                .setCancelable(false)
                                                 .show();
                                     })
                             .setNegativeButton("Cancel", null)
-                            .setNeutralButton(
-                                    "Clear",
-                                    (dialog, which) -> {
-                                        SettingValues.redditClientIdOverride = "";
-                                        SettingValues.prefs
-                                                .edit()
-                                                .putString(
-                                                        SettingValues
-                                                                .PREF_REDDIT_CLIENT_ID_OVERRIDE,
-                                                        "")
-                                                .commit();
-                                        currentClientId.setText("Click to set custom client ID");
-                                        updateActiveClientId(activeClientId);
-                                        new AlertDialog.Builder(context)
-                                                .setMessage("Client ID override cleared")
-                                                .setPositiveButton("OK", null)
-                                                .show();
-                                    })
                             .show();
                 });
     }
@@ -1399,8 +1389,8 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                                                         .replaceAll(
                                                                                 "\\s",
                                                                                 ""); // remove
-                                                                                     // whitespace
-                                                                                     // from input
+                                                        // whitespace
+                                                        // from input
                                                     }
                                                 })
                                         .positiveText(R.string.btn_add)

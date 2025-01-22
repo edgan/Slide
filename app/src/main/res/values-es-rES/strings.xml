@@ -8,13 +8,6 @@
     <string name="pro_upgrade_msg">Actualiza a Slide for Reddit Pro para disfrutar de increíbles características como:\n\n- Bloqueador de Anunicios y el modo lectura en la vista web\n- Cortar y dibujar en la subida de imágenes\n- Modo columna personalizable para teblet\n- Modo nocturno automático\n- Modos de vista Shadowbox y Galería\n- Vista de comentarios en Shadowbox\n- Copia de seguridad y restauración en Google Drive y archivo\n- ¡Tu apoyo al software open source y libre de anuncios!\n\n¿Ayudas a Slide for Reddit?</string>
     <string name="general_open_settings">Abrir Ajustes del Subreddit</string>
     <string name="general_sub_sync">Sincronizando suscripciones</string>
-    <string name="general_gallerymode_ispro">Modo galeria es una caracteristica de Slide Pro</string>
-    <string name="general_cropdraw_ispro">Recortar y dibujar en las imágenes para subir es una característica de Slide Pro</string>
-    <string name="general_shadowbox_comments_ispro">El modo comentarios en shadowbox es una característica Pro</string>
-    <string name="general_shadowbox_ispro">El modo shadowbox es una característica Pro</string>
-    <string name="general_nighttheme_ispro">Modo Nocturno automático es una función de Slide Pro</string>
-    <string name="general_backup_ispro">Backup de configuración es una característica de Slide Pro</string>
-    <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Entrada no guardada</string>
     <string name="submission_info_saved">Envío guardado</string>
     <string name="submission_info_archived">Este es un post archivado. No podrás votar ni comentar.</string>
@@ -556,9 +549,9 @@
     <string name="settings_comment_crop">Recorta la imagen principal en la vista de comentarios</string>
     <string name="settings_general_scroll_read">Marca los posts como leídos al pasar por encima</string>
     <string name="settings_link_chrome">Pestañas personalizadas</string>
-    <string name="settings_image_location">Selecciona la ubicación para guardar Imágenes / GIF</string>
-    <string name="settings_image_location_unset">No establecida aún</string>
-    <string name="settings_set_image_location">Las imágenes se guardarán en %s</string>
+    <string name="settings_storage_location">Selecciona la ubicación para guardar Imágenes / GIF</string>
+    <string name="settings_storage_location_unset">No establecida aún</string>
+    <string name="settings_set_storage_location">Las imágenes se guardarán en %s</string>
     <string name="settings_general_immersive_mode">Modo de pantalla completa</string>
     <string name="settings_general_immersive_mode_desc">Esconder la barra de estado y navegación (experimental)</string>
     <string name="settings_moderation">Moderación</string>
@@ -716,7 +709,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Ordenando</string>
     <string name="display">Mostrar</string>
-    <string name="image_downloads">Imágenes</string>
+    <string name="images">Imágenes</string>
     <string name="app_theme">Tema de la aplicación</string>
     <string name="tinting">Teñiendo</string>
     <string name="post_info">Información de la publicación</string>

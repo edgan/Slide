@@ -346,9 +346,9 @@
     <string name="settings_font_comment">Kommentarfont</string>
     <string name="settings_comment_crop">Beskjær hovedbildet i kommentar-visning</string>
     <string name="settings_general_scroll_read">Merk innlegg som lest etter å ha skrollet forbi</string>
-    <string name="settings_image_location">Velg bilde/GIF-lagringssted</string>
-    <string name="settings_image_location_unset">Ikke fastsatt ennå</string>
-    <string name="settings_set_image_location">Bilder vil bli lagret til %s</string>
+    <string name="settings_storage_location">Velg bilde/GIF-lagringssted</string>
+    <string name="settings_storage_location_unset">Ikke fastsatt ennå</string>
+    <string name="settings_set_storage_location">Bilder vil bli lagret til %s</string>
     <!-- Settings titles displayed in settings activity-->
     <string name="settings_title_backup">Sikkerhetskopier og gjenopprett</string>
     <string name="settings_title_default_theme">Hovedtema</string>
@@ -415,7 +415,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Sortering</string>
     <string name="display">Visning</string>
-    <string name="image_downloads">Bilder</string>
+    <string name="images">Bilder</string>
     <string name="app_theme">App-tema</string>
     <string name="tinting">Fargelegging</string>
     <string name="post_info">Innleggsinformasjon</string>

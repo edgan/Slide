@@ -1,5 +1,9 @@
 package me.edgan.redditslide.test;
 
+import static org.junit.Assert.fail;
+
+import me.edgan.redditslide.SpoilerRobotoTextView;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -10,28 +14,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import me.edgan.redditslide.SpoilerRobotoTextView;
-
-import static org.junit.Assert.fail;
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SpoilerRobotoTextView.class)
 public class SpoilerTextTest {
-    private final Pattern htmlSpoilerPattern = Whitebox.getInternalState(SpoilerRobotoTextView.class, "htmlSpoilerPattern");
-    private final Pattern nativeSpoilerPattern = Whitebox.getInternalState(SpoilerRobotoTextView.class, "nativeSpoilerPattern");
+    private final Pattern htmlSpoilerPattern =
+            Whitebox.getInternalState(SpoilerRobotoTextView.class, "htmlSpoilerPattern");
+    private final Pattern nativeSpoilerPattern =
+            Whitebox.getInternalState(SpoilerRobotoTextView.class, "nativeSpoilerPattern");
 
-    private final List<Object[]> htmlSpoilerTests = new ArrayList<Object[]>() {{
-        add(new Object[]{"<a href=\"#spoiler\">test</a>", true});
-        add(new Object[]{"<a href=\"#sp\">test</a>", true});
-        add(new Object[]{"<a href=\"#s\">test</a>", true});
-        add(new Object[]{"<a href=\"#not-a-spoiler\">test</a>", false});
-    }};
+    private final List<Object[]> htmlSpoilerTests =
+            new ArrayList<Object[]>() {
+                {
+                    add(new Object[] {"<a href=\"#spoiler\">test</a>", true});
+                    add(new Object[] {"<a href=\"#sp\">test</a>", true});
+                    add(new Object[] {"<a href=\"#s\">test</a>", true});
+                    add(new Object[] {"<a href=\"#not-a-spoiler\">test</a>", false});
+                }
+            };
 
-    private final List<Object[]> nativeSpoilerTests = new ArrayList<Object[]>() {{
-        add(new Object[]{"<span class=\"md-spoiler-text\">test</span>", true});
-        add(new Object[]{"<span class=\"md-bold-text md-spoiler-text md-italic-text\">test</span>", true});
-        add(new Object[]{"<span class=\"not-a-spoiler\">test</span>", false});
-    }};
+    private final List<Object[]> nativeSpoilerTests =
+            new ArrayList<Object[]>() {
+                {
+                    add(new Object[] {"<span class=\"md-spoiler-text\">test</span>", true});
+                    add(
+                            new Object[] {
+                                "<span class=\"md-bold-text md-spoiler-text"
+                                        + " md-italic-text\">test</span>",
+                                true
+                            });
+                    add(new Object[] {"<span class=\"not-a-spoiler\">test</span>", false});
+                }
+            };
 
     @Test
     public void htmlSpoilerTest() {

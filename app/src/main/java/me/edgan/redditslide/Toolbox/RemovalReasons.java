@@ -27,7 +27,8 @@ public class RemovalReasons {
     @SerializedName("bantitle")
     private String banTitle =
             ""; // Is this even used by Toolbox? For mod button bans maybe (not a removal reason
-                // thing...)?
+
+    // thing...)?
 
     private List<RemovalReason> reasons;
 

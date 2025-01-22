@@ -46,7 +46,7 @@ public class SettingsGeneral extends BaseActivityAnim implements StorageUtil.Dir
                 String path = StorageUtil.getDisplayPath(this, currentUri);
                 locationView.setText(path);
             } else {
-                locationView.setText(R.string.settings_image_location_unset);
+                locationView.setText(R.string.settings_storage_location_unset);
             }
         }
 

@@ -8,13 +8,6 @@
     <string name="pro_upgrade_msg">Atualize para o Slide para Reddit Pro desfrutar de algumas incríveis novos recursos, incluindo: \n\n - Ad Blocker e o modo de leitor no site view\n-colheita e desenhar nas imagens para upload\n-customizável tablet coluna automática mode\n noite mode\n-Shadowbox e Galeria conteúdo views\n - comentário Shadowbox view\n-Backup e restauração para Google Drive e software ad-livre e aberto de arquivo-coadjuvante! \n\nWould você gosta de apoiar o Slide para Reddit?</string>
     <string name="general_open_settings">Barra lateral</string>
     <string name="general_sub_sync">Sincronizando inscrições</string>
-    <string name="general_gallerymode_ispro">Modo galeria é um recurso Pro</string>
-    <string name="general_cropdraw_ispro">Cortar e Desenhar em Imagens Enviadas é um recurso Pro</string>
-    <string name="general_shadowbox_comments_ispro">Modo Shadowbox de comentários é um recurso Pro</string>
-    <string name="general_shadowbox_ispro">Modo Shadowbox é um recurso Pro</string>
-    <string name="general_nighttheme_ispro">Modo Noturno Automático é um recurso Pro</string>
-    <string name="general_backup_ispro">Backup das configurações é um recurso Pro</string>
-    <string name="general_multicolumn_ispro">Configurações de múltiplas colunas são um recurso Pro</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Envio não salvo</string>
     <string name="submission_info_saved">Post salvo</string>
@@ -569,9 +562,9 @@
     <string name="settings_comment_crop">Cortar a imagem principal na visualização do comentário</string>
     <string name="settings_general_scroll_read">Marcar os posts como lidos a medida que desliza</string>
     <string name="settings_link_chrome">Abas personalizadas</string>
-    <string name="settings_image_location">Selecionar local para salvar imagens/GIFs</string>
-    <string name="settings_image_location_unset">Ainda não definido</string>
-    <string name="settings_set_image_location">Imagens serão salvas em %s</string>
+    <string name="settings_storage_location">Selecionar local para salvar imagens/GIFs</string>
+    <string name="settings_storage_location_unset">Ainda não definido</string>
+    <string name="settings_set_storage_location">Imagens serão salvas em %s</string>
     <string name="settings_general_immersive_mode">Modo de tela cheia imersivo</string>
     <string name="settings_general_immersive_mode_desc">Ocultar as barras de status e de navegação (experimental)</string>
     <string name="settings_general_title_drawer_items">Itens do Menu</string>
@@ -752,7 +745,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Classificação</string>
     <string name="display">Exibição</string>
-    <string name="image_downloads">Imagens</string>
+    <string name="images">Imagens</string>
     <string name="app_theme">Tema do aplicativo</string>
     <string name="tinting">Cores</string>
     <string name="post_info">Informações do post</string>

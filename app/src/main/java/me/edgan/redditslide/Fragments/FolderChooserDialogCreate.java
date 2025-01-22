@@ -209,7 +209,7 @@ public class FolderChooserDialogCreate extends DialogFragment
         } else {
             throw new IllegalStateException(
                     "FolderChooserDialog needs to be shown from an Activity/Fragment implementing"
-                        + " FolderCallback.");
+                            + " FolderCallback.");
         }
     }
 

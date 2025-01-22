@@ -129,108 +129,151 @@ public class ImageDownloadNotificationService extends Service {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                ((Reddit) getApplication()).getImageLoader().loadImage(
-                    actuallyLoaded,
-                    null,
-                    new DisplayImageOptions.Builder()
-                            .imageScaleType(ImageScaleType.NONE)
-                            .cacheInMemory(false)
-                            .cacheOnDisk(true)
-                            .build(),
-                    new SimpleImageLoadingListener() {
-                        @Override
-                        public void onLoadingComplete(String imageUri, android.view.View view, final Bitmap loadedImage) {
-                            synchronized (ImageDownloadNotificationService.class) {
-                                try {
-                                    File cachedFile = ((Reddit) getApplicationContext())
-                                            .getImageLoader()
-                                            .getDiskCache()
-                                            .get(actuallyLoaded);
+                ((Reddit) getApplication())
+                        .getImageLoader()
+                        .loadImage(
+                                actuallyLoaded,
+                                null,
+                                new DisplayImageOptions.Builder()
+                                        .imageScaleType(ImageScaleType.NONE)
+                                        .cacheInMemory(false)
+                                        .cacheOnDisk(true)
+                                        .build(),
+                                new SimpleImageLoadingListener() {
+                                    @Override
+                                    public void onLoadingComplete(
+                                            String imageUri,
+                                            android.view.View view,
+                                            final Bitmap loadedImage) {
+                                        synchronized (ImageDownloadNotificationService.class) {
+                                            try {
+                                                File cachedFile =
+                                                        ((Reddit) getApplicationContext())
+                                                                .getImageLoader()
+                                                                .getDiskCache()
+                                                                .get(actuallyLoaded);
 
-                                    Context activity = ImageDownloadNotificationService.this;
-                                    DocumentFile parentDir = DocumentFile.fromTreeUri(activity, baseUri);
+                                                Context activity =
+                                                        ImageDownloadNotificationService.this;
+                                                DocumentFile parentDir =
+                                                        DocumentFile.fromTreeUri(activity, baseUri);
 
-                                    // Create subreddit subfolder if needed
-                                    if (SettingValues.imageSubfolders && !subreddit.isEmpty()) {
-                                        // Get all existing files/directories
-                                        DocumentFile[] existingFiles = parentDir.listFiles();
-                                        DocumentFile subFolder = null;
+                                                // Create subreddit subfolder if needed
+                                                if (SettingValues.imageSubfolders
+                                                        && !subreddit.isEmpty()) {
+                                                    // Get all existing files/directories
+                                                    DocumentFile[] existingFiles =
+                                                            parentDir.listFiles();
+                                                    DocumentFile subFolder = null;
 
-                                        // Look for an existing directory (exact match first)
-                                        for (DocumentFile file : existingFiles) {
-                                            if (file.isDirectory() && file.getName() != null &&
-                                                file.getName().equals(subreddit)) {
-                                                subFolder = file;
-                                                break;
-                                            }
-                                        }
+                                                    // Look for an existing directory (exact match
+                                                    // first)
+                                                    for (DocumentFile file : existingFiles) {
+                                                        if (file.isDirectory()
+                                                                && file.getName() != null
+                                                                && file.getName()
+                                                                        .equals(subreddit)) {
+                                                            subFolder = file;
+                                                            break;
+                                                        }
+                                                    }
 
-                                        // If not found, try case-insensitive match
-                                        if (subFolder == null) {
-                                            for (DocumentFile file : existingFiles) {
-                                                if (file.isDirectory() && file.getName() != null &&
-                                                    file.getName().equalsIgnoreCase(subreddit)) {
-                                                    subFolder = file;
-                                                    break;
+                                                    // If not found, try case-insensitive match
+                                                    if (subFolder == null) {
+                                                        for (DocumentFile file : existingFiles) {
+                                                            if (file.isDirectory()
+                                                                    && file.getName() != null
+                                                                    && file.getName()
+                                                                            .equalsIgnoreCase(
+                                                                                    subreddit)) {
+                                                                subFolder = file;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    // Only create if no matching directory was
+                                                    // found
+                                                    if (subFolder == null) {
+                                                        subFolder =
+                                                                parentDir.createDirectory(
+                                                                        subreddit);
+                                                    }
+
+                                                    parentDir = subFolder;
                                                 }
+
+                                                if (cachedFile != null && cachedFile.exists()) {
+                                                    String fileName = getFileName(actuallyLoaded);
+                                                    String mimeType = getMimeType(fileName);
+                                                    DocumentFile outDocFile =
+                                                            parentDir.createFile(
+                                                                    mimeType, fileName);
+
+                                                    if (outDocFile != null) {
+                                                        OutputStream out =
+                                                                getContentResolver()
+                                                                        .openOutputStream(
+                                                                                outDocFile
+                                                                                        .getUri());
+                                                        if (out != null) {
+                                                            FileUtil.copyFile(cachedFile, out);
+                                                            out.close();
+                                                            showSuccessNotification(
+                                                                    outDocFile.getUri(),
+                                                                    loadedImage);
+                                                        }
+                                                    }
+                                                } else {
+                                                    String fileName = getFileName(actuallyLoaded);
+                                                    String mimeType = getMimeType(fileName);
+                                                    DocumentFile outDocFile =
+                                                            parentDir.createFile(
+                                                                    mimeType, fileName);
+
+                                                    if (outDocFile != null) {
+                                                        OutputStream out =
+                                                                getContentResolver()
+                                                                        .openOutputStream(
+                                                                                outDocFile
+                                                                                        .getUri());
+                                                        if (out != null) {
+                                                            Bitmap.CompressFormat format =
+                                                                    mimeType.contains("png")
+                                                                            ? Bitmap.CompressFormat
+                                                                                    .PNG
+                                                                            : Bitmap.CompressFormat
+                                                                                    .JPEG;
+                                                            loadedImage.compress(format, 100, out);
+                                                            out.close();
+                                                            showSuccessNotification(
+                                                                    outDocFile.getUri(),
+                                                                    loadedImage);
+                                                        }
+                                                    }
+                                                }
+                                            } catch (IOException e) {
+                                                onError(e);
                                             }
                                         }
-
-                                        // Only create if no matching directory was found
-                                        if (subFolder == null) {
-                                            subFolder = parentDir.createDirectory(subreddit);
-                                        }
-
-                                        parentDir = subFolder;
                                     }
-
-                                    if (cachedFile != null && cachedFile.exists()) {
-                                        String fileName = getFileName(actuallyLoaded);
-                                        String mimeType = getMimeType(fileName);
-                                        DocumentFile outDocFile = parentDir.createFile(mimeType, fileName);
-
-                                        if (outDocFile != null) {
-                                            OutputStream out = getContentResolver().openOutputStream(outDocFile.getUri());
-                                            if (out != null) {
-                                                FileUtil.copyFile(cachedFile, out);
-                                                out.close();
-                                                showSuccessNotification(outDocFile.getUri(), loadedImage);
-                                            }
-                                        }
-                                    } else {
-                                        String fileName = getFileName(actuallyLoaded);
-                                        String mimeType = getMimeType(fileName);
-                                        DocumentFile outDocFile = parentDir.createFile(mimeType, fileName);
-
-                                        if (outDocFile != null) {
-                                            OutputStream out = getContentResolver().openOutputStream(outDocFile.getUri());
-                                            if (out != null) {
-                                                Bitmap.CompressFormat format = mimeType.contains("png")
-                                                        ? Bitmap.CompressFormat.PNG
-                                                        : Bitmap.CompressFormat.JPEG;
-                                                loadedImage.compress(format, 100, out);
-                                                out.close();
-                                                showSuccessNotification(outDocFile.getUri(), loadedImage);
-                                            }
+                                },
+                                new ImageLoadingProgressListener() {
+                                    @Override
+                                    public void onProgressUpdate(
+                                            String imageUri,
+                                            android.view.View view,
+                                            int current,
+                                            int total) {
+                                        latestPercentDone = (int) ((current / (float) total) * 100);
+                                        if (percentDone <= latestPercentDone + 30
+                                                || latestPercentDone == 100) {
+                                            percentDone = latestPercentDone;
+                                            mBuilder.setProgress(100, percentDone, false);
+                                            mNotifyManager.notify(id, mBuilder.build());
                                         }
                                     }
-                                } catch (IOException e) {
-                                    onError(e);
-                                }
-                            }
-                        }
-                    },
-                    new ImageLoadingProgressListener() {
-                        @Override
-                        public void onProgressUpdate(String imageUri, android.view.View view, int current, int total) {
-                            latestPercentDone = (int) ((current / (float) total) * 100);
-                            if (percentDone <= latestPercentDone + 30 || latestPercentDone == 100) {
-                                percentDone = latestPercentDone;
-                                mBuilder.setProgress(100, percentDone, false);
-                                mNotifyManager.notify(id, mBuilder.build());
-                            }
-                        }
-                    });
+                                });
             } catch (Exception e) {
                 onError(e);
             }
@@ -312,7 +355,7 @@ public class ImageDownloadNotificationService extends Service {
             File validFile =
                     FileUtil.getValidFile(
                             tempPath, // We'll use a temp path since we're only interested in the
-                                      // filename
+                            // filename
                             subfolderPath,
                             title,
                             fileIndex,

@@ -59,7 +59,7 @@ android {
         minSdk 21
         //Change to 28 for F-Droid, need to add this to the scheme
         targetSdk 34
-        versionCode 697
+        versionCode 700
         versionName androidGitVersion.name()
 
         multiDexEnabled true
@@ -131,6 +131,12 @@ android {
     }
 }
 
+configurations {
+    all {
+        exclude module: 'httpclient'
+    }
+}
+
 githubRelease {
     token = githubProperties["githubToken"]
     owner = "edgan"
@@ -150,7 +156,13 @@ githubRelease {
 
 dependencies {
 /** Flavors **/
-    withGPlayImplementation 'com.google.android.gms:play-services-drive:11.4.2'
+    // For Google Sign-In
+    withGPlayImplementation 'com.google.android.gms:play-services-auth:20.6.0'
+    // For the REST API Client
+    withGPlayImplementation 'com.google.http-client:google-http-client:1.45.3'
+    withGPlayImplementation 'com.google.api-client:google-api-client-android:2.7.1'
+    withGPlayImplementation 'com.google.api-client:google-api-client-gson:2.7.1'
+    withGPlayImplementation 'com.google.apis:google-api-services-drive:v3-rev20241206-2.0.0'
 
 /** Custom **/
     // Draggable sliding up panel

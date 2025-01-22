@@ -8,12 +8,6 @@
     <string name="pro_upgrade_msg">升級至 Slide for Reddit 專業版 即可享受以下高級功能：\n\n- 網站廣告攔截和閱讀模式\n- 上傳圖片時的編輯功能\n- 平版模式的定制多列功能\n- 自動夜間模式\n-圖庫黑房功能\n- 留言黑房模式\n- 谷歌雲端硬盤和文件的備份恢復\n- 支持開源和無廣告軟件\n\n你願意支持Slide for Reddit 嗎？</string>
     <string name="general_open_settings">開啟 Subreddit 設定</string>
     <string name="general_sub_sync">同步訂閱</string>
-    <string name="general_gallerymode_ispro">圖庫模式是專業版的獨享功能</string>
-    <string name="general_cropdraw_ispro">圖片編輯是專業版的獨享功能</string>
-    <string name="general_shadowbox_comments_ispro">評論黑房模式是專業版的獨享功能</string>
-    <string name="general_shadowbox_ispro">黑房模式是專業版的獨享功能</string>
-    <string name="general_nighttheme_ispro">自動夜間模式是專業版的獨享功能</string>
-    <string name="general_backup_ispro">配置備份是專業版的獨享功能</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">已取消儲存貼文</string>
     <string name="submission_info_saved">已儲存貼文</string>
@@ -545,9 +539,9 @@
     <string name="settings_comment_crop">在留言頁中裁剪主圖片</string>
     <string name="settings_general_scroll_read">在畫面捲動至貼文後標記貼文為已讀</string>
     <string name="settings_link_chrome">內嵌分頁</string>
-    <string name="settings_image_location">選擇圖片／GIF 的儲存位置</string>
-    <string name="settings_image_location_unset">未設定</string>
-    <string name="settings_set_image_location">圖片會被儲存至 %s</string>
+    <string name="settings_storage_location">選擇圖片／GIF 的儲存位置</string>
+    <string name="settings_storage_location_unset">未設定</string>
+    <string name="settings_set_storage_location">圖片會被儲存至 %s</string>
     <string name="settings_general_immersive_mode">沉浸式全屏模式</string>
     <string name="settings_general_immersive_mode_desc">隱藏狀態和導航欄 (實驗功能)</string>
     <string name="settings_general_title_drawer_items">抽屜項目</string>
@@ -657,7 +651,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">排序</string>
     <string name="display">顯示</string>
-    <string name="image_downloads">圖片</string>
+    <string name="images">圖片</string>
     <string name="app_theme">App 主題</string>
     <string name="tinting">顏色</string>
     <string name="post_info">貼文資訊</string>

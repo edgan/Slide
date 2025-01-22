@@ -8,12 +8,6 @@
     <string name="pro_upgrade_msg">يمكنك الترقية إلى Slide لـ Reddit Pro للاستمتاع ببعض الميزات الجديدة في تحقيق ذلك:\n\n- أداة حظر الإعلانات عرض القارئ في عرض موقع الويب \n- لاقتصاص والرسم على الصور لتحميل\n- وضع عمود لوحي قابل للتخصيص \n- الوضع الليلي التلقائي mode\n- Shadowbox and ومعارض المحتوى معرض \n- تعليق Shadowbox عرض\n- النسخ الاحتياطي والاستعادة إلى Google Drive والملف\n- دعم البرامج مفتوحة المصدر والبرامج الخالية من الإعلانات!\n\nهل ترغب في دعم Slide for Reddit؟?</string>
     <string name="general_open_settings">الشريط الجانبي</string>
     <string name="general_sub_sync">مزامنة الاشتراكات</string>
-    <string name="general_gallerymode_ispro">وضع المعرض هو ميزة Pro</string>
-    <string name="general_cropdraw_ispro">المحاصيل والرسومات على الصور التي تم تحميلها هي ميزة Pro</string>
-    <string name="general_shadowbox_comments_ispro">تعليق وضع Shadowbox هو ميزة Pro</string>
-    <string name="general_shadowbox_ispro">وضع Shadowbox هو ميزة Pro</string>
-    <string name="general_nighttheme_ispro">الوضع الليلي التلقائي هو ميزة Pro</string>
-    <string name="general_backup_ispro">إعدادات النسخ الاحتياطي هي ميزة Pro</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">لم يتم حفظ البيانات</string>
     <string name="submission_info_saved">تم حفظ الادخال</string>

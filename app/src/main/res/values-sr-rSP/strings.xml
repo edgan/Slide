@@ -7,10 +7,6 @@
     <string name="general_enable_shadowbox">Shadowbox режим</string>
     <string name="general_open_settings">Бочна трака</string>
     <string name="general_sub_sync">Синхронизовање претплата</string>
-    <string name="general_gallerymode_ispro">Режим са галеријом је функционалност из Pro верзије</string>
-    <string name="general_cropdraw_ispro">Опсецање и цртање на отпремљеним сликама је функционалност из Pro верзије</string>
-    <string name="general_nighttheme_ispro">Аутоматски ноћни режим је функционалност из Pro верзије</string>
-    <string name="general_backup_ispro">Прављење резервнр копија поставки је функционалност из Pro верзије</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Објава није сачувана</string>
     <string name="submission_info_saved">Објава сачувана</string>
@@ -524,9 +520,9 @@
     <string name="settings_filter_title">Филтери за наслов</string>
     <string name="settings_font_post">Фонт за наслов поста</string>
     <string name="settings_font_comment">Фонт за коментаре</string>
-    <string name="settings_image_location">Постави локацију за чување слика/GIF-ова</string>
-    <string name="settings_image_location_unset">Још није постављена</string>
-    <string name="settings_set_image_location">Слике ће бити чуване у %s</string>
+    <string name="settings_storage_location">Постави локацију за чување слика/GIF-ова</string>
+    <string name="settings_storage_location_unset">Још није постављена</string>
+    <string name="settings_set_storage_location">Слике ће бити чуване у %s</string>
     <!-- Settings titles displayed in settings activity-->
     <string name="settings_title_backup">Резервне копије &amp; враћање</string>
     <string name="settings_title_default_theme">Основна тема</string>
@@ -639,7 +635,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Сортирање</string>
     <string name="display">Приказ</string>
-    <string name="image_downloads">Слике</string>
+    <string name="images">Слике</string>
     <string name="app_theme">Тема апликације</string>
     <string name="tinting">Тонирање</string>
     <string name="navigation">Навигација</string>

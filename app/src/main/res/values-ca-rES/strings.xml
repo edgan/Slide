@@ -8,12 +8,6 @@
     <string name="pro_upgrade_msg">Passeu-vos a Slide for Reddit Pro per gaudir de funcions brillants com ara:\n\n- Un bloquejador d\'anuncis i un mode de lectura durant la visualització de pàgines web\n- L\'habilitat de retallar i dibuixar sobre imatges abans de penjar-les\n- Un mode de columnes personalitzar-la per a tauletes\n- Mode nocturn automàtic\n- Visors de contingut de mode galeria i shadowbox\n- Visió de comentaris en format Shadowbox\n- Opció de desar còpies de seguretat a Google Drive o com a fitxers\n- Promocionar software sense anuncis i de codi obert!\n\nVoldrieu donar suport a Slide for Reddit?</string>
     <string name="general_open_settings">Barra lateral</string>
     <string name="general_sub_sync">Sincronitzant Subscripcions</string>
-    <string name="general_gallerymode_ispro">El mode galeria és una funcionalitat de la versió Pro</string>
-    <string name="general_cropdraw_ispro">Retallar i dibuixar en imatges pujades són característiques de pagament</string>
-    <string name="general_shadowbox_comments_ispro">El mode Shadowbox per a comentaris és una funcionalitat de la versió Pro</string>
-    <string name="general_shadowbox_ispro">El mode Shadowbox és una funcionalitat de la versió Pro</string>
-    <string name="general_nighttheme_ispro">El mode nit és una característica de pagament</string>
-    <string name="general_backup_ispro">La còpia de seguretat de la configuració és una funcionalitat decla versió Pro</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Contribució no desada</string>
     <string name="submission_info_saved">Publicació desada</string>
@@ -554,9 +548,9 @@
     <string name="settings_comment_crop">Retallar la imatge principal quan siguis als comentaris</string>
     <string name="settings_general_scroll_read">Marcar les publicacions com a llegides quan les passis</string>
     <string name="settings_link_chrome">Pestanyes personalitzades</string>
-    <string name="settings_image_location">Seleccionar ubicació de descarrega d\'imatges/GIFs</string>
-    <string name="settings_image_location_unset">No definit encara</string>
-    <string name="settings_set_image_location">Les imatges es desaran a %s</string>
+    <string name="settings_storage_location">Seleccionar ubicació de descarrega d\'imatges/GIFs</string>
+    <string name="settings_storage_location_unset">No definit encara</string>
+    <string name="settings_set_storage_location">Les imatges es desaran a %s</string>
     <string name="settings_general_immersive_mode">Mode de pantalla completa</string>
     <string name="settings_general_immersive_mode_desc">Amagar les barres d\'estat i navegació (experimentals)</string>
     <string name="settings_general_title_drawer_items">Elements de calaix</string>
@@ -731,7 +725,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Classificant</string>
     <string name="display">Mostrar</string>
-    <string name="image_downloads">Imatges</string>
+    <string name="images">Imatges</string>
     <string name="app_theme">Tema de l\'aplicació</string>
     <string name="tinting">Tints</string>
     <string name="post_info">Informació de la publicació</string>

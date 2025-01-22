@@ -105,10 +105,10 @@ public class Wiki extends BaseActivityAnim implements WikiPage.WikiPageListener 
     private void createCustomJavaScript() {
         globalCustomJavaScript =
                 "<script type=\"text/javascript\">window.addEventListener('touchstart', function"
-                    + " onSlideUserTouch(e) {var element = e.target;while(element)"
-                    + " {if(element.tagName && (element.tagName.toLowerCase() === 'table' ||"
-                    + " element.tagName.toLowerCase() === 'code')) {Slide.overflowTouched();"
-                    + "return;} else {element = element.parentNode;}}}, false)</script>";
+                        + " onSlideUserTouch(e) {var element = e.target;while(element)"
+                        + " {if(element.tagName && (element.tagName.toLowerCase() === 'table' ||"
+                        + " element.tagName.toLowerCase() === 'code')) {Slide.overflowTouched();"
+                        + "return;} else {element = element.parentNode;}}}, false)</script>";
     }
 
     private static String getHexFromColorInt(@ColorInt int colorInt) {

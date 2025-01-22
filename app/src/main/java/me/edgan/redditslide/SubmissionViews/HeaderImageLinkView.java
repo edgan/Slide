@@ -474,10 +474,9 @@ public class HeaderImageLinkView extends RelativeLayout {
                                     .get("images")
                                     .get(0)
                                     .get("source")
-                                    .has(
-                                            "height")) { // Load the preview image which has
-                                                         // probably already been cached in memory
-                                                         // instead of the direct link
+                                    .has("height")) { // Load the preview image which has
+                        // probably already been cached in memory
+                        // instead of the direct link
                         url =
                                 submission
                                         .getDataNode()
@@ -945,7 +944,7 @@ public class HeaderImageLinkView extends RelativeLayout {
             backdrop.setImageResource(
                     android.R.color
                             .transparent); // reset the image view in case the placeholder is still
-                                           // visible
+            // visible
             thumbImage2.setImageResource(android.R.color.transparent);
             doImageAndText(submission, full, baseSub, false);
         }
@@ -963,7 +962,7 @@ public class HeaderImageLinkView extends RelativeLayout {
             backdrop.setImageResource(
                     android.R.color
                             .transparent); // reset the image view in case the placeholder is still
-                                           // visible
+            // visible
             thumbImage2.setImageResource(android.R.color.transparent);
             doImageAndText(submission, full, baseSub, true);
         }

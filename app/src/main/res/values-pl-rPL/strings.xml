@@ -8,12 +8,6 @@
     <string name="pro_upgrade_msg">Zakup Slide for Reddit Pro aby uzyskać nowe funkcje, włączając:\n\n- Blokowanie reklam i tryb czytnika w przeglądarce\n- Wycinanie i rysowanie na obrazach\n- Konfigurowalny tryb wielu kolumn\n- Automatyczny tryb nocny\n- Tryby galerii i Shadowbox\n- Tryb Shadowbox dla komentarzy\n- Kopia zapasowa ustawień do chmury\n- Wspieranie otwatego i darmowego software!\n\nCzy chciałbyś wesprzeć Slide for Reddit?</string>
     <string name="general_open_settings">Sidebar</string>
     <string name="general_sub_sync">Synchronizowanie subskrypcji</string>
-    <string name="general_gallerymode_ispro">Tryb galerii to funkcja Pro</string>
-    <string name="general_cropdraw_ispro">Przytnij i Rysuj na obrazach to funkcja Pro</string>
-    <string name="general_shadowbox_comments_ispro">Shadowbox komentarzy to funkcja Pro</string>
-    <string name="general_shadowbox_ispro">Shadowbox to funkcja Pro</string>
-    <string name="general_nighttheme_ispro">Auto tryb nocny to funkcja Pro</string>
-    <string name="general_backup_ispro">Kopia zapasowa to funkcja Pro</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Post usunięty z zapisanych</string>
     <string name="submission_info_saved">Post zapisany</string>
@@ -565,9 +559,9 @@
     <string name="settings_comment_crop">Kadruj obraz w widoku komentarzy</string>
     <string name="settings_general_scroll_read">Oznacz posty jako przeczytane po przewinięciu</string>
     <string name="settings_link_chrome">Niestandardowe karty</string>
-    <string name="settings_image_location">Wybierz lokalizację zapisywanie obrazów/GIFów</string>
-    <string name="settings_image_location_unset">Jeszcze nie ustawione</string>
-    <string name="settings_set_image_location">Obrazy będą zapisywane w %s</string>
+    <string name="settings_storage_location">Wybierz lokalizację zapisywanie obrazów/GIFów</string>
+    <string name="settings_storage_location_unset">Jeszcze nie ustawione</string>
+    <string name="settings_set_storage_location">Obrazy będą zapisywane w %s</string>
     <string name="settings_general_immersive_mode">Tryb pełnoekranowy</string>
     <string name="settings_general_immersive_mode_desc">Ukryj paski statusu i nawigacji (eksperymentalne)</string>
     <string name="settings_general_title_drawer_items">Elementy menu</string>
@@ -741,7 +735,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Sortowanie</string>
     <string name="display">Wyświetlanie</string>
-    <string name="image_downloads">Obrazy</string>
+    <string name="images">Obrazy</string>
     <string name="app_theme">Motyw aplikacji</string>
     <string name="tinting">Kolorowanie</string>
     <string name="post_info">Informacje postu</string>

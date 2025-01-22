@@ -75,7 +75,7 @@ public class DoEditorActions {
                                     wrapString(
                                             "**",
                                             editText); // If the user has text selected, wrap that
-                                                       // text in the symbols
+                                    // text in the symbols
                                 } else {
                                     // If the user doesn't have text selected, put the symbols
                                     // around the cursor's position
@@ -127,7 +127,7 @@ public class DoEditorActions {
                                     wrapString(
                                             "*",
                                             editText); // If the user has text selected, wrap that
-                                                       // text in the symbols
+                                    // text in the symbols
                                 } else {
                                     // If the user doesn't have text selected, put the symbols
                                     // around the cursor's position
@@ -149,7 +149,7 @@ public class DoEditorActions {
                                     wrapString(
                                             "~~",
                                             editText); // If the user has text selected, wrap that
-                                                       // text in the symbols
+                                    // text in the symbols
                                 } else {
                                     // If the user doesn't have text selected, put the symbols
                                     // around the cursor's position
@@ -171,7 +171,7 @@ public class DoEditorActions {
                                     wrapString(
                                             ">!", "!<",
                                             editText); // If the user has text selected, wrap that
-                                                       // text in the symbols
+                                    // text in the symbols
                                 } else {
                                     // If the user doesn't have text selected, put the symbols
                                     // around the cursor's position
@@ -364,7 +364,7 @@ public class DoEditorActions {
                                     showText.setText(
                                             StringEscapeUtils.unescapeHtml4(
                                                     oldComment)); // text we get is escaped, we
-                                                                  // don't want that
+                                    // don't want that
                                     showText.setTextIsSelectable(true);
                                     int sixteen = DisplayUtil.dpToPxVertical(24);
                                     showText.setPadding(sixteen, 0, sixteen, 0);
@@ -688,7 +688,7 @@ public class DoEditorActions {
                 Bitmap.CompressFormat.JPEG,
                 100,
                 baos); // Not sure whether this should be jpeg or png, try both and see which works
-                       // best
+        // best
         return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
     }
 

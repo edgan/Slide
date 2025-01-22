@@ -64,7 +64,7 @@ public class ImageFlairs {
                                     .setTitle("Error syncing subreddit flairs")
                                     .setMessage(
                                             "Slide could not find any subreddit flairs to sync from"
-                                                + " /r/"
+                                                    + " /r/"
                                                     + subreddit
                                                     + "'s stylesheet.")
                                     .setPositiveButton(R.string.btn_ok, null);

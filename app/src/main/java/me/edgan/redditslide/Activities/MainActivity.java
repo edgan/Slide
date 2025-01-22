@@ -166,13 +166,6 @@ import net.dean.jraw.paginators.SubredditPaginator;
 import net.dean.jraw.paginators.TimePeriod;
 import net.dean.jraw.paginators.UserRecordPaginator;
 
-import org.ligi.snackengage.SnackEngage;
-import org.ligi.snackengage.conditions.AfterNumberOfOpportunities;
-import org.ligi.snackengage.conditions.NeverAgainWhenClickedOnce;
-import org.ligi.snackengage.conditions.WithLimitedNumberOfTimes;
-import org.ligi.snackengage.snacks.BaseSnack;
-import org.ligi.snackengage.snacks.RateSnack;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -283,9 +276,8 @@ public class MainActivity extends BaseActivity
                 KeyboardUtil.hideKeyboard(this, view.getWindowToken(), 0);
             }
         } else if (requestCode == 2002 && resultCode != RESULT_OK) {
-            mToolbar
-                    .performLongClick(); // search was init from the toolbar, so return focus to the
-                                         // toolbar
+            mToolbar.performLongClick(); // search was init from the toolbar, so return focus to the
+            // toolbar
         } else if (requestCode == 423 && resultCode == RESULT_OK) {
             ((MainPagerAdapterComment) adapter).mCurrentComments.doResult(data);
         } else if (requestCode == 940) {
@@ -776,8 +768,8 @@ public class MainActivity extends BaseActivity
                     .setTitle("Content settings have moved!")
                     .setMessage(
                             "NSFW content is now disabled by default. If you are over the age of"
-                                + " 18, to re-enable NSFW content, visit Settings > Content"
-                                + " settings")
+                                    + " 18, to re-enable NSFW content, visit Settings > Content"
+                                    + " settings")
                     .setPositiveButton(R.string.btn_ok, null)
                     .setCancelable(false)
                     .show();
@@ -1075,31 +1067,6 @@ public class MainActivity extends BaseActivity
                     d.show();
                 }
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-
-        if (!BuildConfig.isFDroid
-                && Authentication.isLoggedIn
-                && NetworkUtil.isConnected(MainActivity.this)) {
-
-            // Display an snackbar that asks the user to rate the app after this
-            // activity was created 6 times, never again when once clicked or with a maximum of
-            // two times.
-            SnackEngage.from(MainActivity.this)
-                    .withSnack(
-                            new RateSnack()
-                                    .withConditions(
-                                            new NeverAgainWhenClickedOnce(),
-                                            new AfterNumberOfOpportunities(10),
-                                            new WithLimitedNumberOfTimes(2))
-                                    .overrideActionText(getString(R.string.misc_rate_msg))
-                                    .overrideTitleText(getString(R.string.misc_rate_title))
-                                    .withDuration(BaseSnack.DURATION_LONG))
-                    /*.withSnack(new CustomSnack(new Intent(MainActivity.this, SettingsReddit.class), "Thumbnails are disabled", "Change", "THUMBNAIL_INFO")
-                    .withConditions(new AfterNumberOfOpportunities(2),
-                            new WithLimitedNumberOfTimes(2), new NeverAgainWhenClickedOnce())
-                    .withDuration(BaseSnack.DURATION_LONG))*/
-                    .build()
-                    .engageWhenAppropriate();
         }
 
         if (SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR
@@ -2801,8 +2768,8 @@ public class MainActivity extends BaseActivity
                                                             public void onPostExecute(
                                                                     Boolean success) {
                                                                 if (!success) { // If subreddit was
-                                                                                // removed from
-                                                                                // account or not
+                                                                    // removed from
+                                                                    // account or not
                                                                     new AlertDialog.Builder(
                                                                                     MainActivity
                                                                                             .this)
@@ -2855,13 +2822,13 @@ public class MainActivity extends BaseActivity
                                                                             .subscribe(subreddit);
                                                                 } catch (NetworkException e) {
                                                                     return false; // Either network
-                                                                                  // crashed or
-                                                                                  // trying to
-                                                                                  // unsubscribe to
-                                                                                  // a subreddit
-                                                                                  // that the
-                                                                                  // account isn't
-                                                                                  // subscribed to
+                                                                    // crashed or
+                                                                    // trying to
+                                                                    // unsubscribe to
+                                                                    // a subreddit
+                                                                    // that the
+                                                                    // account isn't
+                                                                    // subscribed to
                                                                 }
                                                                 return true;
                                                             }
@@ -2902,8 +2869,8 @@ public class MainActivity extends BaseActivity
                                                             public void onPostExecute(
                                                                     Boolean success) {
                                                                 if (!success) { // If subreddit was
-                                                                                // removed from
-                                                                                // account or not
+                                                                    // removed from
+                                                                    // account or not
                                                                     new AlertDialog.Builder(
                                                                                     MainActivity
                                                                                             .this)
@@ -2956,13 +2923,13 @@ public class MainActivity extends BaseActivity
                                                                             .unsubscribe(subreddit);
                                                                 } catch (NetworkException e) {
                                                                     return false; // Either network
-                                                                                  // crashed or
-                                                                                  // trying to
-                                                                                  // unsubscribe to
-                                                                                  // a subreddit
-                                                                                  // that the
-                                                                                  // account isn't
-                                                                                  // subscribed to
+                                                                    // crashed or
+                                                                    // trying to
+                                                                    // unsubscribe to
+                                                                    // a subreddit
+                                                                    // that the
+                                                                    // account isn't
+                                                                    // subscribed to
                                                                 }
                                                                 return true;
                                                             }
@@ -3940,8 +3907,9 @@ public class MainActivity extends BaseActivity
                 .setMultiChoiceItems(
                         new String[] {
                             getString(R.string.type_albums), getString(R.string.type_gallery),
-                            getString(R.string.type_gifs), getString(R.string.image_downloads),
-                            getString(R.string.type_nsfw_content), getString(R.string.type_selftext),
+                            getString(R.string.type_gifs), getString(R.string.images),
+                            getString(R.string.type_nsfw_content),
+                                    getString(R.string.type_selftext),
                             getString(R.string.type_links), getString(R.string.type_videos)
                         },
                         chosen,
@@ -4852,9 +4820,8 @@ public class MainActivity extends BaseActivity
                                                     : null;
 
                                     getSupportActionBar()
-                                            .setTitle(
-                                                    ""); // clear title to make room for search
-                                                         // field
+                                            .setTitle(""); // clear title to make room for search
+                                    // field
 
                                     if (GO_TO_SUB_FIELD != null
                                             && CLOSE_BUTTON != null
