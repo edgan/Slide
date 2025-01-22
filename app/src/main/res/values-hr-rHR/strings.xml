@@ -8,8 +8,6 @@
     <string name="pro_upgrade_msg">Nadogradi na Slide for Reddit Pro i uživaj u super značajkama uključujući:\n\n- Bloker za reklame i čitalački mod u web-prikazu\n- Obrezivanje i crtanje slika prije upload-a\n- Prilagodljivi način s kolumnima\n- Automatski noćni prikaz\n- Prikaz sadržaja Shadowboxa i galerije\n- Shadowbox prikaz za komentare\n- Sigurnosna kopija sadržaja na Google Disk\n- Podržavanje softvera odtvorenog koda\n\nBiste li htjeli podržati Slide for Reddit?</string>
     <string name="general_open_settings">Otvori postavke Podreddita</string>
     <string name="general_sub_sync">Sinkroniziram pretplate</string>
-    <string name="general_shadowbox_ispro">Shadowbox način je Pro mogućnost</string>
-    <string name="general_nighttheme_ispro">Automatski Noćni Način je Pro mogućnost</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Post nije spremljen</string>
     <string name="submission_info_saved">Post spremljen</string>
@@ -454,7 +452,7 @@
     <string name="settings_font_comment">Font komentara</string>
     <string name="settings_comment_crop">Sakrij glavnu sliku u komentarima</string>
     <string name="settings_general_scroll_read">Označi postove pročitanima kada prijeđem preko njih</string>
-    <string name="settings_image_location_unset">Još nije postavljen</string>
+    <string name="settings_storage_location_unset">Još nije postavljen</string>
     <!-- Settings titles displayed in settings activity-->
     <string name="settings_title_backup">Pričuvna kopija &amp; Obnova</string>
     <string name="settings_title_default_theme">Glavna tema</string>
@@ -561,7 +559,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Sortiranje</string>
     <string name="display">Prikaz</string>
-    <string name="image_downloads">Slike</string>
+    <string name="images">Slike</string>
     <string name="app_theme">Tema aplikacije</string>
     <string name="tinting">Bojanje</string>
     <string name="post_info">Informacije o postu</string>

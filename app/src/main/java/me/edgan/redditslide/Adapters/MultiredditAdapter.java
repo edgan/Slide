@@ -211,9 +211,8 @@ public class MultiredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     new Runnable() {
                         public void run() {
                             notifyItemChanged(
-                                    dataSet.posts.size()
-                                            + 1); // the loading spinner to replaced by
-                                                  // nomoreposts.xml
+                                    dataSet.posts.size() + 1); // the loading spinner to replaced by
+                            // nomoreposts.xml
                         }
                     };
 

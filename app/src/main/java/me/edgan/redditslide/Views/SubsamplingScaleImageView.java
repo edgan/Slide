@@ -542,12 +542,12 @@ public class SubsamplingScaleImageView extends View {
             if (imageSource.getBitmap() != null) {
                 throw new IllegalArgumentException(
                         "Preview image cannot be used when a bitmap is provided for the main"
-                            + " image");
+                                + " image");
             }
             if (imageSource.getSWidth() <= 0 || imageSource.getSHeight() <= 0) {
                 throw new IllegalArgumentException(
                         "Preview image cannot be used unless dimensions are provided for the main"
-                            + " image");
+                                + " image");
             }
             this.sWidth = imageSource.getSWidth();
             this.sHeight = imageSource.getSHeight();

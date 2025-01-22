@@ -7,13 +7,6 @@
     <string name="pro_upgrade_msg">Upgrade to Slide for Reddit Pro to enjoy some awesome new features including:\n\n- Ad Blocker and Reader Mode in Website view\n- Crop and draw on images to upload\n- Customizable tablet column mode\n- Automatic night mode\n- Shadowbox and Gallery content views\n- Comment Shadowbox view\n- Backup and restore to Google Drive and to file\n- Supporting open source and ad-free software!\n\nWould you like to support Slide for Reddit?</string>
     <string name="general_open_settings">Sidebar</string>
     <string name="general_sub_sync">Syncing subscriptions</string>
-    <string name="general_gallerymode_ispro">Gallery mode is a Pro feature</string>
-    <string name="general_cropdraw_ispro">Crop and Draw on Uploaded Images is a Pro feature</string>
-    <string name="general_shadowbox_comments_ispro">Comment Shadowbox mode is a Pro feature</string>
-    <string name="general_shadowbox_ispro">Shadowbox mode is a Pro feature</string>
-    <string name="general_nighttheme_ispro">Automatic Night Mode is a Pro feature</string>
-    <string name="general_backup_ispro">Settings backup is a Pro feature</string>
-    <string name="general_multicolumn_ispro">Multi-Column Settings are a Pro feature</string>
 
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Submission unsaved</string>
@@ -264,8 +257,6 @@
     <string name="err_couldnt_save_choose_new">Slide couldn\'t save to the selected directory. Would you like to choose a new save location?</string>
     <string name="err_share_image">Error sharing image</string>
     <string name="err_file_not_found">File not found</string>
-    <string name="err_not_valid_backup">Not a valid Slide backup file</string>
-    <string name="err_not_valid_backup_msg">The selected file is not a valid Slide backup file</string>
     <string name="err_file_not_found_msg">The selected file could not be found. Please make sure it exists and Slide has permissions to access that file/folder</string>
     <string name="err_comment_post">Uh oh, posting this comment failed!</string>
     <string name="err_comment_post_reason">Reason: %1$s</string>
@@ -468,6 +459,20 @@
     <string name="backup_restore_confirm">Are you sure you want to restore? Your current settings will be overwritten</string>
     <string name="backup_failed_msg">Backup failed. Please try again later.</string>
     <string name="backup_restore_failed_msg">Restore failed. Please ensure a valid backup exists and try again.</string>
+    <string name="backup_local_title">Local Backup</string>
+    <string name="backup_drive_title">Google Drive Backup</string>
+    <string name="backup_button">Create Backup</string>
+    <string name="restore_button">Restore Backup</string>
+    <string name="backup_title">Backup Settings</string>
+    <string name="backup_question">Backup?</string>
+    <string name="backup_message">Choose backup type</string>
+    <string name="backup_complete">Backup Complete!</string>
+    <string name="backup_complete_msg">Your settings have been backed up successfully</string>
+    <string name="err_backup_failed">Backup Failed</string>
+    <string name="err_backup_failed_msg">There was an error creating the backup. Please try again.</string>
+    <string name="err_not_valid_backup">Not a valid Slide backup file</string>
+    <string name="err_not_valid_backup_msg">The selected file is not a valid Slide backup file</string>
+    <string name="set_storage_location">Try setting a storage location in General settings.</string>
 
     <!-- Vote -->
     <string name="vote_err">Error casting vote!</string>
@@ -628,9 +633,9 @@
     <string name="settings_comment_crop">Crop lead image in comment view</string>
     <string name="settings_general_scroll_read">Mark posts as seen when scrolled past</string>
     <string name="settings_link_chrome">Custom Tabs</string>
-    <string name="settings_image_location">Select image/GIF save location</string>
-    <string name="settings_image_location_unset">Not yet set</string>
-    <string name="settings_set_image_location">Images will be saved to %s</string>
+    <string name="settings_storage_location">Select storage location</string>
+    <string name="settings_storage_location_unset">Not yet set</string>
+    <string name="settings_set_storage_location">Files will be saved to %s</string>
     <string name="settings_general_immersive_mode">Immersive fullscreen mode</string>
     <string name="settings_general_immersive_mode_desc">Hide the status and navigation bars (experimental)</string>
     <string name="settings_general_title_drawer_items">Drawer Items</string>
@@ -723,8 +728,6 @@
     <string name="settings_handling_external_desc">Domains entered below will always open externally</string>
     <string name="settings_handling_enterdomain">Enter a domain or part of a domain</string>
     <string name="settings_section_content">Content</string>
-    <string name="settings_backup_include_personal_title">Include personal information?</string>
-    <string name="settings_backup_include_personal_text">This includes authentication tokens, usernames, tags, and history</string>
     <string name="settings_backup_view">View backup</string>
     <string name="settings_backup_err_no_explorer">No file explorer found, file located at %1$s</string>
     <string name="settings_about_version_copied_toast">Version number copied to clipboard</string>
@@ -819,7 +822,8 @@
     <!-- Setting subheaders -->
     <string name="sorting">Sorting</string>
     <string name="display">Display</string>
-    <string name="image_downloads">Images</string>
+    <string name="images">Images</string>
+    <string name="storage">Storage</string>
     <string name="app_theme">App theme</string>
     <string name="tinting">Tinting</string>
     <string name="post_info">Post information</string>
@@ -1133,10 +1137,7 @@
     <string name="btn_offline">Enter offline mode</string>
     <string name="discard_comment_title">Discard comment?</string>
     <string name="comment_discard_msg">Do you really want to discard your comment?</string>
-    <string name="backup_complete">Backup complete!</string>
     <string name="backup_saved_downloads">Backup saved to downloads</string>
-    <string name="include_personal_info">Include personal information?</string>
-    <string name="include_personal_info_msg">This includes authentication tokens, usernames, tags, and history</string>
     <string name="really_remove_subreddit_title">Really remove this subreddit?</string>
     <string name="choose_sync_time">Choose a sync time</string>
     <string name="account_suspended">This account is suspended</string>

@@ -1179,8 +1179,9 @@ public class SubredditView extends BaseActivity {
                 .setMultiChoiceItems(
                         new String[] {
                             getString(R.string.type_albums), getString(R.string.type_gallery),
-                            getString(R.string.type_gifs), getString(R.string.image_downloads),
-                            getString(R.string.type_nsfw_content),  getString(R.string.type_selftext),
+                            getString(R.string.type_gifs), getString(R.string.images),
+                            getString(R.string.type_nsfw_content),
+                                    getString(R.string.type_selftext),
                             getString(R.string.type_links), getString(R.string.type_videos)
                         },
                         chosen,
@@ -1651,9 +1652,9 @@ public class SubredditView extends BaseActivity {
                                                                 public void onPostExecute(
                                                                         Boolean success) {
                                                                     if (!success) { // If subreddit
-                                                                                    // was removed
-                                                                                    // from account
-                                                                                    // or not
+                                                                        // was removed
+                                                                        // from account
+                                                                        // or not
                                                                         new AlertDialog.Builder(
                                                                                         SubredditView
                                                                                                 .this)
@@ -1710,17 +1711,17 @@ public class SubredditView extends BaseActivity {
                                                                                         subreddit);
                                                                     } catch (NetworkException e) {
                                                                         return false; // Either
-                                                                                      // network
-                                                                                      // crashed or
-                                                                                      // trying to
-                                                                                      // unsubscribe
-                                                                                      // to a
-                                                                                      // subreddit
-                                                                                      // that the
-                                                                                      // account
-                                                                                      // isn't
-                                                                                      // subscribed
-                                                                                      // to
+                                                                        // network
+                                                                        // crashed or
+                                                                        // trying to
+                                                                        // unsubscribe
+                                                                        // to a
+                                                                        // subreddit
+                                                                        // that the
+                                                                        // account
+                                                                        // isn't
+                                                                        // subscribed
+                                                                        // to
                                                                     }
                                                                     return true;
                                                                 }
@@ -1771,9 +1772,9 @@ public class SubredditView extends BaseActivity {
                                                                 public void onPostExecute(
                                                                         Boolean success) {
                                                                     if (!success) { // If subreddit
-                                                                                    // was removed
-                                                                                    // from account
-                                                                                    // or not
+                                                                        // was removed
+                                                                        // from account
+                                                                        // or not
                                                                         new AlertDialog.Builder(
                                                                                         SubredditView
                                                                                                 .this)
@@ -1830,17 +1831,17 @@ public class SubredditView extends BaseActivity {
                                                                                         subreddit);
                                                                     } catch (NetworkException e) {
                                                                         return false; // Either
-                                                                                      // network
-                                                                                      // crashed or
-                                                                                      // trying to
-                                                                                      // unsubscribe
-                                                                                      // to a
-                                                                                      // subreddit
-                                                                                      // that the
-                                                                                      // account
-                                                                                      // isn't
-                                                                                      // subscribed
-                                                                                      // to
+                                                                        // network
+                                                                        // crashed or
+                                                                        // trying to
+                                                                        // unsubscribe
+                                                                        // to a
+                                                                        // subreddit
+                                                                        // that the
+                                                                        // account
+                                                                        // isn't
+                                                                        // subscribed
+                                                                        // to
                                                                     }
                                                                     return true;
                                                                 }
@@ -1850,9 +1851,8 @@ public class SubredditView extends BaseActivity {
                                                     R.string.just_unsub,
                                                     (dialog, which) -> {
                                                         changeSubscription(
-                                                                subreddit,
-                                                                false); // Force add the
-                                                                        // subscription
+                                                                subreddit, false); // Force add the
+                                                        // subscription
                                                         Snackbar s =
                                                                 Snackbar.make(
                                                                         mToolbar,

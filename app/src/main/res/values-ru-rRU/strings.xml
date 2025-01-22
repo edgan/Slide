@@ -8,13 +8,6 @@
     <string name="pro_upgrade_msg">Обновите Slide for Reddit Pro, чтобы насладиться потрясающими новыми функциями, в том числе: \n\n- Блокировка рекламы и режим чтения в режиме просмотра веб-сайта\n- Обрезка и рисование на изображениях для загрузки\n - Настраиваемый режим столбцов на планшете\n - Автоматический ночной режим\n - Представления содержимого Shadow галереи \n- Комментарий Shadowbox view \n- Резервное копирование и восстановление на Google Диск и в файл \n- Поддержка программного обеспечения с открытым исходным кодом и без рекламы! \n \nВы хотите поддержать Slide for Reddit?</string>
     <string name="general_open_settings">Боковая панель</string>
     <string name="general_sub_sync">Синхронизация Подписок</string>
-    <string name="general_gallerymode_ispro">Режим галереи доступен только в Pro версии</string>
-    <string name="general_cropdraw_ispro">Чтобы обрезать и рисовать на картинках нужно купить Pro</string>
-    <string name="general_shadowbox_comments_ispro">Галерея комментариев доступна только в Pro версии</string>
-    <string name="general_shadowbox_ispro">Галерея изображений доступна только в Pro версии</string>
-    <string name="general_nighttheme_ispro">Автоматический ночной режим доступен только в Pro версии</string>
-    <string name="general_backup_ispro">Резервирование доступно только в Pro версии</string>
-    <string name="general_multicolumn_ispro">Настройки нескольких колонок являются Pro функцией</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Несохранённый пост</string>
     <string name="submission_info_saved">Публикация сохранена</string>
@@ -581,9 +574,9 @@
     <string name="settings_comment_crop">Обрезать изображение в записи при просмотре комментариев</string>
     <string name="settings_general_scroll_read">Помечать записи как просмотренные при их пролистывании</string>
     <string name="settings_link_chrome">Пользовательские вкладки</string>
-    <string name="settings_image_location">Выберите место сохранения изображений/GIF</string>
-    <string name="settings_image_location_unset">Пока не установлено</string>
-    <string name="settings_set_image_location">Изображения будут сохранены в %s</string>
+    <string name="settings_storage_location">Выберите место сохранения изображений/GIF</string>
+    <string name="settings_storage_location_unset">Пока не установлено</string>
+    <string name="settings_set_storage_location">Изображения будут сохранены в %s</string>
     <string name="settings_general_immersive_mode">Иммерсивный полноэкранный режим</string>
     <string name="settings_general_immersive_mode_desc">Скрыть панели статуса и навигации (экспериментально)</string>
     <string name="settings_general_title_drawer_items">Элементы Меню</string>
@@ -764,7 +757,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Сортировка</string>
     <string name="display">Показать</string>
-    <string name="image_downloads">Изображения</string>
+    <string name="images">Изображения</string>
     <string name="app_theme">Тема приложения</string>
     <string name="tinting">Тонирование</string>
     <string name="post_info">Разместить информацию</string>

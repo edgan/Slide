@@ -8,12 +8,6 @@
     <string name="pro_upgrade_msg">Uppgradera Slide för Reddit Pro för att njuta av några häftiga nya funktioner, inklusive: \n\n - Ad Blocker och Läsarläge i webbplatsvyn\n-ändra om- och rita bilder till uppladdning\n-anpassningsbar tablett kolumn mode\n-automatisk night mode\n - Shadowbox och Galleri innehåll views\n - Kommentar Shadowbox view\n-säkerhetskopiering och återställning till Google Drive och \n-stödja öppen källkod och ad-fri programvara! \n\nWould du vilja stödja bild för Reddit?</string>
     <string name="general_open_settings">Öppna Subredditinställningar</string>
     <string name="general_sub_sync">Synkronisera prenumerationer</string>
-    <string name="general_gallerymode_ispro">Galleriläget är endast tillgängligt i Pro-versionen</string>
-    <string name="general_cropdraw_ispro">Beskär och rita på uppladdade bilder är en Pro-funktion</string>
-    <string name="general_shadowbox_comments_ispro">Kommentarer för Shadowboxläge är en Pro-funktion</string>
-    <string name="general_shadowbox_ispro">Shadowbox-läget är en Pro-funktion</string>
-    <string name="general_nighttheme_ispro">Automatiskt nattläge är en Pro-funktion</string>
-    <string name="general_backup_ispro">Säkerhetskopiering av inställningar är en Pro-funktion</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Inlägg ej sparat</string>
     <string name="submission_info_saved">Inlägg sparat</string>
@@ -408,7 +402,7 @@
     <string name="profile_category_select">Välj kategori</string>
     <string name="profile_saved_categories">Sparade kategorier</string>
     <!-- Setting subheaders -->
-    <string name="image_downloads">Bilder</string>
+    <string name="images">Bilder</string>
     <!-- Titles displayed in action bar / head / recents overview-->
     <string name="title_subreddit_settings">Subreddit inställningar</string>
     <string name="title_edit_theme">Redigera tema</string>

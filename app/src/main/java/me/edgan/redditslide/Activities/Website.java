@@ -126,7 +126,7 @@ public class Website extends BaseActivityAnim {
             case R.id.read:
                 v.evaluateJavascript(
                         "(function(){return \"<html>\" + document.documentElement.innerHTML +"
-                            + " \"</html>\";})();",
+                                + " \"</html>\";})();",
                         new ValueCallback<String>() {
                             @Override
                             public void onReceiveValue(String html) {

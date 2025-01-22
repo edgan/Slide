@@ -164,7 +164,7 @@ public class MediaView extends BaseSaveActivity {
         if (!isGif) b.sheet(3, image, getString(R.string.share_image));
         b.sheet(4, save, "Save " + (isGif ? "MP4" : "image"));
         Drawable folder = getResources().getDrawable(R.drawable.ic_folder);
-        b.sheet(16, folder, getString(R.string.settings_image_location));
+        b.sheet(16, folder, getString(R.string.settings_storage_location));
         if (isGif
                 && !contentUrl.contains(".mp4")
                 && !contentUrl.contains("streamable.com")
@@ -326,9 +326,8 @@ public class MediaView extends BaseSaveActivity {
                     try {
 
                         final URL url =
-                                new URL(
-                                        baseUrl); // wont exist on server yet, just load the full
-                                                  // version
+                                new URL(baseUrl); // wont exist on server yet, just load the full
+                        // version
                         URLConnection ucon = url.openConnection();
                         ucon.setReadTimeout(5000);
                         ucon.setConnectTimeout(10000);
@@ -863,7 +862,7 @@ public class MediaView extends BaseSaveActivity {
                 && !contentUrl.startsWith("https://i.reddituploads.com")
                 && !contentUrl.contains(
                         "imgur.com"))) { // we can assume redditmedia and imgur links are to direct
-                                         // images and not websites
+            // images and not websites
             findViewById(R.id.progress).setVisibility(View.VISIBLE);
             ((ProgressBar) findViewById(R.id.progress)).setIndeterminate(true);
 

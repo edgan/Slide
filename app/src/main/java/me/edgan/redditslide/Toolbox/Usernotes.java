@@ -366,9 +366,9 @@ public class Usernotes {
         private String[] mods; // String array of mods. Usernote mod is index in this
 
         @SerializedName("warnings")
-        private String[]
-                types; // String array of used type names corresponding to types in the
-                       // config/defaults. Usernote warning is index in this
+        private String[] types; // String array of used type names corresponding to types in the
+
+        // config/defaults. Usernote warning is index in this
 
         public UsernotesConstants() {
             // for GSON

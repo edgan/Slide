@@ -13,7 +13,8 @@ import java.util.Set;
 public class TestUtils {
 
     public static String getResource(String path) throws IOException {
-        return IOUtils.toString(TestUtils.class.getClassLoader().getResourceAsStream(path), "utf-8");
+        return IOUtils.toString(
+                TestUtils.class.getClassLoader().getResourceAsStream(path), "utf-8");
     }
 
     public static class MockPreferences implements SharedPreferences {
@@ -73,12 +74,10 @@ public class TestUtils {
 
         @Override
         public void registerOnSharedPreferenceChangeListener(
-                OnSharedPreferenceChangeListener listener) {
-        }
+                OnSharedPreferenceChangeListener listener) {}
 
         @Override
         public void unregisterOnSharedPreferenceChangeListener(
-                OnSharedPreferenceChangeListener listener) {
-        }
+                OnSharedPreferenceChangeListener listener) {}
     }
 }

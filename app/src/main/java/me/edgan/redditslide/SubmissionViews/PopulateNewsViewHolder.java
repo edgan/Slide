@@ -332,7 +332,7 @@ public class PopulateNewsViewHolder {
                     && type
                             != ContentType.Type
                                     .XKCD) { // Load the preview image which has probably already
-                                             // been cached in memory instead of the direct link
+                // been cached in memory instead of the direct link
                 previewUrl =
                         StringEscapeUtils.escapeHtml4(
                                 submission
@@ -425,10 +425,9 @@ public class PopulateNewsViewHolder {
                             .get("images")
                             .get(0)
                             .get("source")
-                            .has(
-                                    "height")) { // Load the preview image which has probably
-                                                 // already been cached in memory instead of the
-                                                 // direct link
+                            .has("height")) { // Load the preview image which has probably
+                // already been cached in memory instead of the
+                // direct link
                 String previewUrl =
                         StringEscapeUtils.escapeHtml4(
                                 submission

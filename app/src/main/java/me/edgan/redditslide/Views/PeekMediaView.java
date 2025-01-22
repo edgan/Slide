@@ -464,7 +464,7 @@ public class PeekMediaView extends RelativeLayout {
                 && !contentUrl.startsWith("https://i.reddituploads.com")
                 && !contentUrl.contains(
                         "imgur.com"))) { // we can assume redditmedia and imgur links are to direct
-                                         // images and not websites
+            // images and not websites
             progress.setVisibility(View.VISIBLE);
             progress.setIndeterminate(true);
 

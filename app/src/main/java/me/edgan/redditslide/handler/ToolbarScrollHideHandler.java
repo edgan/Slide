@@ -73,9 +73,8 @@ public class ToolbarScrollHideHandler extends RecyclerView.OnScrollListener {
     @Override
     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
         if (verticalOffset == 0
-                && dy
-                        < 0) { // if scrolling begins halfway through an adapter, don't treat it
-                               // like going negative and instead reset the start position to 0
+                && dy < 0) { // if scrolling begins halfway through an adapter, don't treat it
+            // like going negative and instead reset the start position to 0
             dy = 0;
         }
         verticalOffset += dy;

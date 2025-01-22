@@ -8,12 +8,6 @@
     <string name="pro_upgrade_msg">Upgradujte na Slide pro Reddit Pro a užijte si skvělé nové funkce včetně:\n\n- Režim blokování a čtení v zobrazení webové stránky\n- Oříznout a kreslit obrázky pro nahrání\n- upravitelný režim sloupec pro tablet\n- Automatický noční režim\n- Zobrazení obsahu Shadowbox a galerie\n- Komentovat náhled Shadowbox\n- Zálohování a obnovení do Google Drive a do souboru\n- Podpora open source a bez reklam!\n\nChcete podpořit Slide for Reddit?</string>
     <string name="general_open_settings">Postranní panel</string>
     <string name="general_sub_sync">Probíhá synchronizace odběrů</string>
-    <string name="general_gallerymode_ispro">Režim Gallery je Pro-funkce</string>
-    <string name="general_cropdraw_ispro">Oříznutí a kreslení na Nahrané obrázky je Pro funkcí</string>
-    <string name="general_shadowbox_comments_ispro">Režim Shadowbox v komentářích je Pro-funkce</string>
-    <string name="general_shadowbox_ispro">Režim Shadowbox je Pro-funkce</string>
-    <string name="general_nighttheme_ispro">Automatický noční režim je Pro-funkce</string>
-    <string name="general_backup_ispro">Záloha nastavení je Pro-funkce</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Příspěvek odebrán z uložených</string>
     <string name="submission_info_saved">Příspěvek uložen</string>
@@ -566,9 +560,9 @@
     <string name="settings_comment_crop">Oříznout hlavní obrázek v náhledu komentáře</string>
     <string name="settings_general_scroll_read">Při míjení označit příspěvky jako shlédnuté</string>
     <string name="settings_link_chrome">Vlastní záložky</string>
-    <string name="settings_image_location">Vybrat místo uložení obrázku/GIF</string>
-    <string name="settings_image_location_unset">Zatím nenastaveno</string>
-    <string name="settings_set_image_location">Obrázky budou uloženy do %s</string>
+    <string name="settings_storage_location">Vybrat místo uložení obrázku/GIF</string>
+    <string name="settings_storage_location_unset">Zatím nenastaveno</string>
+    <string name="settings_set_storage_location">Obrázky budou uloženy do %s</string>
     <string name="settings_general_immersive_mode">Pohlcující režim celé obrazovky</string>
     <string name="settings_general_immersive_mode_desc">Skrýt stavové a navigační lišty (experimentální)</string>
     <string name="settings_general_title_drawer_items">Položky v zásuvce</string>
@@ -743,7 +737,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Třídění</string>
     <string name="display">Zobrazení</string>
-    <string name="image_downloads">Obrázky</string>
+    <string name="images">Obrázky</string>
     <string name="app_theme">Motiv aplikace</string>
     <string name="tinting">Tónování</string>
     <string name="post_info">Informace o příspěvku</string>

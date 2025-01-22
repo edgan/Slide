@@ -500,7 +500,7 @@ public class MediaFragmentComment extends Fragment {
                 && !contentUrl.startsWith("https://i.reddituploads.com")
                 && !contentUrl.contains(
                         "imgur.com"))) { // we can assume redditmedia and imgur links are to direct
-                                         // images and not websites
+            // images and not websites
             rootView.findViewById(R.id.progress).setVisibility(View.VISIBLE);
             ((ProgressBar) rootView.findViewById(R.id.progress)).setIndeterminate(true);
 

@@ -8,12 +8,6 @@
     <string name="pro_upgrade_msg">Frissítsen Slide for Reddit Próra, hogy további funkciókat használhasson, például:\n\n- Reklámblokkoló és olvasó mód weboldal nézetben\n- Feltöltendő képek vágása és rájuk rajzolás\n- Személyre szabható táblagép oszlop mód\n- Automatikus éjszakai mód\n- Shadowbox és galéria tartalomnézegető\n- Hozzászólás shadowbox nézegető\n- Biztonsági mentés és helyreállítás fájlba vagy Google Drive-ra\n- Reklámmentes és nyílt forráskódú alkalmazások támogatása!\n\nSzeretne támogatni a Slide for Redditet?</string>
     <string name="general_open_settings">Oldalsáv</string>
     <string name="general_sub_sync">Feliratkozások szinkronizálása</string>
-    <string name="general_gallerymode_ispro">A galéria mód egy Pro verziós funkció</string>
-    <string name="general_cropdraw_ispro">A képekre rajzolás és azok vágása egy Pro verziós funkció</string>
-    <string name="general_shadowbox_comments_ispro">A hozzászólás shadowbox mód egy Pro verziós funkció</string>
-    <string name="general_shadowbox_ispro">A shadowbox mód egy Pro verziós funkció</string>
-    <string name="general_nighttheme_ispro">Az automatikus éjszakai mód egy Pro verziós funkció</string>
-    <string name="general_backup_ispro">A beállítások biztonsági mentése egy Pro verziós funkció</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Bejegyzés mentésének visszavonása</string>
     <string name="submission_info_saved">Bejegyzés elmentve</string>
@@ -521,9 +515,9 @@
     <string name="settings_comment_crop">Kép levágása a hozzászólásoknál</string>
     <string name="settings_general_scroll_read">Bejegyzések megjelölése olvasottként továbbgörgetéskor</string>
     <string name="settings_link_chrome">Egyéni lapok</string>
-    <string name="settings_image_location">Képek/GIFek mentési helyének kiválasztása</string>
-    <string name="settings_image_location_unset">Még nincs megadva</string>
-    <string name="settings_set_image_location">A képek ide lesznek elmentve: %s</string>
+    <string name="settings_storage_location">Képek/GIFek mentési helyének kiválasztása</string>
+    <string name="settings_storage_location_unset">Még nincs megadva</string>
+    <string name="settings_set_storage_location">A képek ide lesznek elmentve: %s</string>
     <string name="settings_general_immersive_mode">Intelligens teljes képernyő</string>
     <string name="settings_general_immersive_mode_desc">Az állapotsor és a navigációs sáv elrejtése (kísérleti)</string>
     <string name="settings_general_title_drawer_items">Fiókelemek</string>
@@ -616,7 +610,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Rendezés</string>
     <string name="display">Megjelenítés</string>
-    <string name="image_downloads">Képek</string>
+    <string name="images">Képek</string>
     <string name="app_theme">Alkalmazás témája</string>
     <string name="tinting">Színezés</string>
     <string name="post_info">Bejegyzés információ</string>

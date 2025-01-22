@@ -8,13 +8,6 @@
     <string name="pro_upgrade_msg">Passa a Slide for Reddit Pro per godere di nuove fantastiche funzioni, tra cui:\n\n- Blocco delle pubblicità e Modalità lettura nella visualizzazione di pagine web\n- Ritaglia e disegna sulle immagini da caricare\n- Modalità tablet a colonne personalizzabile\n- Modalità notte automatica\n- Modalità di visualizzazione contenuti Shadowbox e Galleria\n- Modalità di visualizzazione commenti Shadowbox\n- Backup e ripristino tramite Google Drive e file\n- Il supporto di un software open source e privo di pubblicità!\n\n Vuoi supportare Slide for Reddit?</string>
     <string name="general_open_settings">Sidebar</string>
     <string name="general_sub_sync">Sincronizzazione delle iscrizioni in corso</string>
-    <string name="general_gallerymode_ispro">La modalità Galleria è una funzione per utenti Pro</string>
-    <string name="general_cropdraw_ispro">Ritagliare e Disegnare sulle immagini caricate sono funzioni per gli utenti Pro</string>
-    <string name="general_shadowbox_comments_ispro">La modalità Shadowbox per i commenti è una funzione per utenti Pro</string>
-    <string name="general_shadowbox_ispro">La modalità Shadowbox è una funzione per utenti Pro</string>
-    <string name="general_nighttheme_ispro">La modalità notte automatica è una funzione per utenti Pro</string>
-    <string name="general_backup_ispro">Impostazioni di backup è una funzione per utenti Pro</string>
-    <string name="general_multicolumn_ispro">Le impostazioni per il multi-colonna sono una funzione per utenti Pro</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Post non più salvato</string>
     <string name="submission_info_saved">Post salvato</string>
@@ -567,9 +560,9 @@
     <string name="settings_comment_crop">Taglia immagine troppo grande nella vista commenti</string>
     <string name="settings_general_scroll_read">Segna post come già letti quando vengono scrollati</string>
     <string name="settings_link_chrome">Schede personalizzate</string>
-    <string name="settings_image_location">Salva immagini/GIF in</string>
-    <string name="settings_image_location_unset">Non ancora impostato</string>
-    <string name="settings_set_image_location">Le immagini verranno salvate in %s</string>
+    <string name="settings_storage_location">Salva immagini/GIF in</string>
+    <string name="settings_storage_location_unset">Non ancora impostato</string>
+    <string name="settings_set_storage_location">Le immagini verranno salvate in %s</string>
     <string name="settings_general_immersive_mode">Modalità schermo intero immersive</string>
     <string name="settings_general_immersive_mode_desc">Nascondi le barre di stato e di navigazione (sperimentale)</string>
     <string name="settings_general_title_drawer_items">Elementi del Menu</string>
@@ -750,7 +743,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Ordine</string>
     <string name="display">Mostra</string>
-    <string name="image_downloads">Immagini</string>
+    <string name="images">Immagini</string>
     <string name="app_theme">Tema dell\'applicazione</string>
     <string name="tinting">Colorazione</string>
     <string name="post_info">Informazioni post</string>

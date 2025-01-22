@@ -302,8 +302,8 @@ public class PopulateShadowboxInfo {
                                                                 ? 0
                                                                 : s.getScore()
                                                                         - 1; // if a post is at 0
-                                                                             // votes, keep it at 0
-                                                                             // when downvoting
+                                                // votes, keep it at 0
+                                                // when downvoting
                                                 ((TextView) rootView.findViewById(R.id.score))
                                                         .setText(
                                                                 String.format(
@@ -675,8 +675,8 @@ public class PopulateShadowboxInfo {
                                                                 ? 0
                                                                 : s.getScore()
                                                                         - 1; // if a post is at 0
-                                                                             // votes, keep it at 0
-                                                                             // when downvoting
+                                                // votes, keep it at 0
+                                                // when downvoting
                                                 ((TextView) rootView.findViewById(R.id.score))
                                                         .setText(
                                                                 String.format(
@@ -991,7 +991,8 @@ public class PopulateShadowboxInfo {
                                         } else {
                                             Reddit.defaultShareText(
                                                     submission.getTitle(),
-                                                    "https://reddit.com/comments/" + submission.getId(),
+                                                    "https://reddit.com/comments/"
+                                                            + submission.getId(),
                                                     mContext);
                                         }
                                         break;

@@ -984,9 +984,9 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
                                             && type
                                                     != ContentType.Type
                                                             .XKCD) { // Load the preview image which
-                                                                     // has probably already been
-                                                                     // cached in memory instead of
-                                                                     // the direct link
+                                        // has probably already been
+                                        // cached in memory instead of
+                                        // the direct link
                                         String previewUrl =
                                                 adapter.submission
                                                         .getDataNode()
@@ -1673,7 +1673,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
                                                                     changeSubscription(
                                                                             baseSub,
                                                                             true); // Force add the
-                                                                                   // subscription
+                                                                    // subscription
                                                                     Snackbar s =
                                                                             Snackbar.make(
                                                                                     toolbar,
@@ -1797,7 +1797,7 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
                                                                     changeSubscription(
                                                                             baseSub,
                                                                             false); // Force add the
-                                                                                    // subscription
+                                                                    // subscription
                                                                     Snackbar s =
                                                                             Snackbar.make(
                                                                                     toolbar,

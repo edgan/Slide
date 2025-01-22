@@ -1567,9 +1567,8 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                 }
                                             });
                                 }
-                                replyLine
-                                        .requestFocus(); // TODO: Not working when called a second
-                                                         // time
+                                replyLine.requestFocus(); // TODO: Not working when called a second
+                                // time
                                 KeyboardUtil.toggleKeyboard(
                                         mContext,
                                         InputMethodManager.SHOW_FORCED,

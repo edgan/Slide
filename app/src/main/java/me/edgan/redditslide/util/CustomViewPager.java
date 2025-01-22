@@ -7,8 +7,8 @@ import android.view.MotionEvent;
 import androidx.viewpager.widget.ViewPager;
 
 /**
- * A ViewPager that blocks swiping to the previous page (i.e. "left page")
- * only if you're currently on a specified 'entryPageIndex'.
+ * A ViewPager that blocks swiping to the previous page (i.e. "left page") only if you're currently
+ * on a specified 'entryPageIndex'.
  */
 public class CustomViewPager extends ViewPager {
 
@@ -28,8 +28,8 @@ public class CustomViewPager extends ViewPager {
     }
 
     /**
-     * Set which page index is considered the 'entry' page that should not allow swiping left.
-     * E.g., if the user started on page = 2, pass 2 here.
+     * Set which page index is considered the 'entry' page that should not allow swiping left. E.g.,
+     * if the user started on page = 2, pass 2 here.
      */
     public void setEntryPageIndex(int index) {
         this.entryPageIndex = index;

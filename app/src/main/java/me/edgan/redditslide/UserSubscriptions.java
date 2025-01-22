@@ -828,7 +828,7 @@ public class UserSubscriptions {
                     Toast.makeText(
                                     context,
                                     "Couldn't subscribe, subreddit is private, quarantined, or"
-                                        + " invite only",
+                                            + " invite only",
                                     Toast.LENGTH_SHORT)
                             .show();
                 }

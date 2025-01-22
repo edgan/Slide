@@ -441,9 +441,9 @@
     <string name="settings_font_comment">Lettertype reactie</string>
     <string name="settings_comment_crop">Hoofdafbeelding bijsnijden in reactieweergave</string>
     <string name="settings_general_scroll_read">Berichten als gelezen markeren wanneer je er voorbij scrolt</string>
-    <string name="settings_image_location">Selecteer afbeelding/GIF-opslaglocatie</string>
-    <string name="settings_image_location_unset">Nog niet ingesteld</string>
-    <string name="settings_set_image_location">Afbeeldingen zullen worden opgeslagen in %s</string>
+    <string name="settings_storage_location">Selecteer afbeelding/GIF-opslaglocatie</string>
+    <string name="settings_storage_location_unset">Nog niet ingesteld</string>
+    <string name="settings_set_storage_location">Afbeeldingen zullen worden opgeslagen in %s</string>
     <string name="settings_general_immersive_mode">Volledig scherm-modus</string>
     <string name="settings_general_immersive_mode_desc">Verberg de status en navigatie balken (experimenteel)</string>
     <!-- Settings titles displayed in settings activity-->
@@ -541,7 +541,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Sortering</string>
     <string name="display">Weergave</string>
-    <string name="image_downloads">Afbeeldingen</string>
+    <string name="images">Afbeeldingen</string>
     <string name="app_theme">Appthema</string>
     <string name="tinting">Kleur</string>
     <string name="post_info">Berichtinformatie</string>

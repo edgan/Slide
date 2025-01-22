@@ -8,13 +8,6 @@
     <string name="pro_upgrade_msg">Tingkatkan ke Slide untuk Reddit Pro untuk menikmati fitur baru yang keren termasuk:\n\n- Pemblokir iklan dan Mode Baca di tampilan web\n- Potong dan lukis gambar untuk diunggah\n- Mode kolom tablet khusus\n- Mode malam otomatis\n- Tampilan Shadowbox dan Galeri\n- Tampilan komentar Shadowbox\n- Cadangkan dan pulihkan ke Google Drive dan berkas\n- Mendukung perangkat lunak sumber terbuka dan bebas iklan!\n\nApakah anda ingin mendukung Slide untuk Reddit?</string>
     <string name="general_open_settings">Bilah sisi</string>
     <string name="general_sub_sync">Menyinkronkan subscription</string>
-    <string name="general_gallerymode_ispro">Mode galeri adalah fitur Pro</string>
-    <string name="general_cropdraw_ispro">Potong dan Lukis pada Gambar yang diunggah adalah fitur Pro</string>
-    <string name="general_shadowbox_comments_ispro">Mode Komentar Shadowbox adalah fitur Pro</string>
-    <string name="general_shadowbox_ispro">Mode Shadowbox adalah fitur Pro</string>
-    <string name="general_nighttheme_ispro">Mode Malam Otomatis adalah fitur Pro</string>
-    <string name="general_backup_ispro">Pencadangan pengaturan adalah fitur Pro</string>
-    <string name="general_multicolumn_ispro">Pengaturan multikolom adalah fitur pro</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Kiriman belum disimpan</string>
     <string name="submission_info_saved">Kiriman disimpan</string>
@@ -550,9 +543,9 @@
     <string name="settings_comment_crop">Kerat gambar dalam tampilan komentar</string>
     <string name="settings_general_scroll_read">Tandai posting seperti yang terlihat ketika menggulir melewatinya</string>
     <string name="settings_link_chrome">Tab kustom</string>
-    <string name="settings_image_location">Pilih gambar/GIF lokasi penyimpanan</string>
-    <string name="settings_image_location_unset">Belum diatur</string>
-    <string name="settings_set_image_location">Gambar akan disimpan ke %s</string>
+    <string name="settings_storage_location">Pilih gambar/GIF lokasi penyimpanan</string>
+    <string name="settings_storage_location_unset">Belum diatur</string>
+    <string name="settings_set_storage_location">Gambar akan disimpan ke %s</string>
     <string name="settings_general_immersive_mode">Modus layar penuh mendalam</string>
     <string name="settings_general_immersive_mode_desc">Menyembunyikan status dan bar navigasi (eksperimental)</string>
     <string name="settings_general_subtitle_drawer_items">Pilih item bilah sisi untuk ditampilkan</string>
@@ -726,7 +719,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Mengurutkan</string>
     <string name="display">Tampilan</string>
-    <string name="image_downloads">Gambar</string>
+    <string name="images">Gambar</string>
     <string name="app_theme">Tema aplikasi</string>
     <string name="tinting">Pewarnaan</string>
     <string name="post_info">Informasi posting</string>

@@ -222,8 +222,8 @@ public class CreateMulti extends BaseActivityAnim {
                                                                         .replaceAll(
                                                                                 "\\s",
                                                                                 ""); // remove
-                                                                                     // whitespace
-                                                                                     // from input
+                                                        // whitespace
+                                                        // from input
                                                     }
                                                 })
                                         .positiveText(R.string.btn_add)

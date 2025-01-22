@@ -474,10 +474,9 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                                     input =
                                                             raw.toString()
                                                                     .replaceAll(
-                                                                            "\\s",
-                                                                            ""); // remove
-                                                                                 // whitespace from
-                                                                                 // input
+                                                                            "\\s", ""); // remove
+                                                    // whitespace from
+                                                    // input
                                                     dialog.getActionButton(DialogAction.POSITIVE)
                                                             .setEnabled(input.contains("."));
                                                 }
@@ -586,7 +585,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                     String multiName = r.getDisplayName();
                                     String sortMode =
                                             "hot"; // default sort mode, can be parameterized if
-                                                   // needed
+                                    // needed
 
                                     String url =
                                             String.format(

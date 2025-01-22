@@ -19,12 +19,6 @@
 Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="general_open_settings">Seitenleiste</string>
     <string name="general_sub_sync">Subreddits werden synchronisiert</string>
-    <string name="general_gallerymode_ispro">Der Galeriemodus ist ein Pro-feature</string>
-    <string name="general_cropdraw_ispro">Das Zuschneiden und das Malen auf hochgeladene Bilder ist ein Pro-feature</string>
-    <string name="general_shadowbox_comments_ispro">Shadowbox Modus für Kommentare ist eine Pro Funktion</string>
-    <string name="general_shadowbox_ispro">Shadowbox Modus ist eine Pro Funktion</string>
-    <string name="general_nighttheme_ispro">Automatischer Nacht Modus ist eine Pro Funktion</string>
-    <string name="general_backup_ispro">Einstellungen sichern ist eine Pro Funktion</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Beitrag nicht mehr gespeichert</string>
     <string name="submission_info_saved">Beitrag gespeichert</string>
@@ -565,9 +559,9 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="settings_comment_crop">Hauptbild in Kommentaransicht zuschneiden</string>
     <string name="settings_general_scroll_read">Beiträge nach Vorbeiscrollen als gelesen markieren</string>
     <string name="settings_link_chrome">Benutzerdefinierte Tabs</string>
-    <string name="settings_image_location">Bild/GIF Speicher-Verzeichnis auswählen</string>
-    <string name="settings_image_location_unset">Noch nicht festgelegt</string>
-    <string name="settings_set_image_location">Bilder werden in %s gespeichert</string>
+    <string name="settings_storage_location">Bild/GIF Speicher-Verzeichnis auswählen</string>
+    <string name="settings_storage_location_unset">Noch nicht festgelegt</string>
+    <string name="settings_set_storage_location">Bilder werden in %s gespeichert</string>
     <string name="settings_general_immersive_mode">Vollbildmodus</string>
     <string name="settings_general_immersive_mode_desc">Ausblenden der Status und Navigationsleisten (experimentell)</string>
     <string name="settings_general_title_drawer_items">Menü-Elemente</string>
@@ -742,7 +736,7 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <!-- Setting subheaders -->
     <string name="sorting">Sortierung</string>
     <string name="display">Anzeige</string>
-    <string name="image_downloads">Bilder</string>
+    <string name="images">Bilder</string>
     <string name="app_theme">App-Theme</string>
     <string name="tinting">Einfärben</string>
     <string name="post_info">Beitrags Informationen</string>

@@ -261,9 +261,8 @@ public class CanvasView extends View {
                         ? 1
                         : (int)
                                 Math.floor(
-                                        restWidth
-                                                / lengthOfChar); // The number of characters at 1
-                                                                 // line
+                                        restWidth / lengthOfChar); // The number of characters at 1
+        // line
         int modNumChars = Math.max(numChars, 1);
         float y = textY;
 
