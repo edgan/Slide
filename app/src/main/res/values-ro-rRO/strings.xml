@@ -455,7 +455,6 @@
     <string name="settings_view_type">Tip de vizualizare</string>
     <string name="settings_data">Economisire de date</string>
     <string name="settings_section_content">Conținut</string>
-    <string name="settings_backup_include_personal_title">Incluzi informații personale?</string>
     <string name="settings_theme_night_start_at">Începe la\u0020</string>
     <string name="settings_theme_night_end_at">Înceie la\u0020</string>
     <string name="settings_general_inbox_snd">Sunete și vibrații</string>
@@ -708,8 +707,6 @@
     <string name="comment_discard_msg">Chiar doriți anularea comentariului?</string>
     <string name="backup_complete">Copie de rezervă completă!</string>
     <string name="backup_saved_downloads">Copie de rezervă salvată la descărcări</string>
-    <string name="include_personal_info">Incluzi informații personale?</string>
-    <string name="include_personal_info_msg">Asta include autentificări, nume de utilizator, etichete și istoric</string>
     <string name="really_remove_subreddit_title">Sigur elimini acest subreddit?</string>
     <string name="choose_sync_time">Alege un timp de sincronizare</string>
     <string name="account_suspended">Acest cont a fost suspendat</string>

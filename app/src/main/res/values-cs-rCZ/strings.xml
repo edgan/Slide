@@ -577,7 +577,6 @@
     <string name="settings_title_pro">Povýšit na verzi Pro</string>
     <string name="settings_title_sub_theme">Motivy Subredditů</string>
     <string name="settings_title_sorting">Výchozí řazení</string>
-    <string name="settings_title_support">Darovat</string>
     <string name="settings_title_about">O nás</string>
     <string name="settings_title_multi_column">Vícenásobný sloupec</string>
     <string name="settings_title_fab">Plovoucí tlačítko akce</string>
@@ -649,8 +648,6 @@
     <string name="settings_handling_external_desc">Domény zadané níže budou vždy otevřeny externě</string>
     <string name="settings_handling_enterdomain">Zadejte doménu nebo část domény</string>
     <string name="settings_section_content">Obsah</string>
-    <string name="settings_backup_include_personal_title">Zahrnout osobní informace?</string>
-    <string name="settings_backup_include_personal_text">To zahrnuje ověřovací tokeny, uživatelská jména, štítky a historii</string>
     <string name="settings_backup_view">Zobrazit zálohu</string>
     <string name="settings_backup_err_no_explorer">Nebyl nalezen žádný průzkumník souborů, soubor umístěný v %1$s</string>
     <string name="settings_about_version_copied_toast">Číslo verze zkopírováno do schránky</string>
@@ -1040,8 +1037,6 @@
     <string name="comment_discard_msg">Opravdu chcete zahodit svůj komentář?</string>
     <string name="backup_complete">Záloha dokončena!</string>
     <string name="backup_saved_downloads">Záloha uložena do adresáře stažených souborů</string>
-    <string name="include_personal_info">Zahrnout osobní údaje?</string>
-    <string name="include_personal_info_msg">Zahrnuje přihlašovací token, uživatelské jméno, štítky a historii</string>
     <string name="really_remove_subreddit_title">Opravdu odstranit tento subreddit?</string>
     <string name="choose_sync_time">Zvolte čas pro synchronizaci</string>
     <string name="account_suspended">Tento účet je pozastaven</string>

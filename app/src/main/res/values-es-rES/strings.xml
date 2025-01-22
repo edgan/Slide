@@ -564,7 +564,6 @@
     <string name="settings_title_pro">Conviértete en Pro</string>
     <string name="settings_title_sub_theme">Temas de los subreddits</string>
     <string name="settings_title_sorting">Clasificación por defecto</string>
-    <string name="settings_title_support">Donar</string>
     <string name="settings_title_about">Acerca de</string>
     <string name="settings_title_multi_column">Ajustes de multi-columna</string>
     <string name="settings_title_fab">Botón de acción flotante</string>
@@ -634,8 +633,6 @@
     <string name="settings_handling_external_desc">Los dominios introducidos debajo siempre se abrirán externamente</string>
     <string name="settings_handling_enterdomain">Escriba un dominio o una parte de un dominio</string>
     <string name="settings_section_content">Contenido</string>
-    <string name="settings_backup_include_personal_title">¿Incluir información personal?</string>
-    <string name="settings_backup_include_personal_text">Esto incluye tokens de autenticación, nombre de usuario, etiquetas e historial</string>
     <string name="settings_backup_view">Ver respaldo</string>
     <string name="settings_backup_err_no_explorer">No se encontró explorador de archivos, archivo ubicado en%1$s</string>
     <string name="settings_about_version_copied_toast">Numero de versión copiado al portapapeles</string>
@@ -993,8 +990,6 @@
     <string name="comment_discard_msg">Realmente quieres descartar tu comentario?</string>
     <string name="backup_complete">Copia de seguridad completada!</string>
     <string name="backup_saved_downloads">Copia de seguridad guardada en descargas</string>
-    <string name="include_personal_info">Incluir información personal?</string>
-    <string name="include_personal_info_msg">Esto incluye los identificadores de autenticación, nombres de usuario, etiquetas y el historial</string>
     <string name="really_remove_subreddit_title">¿Seguro que quieres eliminar este subreddit?</string>
     <string name="choose_sync_time">Escoge una hora de sincronización</string>
     <string name="account_suspended">Esta cuenta ha sido suspendida</string>

@@ -559,7 +559,6 @@
     <string name="settings_title_pro">Go Pro</string>
     <string name="settings_title_sub_theme">Tema Subreddit</string>
     <string name="settings_title_sorting">Menyetel ke semula</string>
-    <string name="settings_title_support">Donasi</string>
     <string name="settings_title_about">Tentang</string>
     <string name="settings_title_multi_column">Multi kolom</string>
     <string name="settings_title_fab">Tombol tindakan mengambang</string>
@@ -634,8 +633,6 @@
     <string name="settings_handling_external_desc">Domain yang masuk di bawah ini akan selalu terbuka eksternal</string>
     <string name="settings_handling_enterdomain">Masukkan domain atau bagian dari domain</string>
     <string name="settings_section_content">Konten</string>
-    <string name="settings_backup_include_personal_title">Ubah informasi pribadi?</string>
-    <string name="settings_backup_include_personal_text">Ini termasuk token otentikasi, nama pengguna, tag, dan riwayat</string>
     <string name="settings_backup_view">Lihat cadangan</string>
     <string name="settings_backup_err_no_explorer">Jelajah file tidak ditemukan, file yang terletak di %1$s</string>
     <string name="settings_about_version_copied_toast">Nomor versi disalin ke papan klip</string>
@@ -993,8 +990,6 @@
     <string name="comment_discard_msg">Apakah anda benar-benar ingin membuang komentar anda?</string>
     <string name="backup_complete">Pencadangan selesai!</string>
     <string name="backup_saved_downloads">Cadangan disimpan ke unduhan</string>
-    <string name="include_personal_info">Sertakan informasi personal?</string>
-    <string name="include_personal_info_msg">Ini termasuk token otentikasi, nama pengguna, tag, dan riwayat</string>
     <string name="really_remove_subreddit_title">Yakin hapus subreddit ini?</string>
     <string name="choose_sync_time">Pilih waktu sinkron</string>
     <string name="account_suspended">Akun ini ditangguhkan</string>

@@ -565,7 +565,6 @@
     <string name="settings_title_pro">Pro sürüme geç</string>
     <string name="settings_title_sub_theme">Subreddit temaları</string>
     <string name="settings_title_sorting">Varsayılan Sıralama</string>
-    <string name="settings_title_support">Bağış yapın</string>
     <string name="settings_title_about">Hakkında</string>
     <string name="settings_title_multi_column">Çoklu-sütun</string>
     <string name="settings_title_fab">Kayan eylem butonu</string>
@@ -637,8 +636,6 @@
     <string name="settings_handling_external_desc">Aşağıda girili alan adları her zaman başka uygulamalarla açılacak</string>
     <string name="settings_handling_enterdomain">Alan adının tamamını veya bir kısmını girin</string>
     <string name="settings_section_content">Içerik</string>
-    <string name="settings_backup_include_personal_title">Kişisel bilgileri de içer?</string>
-    <string name="settings_backup_include_personal_text">Bu, kimlik doğrulama bilgilerini, kullanıcı adlarını, etiketleri ve geçmişi içerir</string>
     <string name="settings_backup_view">Yedeği gör</string>
     <string name="settings_backup_err_no_explorer">Bir dosya gezgini bulunamadı, dosya %1$s konumunda</string>
     <string name="settings_about_version_copied_toast">Sürüm numarası panoya kopyalandı</string>
@@ -1008,8 +1005,6 @@
     <string name="comment_discard_msg">Yorumu gerçekten silmek istiyor musunuz?</string>
     <string name="backup_complete">Yedekleme tamamlandı!</string>
     <string name="backup_saved_downloads">Yedek dosyası indirilenlere kaydedildi</string>
-    <string name="include_personal_info">Kişisel bilgileri de içer?</string>
-    <string name="include_personal_info_msg">Bu, kimlik doğrulama bilgilerini, kullanıcı adlarını, etiketleri ve geçmişi içerir</string>
     <string name="really_remove_subreddit_title">Bu subreddit gerçekten silinsin mi?</string>
     <string name="choose_sync_time">Eşitleme zamanını seç</string>
     <string name="account_suspended">Bu hesap askıya alınmış</string>

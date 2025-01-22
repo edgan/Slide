@@ -736,8 +736,6 @@
     <string name="comment_discard_msg">Weet je zeker dat je de reactie wil annuleren?</string>
     <string name="backup_complete">Back-up voltooid.</string>
     <string name="backup_saved_downloads">Back-up opgeslagen in downloads</string>
-    <string name="include_personal_info">Persoonlijke gegevens toevoegen?</string>
-    <string name="include_personal_info_msg">Dit houd in: authenticatie-tokens, gebruikersnamen, tags en geschiedenis</string>
     <string name="really_remove_subreddit_title">Ben je zeker dat je deze subreddit wilt verwijderen?</string>
     <string name="choose_sync_time">Kies een tijd om te synchroniseren</string>
     <string name="account_suspended">Dit account is geschorst</string>

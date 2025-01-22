@@ -571,7 +571,6 @@
     <string name="settings_title_pro">Pro 版</string>
     <string name="settings_title_sub_theme">Subreddit テーマ</string>
     <string name="settings_title_sorting">デフォルトの並べ替え</string>
-    <string name="settings_title_support">寄付</string>
     <string name="settings_title_about">アプリついて</string>
     <string name="settings_title_multi_column">複数列</string>
     <string name="settings_title_fab">フローティング アクションボタン</string>
@@ -648,8 +647,6 @@
     <string name="settings_handling_external_desc">下部に入力されたドメインは常に外部ブラウザ等で開かれます</string>
     <string name="settings_handling_enterdomain">ドメインもしくはその一部を入力</string>
     <string name="settings_section_content">コンテンツ</string>
-    <string name="settings_backup_include_personal_title">個人情報を含めますか?</string>
-    <string name="settings_backup_include_personal_text">これは、認証トークン、ユーザー名、タグ、履歴を含みます</string>
     <string name="settings_backup_view">バックアップを表示</string>
     <string name="settings_backup_err_no_explorer">ファイルエクスプローラーが見つかりません。ファイルの場所は %1$s</string>
     <string name="settings_about_version_copied_toast">バージョン番号をクリップボードにコピーしました</string>
@@ -1011,8 +1008,6 @@
     <string name="comment_discard_msg">このコメントを破棄してもよろしいですか?</string>
     <string name="backup_complete">バックアップが完了しました!</string>
     <string name="backup_saved_downloads">バックアップを downloads に保存しました</string>
-    <string name="include_personal_info">個人情報を含めますか?</string>
-    <string name="include_personal_info_msg">これは、認証トークン、ユーザー名、タグ、履歴を含みます</string>
     <string name="really_remove_subreddit_title">この Subreddit を削除してもよろしいですか?</string>
     <string name="choose_sync_time">同期時刻を選択</string>
     <string name="account_suspended">このアカウントは停止されています</string>

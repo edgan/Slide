@@ -576,7 +576,6 @@
     <string name="settings_title_pro">Kup Pro</string>
     <string name="settings_title_sub_theme">Motywy subredditów</string>
     <string name="settings_title_sorting">Domyślnie sortowanie</string>
-    <string name="settings_title_support">Wesprzyj</string>
     <string name="settings_title_about">O aplikacji</string>
     <string name="settings_title_multi_column">Tryb wielokulumnowy</string>
     <string name="settings_title_fab">Przycisk akcji</string>
@@ -653,8 +652,6 @@
     <string name="settings_handling_external_desc">Domeny poniżej będą zawsze otwierane zewnętrznie</string>
     <string name="settings_handling_enterdomain">Wpisz domenę lub jej część</string>
     <string name="settings_section_content">Zawartość</string>
-    <string name="settings_backup_include_personal_title">Zawrzeć informacje osobiste?</string>
-    <string name="settings_backup_include_personal_text">Zawiera to tokeny uwierzytelniania, nazwy użytkownika, tagi i historię</string>
     <string name="settings_backup_view">Zobacz kopię zapasową</string>
     <string name="settings_backup_err_no_explorer">Nie znaleziono przeglądarki plików, plik w %1$s</string>
     <string name="settings_about_version_copied_toast">Numer wersji skopiowany do schowka</string>
@@ -1026,8 +1023,6 @@
     <string name="comment_discard_msg">Czy chcesz odrzucić swój komentarz?</string>
     <string name="backup_complete">Ukończono kopię!</string>
     <string name="backup_saved_downloads">Kopia zapisana do pobranych</string>
-    <string name="include_personal_info">Zawrzeć informacje osobiste?</string>
-    <string name="include_personal_info_msg">Zawiera to tokeny uwierzytelniania, nazwy użytkownika, tagi i historię</string>
     <string name="really_remove_subreddit_title">Naprawdę usunąć ten subreddit?</string>
     <string name="choose_sync_time">Wybierz czas synchronizacji</string>
     <string name="account_suspended">To konto jest zawieszone</string>

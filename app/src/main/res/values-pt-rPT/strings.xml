@@ -545,7 +545,6 @@
     <string name="settings_title_pro">Passar a Pro</string>
     <string name="settings_title_sub_theme">Temas de Subreddit</string>
     <string name="settings_title_sorting">Padrão de classificação</string>
-    <string name="settings_title_support">Faça uma doação</string>
     <string name="settings_title_about">Acerca de</string>
     <string name="settings_title_multi_column">Multi-coluna</string>
     <string name="settings_title_fab">Botão de ação flutuante</string>
@@ -615,8 +614,6 @@
     <string name="settings_handling_external_desc">Domínios introduzidos abaixo serão abertos sempre externamente</string>
     <string name="settings_handling_enterdomain">Insira um domínio ou parte de um domínio</string>
     <string name="settings_section_content">Conteúdo</string>
-    <string name="settings_backup_include_personal_title">Incluir informações pessoais?</string>
-    <string name="settings_backup_include_personal_text">Isto inclui tokens de autenticação, nomes de utilizador, tags e histórico</string>
     <string name="settings_backup_view">Ver copia de segurança</string>
     <string name="settings_backup_err_no_explorer">Nenhum explorador de ficheiros encontrado, ficheiro localizado em %1$s</string>
     <string name="settings_about_version_copied_toast">Número de versão copiado para a área de transferência</string>
@@ -959,8 +956,6 @@
     <string name="comment_discard_msg">Quer realmente descartar esta publicação?</string>
     <string name="backup_complete">Cópia de segurança completa!</string>
     <string name="backup_saved_downloads">Copia de segurança guardada em downloads</string>
-    <string name="include_personal_info">Incluir informações pessoais?</string>
-    <string name="include_personal_info_msg">Isto inclui tokens de autenticação, nomes de utilizador, etiquetas e histórico</string>
     <string name="really_remove_subreddit_title">Remover realmente este subreddit?</string>
     <string name="choose_sync_time">Escolha uma hora de sincronização</string>
     <string name="account_suspended">Esta conta está suspensa</string>

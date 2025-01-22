@@ -565,7 +565,6 @@
     <string name="settings_title_pro">Pasaar-se a la versió Pro</string>
     <string name="settings_title_sub_theme">Temes del subreddit</string>
     <string name="settings_title_sorting">Ordre per defecte</string>
-    <string name="settings_title_support">Donar</string>
     <string name="settings_title_about">Sobre</string>
     <string name="settings_title_multi_column">Multi-columna</string>
     <string name="settings_title_fab">Barra d\'acció flotant</string>
@@ -637,8 +636,6 @@
     <string name="settings_handling_external_desc">Els dominis introduïts a continuació s\'obriran sempre externament</string>
     <string name="settings_handling_enterdomain">Insereixi un domini o part d\'aquest</string>
     <string name="settings_section_content">Contingut</string>
-    <string name="settings_backup_include_personal_title">Incluir informació personal?</string>
-    <string name="settings_backup_include_personal_text">Això inclou cadenes d\'autentificació, noms d\'usuari, etiquetes i cronologia</string>
     <string name="settings_backup_view">Veure còpia de seguretat</string>
     <string name="settings_backup_err_no_explorer">No s\'ha trobat exploradors de fitxers, el fitxer rau a %1$s</string>
     <string name="settings_about_version_copied_toast">Número de la versió copiat al porta-retalls</string>
@@ -1008,8 +1005,6 @@
     <string name="comment_discard_msg">Esteu segurs que voleu descartar el vostre comentari?</string>
     <string name="backup_complete">Còpia de seguretat completada!</string>
     <string name="backup_saved_downloads">Còpia de seguretat desada a descàrregues</string>
-    <string name="include_personal_info">Incloure informació personal?</string>
-    <string name="include_personal_info_msg">Això inclou cadenes d\'autentificació, noms d\'usuari, etiquetes i cronologia</string>
     <string name="really_remove_subreddit_title">Esteu segurs que voleu el·liminar aquest subreddit?</string>
     <string name="choose_sync_time">Escollir horari de sincronització</string>
     <string name="account_suspended">Aquest compte està suspès</string>

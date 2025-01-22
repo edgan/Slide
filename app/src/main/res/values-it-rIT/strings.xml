@@ -577,7 +577,6 @@
     <string name="settings_title_pro">Passa alla versione Pro</string>
     <string name="settings_title_sub_theme">Temi dei subreddit</string>
     <string name="settings_title_sorting">Ordine predefinito</string>
-    <string name="settings_title_support">Contribuisci con una donazione</string>
     <string name="settings_title_about">Informazioni</string>
     <string name="settings_title_multi_column">Multi-colonna</string>
     <string name="settings_title_fab">Floating Action Button</string>
@@ -654,8 +653,6 @@
     <string name="settings_handling_external_desc">I domini inseriti sotto verranno aperti sempre esternamente</string>
     <string name="settings_handling_enterdomain">Inserisci un dominio o parte di esso</string>
     <string name="settings_section_content">Contenuto</string>
-    <string name="settings_backup_include_personal_title">Includere informazioni personali?</string>
-    <string name="settings_backup_include_personal_text">Questo include token di autenticazione, username, tags e cronologia</string>
     <string name="settings_backup_view">Visualizza backup</string>
     <string name="settings_backup_err_no_explorer">Nessun file explorer trovato, i file si trovano in %1$s</string>
     <string name="settings_about_version_copied_toast">Numero versione copiato negli appunti</string>
@@ -1027,8 +1024,6 @@
     <string name="comment_discard_msg">Vuoi veramente scartare il tuo commento?</string>
     <string name="backup_complete">Backup completato!</string>
     <string name="backup_saved_downloads">Backup salvato nei download</string>
-    <string name="include_personal_info">Includere le informazioni personali?</string>
-    <string name="include_personal_info_msg">Questo include token di autenticazione, username, tag e cronologia</string>
     <string name="really_remove_subreddit_title">Rimuovere davvero questo subreddit?</string>
     <string name="choose_sync_time">Scegli un orario di sincronizzazione</string>
     <string name="account_suspended">Questo account è sospeso</string>

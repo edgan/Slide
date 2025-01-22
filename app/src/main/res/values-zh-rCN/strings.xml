@@ -573,7 +573,6 @@
     <string name="settings_title_pro">升级为专业版</string>
     <string name="settings_title_sub_theme">版块主题</string>
     <string name="settings_title_sorting">默认排序</string>
-    <string name="settings_title_support">捐赠</string>
     <string name="settings_title_about">关于</string>
     <string name="settings_title_multi_column">多列显示</string>
     <string name="settings_title_fab">浮动操作按钮</string>
@@ -650,8 +649,6 @@
     <string name="settings_handling_external_desc">下面输入的域名将始终在外部打开</string>
     <string name="settings_handling_enterdomain">输入域名或域名的一部分</string>
     <string name="settings_section_content">内容</string>
-    <string name="settings_backup_include_personal_title">是否包含个人信息？</string>
-    <string name="settings_backup_include_personal_text">这包括身份验证令牌、用户名、标签和历史记录</string>
     <string name="settings_backup_view">查看备份</string>
     <string name="settings_backup_err_no_explorer">找不到文件资源管理器, 文件位于%1$s</string>
     <string name="settings_about_version_copied_toast">版本号已复制到剪贴板</string>
@@ -1013,8 +1010,6 @@
     <string name="comment_discard_msg">你真的想放弃你的评论吗？</string>
     <string name="backup_complete">备份完成!</string>
     <string name="backup_saved_downloads">备份保存到下载目录</string>
-    <string name="include_personal_info">是否包含个人信息？</string>
-    <string name="include_personal_info_msg">这包括身份验证令牌、用户名、标签和历史记录</string>
     <string name="really_remove_subreddit_title">真的删除此版块吗？</string>
     <string name="choose_sync_time">选择同步时间</string>
     <string name="account_suspended">此帐户已停用</string>

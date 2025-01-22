@@ -854,8 +854,6 @@
     <string name="comment_discard_msg">你肯定要放棄你的留言嗎？</string>
     <string name="backup_complete">備份完成！</string>
     <string name="backup_saved_downloads">備份已存至下載資料夾</string>
-    <string name="include_personal_info">要包括你的個人資料嗎？</string>
-    <string name="include_personal_info_msg">這包括驗證代碼、用戶名稱、標籤及瀏覽歷史</string>
     <string name="really_remove_subreddit_title">你肯定要移除這個 Subreddit 嗎？</string>
     <string name="choose_sync_time">選擇同步時間</string>
     <string name="account_suspended">此用戶已被封禁</string>

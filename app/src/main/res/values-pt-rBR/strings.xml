@@ -579,7 +579,6 @@
     <string name="settings_title_pro">Tornar-se Pro</string>
     <string name="settings_title_sub_theme">Temas dos subreddits</string>
     <string name="settings_title_sorting">Padrão de classificação</string>
-    <string name="settings_title_support">Doar</string>
     <string name="settings_title_about">Sobre</string>
     <string name="settings_title_multi_column">Multi-colunas</string>
     <string name="settings_title_fab">Botão de ação flutuante</string>
@@ -656,8 +655,6 @@
     <string name="settings_handling_external_desc">Os domínios inseridos abaixo sempre abrirão externamente</string>
     <string name="settings_handling_enterdomain">Digite um domínio ou parte de um domínio</string>
     <string name="settings_section_content">Conteúdo</string>
-    <string name="settings_backup_include_personal_title">Incluir informações pessoais?</string>
-    <string name="settings_backup_include_personal_text">Isso inclui histórico, nomes de usuários, tags e tokens de autenticação</string>
     <string name="settings_backup_view">Ver backup</string>
     <string name="settings_backup_err_no_explorer">Nenhum navegador de arquivos encontrado, o arquivo está em %1$s</string>
     <string name="settings_about_version_copied_toast">Número de versão copiado para a área de transferência</string>
@@ -1029,8 +1026,6 @@
     <string name="comment_discard_msg">Deseja mesmo descartar seu comentário?</string>
     <string name="backup_complete">Backup completo!</string>
     <string name="backup_saved_downloads">Backup salvo nos downloads</string>
-    <string name="include_personal_info">Incluir informações pessoais?</string>
-    <string name="include_personal_info_msg">Isso inclui histórico, nomes de usuários, tags e tokens de autenticação</string>
     <string name="really_remove_subreddit_title">Deseja mesmo excluir esse subreddit?</string>
     <string name="choose_sync_time">Escolher um tempo de sincronização</string>
     <string name="account_suspended">Esta conta está suspensa</string>
