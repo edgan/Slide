@@ -131,6 +131,12 @@ android {
     }
 }
 
+configurations {
+    all {
+        exclude module: 'httpclient'
+    }
+}
+
 githubRelease {
     token = githubProperties["githubToken"]
     owner = "edgan"
