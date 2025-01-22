@@ -466,7 +466,8 @@
     <string name="backup_btn_restore_file">Restore from file</string>
     <string name="backup_confirm">Are you sure you want to backup? Your previous backup will be overwritten</string>
     <string name="backup_restore_confirm">Are you sure you want to restore? Your current settings will be overwritten</string>
-
+    <string name="backup_failed_msg">Backup failed. Please try again later.</string>
+    <string name="backup_restore_failed_msg">Restore failed. Please ensure a valid backup exists and try again.</string>
 
     <!-- Vote -->
     <string name="vote_err">Error casting vote!</string>

@@ -22,10 +22,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.http.ByteArrayContent;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.FileList;
@@ -39,10 +40,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.List;
+import java.util.Date;
 
 import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.R;
@@ -50,6 +51,9 @@ import me.edgan.redditslide.util.FileUtil;
 import me.edgan.redditslide.util.LayoutUtils;
 import me.edgan.redditslide.util.LogUtil;
 
+/**
+ * Handles backing up and restoring app settings both locally and to Google Drive.
+ */
 public class SettingsBackup extends BaseActivityAnim {
 
     private static final String TAG = "SettingsBackup";
@@ -59,7 +63,7 @@ public class SettingsBackup extends BaseActivityAnim {
     private static final int RC_AUTHORIZATION = 101;
     private static final int RC_OPEN_DOCUMENT = 102;
 
-    // Google Sign-In client
+    // Google sign-in client
     private GoogleSignInClient mGoogleSignInClient;
 
     // Google Drive service
@@ -68,11 +72,14 @@ public class SettingsBackup extends BaseActivityAnim {
     // Progress dialog
     private MaterialDialog progress;
 
-    // Other fields
-    private int errors;
-
     // File created during "backup to directory"
     private File backedup;
+
+    // For counting errors during tasks
+    private int errors = 0;
+
+    // Common single file name on Google Drive
+    private static final String DRIVE_BACKUP_FILENAME = "shared_prefs_backup.txt";
 
     private HttpTransport HTTP_TRANSPORT;
 
@@ -89,7 +96,7 @@ public class SettingsBackup extends BaseActivityAnim {
         setContentView(R.layout.activity_settings_sync);
         setupAppBar(R.id.toolbar, R.string.settings_title_backup, true, true);
 
-        // Initialize Google Sign-In
+        // Initialize Google sign-in
         initializeGoogleSignIn();
 
         // Setup UI elements and listeners
@@ -110,10 +117,10 @@ public class SettingsBackup extends BaseActivityAnim {
     }
 
     /**
-     * Initialize Google Sign-In options and client.
+     * Initialize Google sign-in options and client.
      */
     private void initializeGoogleSignIn() {
-        Log.d(TAG, "Initializing Google Sign-In options");
+        Log.d(TAG, "Initializing Google sign-in options");
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(
                         new Scope(DriveScopes.DRIVE_FILE),
@@ -160,7 +167,7 @@ public class SettingsBackup extends BaseActivityAnim {
     }
 
     /**
-     * Handle the Backup button click.
+     * Handle the Backup-to-Google-Drive button click.
      */
     private void handleBackup() {
         Log.d(TAG, "handleBackup() called.");
@@ -179,44 +186,14 @@ public class SettingsBackup extends BaseActivityAnim {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.general_confirm)
                 .setMessage(R.string.backup_confirm)
-                .setPositiveButton(R.string.btn_ok, (dialog, whichButton) -> performBackup())
+                .setPositiveButton(R.string.btn_ok, (dialog, whichButton) -> new BackupToDriveAsyncTask().execute())
                 .setNegativeButton(R.string.btn_no, null)
                 .setCancelable(false)
                 .show();
     }
 
     /**
-     * Perform the backup operation by uploading shared preferences to Google Drive.
-     */
-    private void performBackup() {
-        Log.d(TAG, "performBackup() called.");
-        File prefsDir = new File(getApplicationInfo().dataDir, "shared_prefs");
-
-        if (prefsDir.exists() && prefsDir.isDirectory()) {
-            String[] list = prefsDir.list();
-            if (list == null || list.length == 0) {
-                Log.w(TAG, "No prefs found in shared_prefs directory.");
-                showErrorDialog(R.string.backup_no_prefs_found, R.string.backup_no_prefs_found_msg);
-                return;
-            }
-
-            // Show progress dialog
-            progress = new MaterialDialog.Builder(this)
-                    .title(R.string.backup_backing_up)
-                    .progress(false, list.length)
-                    .cancelable(false)
-                    .build();
-            progress.show();
-
-            new BackupAsyncTask().execute(list);
-        } else {
-            Log.w(TAG, "No shared_prefs directory found.");
-            showErrorDialog(R.string.backup_no_prefs_dir, R.string.backup_no_prefs_dir_msg);
-        }
-    }
-
-    /**
-     * Handle the Restore button click.
+     * Handle the Restore-from-Google-Drive button click.
      */
     private void handleRestore() {
         Log.d(TAG, "handleRestore() called.");
@@ -235,30 +212,14 @@ public class SettingsBackup extends BaseActivityAnim {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.general_confirm)
                 .setMessage(R.string.backup_restore_confirm)
-                .setPositiveButton(R.string.btn_ok, (dialog, whichButton) -> performRestore())
+                .setPositiveButton(R.string.btn_ok, (dialog, whichButton) -> new RestoreFromDriveAsyncTask().execute())
                 .setNegativeButton(R.string.btn_no, null)
                 .setCancelable(false)
                 .show();
     }
 
     /**
-     * Perform the restore operation by downloading shared preferences from Google Drive.
-     */
-    private void performRestore() {
-        Log.d(TAG, "performRestore() called.");
-        progress = new MaterialDialog.Builder(this)
-                .title(R.string.backup_restoring)
-                .content(R.string.misc_please_wait)
-                .cancelable(false)
-                .progress(true, 0)
-                .build();
-        progress.show();
-
-        new RestoreAsyncTask().execute();
-    }
-
-    /**
-     * Show dialog to choose backup to directory options.
+     * Show dialog to choose backup to directory options (local .txt).
      */
     private void showBackupToDirDialog() {
         Log.d(TAG, "showBackupToDirDialog() called.");
@@ -273,7 +234,7 @@ public class SettingsBackup extends BaseActivityAnim {
     }
 
     /**
-     * Open a file picker to select a backup file for restoration.
+     * Open a file picker to select a backup file for local restoration.
      */
     private void openRestoreFile() {
         Log.d(TAG, "openRestoreFile() called.");
@@ -284,7 +245,7 @@ public class SettingsBackup extends BaseActivityAnim {
     }
 
     /**
-     * Request Google Sign-In.
+     * Request Google sign-in.
      */
     private void requestSignIn() {
         Log.d(TAG, "requestSignIn() - launching Google sign-in intent.");
@@ -293,10 +254,6 @@ public class SettingsBackup extends BaseActivityAnim {
 
     /**
      * Handle the result from activities like sign-in and file picker.
-     *
-     * @param requestCode The integer request code originally supplied to startActivityForResult().
-     * @param resultCode  The integer result code returned by the child activity.
-     * @param data        An Intent, which can return result data to the caller.
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -310,7 +267,7 @@ public class SettingsBackup extends BaseActivityAnim {
             case RC_AUTHORIZATION:
                 if (resultCode == Activity.RESULT_OK) {
                     Log.d(TAG, "RC_AUTHORIZATION: user granted authorization. Retrying if needed.");
-                    // Retry the failed operation if necessary
+                    // You can retry the last operation if needed
                 } else {
                     Log.w(TAG, "RC_AUTHORIZATION: user denied or canceled authorization.");
                 }
@@ -324,9 +281,7 @@ public class SettingsBackup extends BaseActivityAnim {
     }
 
     /**
-     * Handle the result of the Google Sign-In intent.
-     *
-     * @param data The returned Intent from sign-in.
+     * Handle the result of the Google sign-in intent.
      */
     private void handleSignInResult(Intent data) {
         Log.d(TAG, "handleSignInResult() called.");
@@ -343,10 +298,10 @@ public class SettingsBackup extends BaseActivityAnim {
                         // If we had requested a backup or restore after sign-in, proceed now
                         if (backupRequestedAfterSignIn) {
                             backupRequestedAfterSignIn = false;
-                            performBackup();
+                            new BackupToDriveAsyncTask().execute();
                         } else if (restoreRequestedAfterSignIn) {
                             restoreRequestedAfterSignIn = false;
-                            performRestore();
+                            new RestoreFromDriveAsyncTask().execute();
                         }
                     }
                 } catch (Exception e) {
@@ -358,10 +313,7 @@ public class SettingsBackup extends BaseActivityAnim {
     }
 
     /**
-     * Handle the result from the file picker intent.
-     *
-     * @param resultCode The integer result code returned by the child activity.
-     * @param data       An Intent, which can return result data to the caller.
+     * Handle the result from the local file picker intent.
      */
     private void handleFilePickerResult(int resultCode, Intent data) {
         Log.d(TAG, "handleFilePickerResult: resultCode=" + resultCode + ", data=" + data);
@@ -389,9 +341,6 @@ public class SettingsBackup extends BaseActivityAnim {
 
     /**
      * Show an error dialog with the specified title and message.
-     *
-     * @param titleResId   The resource ID of the title string.
-     * @param messageResId The resource ID of the message string.
      */
     private void showErrorDialog(int titleResId, int messageResId) {
         Log.d(TAG, "showErrorDialog: title=" + titleResId + ", message=" + messageResId);
@@ -404,173 +353,203 @@ public class SettingsBackup extends BaseActivityAnim {
     }
 
     /**
-     * Asynchronous task to perform backup (upload) to Drive.
+     * Asynchronous task to bundle all shared prefs into a single string
+     * and upload/overwrite "shared_prefs_backup.txt" in Google Drive appDataFolder.
      */
-    private class BackupAsyncTask extends AsyncTask<String[], Void, Void> {
-        @Override
-        protected Void doInBackground(String[]... params) {
-            String[] prefsList = params[0];
-            for (String prefFilename : prefsList) {
-                // Skip some known irrelevant files
-                if (!prefFilename.contains("com.google")
-                        && !prefFilename.contains("cache")
-                        && !prefFilename.contains("STACKTRACE")) {
-                    File localFile = new File(getApplicationInfo().dataDir + "/shared_prefs/" + prefFilename);
-                    String content = readFileFully(localFile);
+    private class BackupToDriveAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
+        @Override
+        protected void onPreExecute() {
+            Log.d(TAG, "BackupToDriveAsyncTask: started");
+            progress = new MaterialDialog.Builder(SettingsBackup.this)
+                    .title(R.string.backup_backing_up)
+                    .content(R.string.misc_please_wait)
+                    .cancelable(false)
+                    .progress(true, 0)
+                    .build();
+            progress.show();
+            errors = 0;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            // Build the entire backup as a single string in memory
+            File prefsDir = new File(getApplicationInfo().dataDir, "shared_prefs");
+            if (!prefsDir.exists() || !prefsDir.isDirectory()) {
+                Log.w(TAG, "No shared_prefs directory found for Drive backup.");
+                return false;
+            }
+
+            String[] list = prefsDir.list();
+            if (list == null) {
+                Log.w(TAG, "No preference files found to backup for Drive.");
+                return false;
+            }
+
+            StringBuilder backupBuilder = new StringBuilder();
+            backupBuilder.append("Slide_backupEND>");  // starting marker
+
+            for (String s : list) {
+                if (!s.contains("cache") && !s.contains("ion-cookies") && !s.contains("albums")
+                        && !s.contains("STACKTRACE") && !s.contains("com.google")) {
+
+                    File fileToBackup = new File(prefsDir, s);
+                    String content = readFileFully(fileToBackup);
                     if (content != null) {
-                        Log.d(TAG, "Uploading file: " + prefFilename + " (size=" + content.length() + ")");
-                        uploadFile(prefFilename, content);
+                        backupBuilder.append("<START").append(s).append(">");
+                        backupBuilder.append(content);
+                        backupBuilder.append("END>");
+                        Log.d(TAG, "Adding file to single backup: " + s);
                     } else {
-                        Log.w(TAG, "File content was null for: " + prefFilename);
+                        Log.w(TAG, "Content was null for local file: " + s);
                     }
                 } else {
-                    Log.d(TAG, "Skipping file: " + prefFilename);
+                    Log.d(TAG, "Skipping local file: " + s);
                 }
-                publishProgress(); // Increment progress
             }
-            return null;
+
+            // Convert entire backup string to bytes for upload
+            byte[] backupData = backupBuilder.toString().getBytes();
+
+            // Check if there's an existing backup file named shared_prefs_backup.txt, if so we update; otherwise create
+            try {
+                String fileId = findDriveBackupFileId();
+                if (fileId == null) {
+                    // Create new file
+                    com.google.api.services.drive.model.File fileMetadata =
+                            new com.google.api.services.drive.model.File();
+                    fileMetadata.setName(DRIVE_BACKUP_FILENAME);
+                    fileMetadata.setParents(Collections.singletonList("appDataFolder"));
+
+                    ByteArrayContent contentStream = new ByteArrayContent("text/plain", backupData);
+                    mDriveService.files().create(fileMetadata, contentStream)
+                            .setFields("id")
+                            .execute();
+                    Log.d(TAG, "Created new backup file on Drive: " + DRIVE_BACKUP_FILENAME);
+                } else {
+                    // Update existing file
+                    ByteArrayContent contentStream = new ByteArrayContent("text/plain", backupData);
+                    mDriveService.files().update(fileId, null, contentStream)
+                            .execute();
+                    Log.d(TAG, "Updated existing backup file on Drive: " + DRIVE_BACKUP_FILENAME);
+                }
+            } catch (UserRecoverableAuthIOException urae) {
+                Log.w(TAG, "UserRecoverableAuthIOException while uploading single backup. Requesting auth again.");
+                startActivityForResult(urae.getIntent(), RC_AUTHORIZATION);
+                return false;
+            } catch (IOException e) {
+                Log.e(TAG, "Error uploading single-file backup to Drive", e);
+                errors++;
+                return false;
+            }
+            return (errors == 0);
         }
 
         @Override
-        protected void onProgressUpdate(Void... values) {
-            if (progress != null) {
-                progress.incrementProgress(1);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Boolean success) {
             if (progress != null) {
                 progress.dismiss();
             }
-            new AlertDialog.Builder(SettingsBackup.this)
-                    .setTitle(R.string.backup_success)
-                    .setPositiveButton(R.string.btn_close, (dialog, which) -> finish())
-                    .setCancelable(false)
-                    .show();
+            if (success) {
+                new AlertDialog.Builder(SettingsBackup.this)
+                        .setTitle(R.string.backup_success)
+                        .setPositiveButton(R.string.btn_close, (dialog, which) -> finish())
+                        .setCancelable(false)
+                        .show();
+            } else {
+                showErrorDialog(R.string.err_general, R.string.backup_failed_msg);
+            }
         }
 
         /**
-         * Upload a single file to Google Drive App Folder.
-         *
-         * @param fileName    The name of the file to upload.
-         * @param fileContent The content of the file.
+         * Search for an existing "shared_prefs_backup.txt" in the appDataFolder. Return its fileId or null if not found.
          */
-        private void uploadFile(String fileName, String fileContent) {
-            try {
-                com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
-                fileMetadata.setName(fileName);
-                fileMetadata.setParents(Collections.singletonList("appDataFolder"));
-
-                ByteArrayContent contentStream = new ByteArrayContent("text/xml", fileContent.getBytes());
-                mDriveService.files().create(fileMetadata, contentStream)
-                        .setFields("id")
-                        .execute();
-                Log.d(TAG, "Uploaded file: " + fileName);
-            } catch (com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException e) {
-                Log.w(TAG, "UserRecoverableAuthIOException while uploading, requesting auth again.");
-                startActivityForResult(e.getIntent(), RC_AUTHORIZATION);
-            } catch (IOException e) {
-                Log.e(TAG, "Error uploading file: " + fileName, e);
-                errors++;
+        private String findDriveBackupFileId() throws IOException {
+            FileList result = mDriveService.files().list()
+                    .setSpaces("appDataFolder")
+                    .setFields("files(id, name)")
+                    .execute();
+            if (result.getFiles() != null && !result.getFiles().isEmpty()) {
+                for (com.google.api.services.drive.model.File file : result.getFiles()) {
+                    if (DRIVE_BACKUP_FILENAME.equals(file.getName())) {
+                        return file.getId();
+                    }
+                }
             }
+            return null;
         }
     }
 
     /**
-     * Asynchronous task to list & prepare to restore Drive files.
+     * Asynchronous task to download and restore the single "shared_prefs_backup.txt" from Drive.
      */
-    private class RestoreAsyncTask extends AsyncTask<Void, Integer, List<com.google.api.services.drive.model.File>> {
+    private class RestoreFromDriveAsyncTask extends AsyncTask<Void, Void, Boolean> {
+
         @Override
-        protected List<com.google.api.services.drive.model.File> doInBackground(Void... voids) {
-            List<com.google.api.services.drive.model.File> filesToRestore = new ArrayList<>();
+        protected void onPreExecute() {
+            Log.d(TAG, "RestoreFromDriveAsyncTask: started");
+            progress = new MaterialDialog.Builder(SettingsBackup.this)
+                    .title(R.string.backup_restoring)
+                    .content(R.string.misc_please_wait)
+                    .cancelable(false)
+                    .progress(true, 0)
+                    .build();
+            progress.show();
+            errors = 0;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
             try {
+                // Search for our single backup file in Drive
+                String fileId = null;
                 FileList result = mDriveService.files().list()
                         .setSpaces("appDataFolder")
                         .setFields("files(id, name)")
                         .execute();
-                if (result.getFiles() != null) {
-                    filesToRestore.addAll(result.getFiles());
+                if (result.getFiles() != null && !result.getFiles().isEmpty()) {
+                    for (com.google.api.services.drive.model.File file : result.getFiles()) {
+                        if (DRIVE_BACKUP_FILENAME.equals(file.getName())) {
+                            fileId = file.getId();
+                            break;
+                        }
+                    }
                 }
-                Log.d(TAG, "Drive files found: " + filesToRestore.size());
-            } catch (com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException e) {
-                Log.w(TAG, "UserRecoverableAuthIOException in restore listing, requesting auth again.");
-                startActivityForResult(e.getIntent(), RC_AUTHORIZATION);
+
+                if (fileId == null) {
+                    Log.w(TAG, "No single backup file named " + DRIVE_BACKUP_FILENAME + " found in Drive.");
+                    return false;
+                }
+
+                // Download the file content
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                mDriveService.files().get(fileId)
+                        .executeMediaAndDownloadTo(outputStream);
+                String data = outputStream.toString();
+                Log.d(TAG, "Downloaded " + data.length() + " bytes from: " + DRIVE_BACKUP_FILENAME);
+
+                // Parse the single-file backup just like local restore
+                return restoreSharedPrefsFromString(data);
+
+            } catch (UserRecoverableAuthIOException urae) {
+                Log.w(TAG, "UserRecoverableAuthIOException while downloading single backup. Requesting auth again.");
+                startActivityForResult(urae.getIntent(), RC_AUTHORIZATION);
             } catch (IOException e) {
-                Log.e(TAG, "Error listing files", e);
+                Log.e(TAG, "Error downloading single-file backup from Drive", e);
                 errors++;
             }
-            return filesToRestore;
+            return false;
         }
 
         @Override
-        protected void onPostExecute(List<com.google.api.services.drive.model.File> files) {
+        protected void onPostExecute(Boolean success) {
             if (progress != null) {
                 progress.dismiss();
             }
 
-            if (files.isEmpty()) {
-                Log.w(TAG, "No files found in Drive to restore.");
-                showErrorDialog(R.string.backup_no_files, R.string.backup_no_files_msg);
+            if (!success) {
+                showErrorDialog(R.string.err_general, R.string.backup_restore_failed_msg);
                 return;
-            }
-
-            Log.d(TAG, "Found " + files.size() + " files in Drive appDataFolder to restore.");
-            progress = new MaterialDialog.Builder(SettingsBackup.this)
-                    .title(R.string.backup_restoring)
-                    .progress(false, files.size())
-                    .cancelable(false)
-                    .build();
-            progress.show();
-
-            new RestoreFilesAsyncTask(files).execute();
-        }
-    }
-
-    /**
-     * Asynchronous task to download and restore each file from Google Drive.
-     */
-    private class RestoreFilesAsyncTask extends AsyncTask<Void, Integer, Void> {
-        private final List<com.google.api.services.drive.model.File> files;
-
-        RestoreFilesAsyncTask(List<com.google.api.services.drive.model.File> files) {
-            this.files = files;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            for (com.google.api.services.drive.model.File driveFile : files) {
-                String fileId = driveFile.getId();
-                String fileName = driveFile.getName();
-
-                Log.d(TAG, "Downloading file from Drive: name=" + fileName + ", id=" + fileId);
-                String content = downloadFileContent(fileId);
-                if (content != null) {
-                    Log.d(TAG, "Writing file locally: " + fileName + " (size=" + content.length() + ")");
-                    writeStringToFile(
-                            new File(getApplicationInfo().dataDir + "/shared_prefs/" + fileName),
-                            content
-                    );
-                } else {
-                    Log.w(TAG, "Content was null for: " + fileName);
-                }
-                publishProgress(1);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            if (progress != null) {
-                progress.incrementProgress(1);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            if (progress != null) {
-                progress.dismiss();
             }
 
             // List the shared_prefs directory to confirm the new files are there
@@ -580,71 +559,65 @@ public class SettingsBackup extends BaseActivityAnim {
                     .setTitle(R.string.backup_restore_settings)
                     .setMessage(R.string.backup_restarting)
                     .setOnDismissListener(dialog -> {
-                        Log.d(TAG, "ProcessPhoenix.triggerRebirth() called from onDismiss");
+                        Log.d(TAG, "ProcessPhoenix.triggerRebirth() called from onDismiss (Drive restore).");
                         ProcessPhoenix.triggerRebirth(SettingsBackup.this);
                     })
                     .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
-                        Log.d(TAG, "ProcessPhoenix.triggerRebirth() called from OK button");
+                        Log.d(TAG, "ProcessPhoenix.triggerRebirth() called from OK button (Drive restore).");
                         ProcessPhoenix.triggerRebirth(SettingsBackup.this);
                     })
                     .setCancelable(false)
                     .show();
         }
-
-        /**
-         * Download the content of a file from Google Drive.
-         *
-         * @param fileId The ID of the file to download.
-         * @return The content of the file as a String, or null if failed.
-         */
-        private String downloadFileContent(String fileId) {
-            try {
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                mDriveService.files().get(fileId)
-                        .executeMediaAndDownloadTo(outputStream);
-                String data = outputStream.toString();
-                Log.d(TAG, "Downloaded " + data.length() + " bytes from fileId=" + fileId);
-                return data;
-            } catch (com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException e) {
-                Log.w(TAG, "UserRecoverableAuthIOException while downloading, requesting auth again.");
-                startActivityForResult(e.getIntent(), RC_AUTHORIZATION);
-            } catch (IOException e) {
-                Log.e(TAG, "Error downloading file: " + fileId, e);
-                errors++;
-            }
-            return null;
-        }
     }
 
     /**
-     * Helper method to list the shared_prefs directory contents for debugging.
-     * @param contextMessage Extra message to clarify when/why we're listing.
+     * Restore the shared_prefs contents from a single large string that uses the local-file markers.
+     * @param data The entire backup string containing multiple files.
+     * @return true if success, false otherwise.
      */
-    private void listSharedPrefsDirectory(String contextMessage) {
-        File prefsDir = new File(getApplicationInfo().dataDir, "shared_prefs");
-        if (!prefsDir.exists() || !prefsDir.isDirectory()) {
-            Log.w(TAG, contextMessage + ": shared_prefs directory not found.");
-            return;
+    private boolean restoreSharedPrefsFromString(String data) {
+        try {
+            if (!data.contains("Slide_backupEND>")) {
+                Log.w(TAG, "Backup file did not contain 'Slide_backupEND>' marker, likely invalid.");
+                return false;
+            }
+            // Example data is:
+            // Slide_backupEND><STARTsomefile.xml>filecontentEND><STARTotherfile.xml>filecontentEND> ...
+            String[] files = data.split("END>");
+            // files[0] will contain "Slide_backupEND>", skip it
+            for (int i = 1; i < files.length; i++) {
+                String innerFile = files[i];
+                // Example: <STARTfilename.xml>content
+                int startIndex = innerFile.indexOf("<START");
+                if (startIndex == -1) {
+                    Log.w(TAG, "Skipping malformed file block: " + innerFile);
+                    continue;
+                }
+                // substring from 6 chars after <START to the next '>'
+                String name = innerFile.substring(startIndex + 6, innerFile.indexOf(">", startIndex));
+                String fileContent = innerFile.substring(innerFile.indexOf(">", startIndex) + 1);
+
+                File newF = new File(getApplicationInfo().dataDir + "/shared_prefs/" + name);
+                Log.d(TAG, "Restoring local file: " + name + " (size=" + fileContent.length() + ")");
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter(newF))) {
+                    bw.write(fileContent);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Exception while parsing single-file backup data", e);
+            return false;
         }
-        String[] localPrefs = prefsDir.list();
-        if (localPrefs == null || localPrefs.length == 0) {
-            Log.w(TAG, contextMessage + ": No files in shared_prefs directory.");
-            return;
-        }
-        Log.d(TAG, contextMessage + ": listing shared_prefs files...");
-        for (String file : localPrefs) {
-            File f = new File(prefsDir, file);
-            Log.d(TAG, " - " + file + " (size=" + f.length() + ")");
-        }
+        return true;
     }
 
     /**
      * Asynchronous task to perform backup operations to a local directory (e.g. /Downloads).
-     *
      * @param personal Whether to exclude certain personal data.
      */
     private void backupToDir(final boolean personal) {
         new AsyncTask<Void, Void, Void>() {
+
             @Override
             protected void onPreExecute() {
                 Log.d(TAG, "backupToDir() started, personal=" + personal);
@@ -663,27 +636,26 @@ public class SettingsBackup extends BaseActivityAnim {
                 if (prefsDir.exists() && prefsDir.isDirectory()) {
                     String[] list = prefsDir.list();
                     if (list == null) {
-                        Log.w(TAG, "No preference files found to backup in local directory");
+                        Log.w(TAG, "No preference files found to backup locally.");
                         return null;
                     }
 
                     File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                     downloadsDir.mkdirs();
 
-                    backedup = new File(downloadsDir,
-                            "Slide" +
-                                    new java.text.SimpleDateFormat("-yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().getTime()) +
-                                    (!personal ? "-personal" : "") +
-                                    ".txt");
+                    String timeStamp = new SimpleDateFormat("-yyyy-MM-dd-HH-mm-ss").format(new Date());
+                    String personalSuffix = !personal ? "-personal" : "";
+                    backedup = new File(downloadsDir, "Slide" + timeStamp + personalSuffix + ".txt");
+
                     try {
                         backedup.createNewFile();
                         try (BufferedWriter bw = new BufferedWriter(new FileWriter(backedup))) {
                             bw.write("Slide_backupEND>");
                             for (String s : list) {
-                                // Skip some known irrelevant files
+                                // Skip some known irrelevant/personal files
                                 if (!s.contains("cache") && !s.contains("ion-cookies") && !s.contains("albums")
-                                        && !s.contains("STACKTRACE") && !s.contains("com.google") &&
-                                        (!personal || (!s.contains("SUBSNEW") && !s.contains("appRestart")
+                                        && !s.contains("STACKTRACE") && !s.contains("com.google")
+                                        && (!personal || (!s.contains("SUBSNEW") && !s.contains("appRestart")
                                                 && !s.contains("AUTH") && !s.contains("TAGS")
                                                 && !s.contains("SEEN") && !s.contains("HIDDEN")
                                                 && !s.contains("HIDDEN_POSTS")))) {
@@ -698,7 +670,6 @@ public class SettingsBackup extends BaseActivityAnim {
                                     } else {
                                         Log.w(TAG, "Content was null for local file: " + s);
                                     }
-                                    publishProgress();
                                 } else {
                                     Log.d(TAG, "Skipping local file: " + s);
                                 }
@@ -759,47 +730,24 @@ public class SettingsBackup extends BaseActivityAnim {
         protected Boolean doInBackground(Void... voids) {
             Log.d(TAG, "RestoreFromFileAsyncTask started for URI: " + fileUri);
             StringBuilder fw = new StringBuilder();
-            try {
-                InputStream is = getContentResolver().openInputStream(fileUri);
-                if (is == null) {
+            try (InputStream is = getContentResolver().openInputStream(fileUri);
+                 BufferedReader reader = (is == null) ? null : new BufferedReader(new InputStreamReader(is))) {
+
+                if (reader == null) {
                     Log.e(TAG, "Could not open InputStream for fileUri: " + fileUri);
                     return false;
                 }
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
-                    int c = reader.read();
-                    while (c != -1) {
-                        fw.append((char) c);
-                        c = reader.read();
-                    }
+
+                int c;
+                while ((c = reader.read()) != -1) {
+                    fw.append((char) c);
                 }
                 String read = fw.toString();
                 Log.d(TAG, "Read " + read.length() + " characters from backup file.");
-                if (read.contains("Slide_backupEND>")) {
-                    String[] files = read.split("END>");
-                    // files[0] will contain "Slide_backupEND>", skip it
-                    for (int i = 1; i < files.length; i++) {
-                        String innerFile = files[i];
-                        // Example: <STARTfilename.xml>content
-                        int startIndex = innerFile.indexOf("<START");
-                        if (startIndex == -1) {
-                            Log.w(TAG, "Skipping malformed file block: " + innerFile);
-                            continue;
-                        }
-                        // substring from 6 chars after <START to the closing >
-                        String name = innerFile.substring(startIndex + 6, innerFile.indexOf(">", startIndex));
-                        String fileContent = innerFile.substring(innerFile.indexOf(">", startIndex) + 1);
 
-                        File newF = new File(getApplicationInfo().dataDir + "/shared_prefs/" + name);
-                        Log.d(TAG, "Restoring local file: " + name + " (size=" + fileContent.length() + ")");
-                        try (BufferedWriter bw = new BufferedWriter(new FileWriter(newF))) {
-                            bw.write(fileContent);
-                        }
-                    }
-                    return true;
-                } else {
-                    Log.w(TAG, "Backup file did not contain 'Slide_backupEND>' marker, likely invalid.");
-                    return false;
-                }
+                // Reuse same parse logic as in restoreSharedPrefsFromString
+                return restoreSharedPrefsFromString(read);
+
             } catch (Exception e) {
                 Log.e(TAG, "Exception while restoring from fileUri: " + fileUri, e);
                 return false;
@@ -819,11 +767,11 @@ public class SettingsBackup extends BaseActivityAnim {
                         .setTitle(R.string.backup_restore_settings)
                         .setMessage(R.string.backup_restarting)
                         .setOnDismissListener(dialog -> {
-                            Log.d(TAG, "ProcessPhoenix.triggerRebirth() called from onDismiss for local file restore.");
+                            Log.d(TAG, "ProcessPhoenix.triggerRebirth() from onDismiss for local file restore.");
                             ProcessPhoenix.triggerRebirth(SettingsBackup.this);
                         })
                         .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
-                            Log.d(TAG, "ProcessPhoenix.triggerRebirth() called from OK button for local file restore.");
+                            Log.d(TAG, "ProcessPhoenix.triggerRebirth() from OK button for local file restore.");
                             ProcessPhoenix.triggerRebirth(SettingsBackup.this);
                         })
                         .setCancelable(false)
@@ -837,7 +785,6 @@ public class SettingsBackup extends BaseActivityAnim {
 
     /**
      * Read the entire content of a file into a String.
-     *
      * @param file The file to read.
      * @return The file content as a String, or null if an error occurs.
      */
@@ -862,7 +809,6 @@ public class SettingsBackup extends BaseActivityAnim {
 
     /**
      * Write a String content to a file.
-     *
      * @param file    The file to write to.
      * @param content The content to write.
      */
@@ -873,6 +819,28 @@ public class SettingsBackup extends BaseActivityAnim {
         } catch (IOException e) {
             Log.e(TAG, "Error writing to file: " + file.getName(), e);
             errors++;
+        }
+    }
+
+    /**
+     * Helper method to list the shared_prefs directory contents for debugging.
+     * @param contextMessage Extra message to clarify when/why we're listing.
+     */
+    private void listSharedPrefsDirectory(String contextMessage) {
+        File prefsDir = new File(getApplicationInfo().dataDir, "shared_prefs");
+        if (!prefsDir.exists() || !prefsDir.isDirectory()) {
+            Log.w(TAG, contextMessage + ": shared_prefs directory not found.");
+            return;
+        }
+        String[] localPrefs = prefsDir.list();
+        if (localPrefs == null || localPrefs.length == 0) {
+            Log.w(TAG, contextMessage + ": No files in shared_prefs directory.");
+            return;
+        }
+        Log.d(TAG, contextMessage + ": listing shared_prefs files...");
+        for (String file : localPrefs) {
+            File f = new File(prefsDir, file);
+            Log.d(TAG, " - " + file + " (size=" + f.length() + ")");
         }
     }
 }
