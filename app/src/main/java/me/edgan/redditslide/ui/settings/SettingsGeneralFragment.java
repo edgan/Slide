@@ -443,7 +443,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                     if (hasValidPath) {
                         displayPath = StorageUtil.getDisplayPath(context, currentUri);
                     } else {
-                        displayPath = context.getString(R.string.settings_image_location_unset);
+                        displayPath = context.getString(R.string.settings_storage_location_unset);
                     }
 
                     locationView.post(
@@ -491,7 +491,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                                                     context,
                                                                     context.getString(
                                                                             R.string
-                                                                                    .settings_set_image_location,
+                                                                                    .settings_set_storage_location,
                                                                             path),
                                                                     Toast.LENGTH_LONG)
                                                             .show();
@@ -609,7 +609,8 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                             Toast.makeText(
                                             context,
                                             context.getString(
-                                                    R.string.settings_set_image_location, location),
+                                                    R.string.settings_set_storage_location,
+                                                    location),
                                             Toast.LENGTH_LONG)
                                     .show();
                         }
@@ -622,7 +623,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
             String loc =
                     Reddit.appRestart.getString(
                             "imagelocation",
-                            context.getString(R.string.settings_image_location_unset));
+                            context.getString(R.string.settings_storage_location_unset));
             setSaveLocationView.setText(loc);
         }
 
@@ -1399,8 +1400,8 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                                                         .replaceAll(
                                                                                 "\\s",
                                                                                 ""); // remove
-                                                                                     // whitespace
-                                                                                     // from input
+                                                        // whitespace
+                                                        // from input
                                                     }
                                                 })
                                         .positiveText(R.string.btn_add)

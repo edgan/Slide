@@ -8,13 +8,6 @@
     <string name="pro_upgrade_msg">Passez à Slide pour Reddit Pro pour profiter de nouvelles super fonctionnalités incluant:\n\n- Bloqueur de pub et mode lecture dans le navigateur intégré\n- Recadrez et annotez les images à téléverser\n- Mode colonnes personnalisable pour tablette\n- Mode nuit automatique\n- Visualisation de contenu en Shadowbox et galerie\n- Visualisation des commentaires en Shadowbox\n- Sauvegarde et restauration vers Google Drive et en fichier\n- Supportez un logiciel au code source ouvert et sans pub!\n\nVoulez-vous encourager Slide pour Reddit?</string>
     <string name="general_open_settings">Barre latérale</string>
     <string name="general_sub_sync">Synchronisation des abonnements</string>
-    <string name="general_gallerymode_ispro">Le mode galerie est un fonctionnalité Pro</string>
-    <string name="general_cropdraw_ispro">Recadrer et annoter les images téléversées est une fonctionnalité Pro</string>
-    <string name="general_shadowbox_comments_ispro">Le mode Shadowbox pour commentaires est une fonctionnalité Pro</string>
-    <string name="general_shadowbox_ispro">Le mode Shadowbox est une fonctionnalité Pro</string>
-    <string name="general_nighttheme_ispro">Mode nuit automatique est une fonctionnalité Pro</string>
-    <string name="general_backup_ispro">Sauvegarde des paramètres est une fonctionnalité Pro</string>
-    <string name="general_multicolumn_ispro">Les paramètres multi-colonnes sont une fonctionnalité Pro</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Message désenregistré</string>
     <string name="submission_info_saved">Message enregistré</string>
@@ -561,9 +554,9 @@
     <string name="settings_comment_crop">Rogner l\'image principale en vue de commentaire</string>
     <string name="settings_general_scroll_read">Marquer les articles comme vus après défilement</string>
     <string name="settings_link_chrome">Onglets personnalisés</string>
-    <string name="settings_image_location">Choisir la destination de l\'image / GIF</string>
-    <string name="settings_image_location_unset">Pas encore défini</string>
-    <string name="settings_set_image_location">Les images seront enregistrées dans %s</string>
+    <string name="settings_storage_location">Choisir la destination de l\'image / GIF</string>
+    <string name="settings_storage_location_unset">Pas encore défini</string>
+    <string name="settings_set_storage_location">Les images seront enregistrées dans %s</string>
     <string name="settings_general_immersive_mode">Mode plein écran immersif</string>
     <string name="settings_general_immersive_mode_desc">Masquer les barres d’état et de la navigation (expérimental)</string>
     <string name="settings_general_title_drawer_items">Éléments du tiroir</string>
@@ -743,7 +736,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Trier par</string>
     <string name="display">Affichage</string>
-    <string name="image_downloads">Images</string>
+    <string name="images">Images</string>
     <string name="app_theme">Thème de l\'application</string>
     <string name="tinting">Teinte</string>
     <string name="post_info">Informations du post</string>

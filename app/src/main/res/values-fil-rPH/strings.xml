@@ -7,12 +7,6 @@
     <string name="pro_upgrade_msg">I-upgrade sa Slide for Reddit Pro upang ma-enjoy ang ilang mga kahanga-hangang baong feature kabilang ang:\n\n taga-block ng Ad at Reader na mod sa Website view\n- mag-Crop at mag-draw ng mga imahe na i-upload\n- napapasadyang mode ng kolum ng tablet\n- awtomatikong panggabi na mod\n- Shadowbox at mga view ng nilalaman ng Gallery\n- view ng Shadowbox ng komento\n- i-Backup at i-restore sa Google drive at sa file\n- sumusuporta sa open source at ad-free na software!\n\nGusto mo bang suportahan ang Slide for Reddit?</string>
     <string name="general_open_settings">Panggilid na bar</string>
     <string name="general_sub_sync">Nagsi-sync ang mga suskripsyon</string>
-    <string name="general_gallerymode_ispro">Ang Gallery na mod ay isang Pro na feature</string>
-    <string name="general_cropdraw_ispro">Mag-crop at gumuhit sa na-upload na mga imahe ay isang Pro na feature</string>
-    <string name="general_shadowbox_comments_ispro">Ang comment shadowbox mod ay isang pro na feature</string>
-    <string name="general_shadowbox_ispro">Ang shadowbox box ay isang pro na feature</string>
-    <string name="general_nighttheme_ispro">Awtomatikong panggabi na mod ay isang pro na feature</string>
-    <string name="general_backup_ispro">Ang backup ng mga setting ay isang pro na feature</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Ang pagsusumite ay hindi nai-save</string>
     <string name="submission_info_saved">Ang pagsusumite ay nai-save</string>

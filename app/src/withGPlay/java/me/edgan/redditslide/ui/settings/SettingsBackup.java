@@ -1,35 +1,45 @@
 package me.edgan.redditslide.ui.settings;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.util.Log;
-import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi;
-import com.google.android.gms.drive.DriveContents;
-import com.google.android.gms.drive.DriveFile;
-import com.google.android.gms.drive.DriveFolder;
-import com.google.android.gms.drive.DriveId;
-import com.google.android.gms.drive.Metadata;
-import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.http.ByteArrayContent;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.FileList;
 import com.jakewharton.processphoenix.ProcessPhoenix;
+
+import me.edgan.redditslide.Activities.BaseActivityAnim;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.StorageUtil;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.Closeable;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -38,654 +48,855 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
-import me.edgan.redditslide.Activities.BaseActivityAnim;
-import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
-import me.edgan.redditslide.util.FileUtil;
-import me.edgan.redditslide.util.LayoutUtils;
-import me.edgan.redditslide.util.LogUtil;
-
+import java.util.Collections;
+import java.util.Date;
 
 /**
- * Created by ccrama on 3/5/2015.
+ * Created by ccrama on 3/5/2015 and updated by edgan on 1/21/2025.
+ *  Handles backing up and restoring app settings both locally via SAF and to Google Drive.
  */
-public class SettingsBackup extends BaseActivityAnim
-        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    MaterialDialog progress;
-    DriveFolder    appFolder;
-    String         title;
-    final private ResultCallback<DriveApi.MetadataBufferResult> newCallback  =
-            new ResultCallback<DriveApi.MetadataBufferResult>() {
-                @Override
-                public void onResult(DriveApi.MetadataBufferResult result) {
+public class SettingsBackup extends BaseActivityAnim {
 
-                    int i = 0;
-                    for (Metadata a : result.getMetadataBuffer()) {
-                        i++;
-                        title = a.getTitle();
-                        new RetrieveDriveFileContentsAsyncTask(title).execute(a.getDriveId());
+    private static final String TAG = "SettingsBackup";
 
+    // Request codes
+    private static final int RC_SIGN_IN = 100;
+    private static final int RC_AUTHORIZATION = 101;
+    private static final int RC_OPEN_DOCUMENT = 102; // used for local restore via SAF
 
-                    }
-                    progress = new MaterialDialog.Builder(SettingsBackup.this)
-                            .cancelable(false)
-                            .title(R.string.backup_restoring)
-                            .progress(false, i)
-                            .build();
-                    progress.show();
+    // Google sign-in client
+    private GoogleSignInClient mGoogleSignInClient;
 
+    // Google Drive service
+    private Drive mDriveService;
 
-                }
-            };
-    final private ResultCallback<DriveApi.MetadataBufferResult> newCallback2 =
-            new ResultCallback<DriveApi.MetadataBufferResult>() {
-                @Override
-                public void onResult(DriveApi.MetadataBufferResult result) {
+    // Progress dialog
+    private MaterialDialog progress;
 
-                    int i = 0;
-                    for (Metadata a : result.getMetadataBuffer()) {
-                        i++;
-                        title = a.getTitle();
-                        DriveFile file = a.getDriveId().asDriveFile();
+    // For counting errors during tasks
+    private int errors = 0;
 
-                        file.delete(mGoogleApiClient);
+    // Common single file name on Google Drive
+    private static final String DRIVE_BACKUP_FILENAME = "shared_prefs_backup.txt";
 
-                    }
-                    Drive.DriveApi.requestSync(mGoogleApiClient);
+    private HttpTransport HTTP_TRANSPORT;
 
-                    File prefsdir = new File(getApplicationInfo().dataDir, "shared_prefs");
+    // Flags to track whether user wanted to do certain actions after sign-in
+    private boolean backupRequestedAfterSignIn = false;
+    private boolean restoreRequestedAfterSignIn = false;
 
-                    if (prefsdir.exists() && prefsdir.isDirectory()) {
-
-                        String[] list = prefsdir.list();
-
-                        for (final String s : list) {
-                            if (!s.contains("com.google") && !s.contains("cache") && !s.contains(
-                                    "STACKTRACE")) {
-                                title = s;
-                                Drive.DriveApi.newDriveContents(mGoogleApiClient)
-                                        .setResultCallback(
-                                                new ResultCallback<DriveApi.DriveContentsResult>() {
-                                                    @Override
-                                                    public void onResult(
-                                                            DriveApi.DriveContentsResult result) {
-                                                        final String copy =
-                                                                getApplicationInfo().dataDir
-                                                                        + File.separator
-                                                                        + "shared_prefs"
-                                                                        + File.separator
-                                                                        + s;
-                                                        Log.v(LogUtil.getTag(),
-                                                                "LOCATION IS " + copy);
-                                                        if (!result.getStatus().isSuccess()) {
-                                                            return;
-                                                        }
-                                                        final DriveContents driveContents =
-                                                                result.getDriveContents();
-
-                                                        // Perform I/O off the UI thread.
-                                                        new Thread() {
-                                                            @Override
-                                                            public void run() {
-                                                                // write content to DriveContents
-                                                                OutputStream outputStream =
-                                                                        driveContents.getOutputStream();
-                                                                Writer writer =
-                                                                        new OutputStreamWriter(
-                                                                                outputStream);
-                                                                String content = null;
-                                                                File file = new File(
-                                                                        copy); // for ex foo.txt
-                                                                FileReader reader = null;
-                                                                try {
-                                                                    try {
-                                                                        reader = new FileReader(
-                                                                                file);
-                                                                        char[] chars =
-                                                                                new char[(int) file.length()];
-                                                                        reader.read(chars);
-                                                                        content = new String(chars);
-                                                                        Log.v(LogUtil.getTag(),
-                                                                                content);
-
-                                                                        reader.close();
-                                                                    } catch (IOException e) {
-                                                                        e.printStackTrace();
-                                                                    } finally {
-                                                                        if (reader != null) {
-                                                                            reader.close();
-                                                                        }
-                                                                    }
-
-                                                                    writer.write(content);
-                                                                    writer.close();
-                                                                } catch (Exception e) {
-                                                                    Log.e(LogUtil.getTag(),
-                                                                            e.getMessage());
-                                                                }
-
-                                                                MetadataChangeSet changeSet =
-                                                                        new MetadataChangeSet.Builder()
-                                                                                .setTitle(s)
-                                                                                .setMimeType(
-                                                                                        "text/xml")
-                                                                                .build();
-
-                                                                // create a file on root folder
-                                                                appFolder.createFile(
-                                                                        mGoogleApiClient, changeSet,
-                                                                        driveContents)
-                                                                        .setResultCallback(
-                                                                                fileCallback);
-                                                            }
-                                                        }.start();
-                                                    }
-                                                });
-                            } else {
-                                progress.setProgress(progress.getCurrentProgress() + 1);
-                                if (progress.getCurrentProgress() == progress.getMaxProgress()) {
-
-                                    new AlertDialog.Builder(SettingsBackup.this)
-                                            .setTitle(R.string.backup_success)
-                                            .setPositiveButton(R.string.btn_close, (dialog, which) ->
-                                                    finish())
-                                            .setCancelable(false)
-                                            .show();
-                                }
-                            }
-                        }
-                    }
-
-
-                }
-            };
-
-    int errors;
-    final private ResultCallback<DriveFolder.DriveFileResult> fileCallback =
-            new ResultCallback<DriveFolder.DriveFileResult>() {
-                @Override
-                public void onResult(DriveFolder.DriveFileResult result) {
-                    progress.setProgress(progress.getCurrentProgress() + 1);
-                    if (!result.getStatus().isSuccess()) {
-                        errors += 1;
-                        return;
-                    }
-
-                    if (progress.getCurrentProgress() == progress.getMaxProgress()) {
-
-                        new AlertDialog.Builder(SettingsBackup.this)
-                                .setTitle(R.string.backup_success)
-                                .setPositiveButton(R.string.btn_close, (dialog, which) ->
-                                        finish())
-                                .setCancelable(false)
-                                .show();
-                    }
-                }
-            };
-    private GoogleApiClient mGoogleApiClient;
+    // We’ll store the final URI of the newly created local backup file so we can offer to "View"
+    // it.
+    private Uri localBackupFileUri = null;
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        HTTP_TRANSPORT = new NetHttpTransport();
+
+        applyColorTheme();
+        setContentView(R.layout.activity_settings_sync);
+        setupAppBar(R.id.toolbar, R.string.settings_title_backup, true, true);
+
+        // Initialize Google sign-in
+        initializeGoogleSignIn();
+
+        // Setup UI elements and listeners
+        setupUI();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Check if already signed in
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null && mDriveService == null) {
+            Log.d(TAG, "Already signed in, initializing Drive service.");
+            initializeDriveService(account);
+        } else {
+            Log.d(TAG, "Not signed in or service is already initialized.");
+        }
+    }
+
+    /** Initialize Google sign-in options and client. */
+    private void initializeGoogleSignIn() {
+        Log.d(TAG, "Initializing Google sign-in options");
+        GoogleSignInOptions gso =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestScopes(
+                                new Scope(DriveScopes.DRIVE_FILE),
+                                new Scope(DriveScopes.DRIVE_APPDATA))
+                        .requestEmail()
+                        .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+    }
+
+    /**
+     * Initialize the Google Drive service with the signed-in account.
+     *
+     * @param account The GoogleSignInAccount obtained after sign-in.
+     */
+    private void initializeDriveService(GoogleSignInAccount account) {
+        Log.d(TAG, "Initializing Drive service for account: " + account.getEmail());
+        GoogleAccountCredential credential =
+                GoogleAccountCredential.usingOAuth2(
+                        this, Collections.singleton(DriveScopes.DRIVE_APPDATA));
+        credential.setSelectedAccount(account.getAccount());
+
+        try {
+            mDriveService =
+                    new Drive.Builder(HTTP_TRANSPORT, GsonFactory.getDefaultInstance(), credential)
+                            .setApplicationName(getString(R.string.app_name))
+                            .build();
+            Log.d(TAG, "Drive service initialized successfully.");
+        } catch (Exception e) {
+            Log.e(TAG, "Error initializing Drive service", e);
+            showErrorDialog(R.string.err_general, R.string.err_general);
+        }
+    }
+
+    /** Setup UI elements and their click listeners (keeping the base UI). */
+    private void setupUI() {
+        // Backup to Google Drive
+        findViewById(R.id.back).setOnClickListener(v -> handleBackup());
+        // Restore from Google Drive
+        findViewById(R.id.restore).setOnClickListener(v -> handleRestore());
+
+        // SAF-based local backup
+        findViewById(R.id.backfile).setOnClickListener(v -> showBackupToDirDialog());
+        // SAF-based local restore
+        findViewById(R.id.restorefile).setOnClickListener(v -> openRestoreFile());
+    }
+
+    /** Handle the Backup-to-Google-Drive button click */
+    private void handleBackup() {
+        Log.d(TAG, "handleBackup() called.");
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account == null) {
+            Log.d(TAG, "User not signed in, requesting sign in before backup.");
+            backupRequestedAfterSignIn = true;
+            requestSignIn();
+            return;
+        }
+
+        if (mDriveService == null) {
+            initializeDriveService(account);
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.general_confirm)
+                .setMessage(R.string.backup_confirm)
+                .setPositiveButton(
+                        R.string.btn_ok,
+                        (dialog, whichButton) -> new BackupToDriveAsyncTask().execute())
+                .setNegativeButton(R.string.btn_no, null)
+                .setCancelable(false)
+                .show();
+    }
+
+    /** Handle the Restore-from-Google-Drive button click */
+    private void handleRestore() {
+        Log.d(TAG, "handleRestore() called.");
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account == null) {
+            Log.d(TAG, "User not signed in, requesting sign in before restore.");
+            restoreRequestedAfterSignIn = true;
+            requestSignIn();
+            return;
+        }
+
+        if (mDriveService == null) {
+            initializeDriveService(account);
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.general_confirm)
+                .setMessage(R.string.backup_restore_confirm)
+                .setPositiveButton(
+                        R.string.btn_ok,
+                        (dialog, whichButton) -> new RestoreFromDriveAsyncTask().execute())
+                .setNegativeButton(R.string.btn_no, null)
+                .setCancelable(false)
+                .show();
+    }
+
+    /** Show dialog to choose backup-to-directory options */
+    private void showBackupToDirDialog() {
+        Log.d(TAG, "showBackupToDirDialog() called.");
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.backup_question)
+                .setPositiveButton(R.string.btn_ok, (dialog, which) -> backupToDir())
+                .setNeutralButton(R.string.btn_cancel, null)
+                .setCancelable(false)
+                .show();
+    }
+
+    /**
+     * Open a file picker to select a backup file for local restoration (SAF). This is the same
+     * basic UI from base, but we are using ACTION_OPEN_DOCUMENT with RC_OPEN_DOCUMENT. The actual
+     * reading is done in onActivityResult -> RestoreFromFileAsyncTask.
+     */
+    private void openRestoreFile() {
+        Log.d(TAG, "openRestoreFile() called.");
+
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setType("*/*"); // or "text/plain"
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        Uri treeUri = StorageUtil.getStorageUri(this);
+        if (treeUri != null) {
+            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, treeUri);
+        }
+
+        startActivityForResult(
+                Intent.createChooser(intent, getString(R.string.select_backup_file)),
+                RC_OPEN_DOCUMENT);
+    }
+
+    /** Request Google sign-in if needed. */
+    private void requestSignIn() {
+        Log.d(TAG, "requestSignIn() - launching Google sign-in intent.");
+        startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN);
+    }
+
+    /**
+     * Merged onActivityResult to handle: - Google sign-in - Google authorization - Local file open
+     * via SAF
+     */
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 24) {
-            if (resultCode == RESULT_OK) {
-                mGoogleApiClient.connect();
-            }
-        } else if (requestCode == 42) {
+
+        switch (requestCode) {
+            case RC_SIGN_IN:
+                handleSignInResult(data);
+                break;
+            case RC_AUTHORIZATION:
+                if (resultCode == Activity.RESULT_OK) {
+                    Log.d(TAG, "RC_AUTHORIZATION: user granted authorization. Retrying if needed.");
+                    // Retry last operation if needed
+                } else {
+                    Log.w(TAG, "RC_AUTHORIZATION: user denied or canceled authorization.");
+                }
+                break;
+            case RC_OPEN_DOCUMENT:
+                // SAF file picker result for local restore
+                handleFilePickerResult(resultCode, data);
+                break;
+            default:
+                // ...
+                break;
+        }
+    }
+
+    /** Handle the result of the Google sign-in intent */
+    private void handleSignInResult(Intent data) {
+        Log.d(TAG, "handleSignInResult() called.");
+        Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+        task.addOnCompleteListener(
+                this,
+                new OnCompleteListener<GoogleSignInAccount>() {
+                    @Override
+                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                        try {
+                            GoogleSignInAccount account = task.getResult(Exception.class);
+                            if (account != null) {
+                                Log.d(TAG, "Sign-in successful, email: " + account.getEmail());
+                                initializeDriveService(account);
+
+                                // If we had requested a backup or restore after sign-in, proceed
+                                // now
+                                if (backupRequestedAfterSignIn) {
+                                    backupRequestedAfterSignIn = false;
+                                    new BackupToDriveAsyncTask().execute();
+                                } else if (restoreRequestedAfterSignIn) {
+                                    restoreRequestedAfterSignIn = false;
+                                    new RestoreFromDriveAsyncTask().execute();
+                                }
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Sign-in failed", e);
+                            showErrorDialog(R.string.sign_in_failed, R.string.sign_in_failed_msg);
+                        }
+                    }
+                });
+    }
+
+    /** Handle the result from the local SAF file picker for restore. */
+    private void handleFilePickerResult(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            Uri fileUri = data.getData();
+            Log.d(TAG, "Selected local backup file URI: " + fileUri);
+
+            // Start async restore
             progress =
-                    new MaterialDialog.Builder(SettingsBackup.this).title(R.string.backup_restoring)
+                    new MaterialDialog.Builder(this)
+                            .title(R.string.backup_restoring)
                             .content(R.string.misc_please_wait)
                             .cancelable(false)
                             .progress(true, 1)
                             .build();
             progress.show();
 
-
-            if (data != null) {
-                Uri fileUri = data.getData();
-                Log.v(LogUtil.getTag(), "WORKED! " + fileUri.toString());
-
-                StringWriter fw = new StringWriter();
-                try {
-                    InputStream is = getContentResolver().openInputStream(fileUri);
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                    int c = reader.read();
-                    while (c != -1) {
-                        fw.write(c);
-                        c = reader.read();
-                    }
-                    String read = fw.toString();
-                    if (read.contains("Slide_backupEND>")) {
-
-                        String[] files = read.split("END>");
-                        progress.dismiss();
-                        progress = new MaterialDialog.Builder(SettingsBackup.this).title(
-                                R.string.backup_restoring)
-                                .progress(false, files.length - 1)
-                                .cancelable(false)
-                                .build();
-                        progress.show();
-                        for (int i = 1; i < files.length; i++) {
-                            String innerFile = files[i];
-                            String t = innerFile.substring(6, innerFile.indexOf(">"));
-                            innerFile = innerFile.substring(innerFile.indexOf(">") + 1
-                            );
-
-                            File newF = new File(getApplicationInfo().dataDir
-                                    + File.separator
-                                    + "shared_prefs"
-                                    + File.separator
-                                    + t);
-                            Log.v(LogUtil.getTag(), "WRITING TO " + newF.getAbsolutePath());
-                            try {
-                                FileWriter newfw = new FileWriter(newF);
-                                BufferedWriter bw = new BufferedWriter(newfw);
-                                bw.write(innerFile);
-                                bw.close();
-                                progress.setProgress(progress.getCurrentProgress() + 1);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                        new AlertDialog.Builder(SettingsBackup.this)
-                                .setTitle(R.string.backup_restore_settings)
-                                .setMessage(R.string.backup_restarting)
-                                .setOnDismissListener(dialog ->
-                                        ProcessPhoenix.triggerRebirth(SettingsBackup.this))
-                                .setPositiveButton(R.string.btn_ok, (dialog, which) ->
-                                        ProcessPhoenix.triggerRebirth(SettingsBackup.this))
-                                .setCancelable(false)
-                                .show();
-
-                    } else {
-                        progress.hide();
-                        new AlertDialog.Builder(SettingsBackup.this)
-                                .setTitle(R.string.err_not_valid_backup)
-                                .setMessage(R.string.err_not_valid_backup_msg)
-                                .setPositiveButton(R.string.btn_ok, null)
-                                .setCancelable(false)
-                                .show();
-                    }
-                } catch (Exception e) {
-                    progress.hide();
-                    e.printStackTrace();
-                    new AlertDialog.Builder(SettingsBackup.this)
-                            .setTitle(R.string.err_file_not_found)
-                            .setMessage(R.string.err_file_not_found_msg)
-                            .setPositiveButton(R.string.btn_ok, null)
-                            .setCancelable(false)
-                            .show();
-                }
-            } else {
-                progress.dismiss();
-                new AlertDialog.Builder(SettingsBackup.this)
-                        .setTitle(R.string.err_file_not_found)
-                        .setMessage(R.string.err_file_not_found_msg)
-                        .setPositiveButton(R.string.btn_ok, null)
-                        .setCancelable(false)
-                        .show();
-            }
-
+            new RestoreFromFileAsyncTask(fileUri).execute();
+        } else {
+            Log.w(TAG, "No file chosen or result not OK.");
+            showErrorDialog(R.string.err_file_not_found, R.string.err_file_not_found_msg);
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
+    /** SAF-based local backup to the user-chosen directory. */
+    private void backupToDir() {
+        Uri treeUri = StorageUtil.getStorageUri(this);
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        applyColorTheme();
-        setContentView(R.layout.activity_settings_sync);
-        setupAppBar(R.id.toolbar, R.string.settings_title_backup, true, true);
+        if (treeUri == null) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.err_general)
+                    .setMessage(R.string.set_storage_location)
+                    .setPositiveButton(R.string.btn_ok, (dialog, which) -> {})
+                    .setCancelable(false)
+                    .show();
+            return;
+        }
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(Drive.API)
-                .addScope(Drive.SCOPE_FILE)
-                .addScope(Drive.SCOPE_APPFOLDER)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-
-        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mGoogleApiClient.isConnected()) {
-                    new AlertDialog.Builder(SettingsBackup.this)
-                            .setTitle(R.string.general_confirm)
-                            .setMessage(R.string.backup_confirm)
-                            .setOnCancelListener(null)
-                            .setPositiveButton(R.string.btn_ok, (dialog, whichButton) -> {
-                                File prefsdir = new File(getApplicationInfo().dataDir, "shared_prefs");
-
-                                if (prefsdir.exists() && prefsdir.isDirectory()) {
-
-                                    String[] list = prefsdir.list();
-                                    progress = new MaterialDialog.Builder(
-                                            SettingsBackup.this).title(
-                                            R.string.backup_backing_up)
-                                            .progress(false, list.length)
-                                            .cancelable(false)
-                                            .build();
-                                    progress.show();
-                                    appFolder.listChildren(mGoogleApiClient)
-                                            .setResultCallback(newCallback2);
-
-                                }
-                            })
-                            .setNegativeButton(R.string.btn_no, null)
-                            .setCancelable(false)
-                            .show();
-                } else {
-                    new AlertDialog.Builder(SettingsBackup.this)
-                            .setTitle(R.string.settings_google)
-                            .setMessage(R.string.settings_google_msg)
-                            .setOnCancelListener(null)
-                            .setPositiveButton(R.string.btn_ok, null)
-                            .setCancelable(false)
-                            .show();
-                }
-            }
-        });
-
-
-        findViewById(R.id.restore).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mGoogleApiClient.isConnected()) {
-                    new AlertDialog.Builder(SettingsBackup.this)
-                            .setTitle(R.string.general_confirm)
-                            .setMessage(R.string.backup_restore_confirm)
-                            .setOnCancelListener(null)
-                            .setPositiveButton(R.string.btn_ok, (dialog, whichButton) -> {
-                                progress = new MaterialDialog.Builder(SettingsBackup.this)
-                                        .title(R.string.backup_restoring)
-                                        .content(R.string.misc_please_wait)
-                                        .cancelable(false)
-                                        .progress(true, 1)
-                                        .build();
-                                progress.show();
-                                appFolder.listChildren(mGoogleApiClient).setResultCallback(newCallback);
-                            })
-                            .setNegativeButton(R.string.btn_no, null)
-                            .setCancelable(false)
-                            .show();
-                } else {
-                    new AlertDialog.Builder(SettingsBackup.this)
-                            .setTitle(R.string.settings_google)
-                            .setMessage(R.string.settings_google_msg)
-                            // avoid that the dialog can be closed
-                            .setOnCancelListener(null)
-                            .setPositiveButton(R.string.btn_ok, null)
-                            .setCancelable(false)
-                            .show();
-                }
-
-            }
-        });
-        findViewById(R.id.backfile).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(SettingsBackup.this)
-                        .setTitle(R.string.include_personal_info)
-                        .setMessage(R.string.include_personal_info_msg)
-                        .setPositiveButton(R.string.btn_yes, (dialog, which) ->
-                                backupToDir(false))
-                        .setNegativeButton(R.string.btn_no, (dialog, which) ->
-                                backupToDir(true))
-                        .setNeutralButton(R.string.btn_cancel, null)
-                        .setCancelable(false)
-                        .show();
-            }
-        });
-
-
-        findViewById(R.id.restorefile).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("file/*");
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                String[] mimeTypes = {"text/plain"};
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-                startActivityForResult(intent, 42);
-            }
-        });
-    }
-
-    File file;
-
-    public void backupToDir(final boolean personal) {
-
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected void onPreExecute() {
-                progress = new MaterialDialog.Builder(SettingsBackup.this).cancelable(false)
+        progress =
+                new MaterialDialog.Builder(SettingsBackup.this)
                         .title(R.string.backup_backing_up)
-                        .progress(false, 40)
+                        .content(R.string.misc_please_wait)
                         .cancelable(false)
+                        .progress(true, 0)
                         .build();
+        progress.show();
 
-                progress.show();
-            }
+        new AsyncTask<Void, Void, Boolean>() {
+            private String errorMessage = null;
 
             @Override
-            protected Void doInBackground(Void... params) {
-                File prefsdir = new File(getApplicationInfo().dataDir, "shared_prefs");
-
-                if (prefsdir.exists() && prefsdir.isDirectory()) {
-                    String[] list = prefsdir.list();
-
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                            .mkdirs();
-                    File backedup = new File(Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_DOWNLOADS)
-                            + File.separator
-                            + "Slide"
-                            + new SimpleDateFormat("-yyyy-MM-dd-HH-mm-ss").format(
-                            Calendar.getInstance().getTime())
-                            + (!personal ? "-personal" : "")
-                            + ".txt");
-
-                    file = backedup;
-                    FileWriter fw = null;
-                    try {
-                        backedup.createNewFile();
-                        fw = new FileWriter(backedup);
-                        fw.write("Slide_backupEND>");
-                        for (String s : list) {
-
-                            if (!s.contains("cache") && !s.contains("ion-cookies") && !s.contains(
-                                    "albums") && !s.contains("STACKTRACE") && !s.contains(
-                                    "com.google") && (!personal ||
-                                    (!s.contains("SUBSNEW")
-                                    && !s.contains("appRestart")
-                                    && !s.contains("AUTH")
-                                    && !s.contains("TAGS")
-                                    && !s.contains("SEEN")
-                                    && !s.contains("HIDDEN")
-                                    && !s.contains("HIDDEN_POSTS")))) {
-                                FileReader fr = null;
-                                try {
-                                    fr = new FileReader(new File(prefsdir + File.separator + s));
-                                    int c = fr.read();
-                                    fw.write("<START" + new File(s).getName() + ">");
-                                    while (c != -1) {
-                                        fw.write(c);
-                                        c = fr.read();
-                                    }
-                                    fw.write("END>");
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                } finally {
-                                    close(fr);
-                                }
-                            }
-
-                        }
-                        return null;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        // todo error
-                    } finally {
-                        close(fw);
+            protected Boolean doInBackground(Void... params) {
+                try {
+                    DocumentFile parentDir = DocumentFile.fromTreeUri(SettingsBackup.this, treeUri);
+                    if (parentDir == null || !parentDir.exists() || !parentDir.isDirectory()) {
+                        errorMessage = "Invalid backup directory.";
+                        return false;
                     }
 
+                    // Generate a backup filename
+                    String timeStamp =
+                            new SimpleDateFormat("-yyyy-MM-dd-HH-mm-ss").format(new Date());
+                    String fileName = "Slide" + timeStamp + ".txt";
+
+                    // Create the backup file in the chosen directory
+                    DocumentFile backupFile = parentDir.createFile("text/plain", fileName);
+                    if (backupFile == null) {
+                        errorMessage = "Failed to create backup file via SAF.";
+                        return false;
+                    }
+
+                    localBackupFileUri = backupFile.getUri();
+
+                    // Start writing
+                    OutputStream out = getContentResolver().openOutputStream(localBackupFileUri);
+                    if (out == null) {
+                        errorMessage = "OutputStream was null for: " + localBackupFileUri;
+                        return false;
+                    }
+
+                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out));
+                    // Start marker
+                    bw.write("Slide_backupEND>");
+
+                    File prefsDir = new File(getApplicationInfo().dataDir, "shared_prefs");
+                    if (!prefsDir.exists() || !prefsDir.isDirectory()) {
+                        Log.w(TAG, "No shared_prefs directory found for local backup.");
+                        bw.close();
+                        return true; // It's "valid" but empty
+                    }
+
+                    String[] list = prefsDir.list();
+                    if (list == null) {
+                        Log.w(TAG, "No preference files found to backup locally.");
+                        bw.close();
+                        return true;
+                    }
+
+                    for (String s : list) {
+                        if (!s.contains("cache")
+                                && !s.contains("ion-cookies")
+                                && !s.contains("albums")
+                                && !s.contains("STACKTRACE")
+                                && !s.contains("com.google")) {
+
+                            File fileToBackup = new File(prefsDir, s);
+                            if (fileToBackup.exists()) {
+                                BufferedReader br =
+                                        new BufferedReader(new FileReader(fileToBackup));
+                                bw.write("<START" + s + ">");
+                                char[] buf = new char[8192];
+                                int read;
+                                while ((read = br.read(buf)) != -1) {
+                                    bw.write(buf, 0, read);
+                                }
+                                bw.write("END>");
+                                br.close();
+                                Log.d(TAG, "Backed up local file: " + s);
+                            }
+                        } else {
+                            Log.d(TAG, "Skipping local file: " + s);
+                        }
+                    }
+
+                    bw.close();
+                    return true;
+
+                } catch (IOException e) {
+                    Log.e(TAG, "Error creating or writing backup file", e);
+                    errorMessage = e.getMessage();
+                    return false;
                 }
-                return null;
             }
 
             @Override
-            protected void onPostExecute(Void aVoid) {
-                progress.dismiss();
+            protected void onPostExecute(Boolean success) {
+                if (progress != null) {
+                    progress.dismiss();
+                }
+                if (!success) {
+                    Log.w(TAG, "Local backup failed: " + errorMessage);
+                    showErrorDialog(R.string.err_general, R.string.set_storage_location);
+                    return;
+                }
+                // Show success dialog with a "View" button (like base version)
                 new AlertDialog.Builder(SettingsBackup.this)
                         .setTitle(R.string.backup_complete)
-                        .setMessage(R.string.backup_saved_downloads)
-                        .setPositiveButton(R.string.btn_view, (dialog, which) -> {
-                            Intent intent = FileUtil.getFileIntent(file,
-                                    new Intent(Intent.ACTION_VIEW),
-                                    SettingsBackup.this);
-                            if (intent.resolveActivityInfo(getPackageManager(), 0) != null) {
-                                startActivity(
-                                        Intent.createChooser(
-                                                intent, getString(R.string.settings_backup_view)));
-                            } else {
-                                Snackbar s = Snackbar.make(findViewById(R.id.restorefile),
-                                        R.string.settings_backup_err_no_explorer + file.getAbsolutePath(),
-                                        Snackbar.LENGTH_INDEFINITE);
-                                LayoutUtils.showSnackbar(s);
-                            }
-                        })
+                        .setMessage(R.string.backup_saved_downloads) // or a generic success message
+                        .setPositiveButton(
+                                R.string.btn_view,
+                                (dialog, which) -> {
+                                    if (localBackupFileUri != null) {
+                                        // Attempt to open with a viewer
+                                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                                        intent.setDataAndType(localBackupFileUri, "text/plain");
+                                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                                        if (intent.resolveActivityInfo(getPackageManager(), 0)
+                                                != null) {
+                                            startActivity(
+                                                    Intent.createChooser(
+                                                            intent,
+                                                            getString(
+                                                                    R.string
+                                                                            .settings_backup_view)));
+                                        } else {
+                                            Snackbar s =
+                                                    Snackbar.make(
+                                                            findViewById(R.id.restorefile),
+                                                            getString(
+                                                                            R.string
+                                                                                    .settings_backup_err_no_explorer)
+                                                                    + localBackupFileUri,
+                                                            Snackbar.LENGTH_INDEFINITE);
+                                            LayoutUtils.showSnackbar(s);
+                                        }
+                                    }
+                                })
                         .setNegativeButton(R.string.btn_close, null)
                         .setCancelable(false)
                         .show();
             }
         }.execute();
-
     }
 
-    public static void close(Closeable stream) {
-        try {
-            if (stream != null) {
-                stream.close();
-            }
-        } catch (IOException e) {
-        }
-    }
+    /** Async task to restore from a local SAF-chosen file (replacing old restoreFromFile code). */
+    private class RestoreFromFileAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
-    @Override
-    public void onConnected(Bundle bundle) {
-        appFolder = Drive.DriveApi.getAppFolder(mGoogleApiClient);
-        Drive.DriveApi.requestSync(mGoogleApiClient);
-    }
+        private final Uri fileUri;
 
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        if (connectionResult.hasResolution()) {
-            try {
-                connectionResult.startResolutionForResult(this, 24);
-            } catch (IntentSender.SendIntentException e) {
-                // Unable to resolve, message user appropriately
-            }
-        } else {
-            GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-            apiAvailability.getErrorDialog(this, connectionResult.getErrorCode(), 0).show();
-        }
-    }
-
-
-    final private class RetrieveDriveFileContentsAsyncTask
-            extends AsyncTask<DriveId, Boolean, String> {
-
-
-        String t;
-
-        public RetrieveDriveFileContentsAsyncTask(String title) {
-            t = title;
+        RestoreFromFileAsyncTask(Uri fileUri) {
+            this.fileUri = fileUri;
         }
 
         @Override
-        protected String doInBackground(DriveId... params) {
-            String contents = null;
-            DriveFile file = params[0].asDriveFile();
-            DriveApi.DriveContentsResult driveContentsResult =
-                    file.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, null).await();
-            if (!driveContentsResult.getStatus().isSuccess()) {
-                return null;
-            }
+        protected Boolean doInBackground(Void... voids) {
+            Log.d(TAG, "RestoreFromFileAsyncTask started for URI: " + fileUri);
+            StringBuilder fw = new StringBuilder();
+            try (InputStream is = getContentResolver().openInputStream(fileUri);
+                    BufferedReader reader =
+                            (is == null) ? null : new BufferedReader(new InputStreamReader(is))) {
 
-
-            DriveContents driveContents = driveContentsResult.getDriveContents();
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(driveContents.getInputStream()));
-            StringBuilder builder = new StringBuilder();
-            String line;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    builder.append(line);
+                if (reader == null) {
+                    Log.e(TAG, "Could not open InputStream for fileUri: " + fileUri);
+                    return false;
                 }
-                contents = builder.toString();
-            } catch (IOException e) {
-                Log.e(LogUtil.getTag(), "IOException while reading from the stream", e);
+
+                char[] buf = new char[8192];
+                int read;
+                while ((read = reader.read(buf)) != -1) {
+                    fw.append(buf, 0, read);
+                }
+
+                String readContent = fw.toString();
+                Log.d(TAG, "Read " + readContent.length() + " characters from backup file.");
+
+                // Use the same parse logic from base version:
+                return restoreSharedPrefsFromString(readContent);
+
+            } catch (Exception e) {
+                Log.e(TAG, "Exception while restoring from fileUri: " + fileUri, e);
+                return false;
             }
-
-            File newF = new File(getApplicationInfo().dataDir
-                    + File.separator
-                    + "shared_prefs"
-                    + File.separator
-                    + t);
-            Log.v(LogUtil.getTag(), "WRITING TO " + newF.getAbsolutePath());
-
-
-            try {
-                FileWriter fw = new FileWriter(newF);
-                BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(contents);
-                bw.close();
-                progress.setProgress(progress.getCurrentProgress() + 1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            driveContents.discard(mGoogleApiClient);
-            return contents;
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            if (progress.getCurrentProgress() == progress.getMaxProgress()) {
+        protected void onPostExecute(Boolean success) {
+            if (progress != null) {
                 progress.dismiss();
-
-
+            }
+            if (success) {
+                // Show final restart dialog
                 new AlertDialog.Builder(SettingsBackup.this)
                         .setTitle(R.string.backup_restore_settings)
                         .setMessage(R.string.backup_restarting)
-                        .setOnDismissListener(dialog ->
-                                ProcessPhoenix.triggerRebirth(SettingsBackup.this))
-                        .setPositiveButton(R.string.btn_ok, (dialog, which) ->
-                                ProcessPhoenix.triggerRebirth(SettingsBackup.this))
+                        .setOnDismissListener(
+                                dialog -> {
+                                    Log.d(
+                                            TAG,
+                                            "ProcessPhoenix.triggerRebirth() from onDismiss for"
+                                                    + " local file restore.");
+                                    ProcessPhoenix.triggerRebirth(SettingsBackup.this);
+                                })
+                        .setPositiveButton(
+                                R.string.btn_ok,
+                                (dialog, which) -> {
+                                    Log.d(
+                                            TAG,
+                                            "ProcessPhoenix.triggerRebirth() from OK button for"
+                                                    + " local file restore.");
+                                    ProcessPhoenix.triggerRebirth(SettingsBackup.this);
+                                })
                         .setCancelable(false)
                         .show();
+            } else {
+                Log.w(TAG, "Restore from local file failed or invalid file.");
+                showErrorDialog(R.string.err_not_valid_backup, R.string.err_not_valid_backup_msg);
             }
-            if (result == null) {
-                // showMessage("Error while reading from the file");
-
-                return;
-            }
-            Log.v(LogUtil.getTag(), "File contents: " + result);
         }
     }
 
+    /** Asynchronous task to upload single-file backup to Google Drive's appDataFolder. */
+    private class BackupToDriveAsyncTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            Log.d(TAG, "BackupToDriveAsyncTask: started");
+            progress =
+                    new MaterialDialog.Builder(SettingsBackup.this)
+                            .title(R.string.backup_backing_up)
+                            .content(R.string.misc_please_wait)
+                            .cancelable(false)
+                            .progress(true, 0)
+                            .build();
+            progress.show();
+            errors = 0;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            // Build the entire backup as a single string in memory
+            File prefsDir = new File(getApplicationInfo().dataDir, "shared_prefs");
+            if (!prefsDir.exists() || !prefsDir.isDirectory()) {
+                Log.w(TAG, "No shared_prefs directory found for Drive backup.");
+                return false;
+            }
+
+            String[] list = prefsDir.list();
+            if (list == null) {
+                Log.w(TAG, "No preference files found to backup for Drive.");
+                return false;
+            }
+
+            StringBuilder backupBuilder = new StringBuilder();
+            backupBuilder.append("Slide_backupEND>"); // starting marker
+
+            for (String s : list) {
+                if (!s.contains("cache")
+                        && !s.contains("ion-cookies")
+                        && !s.contains("albums")
+                        && !s.contains("STACKTRACE")
+                        && !s.contains("com.google")) {
+
+                    File fileToBackup = new File(prefsDir, s);
+                    String content = readFileFully(fileToBackup);
+                    if (content != null) {
+                        backupBuilder.append("<START").append(s).append(">");
+                        backupBuilder.append(content);
+                        backupBuilder.append("END>");
+                        Log.d(TAG, "Adding file to single backup: " + s);
+                    } else {
+                        Log.w(TAG, "Content was null for local file: " + s);
+                    }
+                } else {
+                    Log.d(TAG, "Skipping local file: " + s);
+                }
+            }
+
+            // Convert entire backup string to bytes for upload
+            byte[] backupData = backupBuilder.toString().getBytes();
+
+            // Upload or update on Drive
+            try {
+                String fileId = findDriveBackupFileId();
+                if (fileId == null) {
+                    // Create new file
+                    com.google.api.services.drive.model.File fileMetadata =
+                            new com.google.api.services.drive.model.File();
+                    fileMetadata.setName(DRIVE_BACKUP_FILENAME);
+                    fileMetadata.setParents(Collections.singletonList("appDataFolder"));
+
+                    ByteArrayContent contentStream = new ByteArrayContent("text/plain", backupData);
+                    mDriveService
+                            .files()
+                            .create(fileMetadata, contentStream)
+                            .setFields("id")
+                            .execute();
+                    Log.d(TAG, "Created new backup file on Drive: " + DRIVE_BACKUP_FILENAME);
+                } else {
+                    // Update existing file
+                    ByteArrayContent contentStream = new ByteArrayContent("text/plain", backupData);
+                    mDriveService.files().update(fileId, null, contentStream).execute();
+                    Log.d(TAG, "Updated existing backup file on Drive: " + DRIVE_BACKUP_FILENAME);
+                }
+            } catch (UserRecoverableAuthIOException urae) {
+                Log.w(
+                        TAG,
+                        "UserRecoverableAuthIOException while uploading single backup. Requesting"
+                                + " auth again.");
+                startActivityForResult(urae.getIntent(), RC_AUTHORIZATION);
+                return false;
+            } catch (IOException e) {
+                Log.e(TAG, "Error uploading single-file backup to Drive", e);
+                errors++;
+                return false;
+            }
+            return (errors == 0);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (progress != null) {
+                progress.dismiss();
+            }
+            if (success) {
+                new AlertDialog.Builder(SettingsBackup.this)
+                        .setTitle(R.string.backup_success)
+                        .setPositiveButton(R.string.btn_close, (dialog, which) -> finish())
+                        .setCancelable(false)
+                        .show();
+            } else {
+                showErrorDialog(R.string.err_general, R.string.backup_failed_msg);
+            }
+        }
+
+        private String findDriveBackupFileId() throws IOException {
+            FileList result =
+                    mDriveService
+                            .files()
+                            .list()
+                            .setSpaces("appDataFolder")
+                            .setFields("files(id, name)")
+                            .execute();
+            if (result.getFiles() != null && !result.getFiles().isEmpty()) {
+                for (com.google.api.services.drive.model.File file : result.getFiles()) {
+                    if (DRIVE_BACKUP_FILENAME.equals(file.getName())) {
+                        return file.getId();
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Asynchronous task to download and restore the single "shared_prefs_backup.txt" from Drive.
+     */
+    private class RestoreFromDriveAsyncTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            Log.d(TAG, "RestoreFromDriveAsyncTask: started");
+            progress =
+                    new MaterialDialog.Builder(SettingsBackup.this)
+                            .title(R.string.backup_restoring)
+                            .content(R.string.misc_please_wait)
+                            .cancelable(false)
+                            .progress(true, 0)
+                            .build();
+            progress.show();
+            errors = 0;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                // Search for our single backup file in Drive
+                String fileId = null;
+                FileList result =
+                        mDriveService
+                                .files()
+                                .list()
+                                .setSpaces("appDataFolder")
+                                .setFields("files(id, name)")
+                                .execute();
+                if (result.getFiles() != null && !result.getFiles().isEmpty()) {
+                    for (com.google.api.services.drive.model.File file : result.getFiles()) {
+                        if (DRIVE_BACKUP_FILENAME.equals(file.getName())) {
+                            fileId = file.getId();
+                            break;
+                        }
+                    }
+                }
+
+                if (fileId == null) {
+                    Log.w(
+                            TAG,
+                            "No single backup file named "
+                                    + DRIVE_BACKUP_FILENAME
+                                    + " found in Drive.");
+                    return false;
+                }
+
+                // Download the file content
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                mDriveService.files().get(fileId).executeMediaAndDownloadTo(outputStream);
+                String data = outputStream.toString();
+                Log.d(TAG, "Downloaded " + data.length() + " bytes from: " + DRIVE_BACKUP_FILENAME);
+
+                // Parse the single-file backup
+                return restoreSharedPrefsFromString(data);
+
+            } catch (UserRecoverableAuthIOException urae) {
+                Log.w(
+                        TAG,
+                        "UserRecoverableAuthIOException while downloading single backup. Requesting"
+                                + " auth again.");
+                startActivityForResult(urae.getIntent(), RC_AUTHORIZATION);
+            } catch (IOException e) {
+                Log.e(TAG, "Error downloading single-file backup from Drive", e);
+                errors++;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (progress != null) {
+                progress.dismiss();
+            }
+
+            if (!success) {
+                showErrorDialog(R.string.err_general, R.string.backup_restore_failed_msg);
+                return;
+            }
+
+            new AlertDialog.Builder(SettingsBackup.this)
+                    .setTitle(R.string.backup_restore_settings)
+                    .setMessage(R.string.backup_restarting)
+                    .setOnDismissListener(
+                            dialog -> {
+                                Log.d(
+                                        TAG,
+                                        "ProcessPhoenix.triggerRebirth() called from onDismiss"
+                                                + " (Drive restore).");
+                                ProcessPhoenix.triggerRebirth(SettingsBackup.this);
+                            })
+                    .setPositiveButton(
+                            R.string.btn_ok,
+                            (dialog, which) -> {
+                                Log.d(
+                                        TAG,
+                                        "ProcessPhoenix.triggerRebirth() called from OK button"
+                                                + " (Drive restore).");
+                                ProcessPhoenix.triggerRebirth(SettingsBackup.this);
+                            })
+                    .setCancelable(false)
+                    .show();
+        }
+    }
+
+    /**
+     * Restore the shared_prefs contents from a single large string that uses the local-file
+     * markers.
+     */
+    private boolean restoreSharedPrefsFromString(String data) {
+        try {
+            if (!data.contains("Slide_backupEND>")) {
+                Log.w(
+                        TAG,
+                        "Backup file did not contain 'Slide_backupEND>' marker, likely invalid.");
+                return false;
+            }
+            // Example data is:
+            // Slide_backupEND><STARTsomefile.xml>filecontentEND><STARTotherfile.xml>filecontentEND>
+            // ...
+            String[] files = data.split("END>");
+            // files[0] will contain "Slide_backupEND>", skip it
+            for (int i = 1; i < files.length; i++) {
+                String innerFile = files[i];
+                int startIndex = innerFile.indexOf("<START");
+                if (startIndex == -1) {
+                    Log.w(TAG, "Skipping malformed file block: " + innerFile);
+                    continue;
+                }
+                // substring from 6 chars after <START to the next '>'
+                String name =
+                        innerFile.substring(startIndex + 6, innerFile.indexOf(">", startIndex));
+                String fileContent = innerFile.substring(innerFile.indexOf(">", startIndex) + 1);
+
+                File newF = new File(getApplicationInfo().dataDir + "/shared_prefs/" + name);
+                Log.d(
+                        TAG,
+                        "Restoring local file: " + name + " (size=" + fileContent.length() + ")");
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter(newF))) {
+                    bw.write(fileContent);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Exception while parsing single-file backup data", e);
+            return false;
+        }
+        return true;
+    }
+
+    /** Read the entire content of a file into a String. */
+    private String readFileFully(File file) {
+        if (!file.exists()) {
+            Log.w(TAG, "readFileFully: file does not exist - " + file.getAbsolutePath());
+            return null;
+        }
+        StringBuilder builder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line).append("\n");
+            }
+            Log.d(TAG, "readFileFully: " + file.getName() + " (size=" + builder.length() + ")");
+            return builder.toString();
+        } catch (IOException e) {
+            Log.e(TAG, "Error reading file: " + file.getName(), e);
+            return null;
+        }
+    }
+
+    /** Show an error dialog with the specified title and message. */
+    private void showErrorDialog(int titleResId, int messageResId) {
+        Log.d(TAG, "showErrorDialog: title=" + titleResId + ", message=" + messageResId);
+        new AlertDialog.Builder(this)
+                .setTitle(titleResId)
+                .setMessage(messageResId)
+                .setPositiveButton(R.string.btn_ok, null)
+                .setCancelable(false)
+                .show();
+    }
 }

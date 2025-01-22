@@ -900,7 +900,7 @@ public class CommentAdapterHelper {
                                                 }
                                             });
                                 } else { // Show a Slide reason dialog if we can't show a toolbox or
-                                         // reddit one
+                                    // reddit one
                                     doRemoveCommentReason(mContext, holder, comment, adapter);
                                 }
                                 break;

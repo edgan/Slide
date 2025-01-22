@@ -8,13 +8,6 @@
     <string name="pro_upgrade_msg">升级到 Slide for Reddit Pro，享受以下高级功能：\n\n- 网站广告拦截和阅读模式\n- 上传图片时的编辑功能\n- 平版模式的定制列功能\n- 自动夜间模式\n- 内容视图的图库功能\n- 评论视图\n- 备份和恢复，支持 Google Drive 和文件\n- 支持开源和无广告软件\n\n你愿意支持 Slide for Reddit 吗？</string>
     <string name="general_open_settings">侧栏</string>
     <string name="general_sub_sync">正在同步订阅</string>
-    <string name="general_gallerymode_ispro">图库模式是专业版功能</string>
-    <string name="general_cropdraw_ispro">图片编辑功能是专业版功能</string>
-    <string name="general_shadowbox_comments_ispro">评论的 Shadowbox 模式是专业版功能</string>
-    <string name="general_shadowbox_ispro">Shadowbox 模式是专业版功能</string>
-    <string name="general_nighttheme_ispro">自动夜间模式是专业版功能</string>
-    <string name="general_backup_ispro">设置备份是专业版功能</string>
-    <string name="general_multicolumn_ispro">多列设置是专业版功能</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">提交未保存</string>
     <string name="submission_info_saved">提交已保存</string>
@@ -563,9 +556,9 @@
     <string name="settings_comment_crop">在评论视图中裁剪主图片</string>
     <string name="settings_general_scroll_read">将滑过的帖子标记为已阅</string>
     <string name="settings_link_chrome">自定义标签页</string>
-    <string name="settings_image_location">选择图片保存位置</string>
-    <string name="settings_image_location_unset">尚未设置</string>
-    <string name="settings_set_image_location">图片将被保存到 %s</string>
+    <string name="settings_storage_location">选择图片保存位置</string>
+    <string name="settings_storage_location_unset">尚未设置</string>
+    <string name="settings_set_storage_location">图片将被保存到 %s</string>
     <string name="settings_general_immersive_mode">沉浸式全屏模式</string>
     <string name="settings_general_immersive_mode_desc">隐藏状态和导航栏（实验功能）</string>
     <string name="settings_general_title_drawer_items">抽屉项目</string>
@@ -746,7 +739,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">排序</string>
     <string name="display">显示</string>
-    <string name="image_downloads">图片</string>
+    <string name="images">图片</string>
     <string name="app_theme">应用程序主题</string>
     <string name="tinting">着色</string>
     <string name="post_info">帖子信息</string>

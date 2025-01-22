@@ -69,8 +69,6 @@ import java.nio.channels.WritableByteChannel;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /** GIF handling utilities */
 public class GifUtils {
@@ -238,7 +236,8 @@ public class GifUtils {
 
                 @Override
                 protected DocumentFile doInBackground(Void... voids) {
-                    NotificationManager notifMgr = ContextCompat.getSystemService(activity, NotificationManager.class);
+                    NotificationManager notifMgr =
+                            ContextCompat.getSystemService(activity, NotificationManager.class);
                     Exception saveError;
                     InputStream in = null;
                     OutputStream out = null;
@@ -260,8 +259,9 @@ public class GifUtils {
 
                                 // First pass: exact match
                                 for (DocumentFile file : existingFiles) {
-                                    if (file.isDirectory() && file.getName() != null &&
-                                        file.getName().equals(subreddit)) {
+                                    if (file.isDirectory()
+                                            && file.getName() != null
+                                            && file.getName().equals(subreddit)) {
                                         subFolder = file;
                                         break;
                                     }
@@ -270,8 +270,9 @@ public class GifUtils {
                                 // Second pass: case-insensitive match if exact match not found
                                 if (subFolder == null) {
                                     for (DocumentFile file : existingFiles) {
-                                        if (file.isDirectory() && file.getName() != null &&
-                                            file.getName().equalsIgnoreCase(subreddit)) {
+                                        if (file.isDirectory()
+                                                && file.getName() != null
+                                                && file.getName().equalsIgnoreCase(subreddit)) {
                                             subFolder = file;
                                             break;
                                         }
@@ -282,7 +283,8 @@ public class GifUtils {
                                 if (subFolder == null) {
                                     subFolder = parentDir.createDirectory(subreddit);
                                     if (subFolder == null) {
-                                        saveError = new Exception("Could not create subreddit folder");
+                                        saveError =
+                                                new Exception("Could not create subreddit folder");
                                         return null;
                                     }
                                 }
@@ -290,7 +292,8 @@ public class GifUtils {
                             }
 
                             // Create output file with .mp4 extension
-                            String fileName = FileUtil.getValidFileName(submissionTitle, "", ".mp4");
+                            String fileName =
+                                    FileUtil.getValidFileName(submissionTitle, "", ".mp4");
                             Log.d("GifUtils", "Creating output file: " + fileName);
                             DocumentFile outDocFile = parentDir.createFile("video/mp4", fileName);
                             if (outDocFile == null) {
@@ -299,7 +302,8 @@ public class GifUtils {
                             }
 
                             String urlStr = uri.toString();
-                            if (urlStr.contains("v.redd.it") && urlStr.contains("DASHPlaylist.mpd")) {
+                            if (urlStr.contains("v.redd.it")
+                                    && urlStr.contains("DASHPlaylist.mpd")) {
                                 // ... existing DASH handling code ...
                             }
 
@@ -308,12 +312,15 @@ public class GifUtils {
                             Response videoResponse = Reddit.client.newCall(videoRequest).execute();
 
                             if (!videoResponse.isSuccessful()) {
-                                saveError = new Exception("Failed to download video: " + videoResponse);
+                                saveError =
+                                        new Exception("Failed to download video: " + videoResponse);
                                 return null;
                             }
 
                             in = videoResponse.body().byteStream();
-                            out = activity.getContentResolver().openOutputStream(outDocFile.getUri());
+                            out =
+                                    activity.getContentResolver()
+                                            .openOutputStream(outDocFile.getUri());
 
                             byte[] buffer = new byte[8192];
                             long total = 0;
@@ -677,8 +684,8 @@ public class GifUtils {
                                                                 url.replace(
                                                                         ".mp4",
                                                                         ".png"))); // Link is likely
-                                                                                   // an image and
-                                                                                   // not a gif
+                                // an image and
+                                // not a gif
                                 (c).finish();
                             }
                         });

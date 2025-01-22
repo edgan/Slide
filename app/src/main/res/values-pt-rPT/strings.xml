@@ -8,12 +8,6 @@
     <string name="pro_upgrade_msg">Atualize para o Slide para Reddit Pro desfrutar de algumas funções novas incríveis, incluindo: \n\n - Bloqueio de publicidade e o modo de leitor na vista de Website\n- Recortar e desenhar nas imagens para a enviar\n- Modo coluna personalizável do tablet\n Modo noturno automático\n- Vista de conteúdo em Shadowbox e Galeria\n - Vista de comentário em Shadowbox\n- Copia de segurança e restauro para Google Drive e ficheiro \n Apoiando software de código aberto e sem publicidade \n\nGostaria de apoiar o Slide para Reddit?</string>
     <string name="general_open_settings">Barra lateral</string>
     <string name="general_sub_sync">A sincronizar subscrições</string>
-    <string name="general_gallerymode_ispro">Modo Galeria é uma funcionalidade Pro</string>
-    <string name="general_cropdraw_ispro">Cortar e desenhar em imagens enviadas é uma funcionalidade Pro</string>
-    <string name="general_shadowbox_comments_ispro">Modo Shadowbox de comentários é uma funcionalidade Pro</string>
-    <string name="general_shadowbox_ispro">Modo Shadowbox é uma funcionalidade Pro</string>
-    <string name="general_nighttheme_ispro">Modo noturno automático é uma funcionalidade Pro</string>
-    <string name="general_backup_ispro">Copia de segurança das definições é uma funcionalidade Pro</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Publicação removida</string>
     <string name="submission_info_saved">Publicação gravada</string>
@@ -537,9 +531,9 @@
     <string name="settings_font_comment">Fonte do comentário</string>
     <string name="settings_comment_crop">Cortar imagem na visualização do comentário</string>
     <string name="settings_general_scroll_read">Marque as publicações como lidas a medida que desliza</string>
-    <string name="settings_image_location">Selecione o local para guardar imagem/GIF</string>
-    <string name="settings_image_location_unset">Ainda não definido</string>
-    <string name="settings_set_image_location">Imagens serão gravada em %s</string>
+    <string name="settings_storage_location">Selecione o local para guardar imagem/GIF</string>
+    <string name="settings_storage_location_unset">Ainda não definido</string>
+    <string name="settings_set_storage_location">Imagens serão gravada em %s</string>
     <string name="settings_general_immersive_mode">Modo de ecrã completo imersivo</string>
     <string name="settings_general_immersive_mode_desc">Ocultar a barra de estado e de navegação (experimental)</string>
     <!-- Settings titles displayed in settings activity-->
@@ -690,7 +684,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Ordenação</string>
     <string name="display">Ecrã</string>
-    <string name="image_downloads">Imagens</string>
+    <string name="images">Imagens</string>
     <string name="app_theme">Tema da aplicação</string>
     <string name="tinting">Coloração</string>
     <string name="post_info">Informações da publicação</string>

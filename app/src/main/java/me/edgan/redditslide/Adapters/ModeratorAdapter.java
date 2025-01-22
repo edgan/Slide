@@ -814,7 +814,7 @@ public class ModeratorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                                                 }
                                             });
                                 } else { // Show a Slide reason dialog if we can't show a toolbox or
-                                         // reddit reason
+                                    // reddit reason
                                     doRemoveCommentReason(mContext, holder, comment);
                                 }
                                 break;

@@ -182,10 +182,9 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
                                         .get("images")
                                         .get(0)
                                         .get("source")
-                                        .has(
-                                                "height")) { // Load the preview image which has
-                                                             // probably already been cached in
-                                                             // memory instead of the direct link
+                                        .has("height")) { // Load the preview image which has
+                            // probably already been cached in
+                            // memory instead of the direct link
                             previewUrl =
                                     submission
                                             .getDataNode()

@@ -8,12 +8,6 @@
     <string name="pro_upgrade_msg">Slide for Reddit Pro sürümüne geçin ve:\n\n- Reklam Engelleyici ve Web sitesi görünümünde Okuma Modu\n- Yüklenen görüntüleri kesme ve üzerine çizme\n- Özelleştirilebilir çoklu sütun modu\n- Otomatik gece modu\n- Shadowbox ve Galeri içerik görünümleri\n- Yorum Shadowbox görünümü\n- Google Drive ve dosyaya yedekleme ve yedekten geri yükleme\n- de dahil birçok şahane özellikten yararlanıp, açık kaynaklı ve reklamsız yazılımları destekleyin!\n\n Slide for Reddit\'i desteklemek ister misiniz?</string>
     <string name="general_open_settings">Subreddit Ayarları\'nı Açın</string>
     <string name="general_sub_sync">Abonelikler eşitleniyor</string>
-    <string name="general_gallerymode_ispro">Galeri modu bir Pro özelliğidir</string>
-    <string name="general_cropdraw_ispro">Yüklenen görüntüleri kesmek ve üzerlerinde çizim yapmak bir Pro özelliğidir</string>
-    <string name="general_shadowbox_comments_ispro">Yorum shadowbox modu bir Pro özelliğidir</string>
-    <string name="general_shadowbox_ispro">Shadowbox modu bir Pro özelliğidir</string>
-    <string name="general_nighttheme_ispro">Otomatik Gece Modu bir Pro özelliğidir</string>
-    <string name="general_backup_ispro">Ayarları yedekleme bir Pro özelliğidir</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Gönderi kaydedilmedi</string>
     <string name="submission_info_saved">Gönderi kaydedildi</string>
@@ -554,9 +548,9 @@
     <string name="settings_comment_crop">Yorum görünümünde öne çıkan görüntüyü kırp</string>
     <string name="settings_general_scroll_read">Aşağı kaydırdıkça gönderileri okundu olarak işaretle</string>
     <string name="settings_link_chrome">Özel Sekmeler</string>
-    <string name="settings_image_location">Görüntü/GIF kaydetme konumu seçin</string>
-    <string name="settings_image_location_unset">Henüz ayarlanmadı</string>
-    <string name="settings_set_image_location">Görüntüler %s konumuna kaydedilecek</string>
+    <string name="settings_storage_location">Görüntü/GIF kaydetme konumu seçin</string>
+    <string name="settings_storage_location_unset">Henüz ayarlanmadı</string>
+    <string name="settings_set_storage_location">Görüntüler %s konumuna kaydedilecek</string>
     <string name="settings_general_immersive_mode">Gerçek tam ekran modu</string>
     <string name="settings_general_immersive_mode_desc">Durum ve navigasyon çubuklarını gizle (deneysel)</string>
     <string name="settings_general_title_drawer_items">Çekmece Ögeleri</string>
@@ -731,7 +725,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Sıralama</string>
     <string name="display">Görünüm</string>
-    <string name="image_downloads">Resimler</string>
+    <string name="images">Resimler</string>
     <string name="app_theme">Uygulama teması</string>
     <string name="tinting">Renklendirme</string>
     <string name="post_info">Gönderi bilgileri</string>

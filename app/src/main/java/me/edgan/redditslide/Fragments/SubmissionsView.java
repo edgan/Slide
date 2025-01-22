@@ -416,9 +416,10 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
 
     public void doAdapter() {
         if (!MainActivity.isRestart) {
-            mSwipeRefreshLayout.post(() -> {
-                mSwipeRefreshLayout.setRefreshing(true);
-            });
+            mSwipeRefreshLayout.post(
+                    () -> {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                    });
         }
 
         posts = new SubredditPosts(id, getContext());
@@ -436,9 +437,10 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
     }
 
     public void doAdapter(boolean force18) {
-        mSwipeRefreshLayout.post(() -> {
-            mSwipeRefreshLayout.setRefreshing(true);
-        });
+        mSwipeRefreshLayout.post(
+                () -> {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                });
 
         posts = new SubredditPosts(id, getContext(), force18);
         adapter = new SubmissionAdapter(getActivity(), posts, rv, id, this);
@@ -540,30 +542,33 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
     @Override
     public void updateSuccess(final List<Submission> submissions, final int startIndex) {
         if (getActivity() != null) {
-            if (getActivity() instanceof MainActivity &&
-                ((MainActivity) getActivity()).runAfterLoad != null) {
+            if (getActivity() instanceof MainActivity
+                    && ((MainActivity) getActivity()).runAfterLoad != null) {
                 new Handler().post(((MainActivity) getActivity()).runAfterLoad);
             }
 
-            getActivity().runOnUiThread(() -> {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(false);
-                }
+            getActivity()
+                    .runOnUiThread(
+                            () -> {
+                                if (mSwipeRefreshLayout != null) {
+                                    mSwipeRefreshLayout.setRefreshing(false);
+                                }
 
-                // Ensure layout manager state is consistent
-                CatchStaggeredGridLayoutManager layoutManager =
-                    (CatchStaggeredGridLayoutManager) rv.getLayoutManager();
-                layoutManager.invalidateSpanAssignments();
+                                // Ensure layout manager state is consistent
+                                CatchStaggeredGridLayoutManager layoutManager =
+                                        (CatchStaggeredGridLayoutManager) rv.getLayoutManager();
+                                layoutManager.invalidateSpanAssignments();
 
-                if (startIndex != -1 && !forced) {
-                    adapter.notifyItemRangeInserted(startIndex + 1, posts.posts.size());
-                } else {
-                    forced = false;
-                    rv.scrollToPosition(0);
-                }
+                                if (startIndex != -1 && !forced) {
+                                    adapter.notifyItemRangeInserted(
+                                            startIndex + 1, posts.posts.size());
+                                } else {
+                                    forced = false;
+                                    rv.scrollToPosition(0);
+                                }
 
-                adapter.notifyDataSetChanged();
-            });
+                                adapter.notifyDataSetChanged();
+                            });
 
             if (MainActivity.isRestart) {
                 MainActivity.isRestart = false;
@@ -632,15 +637,19 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
 
     public void resetScroll() {
         if (toolbarScroll == null) {
-            toolbarScroll = new ToolbarScrollHideHandler(((BaseActivity) getActivity()).mToolbar, header) {
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
+            toolbarScroll =
+                    new ToolbarScrollHideHandler(((BaseActivity) getActivity()).mToolbar, header) {
+                        @Override
+                        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                            super.onScrolled(recyclerView, dx, dy);
 
-                    // Stabilize layout during scrolling
-                    if (Math.abs(dy) > 0 && rv.getLayoutManager() instanceof CatchStaggeredGridLayoutManager) {
-                        ((CatchStaggeredGridLayoutManager) rv.getLayoutManager()).invalidateSpanAssignments();
-                    }
+                            // Stabilize layout during scrolling
+                            if (Math.abs(dy) > 0
+                                    && rv.getLayoutManager()
+                                            instanceof CatchStaggeredGridLayoutManager) {
+                                ((CatchStaggeredGridLayoutManager) rv.getLayoutManager())
+                                        .invalidateSpanAssignments();
+                            }
 
                             if (!posts.loading
                                     && !posts.nomore

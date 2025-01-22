@@ -8,12 +8,6 @@
     <string name="pro_upgrade_msg">Slide for Reddit Pro にアップグレードして次の素晴らしい新機能を楽しみましょう:\n\n- 広告ブロッカーと Web サイトビューのリーダーモード\n- アップロードする画像のトリミングと描画\n- カスタマイズ可能なタブレット カラムモード\n- 自動夜間モード\n- シャドーボックスとギャラリー コンテンツ ビュー\n- コメント シャドーボックス ビュー\n- Google ドライブおよびファイルへのバックアップと復元\n- オープンソースと広告のないソフトウェアのサポート!\n\nSlide for Reddit をサポートしていただけませんか?</string>
     <string name="general_open_settings">Subreddit 設定を開く</string>
     <string name="general_sub_sync">購読の同期中</string>
-    <string name="general_gallerymode_ispro">ギャラリー モードは Pro 版の機能です</string>
-    <string name="general_cropdraw_ispro">アップロードした画像のトリミングと描画は Pro 版の機能です</string>
-    <string name="general_shadowbox_comments_ispro">コメント シャドーボックス モードは Pro 版の機能です</string>
-    <string name="general_shadowbox_ispro">シャドーボックス モードは Pro 版の機能です</string>
-    <string name="general_nighttheme_ispro">自動夜間モードでは Pro 版の機能です</string>
-    <string name="general_backup_ispro">設定のバックアップは Pro 版の機能です</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">未保存のサブミッション</string>
     <string name="submission_info_saved">保存したサブミッション</string>
@@ -560,9 +554,9 @@
     <string name="settings_comment_crop">コメント表示で先頭画像のトリミング</string>
     <string name="settings_general_scroll_read">スクロールで過ぎたときに既読として投稿をマーク</string>
     <string name="settings_link_chrome">カスタムタブ</string>
-    <string name="settings_image_location">画像/GIFの保存先を選択する</string>
-    <string name="settings_image_location_unset">未設定です</string>
-    <string name="settings_set_image_location">画像が %s に保存されるようになりました</string>
+    <string name="settings_storage_location">画像/GIFの保存先を選択する</string>
+    <string name="settings_storage_location_unset">未設定です</string>
+    <string name="settings_set_storage_location">画像が %s に保存されるようになりました</string>
     <string name="settings_general_immersive_mode">イマーシブ全画面モード</string>
     <string name="settings_general_immersive_mode_desc">ステータスとナビゲーション バーを非表示にします (実験的)</string>
     <string name="settings_general_title_drawer_items">ドロワーアイテム</string>
@@ -743,7 +737,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">ソート設定</string>
     <string name="display">画面表示</string>
-    <string name="image_downloads">画像</string>
+    <string name="images">画像</string>
     <string name="app_theme">アプリテーマ</string>
     <string name="tinting">色合い</string>
     <string name="post_info">投稿情報</string>

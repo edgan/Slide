@@ -6,7 +6,6 @@
     <string name="general_enable_shadowbox">Activați mod Shadowbox</string>
     <string name="general_open_settings">Deschideţi setări Subreddit</string>
     <string name="general_sub_sync">Sincronizând subscrieri</string>
-    <string name="general_gallerymode_ispro">Modul Galerie este o caracteristică Pro</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Postarea nu a fost salvată</string>
     <string name="submission_info_saved">Postare salvată</string>
@@ -408,9 +407,9 @@
     <string name="settings_font_comment">Font comentarii</string>
     <string name="settings_comment_crop">Decupează imaginea principala în perspectiva cu comentarii</string>
     <string name="settings_general_scroll_read">Marchează posturile ca citite când defilez peste ele</string>
-    <string name="settings_image_location">Selectează locația pentru imagini/GIFuri</string>
-    <string name="settings_image_location_unset">Nu este setat</string>
-    <string name="settings_set_image_location">Imaginile vor fi salvate la %s</string>
+    <string name="settings_storage_location">Selectează locația pentru imagini/GIFuri</string>
+    <string name="settings_storage_location_unset">Nu este setat</string>
+    <string name="settings_set_storage_location">Imaginile vor fi salvate la %s</string>
     <!-- Settings titles displayed in settings activity-->
     <string name="settings_title_backup">Copie de siguranță &amp; restaurare</string>
     <string name="settings_title_default_theme">Tema principală</string>
@@ -503,7 +502,7 @@
     <!-- Setting subheaders -->
     <string name="sorting">Sortare</string>
     <string name="display">Afișare</string>
-    <string name="image_downloads">Imagini</string>
+    <string name="images">Imagini</string>
     <string name="app_theme">Tema aplicației</string>
     <string name="tinting">Colorare</string>
     <string name="post_info">Informații despre postare</string>

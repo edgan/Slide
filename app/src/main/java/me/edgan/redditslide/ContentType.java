@@ -224,10 +224,9 @@ public class ContentType {
                     && (e.getMessage().contains("Illegal character in fragment")
                             || e.getMessage().contains("Illegal character in query")
                             || e.getMessage()
-                                    .contains(
-                                            "Illegal character in path"))) // a valid link but
-                                                                           // something un-encoded
-                                                                           // in the URL
+                                    .contains("Illegal character in path"))) // a valid link but
+            // something un-encoded
+            // in the URL
             {
                 return Type.LINK;
             }

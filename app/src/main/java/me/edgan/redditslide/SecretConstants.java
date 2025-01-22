@@ -54,10 +54,9 @@ public class SecretConstants {
                 apiKey = properties.getProperty("imgur");
             } catch (IOException e) {
                 // file not found
-                apiKey =
-                        "3P3GlZj91emshgWU6YuQL98Q9Zihp1c2vCSjsnOQLIchXPzDLh"; // Testing key, will
-                                                                              // not work in
-                                                                              // production
+                apiKey = "3P3GlZj91emshgWU6YuQL98Q9Zihp1c2vCSjsnOQLIchXPzDLh"; // Testing key, will
+                // not work in
+                // production
             }
         }
         return apiKey;

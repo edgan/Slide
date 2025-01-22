@@ -8,13 +8,6 @@
     <string name="pro_upgrade_msg">Päivitä Slide for Reddit Pro:hon nauttiaksesi mahtavia uusia ominaisuuksia kuten esimerkiksi:\n\n-Mainosten Esto ja Lukijatila\n- Kuvien Rajaaminen ja Piirtäminen\n- Tabletin sarakkeiden muokkaaminen\n- Automaattinen yötila\n- Varjolaatikkon ja Gallerian sisältönäkymä\n Kommentin Varjolaatikon Näkymä\n- Tiedostoon/Google Driveen Varmuuskopiointi ja Palauttaminen\n- Mainosvapaan ja avoin lähdekoodin ohjelmiston tukeminen!\n\nHaluaisitko tukea Slide for Reddit:ta?</string>
     <string name="general_open_settings">Avaa Subreddit asetukset</string>
     <string name="general_sub_sync">Synkronoidaan tilauksia</string>
-    <string name="general_gallerymode_ispro">Galleriatila on Pro-ominaisuus</string>
-    <string name="general_cropdraw_ispro">Kuvien Piirtäminen ja Rajaaminen on Pro-ominaisuus</string>
-    <string name="general_shadowbox_comments_ispro">Kommentin Varjolaatikko on Pro-ominaisuus</string>
-    <string name="general_shadowbox_ispro">Varjolaatikkotila on Pro-ominaisuus</string>
-    <string name="general_nighttheme_ispro">Automaattinen yötila on Pro-ominaisuus</string>
-    <string name="general_backup_ispro">Asetusten varmuuskopiointi on Pro-ominaisuus</string>
-    <string name="general_multicolumn_ispro">Usean sarakkeen asetukset ovat Pro-ominaisuus</string>
     <!-- Used when viewing a thread -->
     <string name="submission_info_unsaved">Viestiä ei tallentanut</string>
     <string name="submission_info_saved">Viesti tallennettu</string>

@@ -15,6 +15,7 @@ public class StorageUtil {
     private static final String PREF_STORAGE_URI = "storage_uri";
     private static final String PREF_NAME = "reddit_slide";
     public static final int REQUEST_STORAGE_ACCESS = 1;
+    public static final int REQUEST_STORAGE_PERMISSION = 42;
 
     public static boolean hasStorageAccess(Context context) {
         Uri uri = getStorageUri(context);
@@ -109,7 +110,7 @@ public class StorageUtil {
         } catch (Exception e) {
             LogUtil.e(e, TAG + "Error getting display path: " + e.getMessage());
         }
-        return context.getString(R.string.settings_image_location_unset);
+        return context.getString(R.string.settings_storage_location_unset);
     }
 
     public static void clearStorageUri(Activity activity) {
@@ -125,5 +126,12 @@ public class StorageUtil {
             return false;
         }
         return true;
+    }
+
+    public static void setStorageUri(Context context, Uri uri) {
+        context.getSharedPreferences("storage", Context.MODE_PRIVATE)
+                .edit()
+                .putString(PREF_STORAGE_URI, uri.toString())
+                .apply();
     }
 }

@@ -182,9 +182,8 @@ public class SubredditAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     new Runnable() {
                         public void run() {
                             notifyItemChanged(
-                                    dataSet.posts.size()
-                                            + 1); // the loading spinner to replaced by
-                                                  // nomoreposts.xml
+                                    dataSet.posts.size() + 1); // the loading spinner to replaced by
+                            // nomoreposts.xml
                         }
                     };
 
