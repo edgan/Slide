@@ -167,7 +167,7 @@ dependencies {
 /** Custom **/
     // Draggable sliding up panel
     implementation 'com.github.edgan:AndroidSlidingUpPanel:8413b22a2a'
-    implementation 'com.github.edgan:JRAW:ac8f33e1a7'
+    implementation 'com.github.edgan:JRAW:716cab0bc4'
     implementation 'io.github.ParkSangGwon:tedimagepicker:1.6.1'
     def commonmarkVersion = '0ebc0749c7'
     implementation "com.github.Haptic-Apps.commonmark-java:commonmark:$commonmarkVersion"
@@ -193,13 +193,11 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 /** ExoPlayer **/
     // Application level media player
-    // Cannot update beyond this point: extension's minimum SDK version is 21 in 2.15.0 and above
-    def exoPlayerVersion = '2.14.2'
+    def exoPlayerVersion = '2.17.1'
     implementation "com.google.android.exoplayer:exoplayer-core:$exoPlayerVersion"
     implementation "com.google.android.exoplayer:exoplayer-dash:$exoPlayerVersion"
     implementation "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
     implementation "com.google.android.exoplayer:extension-okhttp:$exoPlayerVersion"
-
 
 /** Third-party **/
 
@@ -280,7 +278,8 @@ dependencies {
     implementation 'com.github.suckgamony.RapidDecoder:library:7cdfca47fa'
 
     // HTTP client
-    implementation 'com.squareup.okhttp3:okhttp:3.12.13'
+    //implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
 
     // Convert Java objects into JSON and back
     implementation 'com.google.code.gson:gson:2.8.9'

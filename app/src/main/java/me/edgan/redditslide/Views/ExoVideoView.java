@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -54,6 +56,7 @@ public class ExoVideoView extends RelativeLayout {
     private boolean muteAttached = false;
     private boolean hqAttached = false;
     private AudioFocusHelper audioFocusHelper;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     public ExoVideoView(final Context context) {
         this(context, null, true);
@@ -132,7 +135,6 @@ public class ExoVideoView extends RelativeLayout {
                     }
 
                     // Logging
-                    @Override
                     public void onTracksChanged(
                             @NonNull TrackGroupArray trackGroups,
                             @NonNull TrackSelectionArray trackSelections) {
@@ -222,7 +224,10 @@ public class ExoVideoView extends RelativeLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        // If we don't release the player here, hardware decoders won't be released, breaking
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
+	// If we don't release the player here, hardware decoders won't be released, breaking
         // ExoPlayer device-wide
         stop();
     }
@@ -239,9 +244,12 @@ public class ExoVideoView extends RelativeLayout {
 
     /** Stops the video and releases the player */
     public void stop() {
-        player.stop();
-        player.release();
-        audioFocusHelper.loseFocus(); // do this last so audio doesn't overlap
+        if (player != null) {
+            player.stop();
+            player.release();
+	    player = null;
+        }
+	audioFocusHelper.loseFocus(); // do this last so audio doesn't overlap
     }
 
     /**
@@ -274,7 +282,6 @@ public class ExoVideoView extends RelativeLayout {
 
         player.addListener(
                 new Player.Listener() {
-                    @Override
                     public void onTracksChanged(
                             @NonNull TrackGroupArray trackGroups,
                             @NonNull TrackSelectionArray trackSelections) {
@@ -354,7 +361,6 @@ public class ExoVideoView extends RelativeLayout {
 
         player.addListener(
                 new Player.Listener() {
-                    @Override
                     public void onTracksChanged(
                             @NonNull TrackGroupArray trackGroups,
                             @NonNull TrackSelectionArray trackSelections) {

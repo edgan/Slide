@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.internal.Util;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -14,7 +15,7 @@ class HttpClientFactory {
 
     private static OkHttpClient client;
     private static final int SOCKET_OPERATION_TIMEOUT = 60 * 1000;
-    private static final List<Protocol> PROTOCOLS = Util.immutableList(Protocol.HTTP_1_1);
+    private static final List<Protocol> PROTOCOLS = Collections.singletonList(Protocol.HTTP_1_1);
 
     static synchronized OkHttpClient getOkHttpClient() {
         if (client == null) {

@@ -977,7 +977,7 @@ public class GifUtils {
                             for (Representation r : as.representations) {
                                 if (r.format.bitrate > bitrate) {
                                     bitrate = r.format.bitrate;
-                                    hqUri = r.baseUrl;
+                                    hqUri = r.baseUrls.get(0).url.toString();
                                 }
                                 if (MimeTypes.isAudio(r.format.sampleMimeType)) {
                                     isAudio = true;
