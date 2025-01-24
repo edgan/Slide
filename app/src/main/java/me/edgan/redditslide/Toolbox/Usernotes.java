@@ -1,10 +1,10 @@
 package me.edgan.redditslide.Toolbox;
 
+import android.graphics.Color;
 import android.util.Base64;
 
 import androidx.annotation.ColorInt;
 
-import com.google.android.exoplayer2.util.ColorParser;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
+
+import me.edgan.redditslide.util.ColorParser;
 
 /** A group of usernotes for a subreddit */
 public class Usernotes {
@@ -191,7 +193,7 @@ public class Usernotes {
      */
     @ColorInt
     public int getColorFromWarningIndex(int index) {
-        String color = "#808080";
+        String color = "#808080"; // Default gray color
 
         ToolboxConfig config = Toolbox.getConfig(subreddit);
         if (config != null) { // Subs can have usernotes without a toolbox config
@@ -210,8 +212,10 @@ public class Usernotes {
         }
 
         try {
+            // Use the custom ColorParser to handle CSS-style colors
             return ColorParser.parseCssColor(color);
         } catch (IllegalArgumentException e) {
+            // Return a default color in case of parsing failure
             return 0xFF808080;
         }
     }
