@@ -25,7 +25,7 @@ public class GifDrawable extends Drawable {
 
     @Override
     public void draw(Canvas canvas) {
-        if (movie == null) return;
+        if (movie == null || movie.duration() == 0) return;
 
         long now = SystemClock.uptimeMillis();
 
