@@ -478,6 +478,7 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
         ImageFlairs.flairs = getSharedPreferences("FLAIRS", 0);
         SettingValues.setAllValues(getSharedPreferences("SETTINGS", 0));
         SortingUtil.defaultSorting = SettingValues.defaultSorting;
+        SortingUtil.frontpageSorting = SettingValues.frontpageSorting;
         SortingUtil.timePeriod = SettingValues.timePeriod;
         colors = getSharedPreferences("COLOR", 0);
         tags = getSharedPreferences("TAGS", 0);

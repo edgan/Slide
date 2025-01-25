@@ -558,7 +558,7 @@
     <string name="settings_title_notifications">Pemberitahuan</string>
     <string name="settings_title_pro">Go Pro</string>
     <string name="settings_title_sub_theme">Tema Subreddit</string>
-    <string name="settings_title_sorting">Menyetel ke semula</string>
+    <string name="settings_title_sort">Menyetel ke semula</string>
     <string name="settings_title_about">Tentang</string>
     <string name="settings_title_multi_column">Multi kolom</string>
     <string name="settings_title_fab">Tombol tindakan mengambang</string>
@@ -953,7 +953,7 @@
     <string name="submit_replies_to_inbox">Kirim balasan ke kotak masuk</string>
     <string name="btn_open_comments">Komentar terbuka</string>
     <string name="btn_preview">Pratinjau</string>
-    <string name="sorting_default_comment">Komentar pengurutan bawaan</string>
+    <string name="default_comment_sort">Komentar pengurutan bawaan</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Lanjutkan saat ini</string>
     <string name="type_selftext">Teks diri</string>

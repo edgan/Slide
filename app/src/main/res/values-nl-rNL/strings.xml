@@ -454,7 +454,7 @@
     <string name="settings_title_notifications">Notificaties</string>
     <string name="settings_title_pro">Neem Pro</string>
     <string name="settings_title_sub_theme">Subredditthema \'s</string>
-    <string name="settings_title_sorting">Standaardsortering</string>
+    <string name="settings_title_sort">Standaardsortering</string>
     <string name="settings_title_about">Over</string>
     <string name="settings_title_multi_column">Multikolom</string>
     <string name="settings_title_fab">Zwevende actieknop</string>
@@ -700,7 +700,7 @@
     <string name="submit_replies_to_inbox">Stuur reacties naar de inbox</string>
     <string name="btn_open_comments">Toon reacties</string>
     <string name="btn_preview">Voorbeeld</string>
-    <string name="sorting_default_comment">Standaard reactiesortering</string>
+    <string name="default_comment_sort">Standaard reactiesortering</string>
     <string name="thread_continue">Verdergaan met deze thread</string>
     <string name="type_selftext">Zelftekst</string>
     <string name="submission_unhide">Bericht weer tonen</string>

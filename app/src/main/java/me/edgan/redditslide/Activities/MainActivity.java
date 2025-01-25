@@ -3988,57 +3988,51 @@ public class MainActivity extends BaseActivity
                         }
                         switch (i) {
                             case 0:
-                                SortingUtil.setSorting(
-                                        ((SubmissionsView)
-                                                        (((MainPagerAdapter) pager.getAdapter())
-                                                                .getCurrentFragment()))
-                                                .id,
-                                        Sorting.HOT);
+                                if(id.equals("frontpage")) {
+                                    SortingUtil.frontpageSorting = Sorting.HOT;
+                                } else {
+                                    SortingUtil.setSorting(id, Sorting.HOT);
+                                }
                                 reloadSubs();
                                 break;
                             case 1:
-                                SortingUtil.setSorting(
-                                        ((SubmissionsView)
-                                                        (((MainPagerAdapter) pager.getAdapter())
-                                                                .getCurrentFragment()))
-                                                .id,
-                                        Sorting.NEW);
+                                if(id.equals("frontpage")) {
+                                    SortingUtil.frontpageSorting = Sorting.NEW;
+                                } else {
+                                    SortingUtil.setSorting(id, Sorting.NEW);
+                                }
                                 reloadSubs();
                                 break;
                             case 2:
-                                SortingUtil.setSorting(
-                                        ((SubmissionsView)
-                                                        (((MainPagerAdapter) pager.getAdapter())
-                                                                .getCurrentFragment()))
-                                                .id,
-                                        Sorting.RISING);
+                                if(id.equals("frontpage")) {
+                                    SortingUtil.frontpageSorting = Sorting.RISING;
+                                } else {
+                                    SortingUtil.setSorting(id, Sorting.RISING);
+                                }
                                 reloadSubs();
                                 break;
                             case 3:
-                                SortingUtil.setSorting(
-                                        ((SubmissionsView)
-                                                        (((MainPagerAdapter) pager.getAdapter())
-                                                                .getCurrentFragment()))
-                                                .id,
-                                        Sorting.TOP);
+                                if(id.equals("frontpage")) {
+                                    SortingUtil.frontpageSorting = Sorting.TOP;
+                                } else {
+                                    SortingUtil.setSorting(id, Sorting.TOP);
+                                }
                                 openPopupTime();
                                 break;
                             case 4:
-                                SortingUtil.setSorting(
-                                        ((SubmissionsView)
-                                                        (((MainPagerAdapter) pager.getAdapter())
-                                                                .getCurrentFragment()))
-                                                .id,
-                                        Sorting.CONTROVERSIAL);
+                                if(id.equals("frontpage")) {
+                                    SortingUtil.frontpageSorting = Sorting.CONTROVERSIAL;
+                                } else {
+                                    SortingUtil.setSorting(id, Sorting.CONTROVERSIAL);
+                                }
                                 openPopupTime();
                                 break;
                             case 5:
-                                SortingUtil.setSorting(
-                                        ((SubmissionsView)
-                                                        (((MainPagerAdapter) pager.getAdapter())
-                                                                .getCurrentFragment()))
-                                                .id,
-                                        Sorting.BEST);
+                                if(id.equals("frontpage")) {
+                                    SortingUtil.frontpageSorting = Sorting.BEST;
+                                } else {
+                                    SortingUtil.setSorting(id, Sorting.BEST);
+                                }
                                 reloadSubs();
                                 break;
                         }

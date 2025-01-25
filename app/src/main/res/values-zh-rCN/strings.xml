@@ -572,7 +572,7 @@
     <string name="settings_title_notifications">通知</string>
     <string name="settings_title_pro">升级为专业版</string>
     <string name="settings_title_sub_theme">版块主题</string>
-    <string name="settings_title_sorting">默认排序</string>
+    <string name="settings_title_sort">默认排序</string>
     <string name="settings_title_about">关于</string>
     <string name="settings_title_multi_column">多列显示</string>
     <string name="settings_title_fab">浮动操作按钮</string>
@@ -973,7 +973,7 @@
     <string name="submit_replies_to_inbox">将回复发送到收件箱</string>
     <string name="btn_open_comments">打开评论</string>
     <string name="btn_preview">预览</string>
-    <string name="sorting_default_comment">默认评论排序</string>
+    <string name="default_comment_sort">默认评论排序</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">继续此主题帖</string>
     <string name="type_selftext">帖文</string>

@@ -570,7 +570,7 @@
     <string name="settings_title_notifications">通知設定</string>
     <string name="settings_title_pro">Pro 版</string>
     <string name="settings_title_sub_theme">Subreddit テーマ</string>
-    <string name="settings_title_sorting">デフォルトの並べ替え</string>
+    <string name="settings_title_sort">デフォルトの並べ替え</string>
     <string name="settings_title_about">アプリついて</string>
     <string name="settings_title_multi_column">複数列</string>
     <string name="settings_title_fab">フローティング アクションボタン</string>
@@ -971,7 +971,7 @@
     <string name="submit_replies_to_inbox">受信トレイに返信を送信</string>
     <string name="btn_open_comments">コメントを開く</string>
     <string name="btn_preview">プレビュー</string>
-    <string name="sorting_default_comment">デフォルトのコメントのソート順</string>
+    <string name="default_comment_sort">デフォルトのコメントのソート順</string>
     <string name="content_deleted">[削除済]</string>
     <string name="thread_continue">このスレッドの続きを読む</string>
     <string name="type_selftext">自己投稿文</string>

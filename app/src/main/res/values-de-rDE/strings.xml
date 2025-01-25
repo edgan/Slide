@@ -575,7 +575,7 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="settings_title_notifications">Benachrichtigungen</string>
     <string name="settings_title_pro">Hol dir die Pro-Version</string>
     <string name="settings_title_sub_theme">Subreddit Theme</string>
-    <string name="settings_title_sorting">Standard-Sortierung</string>
+    <string name="settings_title_sort">Standard-Sortierung</string>
     <string name="settings_title_about">Über</string>
     <string name="settings_title_multi_column">Mehrspaltiges Layout</string>
     <string name="settings_title_fab">Schwebender Aktionsknopf</string>
@@ -979,7 +979,7 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="submit_replies_to_inbox">Über Antworten benachrichtigen</string>
     <string name="btn_open_comments">Kommentare anzeigen</string>
     <string name="btn_preview">Vorschau</string>
-    <string name="sorting_default_comment">Standardmäßige Kommentar-Sortierung</string>
+    <string name="default_comment_sort">Standardmäßige Kommentar-Sortierung</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Diesen Beitrag fortsetzen</string>
     <string name="type_selftext">Selftext</string>

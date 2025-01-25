@@ -150,6 +150,7 @@ public class SettingValues {
 
     public static CreateCardView.CardEnum defaultCardView;
     public static Sorting defaultSorting;
+    public static Sorting frontpageSorting;
     public static TimePeriod timePeriod;
     public static CommentSort defaultCommentSorting;
     public static boolean middleImage;
@@ -311,6 +312,7 @@ public class SettingValues {
         colorIndicator =
                 ColorIndicator.valueOf(settings.getString("colorIndicatorNew", "CARD_BACKGROUND"));
         defaultSorting = Sorting.valueOf(settings.getString("defaultSorting", "HOT"));
+        frontpageSorting = Sorting.valueOf(settings.getString("frontpageSorting", "BEST"));
         timePeriod = TimePeriod.valueOf(settings.getString("timePeriod", "DAY"));
         defaultCommentSorting =
                 CommentSort.valueOf(settings.getString("defaultCommentSortingNew", "CONFIDENCE"));
@@ -547,7 +549,12 @@ public class SettingValues {
 
     public static Sorting getSubmissionSort(String sub) {
         String subreddit = sub.toLowerCase(Locale.ENGLISH);
-        if (SortingUtil.sorting.containsKey(subreddit)) {
+        if (sub.equals("frontpage")) {
+            return Sorting.valueOf(
+                    prefs.getString(
+                            "frontpageSort" + sub.toLowerCase(Locale.ENGLISH),
+                            SortingUtil.frontpageSorting.name()));
+	} else if (SortingUtil.sorting.containsKey(subreddit)) {
             return SortingUtil.sorting.get(subreddit);
         } else {
             return Sorting.valueOf(

@@ -530,7 +530,7 @@
     <string name="settings_title_notifications">Értesítések</string>
     <string name="settings_title_pro">Pro verzió beszerzése</string>
     <string name="settings_title_sub_theme">Alreddit témák</string>
-    <string name="settings_title_sorting">Alapértelmezett rendezés</string>
+    <string name="settings_title_sort">Alapértelmezett rendezés</string>
     <string name="settings_title_about">Névjegy</string>
     <string name="settings_title_multi_column">Több oszlopos</string>
     <string name="settings_title_fab">Lebegő akciógomb</string>
@@ -738,7 +738,7 @@
     <string name="handling_browser">Webböngésző</string>
     <string name="btn_open_comments">Hozzászólások megnyitása</string>
     <string name="btn_preview">Előnézet</string>
-    <string name="sorting_default_comment">Alapértelmezett hozzászólás-rendezés</string>
+    <string name="default_comment_sort">Alapértelmezett hozzászólás-rendezés</string>
     <string name="thread_continue">A szál folytatása</string>
     <string name="type_selftext">Önálló szöveg</string>
     <string name="submission_unhide">Elrejtés visszavonása</string>

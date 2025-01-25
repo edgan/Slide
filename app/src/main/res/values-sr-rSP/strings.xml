@@ -530,7 +530,7 @@
     <string name="settings_title_history">Историјат</string>
     <string name="settings_title_notifications">Обавештења</string>
     <string name="settings_title_sub_theme">Субредит теме</string>
-    <string name="settings_title_sorting">Подразумеванo сортирањe</string>
+    <string name="settings_title_sort">Подразумеванo сортирањe</string>
     <string name="settings_title_about">О програму</string>
     <string name="settings_title_multi_column">Више колона</string>
     <string name="settings_title_comments">Коментари</string>
@@ -820,7 +820,7 @@
     <string name="handling_browser">Веб читач</string>
     <string name="submit_replies_to_inbox">Пошаљи одговоре у пријемно сандуче</string>
     <string name="btn_preview">Претпреглед</string>
-    <string name="sorting_default_comment">Подразумевано сортирање коментара</string>
+    <string name="default_comment_sort">Подразумевано сортирање коментара</string>
     <string name="content_deleted">[обрисано]</string>
     <string name="thread_continue">Настави ову тему</string>
     <string name="type_selftext">Selftext</string>

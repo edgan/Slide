@@ -563,7 +563,7 @@
     <string name="settings_title_notifications">Ajustes de notificaciones</string>
     <string name="settings_title_pro">Conviértete en Pro</string>
     <string name="settings_title_sub_theme">Temas de los subreddits</string>
-    <string name="settings_title_sorting">Clasificación por defecto</string>
+    <string name="settings_title_sort">Clasificación por defecto</string>
     <string name="settings_title_about">Acerca de</string>
     <string name="settings_title_multi_column">Ajustes de multi-columna</string>
     <string name="settings_title_fab">Botón de acción flotante</string>
@@ -953,7 +953,7 @@
     <string name="submit_replies_to_inbox">Envía respuestas al buzón</string>
     <string name="btn_open_comments">Comentarios abiertos</string>
     <string name="btn_preview">Preliminar</string>
-    <string name="sorting_default_comment">Orden predeterminado de comentarios</string>
+    <string name="default_comment_sort">Orden predeterminado de comentarios</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Continuar este hilo</string>
     <string name="type_selftext">Post de texto</string>

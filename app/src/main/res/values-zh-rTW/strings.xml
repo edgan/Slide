@@ -554,7 +554,7 @@
     <string name="settings_title_history">歷史</string>
     <string name="settings_title_notifications">通知</string>
     <string name="settings_title_sub_theme">Subreddit 主題</string>
-    <string name="settings_title_sorting">預設排序</string>
+    <string name="settings_title_sort">預設排序</string>
     <string name="settings_title_about">關於</string>
     <string name="settings_title_multi_column">多列版面</string>
     <string name="settings_title_fab">浮動動作按鈕</string>
@@ -822,7 +822,7 @@
     <string name="submit_replies_to_inbox">把回應發送至收件匣</string>
     <string name="btn_open_comments">開啟留言</string>
     <string name="btn_preview">預覽</string>
-    <string name="sorting_default_comment">預設留言排序</string>
+    <string name="default_comment_sort">預設留言排序</string>
     <string name="thread_continue">檢視更多留言</string>
     <string name="type_selftext">文字貼文</string>
     <string name="submission_unhide">取消隱藏貼文</string>

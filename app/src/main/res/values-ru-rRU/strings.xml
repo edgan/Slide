@@ -590,7 +590,7 @@
     <string name="settings_title_notifications">Уведомления</string>
     <string name="settings_title_pro">Перейти на Pro</string>
     <string name="settings_title_sub_theme">Темы сабреддитов</string>
-    <string name="settings_title_sorting">Сортировка по умолчанию</string>
+    <string name="settings_title_sort">Сортировка по умолчанию</string>
     <string name="settings_title_about">О приложении</string>
     <string name="settings_title_multi_column">Многостолбцовый режим</string>
     <string name="settings_title_fab">Плавающая кнопка действий</string>
@@ -1021,7 +1021,7 @@
     <string name="submit_replies_to_inbox">Присылать ответы во входящие</string>
     <string name="btn_open_comments">Открыть комментарии</string>
     <string name="btn_preview">Предварительный просмотр</string>
-    <string name="sorting_default_comment">Сортировка комментариев по умолчанию</string>
+    <string name="default_comment_sort">Сортировка комментариев по умолчанию</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Раскрыть эту ветку</string>
     <string name="type_selftext">Текстовые записи</string>

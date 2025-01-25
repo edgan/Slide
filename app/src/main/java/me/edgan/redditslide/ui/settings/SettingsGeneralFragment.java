@@ -291,6 +291,8 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                 context.findViewById(R.id.settings_general_sub_notifications);
         final TextView defaultSortingCurrentView =
                 context.findViewById(R.id.settings_general_sorting_current);
+        final TextView frontpageSortingCurrentView =
+                context.findViewById(R.id.settings_general_sorting_current_frontpage);
 
         context.findViewById(R.id.settings_general_drawer_items)
                 .setOnClickListener(
@@ -1049,6 +1051,72 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                 });
             }
         }
+
+	if (frontpageSortingCurrentView != null) {
+            frontpageSortingCurrentView.setText(
+                    SortingUtil.getSortingStrings()[SortingUtil.getSortingIdFrontpage()]);
+        }
+
+        {
+            if (context.findViewById(R.id.settings_general_sorting_frontpage) != null) {
+                context.findViewById(R.id.settings_general_sorting_frontpage)
+                        .setOnClickListener(
+                                v -> {
+                                    final DialogInterface.OnClickListener l2 =
+                                            (dialogInterface, i) -> {
+                                                switch (i) {
+                                                    case 0:
+                                                        SortingUtil.frontpageSorting = Sorting.HOT;
+                                                        break;
+                                                    case 1:
+                                                        SortingUtil.frontpageSorting = Sorting.NEW;
+                                                        break;
+                                                    case 2:
+                                                        SortingUtil.frontpageSorting = Sorting.RISING;
+                                                        break;
+                                                    case 3:
+                                                        SortingUtil.frontpageSorting = Sorting.TOP;
+                                                        askTimePeriod();
+                                                        return;
+                                                    case 4:
+                                                        SortingUtil.frontpageSorting =
+                                                                Sorting.CONTROVERSIAL;
+                                                        askTimePeriod();
+                                                        return;
+                                                    case 5:
+                                                        SortingUtil.frontpageSorting = Sorting.BEST;
+                                                        break;
+                                                }
+                                                SettingValues.prefs
+                                                        .edit()
+                                                        .putString(
+                                                                "frontpageSorting",
+                                                                SortingUtil.frontpageSorting.name())
+                                                        .apply();
+                                                SettingValues.frontpageSorting =
+                                                        SortingUtil.frontpageSorting;
+
+                                                if (frontpageSortingCurrentView != null) {
+                                                    frontpageSortingCurrentView.setText(
+                                                            SortingUtil.getSortingStrings()[
+                                                                    SortingUtil.getSortingIdFrontpage()]);
+                                                }
+                                            };
+
+                                    List<String> sortingStrings =
+                                            new ArrayList<>(
+                                                    Arrays.asList(SortingUtil.getSortingStrings()));
+                                    new AlertDialog.Builder(SettingsGeneralFragment.this.context)
+                                            .setTitle(R.string.sorting_choose)
+                                            .setSingleChoiceItems(
+                                                    sortingStrings.toArray(new String[0]),
+                                                    SortingUtil.getSortingIdFrontpage(),
+                                                    l2)
+                                            .show();
+                                });
+            }
+        }
+
         doNotifText(context);
         {
             final int i2 =

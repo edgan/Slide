@@ -544,7 +544,7 @@
     <string name="settings_title_notifications">Notificações</string>
     <string name="settings_title_pro">Passar a Pro</string>
     <string name="settings_title_sub_theme">Temas de Subreddit</string>
-    <string name="settings_title_sorting">Padrão de classificação</string>
+    <string name="settings_title_sort">Padrão de classificação</string>
     <string name="settings_title_about">Acerca de</string>
     <string name="settings_title_multi_column">Multi-coluna</string>
     <string name="settings_title_fab">Botão de ação flutuante</string>
@@ -919,7 +919,7 @@
     <string name="submit_replies_to_inbox">Enviar respostas para caixa de entrada</string>
     <string name="btn_open_comments">Abrir comentários</string>
     <string name="btn_preview">Pré-Visualização</string>
-    <string name="sorting_default_comment">Ordenação padrão de comentários</string>
+    <string name="default_comment_sort">Ordenação padrão de comentários</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Continuar esta discussão</string>
     <string name="type_selftext">Texto</string>

@@ -564,7 +564,7 @@
     <string name="settings_title_notifications">Notificacions</string>
     <string name="settings_title_pro">Pasaar-se a la versió Pro</string>
     <string name="settings_title_sub_theme">Temes del subreddit</string>
-    <string name="settings_title_sorting">Ordre per defecte</string>
+    <string name="settings_title_sort">Ordre per defecte</string>
     <string name="settings_title_about">Sobre</string>
     <string name="settings_title_multi_column">Multi-columna</string>
     <string name="settings_title_fab">Barra d\'acció flotant</string>
@@ -968,7 +968,7 @@
     <string name="submit_replies_to_inbox">Enviar les respostes a la safata d\'entrada</string>
     <string name="btn_open_comments">Obrir comentaris</string>
     <string name="btn_preview">Vista prèvia</string>
-    <string name="sorting_default_comment">Ordre de comentaris per defecte</string>
+    <string name="default_comment_sort">Ordre de comentaris per defecte</string>
     <string name="content_deleted">[eliminat]</string>
     <string name="thread_continue">Continuar aquest fil</string>
     <string name="type_selftext">Publicació escrita</string>

@@ -356,7 +356,7 @@
     <string name="settings_title_history">Logg</string>
     <string name="settings_title_notifications">Varselinnstillinger</string>
     <string name="settings_title_sub_theme">Subreddit-temaer</string>
-    <string name="settings_title_sorting">Standardsortering</string>
+    <string name="settings_title_sort">Standardsortering</string>
     <string name="settings_title_about">Om</string>
     <string name="settings_title_fab">Flytende handlingsknapp</string>
     <string name="settings_title_filter">Filtre</string>
@@ -558,7 +558,7 @@
     <string name="submit_replies_to_inbox">Send svar til innboks</string>
     <string name="btn_open_comments">Åpne kommentarer</string>
     <string name="btn_preview">Forhåndsvis</string>
-    <string name="sorting_default_comment">Standard kommentar-sortering</string>
+    <string name="default_comment_sort">Standard kommentar-sortering</string>
     <string name="thread_continue">Fortsett denne tråden</string>
     <string name="type_selftext">Selvtekst</string>
     <string name="submission_unhide">Vis skjult innlegg</string>

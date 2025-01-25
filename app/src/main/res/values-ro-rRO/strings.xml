@@ -417,7 +417,7 @@
     <string name="settings_title_history">Istoric</string>
     <string name="settings_title_notifications">Notificări</string>
     <string name="settings_title_sub_theme">Teme subreddits</string>
-    <string name="settings_title_sorting">Modul implicit pentru sortare</string>
+    <string name="settings_title_sort">Modul implicit pentru sortare</string>
     <string name="settings_title_about">Desde</string>
     <string name="settings_title_multi_column">Coloane multiple</string>
     <string name="settings_title_fab">Butonul flotant de acțiuni</string>
@@ -674,7 +674,7 @@
     <string name="handling_browser">Browser</string>
     <string name="btn_open_comments">Deschide comentariile</string>
     <string name="btn_preview">Previzualizare</string>
-    <string name="sorting_default_comment">Mod implicit de sortare a comentariilor</string>
+    <string name="default_comment_sort">Mod implicit de sortare a comentariilor</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Continuă acest subiect</string>
     <string name="type_selftext">Selftext</string>

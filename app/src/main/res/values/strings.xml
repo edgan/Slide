@@ -651,7 +651,8 @@
     <string name="settings_title_notifications">Notifications</string>
     <string name="settings_title_pro">Go Pro</string>
     <string name="settings_title_sub_theme">Subreddit themes</string>
-    <string name="settings_title_sorting">Default sorting</string>
+    <string name="settings_title_sort">Default sort</string>
+    <string name="settings_title_sort_frontpage">Frontpage sort</string>
     <string name="settings_title_about">About</string>
     <string name="settings_title_multi_column">Multi-column</string>
     <string name="settings_title_fab">Floating action button</string>
@@ -820,7 +821,7 @@
     <string name="profile_saved_categories">Saved categories</string>
 
     <!-- Setting subheaders -->
-    <string name="sorting">Sorting</string>
+    <string name="sorting">Sorts</string>
     <string name="display">Display</string>
     <string name="images">Images</string>
     <string name="storage">Storage</string>
@@ -1101,7 +1102,7 @@
     <string name="submit_replies_to_inbox">Send replies to inbox</string>
     <string name="btn_open_comments">Open comments</string>
     <string name="btn_preview">Preview</string>
-    <string name="sorting_default_comment">Default comment sorting</string>
+    <string name="default_comment_sort">Default comment sort</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Continue this thread</string>
     <string name="type_selftext">Selftext</string>

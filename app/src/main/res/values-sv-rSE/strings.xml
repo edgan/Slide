@@ -364,7 +364,7 @@
     <string name="settings_title_history">Historik</string>
     <string name="settings_title_notifications">Notifieringsinställningar</string>
     <string name="settings_title_sub_theme">Subreddit-teman</string>
-    <string name="settings_title_sorting">Standard sortering</string>
+    <string name="settings_title_sort">Standard sortering</string>
     <string name="settings_title_about">Om</string>
     <string name="settings_title_fab">Flytande action-knapp</string>
     <string name="settings_title_comments">Kommentarer</string>

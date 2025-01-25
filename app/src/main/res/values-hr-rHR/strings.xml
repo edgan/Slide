@@ -461,7 +461,7 @@
     <string name="settings_title_notifications">Obavijesti</string>
     <string name="settings_title_pro">Kupi Pro</string>
     <string name="settings_title_sub_theme">Podreddit teme</string>
-    <string name="settings_title_sorting">Zadano sortiranje</string>
+    <string name="settings_title_sort">Zadano sortiranje</string>
     <string name="settings_title_about">O nama</string>
     <string name="settings_title_multi_column">Više-stupačni način</string>
     <string name="settings_title_fab">Plutajući akcijski gumb</string>
