@@ -9,7 +9,6 @@ import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -22,29 +21,23 @@ import androidx.media.AudioAttributesCompat;
 import androidx.media.AudioFocusRequestCompat;
 import androidx.media.AudioManagerCompat;
 
-import androidx.media3.common.Format;
-import androidx.media3.common.MediaItem;
-import androidx.media3.common.Player;
-import androidx.media3.common.Tracks;
-import androidx.media3.common.Tracks.Group;
-import androidx.media3.common.util.Util;
-import androidx.media3.datasource.DataSource;
-import androidx.media3.datasource.DataSpec;
-import androidx.media3.datasource.cache.Cache;
-import androidx.media3.datasource.cache.CacheDataSource;
-import androidx.media3.datasource.cache.SimpleCache;
-import androidx.media3.datasource.okhttp.OkHttpDataSource;
-import androidx.media3.database.DatabaseProvider;
-import androidx.media3.database.ExoDatabaseProvider;
-import androidx.media3.exoplayer.ExoPlayer;
-import androidx.media3.exoplayer.dash.DashMediaSource;
-import androidx.media3.exoplayer.source.MediaSource;
-import androidx.media3.exoplayer.source.ProgressiveMediaSource;
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
-import androidx.media3.ui.AspectRatioFrameLayout;
-import androidx.media3.ui.PlayerView;
-import androidx.media3.common.MimeTypes;
-import androidx.media3.common.VideoSize;
+import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Tracks;
+import com.google.android.exoplayer2.Tracks.Group;
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.PlayerControlView;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.util.MimeTypes;
+import com.google.android.exoplayer2.video.VideoSize;
 
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
@@ -57,9 +50,9 @@ import me.edgan.redditslide.util.NetworkUtil;
 /** View containing an ExoPlayer */
 public class ExoVideoView extends RelativeLayout {
     private Context context;
-    private ExoPlayer player;
+    private SimpleExoPlayer player;
     private DefaultTrackSelector trackSelector;
-    private androidx.media3.ui.PlayerView playerUI;
+    private PlayerControlView playerUI;
     private boolean muteAttached = false;
     private boolean hqAttached = false;
     private AudioFocusHelper audioFocusHelper;
@@ -87,7 +80,7 @@ public class ExoVideoView extends RelativeLayout {
         }
     }
 
-    /** Initializes the view to render onto and the ExoPlayer instance */
+    /** Initializes the view to render onto and the SimpleExoPlayer instance */
     private void setupPlayer() {
         // Create a view to render the video onto and an AspectRatioFrameLayout to size the video
         // correctly
@@ -117,7 +110,7 @@ public class ExoVideoView extends RelativeLayout {
         }
 
         // Create the player, attach it to the view, make it repeat infinitely
-        player = new ExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
+        player = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
         player.setVideoSurfaceView(renderView);
         player.setRepeatMode(Player.REPEAT_MODE_ALL);
 
@@ -165,17 +158,18 @@ public class ExoVideoView extends RelativeLayout {
 
     /** Sets up the player UI */
     private void setupUI() {
-        playerUI = new PlayerView(context);
+        // Create a PlayerControlView for our video controls and add it
+        playerUI = new PlayerControlView(context);
         playerUI.setPlayer(player);
-        playerUI.setControllerShowTimeoutMs(2000);
-        playerUI.setUseController(false);
+        playerUI.setShowTimeoutMs(2000);
+        playerUI.hide();
         addView(playerUI);
 
         // Show/hide the player UI on tap
         setOnClickListener(
                 (v) -> {
                     playerUI.clearAnimation();
-                    if (playerUI.getVisibility() == View.VISIBLE) {
+                    if (playerUI.isVisible()) {
                         playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, false, 300));
                     } else {
                         playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, true, 300));
@@ -469,10 +463,10 @@ public class ExoVideoView extends RelativeLayout {
     }
 
     static class PlayerUIFadeInAnimation extends AnimationSet {
-        private PlayerView animationView;
+        private PlayerControlView animationView;
         private boolean toVisible;
 
-        PlayerUIFadeInAnimation(PlayerView view, boolean toVisible, long duration) {
+        PlayerUIFadeInAnimation(PlayerControlView view, boolean toVisible, long duration) {
             super(false);
             this.toVisible = toVisible;
             this.animationView = view;
@@ -491,15 +485,15 @@ public class ExoVideoView extends RelativeLayout {
 
             @Override
             public void onAnimationStart(Animation animation) {
-                animationView.setUseController(true);
+                animationView.show();
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
                 if (toVisible) {
-                    animationView.setUseController(true);
+                    animationView.show();
                 } else {
-                    animationView.setUseController(false);
+                    animationView.hide();
                 }
             }
 
