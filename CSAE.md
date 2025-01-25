@@ -1,6 +1,7 @@
 # Child Sexual Abuse and Exploitation (CSAE) Policy for Slide
 At Slide, we take the issue of child sexual abuse and exploitation (CSAE) with the utmost seriousness. We are committed to providing a safe environment for our users and ensuring compliance with legal standards to combat CSAE.
-Reporting and Handling CSAE Content
+
+# Reporting and Handling CSAE Content
 
 Slide is a third-party client for Reddit, meaning that content displayed in the app is sourced directly from Reddit’s platform. Slide does not host or manage content independently; it provides an alternative user interface for browsing Reddit. As such, the handling of CSAE-related content is primarily governed by Reddit’s content policies and moderation systems.
 
