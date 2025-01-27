@@ -2,6 +2,131 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+7.0.4 / 2025-1-27
+=================
+* Added a link to the privacy policy in the app
+
+7.0.3 / 2025-1-26
+=================
+* Made PREF_IGNORE_SUB_SETTINGS default to true
+
+7.0.2 / 2025-1-25
+=================
+* Fixed frontpage sort inconsistency #39    
+* Added Frontpage sort setting #39
+* Fixed media controls by reverting the upgrade to media3
+
+7.0.1 / 2025-1-24
+=================
+* Fixed crashes caused by duplicate gif emotes in comments #37
+* Changed Reddit Client ID override in General settings to restart the app
+* Updated from exoplayer to media3
+
+7.0.0 / 2025-1-24
+=================
+* Fixed Google drive backup and restore #30
+* Fixed local file backup and restore #30
+* Moved client id to the top of General settings
+* Renamed Save image location to Save storage location in General settings
+
+6.9.9 / 2025-1-21
+=================
+Fixed share image #36
+Fixed shortened URLs to work with the official Reddit app #35
+
+6.9.8 / 2025-1-20
+=================
+* Fixed Multireddits button in the navigation bar #34
+
+6.9.7 / 2025-1-18
+=================
+* Fixed comments screen swipe left behavior #32
+* Added more options for filtering subreddit content
+* Fixed gallery preview image size in comments #20
+
+6.9.6 / 2025-1-16
+=================
+* Fixed comments screen #25
+
+6.9.5 / 2025-1-16
+=================
+* Removed BlankFragment everywhere to fix cascade effect #22
+* Fixed saving media by updating to SAF #21
+* Fixed single image Imgur albums #24
+
+6.9.3 / 2025-1-3
+================
+Tried android:autoVerify="false"
+
+6.9.2 / 2025-1-1
+================
+* Added another fix for cutoff text in post titles
+
+6.9.1 / 2024-12-31
+==================
+
+6.9.0 / 2024-12-31
+==================
+* Reverting the Open by default change
+
+6.8.8 / 2024-12-26
+==================
+* Fixed bug with animated gif playback in non-galleries
+
+6.8.7 / 2024-12-25
+==================
+* Removed all reference to the Donate button in Settings
+
+6.8.6 / 2024-12-24
+==================
+* Fixed Open externally crash
+
+6.8.5 / 2024-12-24
+==================
+* Fixed SELECT PICTURE button to only require one press
+* Improved defaults
+* Removed Android Beam(NFC) support
+* Removed Open by default links
+
+6.8.2 / 2024-12-24
+==================
+* Removed open with links
+
+6.7.13 / 2024-12-22
+===================
+* Changed applicationId, minSdk, and versionCode for Google Play Store
+
+6.7.12 / 2024-12-22
+==================
+* Fixed gif post issue #17
+* Fixed a mix of animated and non-animated images in Reddit galleries #4
+
+6.7.11 / 2024-12-20
+===================
+* Fixed gallery preview showing the last image instead of the first #16
+* Fixed galleries being misdetected if the url wasn't a gallery url #15
+
+6.7.10 / 2024-12-19
+===================
+* Fixed consistently of emotes in comments respecting the animation toggle
+* Improved giphy gifs using the preview if it is available
+* Fixed galleries to not show a preview where mediaInfo has all failed entries
+
+6.7.9 / 2024-12-19
+==================
+* Fixed emotes with text before and after the gif
+* Fixed the emote scaling
+* Fixed the emote animation setting to be consistent
+* Replaced all references to /r/slideforreddit with /r/slidereddit
+
+6.7.8 / 2024-12-19
+==================
+* Added setting to disable longclicks on preview images
+
+6.7.7 / 2024-12-18
+==================
+* Fixed gallery image previews to be consistent on scroll down and back
+
 6.7.6 / 2024-12-15
 ==================
 * Fixed crash in RedditGalleryView
