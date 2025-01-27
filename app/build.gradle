@@ -7,26 +7,6 @@ plugins {
     id 'com.github.breadmoirai.github-release' version '2.5.2'
 }
 
-// Load github properties from github.properties
-def githubProperties = new Properties()
-def githubPropertiesFile = rootProject.file("github.properties")
-
-if (githubPropertiesFile.exists()) {
-    githubProperties.load(new FileInputStream(githubPropertiesFile))
-} else {
-    throw new GradleException("github.properties file not found. Please create one with the necessary github configurations.")
-}
-
-// Load keystore properties from keystore.properties
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file("keystore.properties")
-
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-} else {
-    throw new GradleException("keystore.properties file not found. Please create one with the necessary keystore configurations.")
-}
-
 android {
     compileSdk 34
     namespace "me.edgan.redditslide"
@@ -77,28 +57,41 @@ android {
         }
     }
 
-    signingConfigs {
-        withGPlay {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+    def keystorePropertiesFile = rootProject.file("keystore.properties")
+
+    if (keystorePropertiesFile.exists()) {
+        def keystoreProperties = new Properties()
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+        signingConfigs {
+            withGPlay {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
         }
+    } else {
+        println("Warning: keystore.properties file not found. Skipping signing configuration for withGPlay.")
     }
 
-    buildTypes {
-        release {
+
+buildTypes {
+    release {
+        if (keystorePropertiesFile.exists()) {
             signingConfig signingConfigs.withGPlay
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", "app_name", "Slide"
+        } else {
+            println("Warning: keystore.properties file not found. Skipping signing configuration for release.")
         }
-        debug {
-            applicationIdSuffix ".debug"
-            resValue "string", "app_name", "Slide Debug"
-        }
+        minifyEnabled false
+        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        resValue "string", "app_name", "Slide"
     }
-
+    debug {
+        applicationIdSuffix ".debug"
+        resValue "string", "app_name", "Slide Debug"
+    }
+}
     packagingOptions {
         exclude 'META-INF/*'
     }
@@ -136,21 +129,34 @@ configurations {
     }
 }
 
-githubRelease {
-    token = githubProperties["githubToken"]
-    owner = "edgan"
-    repo = "Slide"
-    tagName = "${android.defaultConfig.versionName}"
-    targetCommitish = "master"
-    releaseName = "Release ${android.defaultConfig.versionName}"
-    body = "Automated release of version ${android.defaultConfig.versionName}"
-    draft = false
-    prerelease = false
-    overwrite = false
+def githubPropertiesFile = rootProject.file("github.properties")
 
-    // Dynamically set releaseAssets by searching the APK path
-    // This assumes only one APK is present in the specified directory
-    releaseAssets = fileTree(dir: "build/outputs/apk/withGPlay/release/", include: "*.apk").files.toList()
+if (githubPropertiesFile.exists()) {
+    def githubProperties = new Properties()
+    githubProperties.load(new FileInputStream(githubPropertiesFile))
+
+    githubRelease {
+       token = githubProperties["githubToken"]
+        owner = "edgan"
+        repo = "Slide"
+        tagName = android.defaultConfig.versionName ?: "default-version"
+        targetCommitish = "master"
+        releaseName = "Release ${android.defaultConfig.versionName ?: "default-version"}"
+        body = "Automated release of version ${android.defaultConfig.versionName ?: "default-version"}"
+        draft = false
+        prerelease = false
+        overwrite = false
+
+        // Dynamically set releaseAssets by searching the APK path
+        def apkFiles = fileTree(dir: "build/outputs/apk/withGPlay/release/", include: "*.apk").files.toList()
+        if (apkFiles.isEmpty()) {
+            println("Warning: No APK files found in the directory 'build/outputs/apk/withGPlay/release/'.")
+        } else {
+            releaseAssets = apkFiles
+        }
+    }
+} else {
+    println("Warning: github.properties file not found. Skipping GitHub release configuration.")
 }
 
 dependencies {
