@@ -848,7 +848,7 @@
     <string name="over18_desc">Вам больше восемнадцати и вы желаете видеть контент для взрослых?</string>
     <string name="over18_desc_loggedout">Авторизируйтесь, чтобы отключить это предупреждение навсегда</string>
     <string name="over18_desc_loggedin">Вы можете отключить это навсегда в Настройки → Предпочтения Reddit → Показывать NSFW-контент</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Синхронизация завершена</string>
     <plurals name="color_sync_colored">
         <item quantity="one">%d сабреддит был раскрашен</item>
@@ -1123,7 +1123,7 @@
     <string name="authors_above">Авторы выше</string>
     <string name="btn_crosspost">Кросспост</string>
     <string name="btn_reset_color">СБРОСИТЬ ЦВЕТ</string>
-    <string name="settings_shortlink_description">Ссылки будут в виде \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Ссылки будут в виде \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">По возможности делиться укороченной ссылкой на Reddit</string>
     <string name="disable_replies_comment">Отключить ответы на комментарии во входящие</string>
     <string name="replies_disabled_comment">Ответы на комментарии отключены</string>

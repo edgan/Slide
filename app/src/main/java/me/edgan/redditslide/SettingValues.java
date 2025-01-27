@@ -318,7 +318,7 @@ public class SettingValues {
                 CommentSort.valueOf(settings.getString("defaultCommentSortingNew", "CONFIDENCE"));
         showNSFWContent = prefs.getBoolean(PREF_SHOW_NSFW_CONTENT, false);
         hideNSFWCollection = prefs.getBoolean(PREF_HIDE_NSFW_COLLECTION, true);
-        ignoreSubSetting = prefs.getBoolean(PREF_IGNORE_SUB_SETTINGS, false);
+        ignoreSubSetting = prefs.getBoolean(PREF_IGNORE_SUB_SETTINGS, true);
 
         single = prefs.getBoolean(PREF_SINGLE, false);
         readerNight = prefs.getBoolean(PREF_READER_NIGHT, false);

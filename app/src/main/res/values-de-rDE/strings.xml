@@ -813,7 +813,7 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="over18_desc">Bist du volljährig und möchtest jugendfreie Inhalte sehen?</string>
     <string name="over18_desc_loggedout">Log dich ein, um diese Warnung dauerhaft zu deaktivieren</string>
     <string name="over18_desc_loggedin">Sie können das auch permanent in den Einstellungen→Reddit Einstellungen→ Zeige NSFW Inhalt deaktivieren</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Synchronisation abgeschlossen</string>
     <plurals name="color_sync_colored">
         <item quantity="one">Ein Subreddit wurde gefärbt</item>
@@ -1079,7 +1079,7 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="authors_above">Autoren oberhalb</string>
     <string name="btn_crosspost">Crossposten</string>
     <string name="btn_reset_color">FARBE ZURÜCKSETZEN</string>
-    <string name="settings_shortlink_description">Links werden geteilt als \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Links werden geteilt als \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">Wenn möglich Reddit-Kurzlink teilen</string>
     <string name="disable_replies_comment">Kommentar Antworten im Posteingang deaktivieren</string>
     <string name="replies_disabled_comment">Kommentar Antworten deaktiviert</string>

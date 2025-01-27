@@ -809,7 +809,7 @@
     <string name="over18_desc">你已年满十八并愿意看到成人内容吗？</string>
     <string name="over18_desc_loggedout">登录以永久禁用此警告</string>
     <string name="over18_desc_loggedin">你可以永久禁用此选项，在设置→ Reddit 首选项→显示 NSFW 内容</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">同步完成</string>
     <plurals name="color_sync_colored">
         <item quantity="other">%d 个版块已上色</item>
@@ -1075,7 +1075,7 @@
     <string name="authors_above">上方为作者</string>
     <string name="btn_crosspost">交叉发帖</string>
     <string name="btn_reset_color">重置颜色</string>
-    <string name="settings_shortlink_description">链接将被以“https://redd.it/”的形式分享</string>
+    <string name="settings_shortlink_description">链接将被以“https://reddit.com/comments/”的形式分享</string>
     <string name="settings_shortlink">在可用时分享 Reddit 短链接</string>
     <string name="disable_replies_comment">关闭评论收件箱回复</string>
     <string name="replies_disabled_comment">已禁用评论回复</string>

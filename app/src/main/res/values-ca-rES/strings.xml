@@ -802,7 +802,7 @@
     <string name="over18_desc">Sou major d\'edat i voleu veure contingut per adults?</string>
     <string name="over18_desc_loggedout">Conecteu-vos per deshabitar aquest avís permanentment</string>
     <string name="over18_desc_loggedin">Podeu deshabilitar-ho permanentment a Configuració → Preferències de Reddit → Mostrar contingut NSFW</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Sincronització finalitzada</string>
     <plurals name="color_sync_colored">
         <item quantity="one">%d subreddit ha estat tintat</item>
@@ -1068,7 +1068,7 @@
     <string name="authors_above">Autors a dalt</string>
     <string name="btn_crosspost">Publicació creuada</string>
     <string name="btn_reset_color">RESTABLIR EL COLOR</string>
-    <string name="settings_shortlink_description">Els enllaços es compartiran com a \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Els enllaços es compartiran com a \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">Compartir enllaços de Reddit escurçats quan sigui possible</string>
     <string name="disable_replies_comment">Desactivar les respostes a comentaris de la bústia d\'entrada</string>
     <string name="replies_disabled_comment">Respostes de comentari desactivades</string>

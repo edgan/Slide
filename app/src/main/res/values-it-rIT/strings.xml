@@ -820,7 +820,7 @@
     <string name="over18_desc">Hai più di diciotto anni e confermi di voler visualizzare contenuti per adulti?</string>
     <string name="over18_desc_loggedout">Esegui il login per rimuovere permanentemente questo avviso</string>
     <string name="over18_desc_loggedin">Puoi disabilitare permanentemente questo avviso in Impostazioni → Mostra contenuto NSFW</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Sincronizzazione completata</string>
     <plurals name="color_sync_colored">
         <item quantity="one">%d subreddit colorato</item>
@@ -1089,7 +1089,7 @@
     <string name="authors_above">Autori sopra</string>
     <string name="btn_crosspost">Crosspost</string>
     <string name="btn_reset_color">REIMPOSTA COLORE</string>
-    <string name="settings_shortlink_description">Il dominio dei link condivisi sarà \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Il dominio dei link condivisi sarà \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">Condividi il link accorciato di reddit quando possibile</string>
     <string name="disable_replies_comment">Disabilita le risposte della casella di posta dei commenti</string>
     <string name="replies_disabled_comment">Risposte ai commenti disabilitati</string>

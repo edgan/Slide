@@ -807,7 +807,7 @@
     <string name="over18_desc">あなたは18歳以上で、成人向けコンテンツを閲覧しますか?</string>
     <string name="over18_desc_loggedout">この注意を永久に表示しない為にはログインして下さい</string>
     <string name="over18_desc_loggedin">この機能は 設定 → Reddit 設定 → NSFWコンテンツを表示する で無効化できます</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">同期が完了しました</string>
     <plurals name="color_sync_colored">
         <item quantity="other">%d個のサブレディットに色が付けられました</item>
@@ -1073,7 +1073,7 @@
     <string name="authors_above">上の作者</string>
     <string name="btn_crosspost">クロスポスト</string>
     <string name="btn_reset_color">色をリセット</string>
-    <string name="settings_shortlink_description">\'https://redd.it/\' としてリンクが共有されます</string>
+    <string name="settings_shortlink_description">\'https://reddit.com/comments/\' としてリンクが共有されます</string>
     <string name="settings_shortlink">可能な場合 Reddit 短縮リンクを共有</string>
     <string name="disable_replies_comment">コメントの受信トレイの返信を無効にする</string>
     <string name="replies_disabled_comment">コメントの返信は無効です</string>

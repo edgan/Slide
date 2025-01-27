@@ -789,7 +789,7 @@
     <string name="over18_desc">Apakah Anda selama delapan belas dan bersedia untuk melihat konten dewasa?</string>
     <string name="over18_desc_loggedout">Log in untuk menonaktifkan peringatan ini secara permanen</string>
     <string name="over18_desc_loggedin">Anda dapat menonaktifkan ini secara permanen dalam pengaturan → Reddit preferensi → Tampilkan NSFW konten</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Sinkronisasi lengkap</string>
     <plurals name="color_sync_colored">
         <item quantity="other">%d subreddits diwarnai</item>
@@ -1053,7 +1053,7 @@
     <string name="authors_above">Pengirim diatas</string>
     <string name="btn_crosspost">Crosspost</string>
     <string name="btn_reset_color">SETEL ULANG WARNA</string>
-    <string name="settings_shortlink_description">Tautan akan dibagikan sebagai \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Tautan akan dibagikan sebagai \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">Bagikan tautan pendek Reddit jika memungkinkan</string>
     <string name="disable_replies_comment">Nonaktifkan balasan inbox komentar</string>
     <string name="replies_disabled_comment">Balasan komentar dinonaktifkan</string>

@@ -828,7 +828,7 @@
     <string name="over18_desc">Je Vám přes osmnáct a chcete vidět obsah pro dospělé?</string>
     <string name="over18_desc_loggedout">Pro trvalé vypnutí tohoto varování se přihlaste</string>
     <string name="over18_desc_loggedin">Můžete to trvale zakázat v Nastavení → Reddit nastavení → Zobrazit NSFW obsah</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Synchronizace dokončena</string>
     <plurals name="color_sync_colored">
         <item quantity="one">%d subreddit byl zabarven</item>
@@ -1100,7 +1100,7 @@
     <string name="authors_above">Autoři výše</string>
     <string name="btn_crosspost">Crosspost</string>
     <string name="btn_reset_color">OBNOVIT BARVY</string>
-    <string name="settings_shortlink_description">Odkazy budou sdíleny jako \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Odkazy budou sdíleny jako \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">Sdílet Reddit shortlink tam, kde je to možné</string>
     <string name="disable_replies_comment">Vypnout odpovědi na komentáře v inboxu</string>
     <string name="replies_disabled_comment">Odpovědi na komentáře vypnuty</string>
