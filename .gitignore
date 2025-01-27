@@ -7,7 +7,7 @@ keystore.properties
 # Local configuration file (sdk path, etc)
 local.properties
 
-secretconstants.properties
+app/src/main/assets/secretconstants.properties
 app/google-services.json
 
 # Gradle generated files
