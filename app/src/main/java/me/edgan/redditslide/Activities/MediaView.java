@@ -562,9 +562,6 @@ public class MediaView extends BaseSaveActivity {
             doLoad(contentUrl);
         }
 
-        if (!Reddit.appRestart.contains("tutorialSwipe")) {
-            startActivityForResult(new Intent(this, SwipeTutorial.class), 3);
-        }
         findViewById(R.id.more)
                 .setOnClickListener(
                         new View.OnClickListener() {
@@ -918,14 +915,6 @@ public class MediaView extends BaseSaveActivity {
         }
 
         actuallyLoaded = contentUrl;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 3) {
-            Reddit.appRestart.edit().putBoolean("tutorialSwipe", true).apply();
-        }
     }
 
     public void displayImage(final String urlB) {

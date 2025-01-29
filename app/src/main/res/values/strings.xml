@@ -1245,4 +1245,6 @@
     <string name="sign_in_failed_msg">Unable to sign in to your Google account. Please try again.</string>
     <string name="backup_no_files">No Backup Files Found</string>
     <string name="backup_no_files_msg">There are no backup files available to restore.</string>
+
+    <string name="settings_set_image_location">Images will be saved to %s</string>
 </resources>

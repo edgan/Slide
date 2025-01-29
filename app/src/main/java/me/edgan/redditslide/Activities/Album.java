@@ -25,17 +25,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import me.edgan.redditslide.Adapters.AlbumView;
+import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.ImgurAlbum.AlbumUtils;
 import me.edgan.redditslide.ImgurAlbum.Image;
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.NavigationModeDetector;
 import me.edgan.redditslide.util.StorageUtil;
 
 import java.util.ArrayList;
@@ -52,6 +54,9 @@ public class Album extends BaseSaveActivity {
     public static final String SUBREDDIT = "subreddit";
     private List<Image> images;
     private int adapterPosition;
+
+    private View rootView;
+    private int navigationMode = NavigationModeDetector.NAVIGATION_MODE_GESTURE;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -151,6 +156,10 @@ public class Album extends BaseSaveActivity {
                         true);
         setContentView(R.layout.album);
 
+        rootView = findViewById(android.R.id.content);
+
+        navigationMode = NavigationModeDetector.getNavigationMode(this, rootView);
+
         // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -163,34 +172,55 @@ public class Album extends BaseSaveActivity {
 
         final ViewPager pager = (ViewPager) findViewById(R.id.images);
 
-        album = new AlbumPagerAdapter(getSupportFragmentManager());
+        album = new AlbumPagerAdapter(getSupportFragmentManager(), navigationMode);
         pager.setAdapter(album);
         pager.setCurrentItem(1);
-        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {});
-
-        if (!Reddit.appRestart.contains("tutorialSwipe")) {
-            startActivityForResult(new Intent(this, SwipeTutorial.class), 3);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 3) {
-            Reddit.appRestart.edit().putBoolean("tutorialSwipe", true).apply();
+        if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            pager.addOnPageChangeListener(
+                    new ViewPager.SimpleOnPageChangeListener() {
+                        @Override
+                        public void onPageScrolled(
+                                int position, float positionOffset, int positionOffsetPixels) {
+                            if (position == 0 && positionOffsetPixels == 0) {
+                                finish();
+                            }
+                            if (position == 0
+                                    && ((AlbumPagerAdapter) pager.getAdapter()).blankPage != null) {
+                                if (((AlbumPagerAdapter) pager.getAdapter()).blankPage != null) {
+                                    ((AlbumPagerAdapter) pager.getAdapter())
+                                            .blankPage.doOffset(positionOffset);
+                                }
+                                ((AlbumPagerAdapter) pager.getAdapter())
+                                        .blankPage.realBack.setBackgroundColor(
+                                                Palette.adjustAlpha(positionOffset * 0.7f));
+                            }
+                        }
+                    });
+        } else {
+            pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {});
         }
     }
 
     public static class AlbumPagerAdapter extends FragmentStatePagerAdapter {
+        public BlankFragment blankPage;
         public AlbumFrag album;
+        private final int navigationMode;
 
-        public AlbumPagerAdapter(FragmentManager fm) {
+        public AlbumPagerAdapter(FragmentManager fm, int navigationMode) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+            this.navigationMode = navigationMode;
         }
 
         @NonNull
         @Override
         public Fragment getItem(int i) {
+            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                if (i == 0) {
+                    blankPage = new BlankFragment();
+                    return blankPage;
+                }
+            }
+
             album = new AlbumFrag();
 
             return album;
@@ -198,7 +228,13 @@ public class Album extends BaseSaveActivity {
 
         @Override
         public int getCount() {
-            return 1;
+            int count = 1;
+
+            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                count = 2;
+            }
+
+            return count;
         }
     }
 

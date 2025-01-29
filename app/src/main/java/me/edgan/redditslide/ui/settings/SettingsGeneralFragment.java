@@ -1052,7 +1052,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
             }
         }
 
-	if (frontpageSortingCurrentView != null) {
+        if (frontpageSortingCurrentView != null) {
             frontpageSortingCurrentView.setText(
                     SortingUtil.getSortingStrings()[SortingUtil.getSortingIdFrontpage()]);
         }
@@ -1072,7 +1072,8 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                                         SortingUtil.frontpageSorting = Sorting.NEW;
                                                         break;
                                                     case 2:
-                                                        SortingUtil.frontpageSorting = Sorting.RISING;
+                                                        SortingUtil.frontpageSorting =
+                                                                Sorting.RISING;
                                                         break;
                                                     case 3:
                                                         SortingUtil.frontpageSorting = Sorting.TOP;
@@ -1099,7 +1100,8 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                                 if (frontpageSortingCurrentView != null) {
                                                     frontpageSortingCurrentView.setText(
                                                             SortingUtil.getSortingStrings()[
-                                                                    SortingUtil.getSortingIdFrontpage()]);
+                                                                    SortingUtil
+                                                                            .getSortingIdFrontpage()]);
                                                 }
                                             };
 

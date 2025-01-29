@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
@@ -20,6 +21,7 @@ import me.edgan.redditslide.Adapters.MultiredditPosts;
 import me.edgan.redditslide.Adapters.SubmissionDisplay;
 import me.edgan.redditslide.Adapters.SubredditPosts;
 import me.edgan.redditslide.Authentication;
+import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.CommentPage;
 import me.edgan.redditslide.LastComments;
 import me.edgan.redditslide.OfflineSubreddit;
@@ -27,8 +29,10 @@ import me.edgan.redditslide.PostLoader;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.CustomViewPager;
 import me.edgan.redditslide.util.KeyboardUtil;
+import me.edgan.redditslide.util.NavigationModeDetector;
 
 import net.dean.jraw.models.Submission;
 
@@ -65,6 +69,9 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
     String multireddit;
     String profile;
 
+    private View rootView;
+    private int navigationMode;
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         int keyCode = event.getKeyCode();
@@ -89,25 +96,10 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if (!Reddit.appRestart.contains("tutorialSwipeComment")) {
-            Reddit.appRestart.edit().putBoolean("tutorialSwipeComment", true).apply();
-        } else if (!Reddit.appRestart.contains("tutorial_comm")) {
-            Reddit.appRestart.edit().putBoolean("tutorial_comm", true).apply();
-        }
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 14) {
             comments.notifyDataSetChanged();
-            // todo make this work
-        }
-        if (requestCode == 333) {
-            Reddit.appRestart.edit().putBoolean("tutorialSwipeComments", true).apply();
         }
     }
 
@@ -115,6 +107,35 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
     public ArrayList<Integer> seen;
 
     public boolean popup;
+
+    private class CommonPageChangeListener extends ViewPager.SimpleOnPageChangeListener {
+        @Override
+        public void onPageSelected(int position) {
+            if (position != firstPage && position < currentPosts.size()) {
+                position = position - 1;
+                if (position < 0) position = 0;
+
+                updateSubredditAndSubmission(currentPosts.get(position));
+
+                if (currentPosts.size() - 2 <= position && subredditPosts.hasMore()) {
+                    subredditPosts.loadMore(
+                            CommentsScreen.this.getApplicationContext(),
+                            CommentsScreen.this,
+                            false);
+                }
+
+                currentPage = position;
+                seen.add(position);
+
+                Bundle conData = new Bundle();
+                conData.putIntegerArrayList("seen", seen);
+                conData.putInt("lastPage", position);
+                Intent intent = new Intent();
+                intent.putExtras(conData);
+                setResult(RESULT_OK, intent);
+            }
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstance) {
@@ -138,6 +159,10 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
             super.onCreate(savedInstance);
             setContentView(R.layout.activity_slide);
         }
+
+        rootView = findViewById(android.R.id.content);
+
+        navigationMode = NavigationModeDetector.getNavigationMode(this, rootView);
 
         Reddit.setDefaultErrorHandler(this);
 
@@ -193,47 +218,33 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
             pager.setAdapter(comments);
             currentPage = firstPage;
 
-            pager.setCurrentItem(firstPage);
+            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                pager.setCurrentItem(firstPage + 1);
+            } else {
+                pager.setCurrentItem(firstPage);
+            }
 
             pager.setEntryPageIndex(firstPage);
 
-            pager.addOnPageChangeListener(
-                    new ViewPager.SimpleOnPageChangeListener() {
-                        @Override
-                        public void onPageSelected(int position) {
-                            if (position != firstPage && position < currentPosts.size()) {
-                                position = position - 1;
-                                if (position < 0) position = 0;
-                                updateSubredditAndSubmission(currentPosts.get(position));
-
-                                if (currentPosts.size() - 2 <= position
-                                        && subredditPosts.hasMore()) {
-                                    subredditPosts.loadMore(
-                                            CommentsScreen.this.getApplicationContext(),
-                                            CommentsScreen.this,
-                                            false);
-                                }
-
-                                currentPage = position;
-                                seen.add(position);
-
-                                Bundle conData = new Bundle();
-                                conData.putIntegerArrayList("seen", seen);
-                                conData.putInt("lastPage", position);
-                                Intent intent = new Intent();
-                                intent.putExtras(conData);
-                                setResult(RESULT_OK, intent);
-                            }
+            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                pager.addOnPageChangeListener(new CommonPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                        if (position <= firstPage && positionOffsetPixels == 0) {
+                            finish();
                         }
-                    });
-        }
-        if (!Reddit.appRestart.contains("tutorialSwipeComments")) {
-            Intent i = new Intent(this, SwipeTutorial.class);
-            i.putExtra(
-                    "subtitle",
-                    "Swipe from the left edge to exit comments.\n\n"
-                        + "You can swipe in the middle to get to the previous/next submission.");
-            startActivityForResult(i, 333);
+                        if (position == firstPage && !popup) {
+                            CommentsScreenPagerAdapter adapter = (CommentsScreenPagerAdapter) pager.getAdapter();
+                            if (adapter.blankPage != null) {
+                                adapter.blankPage.doOffset(positionOffset);
+                            }
+                            pager.setBackgroundColor(Palette.adjustAlpha(positionOffset * 0.7f));
+                        }
+                    }
+                });
+            } else {
+                pager.addOnPageChangeListener(new CommonPageChangeListener());
+            }
         }
     }
 
@@ -255,13 +266,7 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
                 new Runnable() {
                     @Override
                     public void run() {
-                        if (startIndex != -1) {
-                            // TODO determine correct behaviour
-                            // comments.notifyItemRangeInserted(startIndex, posts.posts.size());
-                            comments.notifyDataSetChanged();
-                        } else {
-                            comments.notifyDataSetChanged();
-                        }
+                        comments.notifyDataSetChanged();
                     }
                 });
     }
@@ -293,6 +298,7 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
 
     private class CommentsScreenPagerAdapter extends FragmentStatePagerAdapter {
         private CommentPage mCurrentFragment;
+        public BlankFragment blankPage;
 
         CommentsScreenPagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -314,29 +320,47 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
             }
         }
 
-        @NonNull
-        @Override
-        public Fragment getItem(int i) {
+        private Fragment createCommentPageFragment(int i) {
             Fragment f = new CommentPage();
             Bundle args = new Bundle();
             String name = currentPosts.get(i).getFullName();
             args.putString("id", name.substring(3));
             args.putBoolean("archived", currentPosts.get(i).isArchived());
             args.putBoolean(
-                    "contest", currentPosts.get(i).getDataNode().get("contest_mode").asBoolean());
+                    "contest",
+                    currentPosts.get(i).getDataNode().get("contest_mode").asBoolean());
             args.putBoolean("locked", currentPosts.get(i).isLocked());
             args.putInt("page", i);
             args.putString("subreddit", currentPosts.get(i).getSubredditName());
             args.putString(
-                    "baseSubreddit", multireddit == null ? baseSubreddit : "multi" + multireddit);
-
+                    "baseSubreddit",
+                    multireddit == null ? baseSubreddit : "multi" + multireddit);
             f.setArguments(args);
             return f;
         }
 
+        @NonNull
+        @Override
+        public Fragment getItem(int i) {
+            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                if (i <= firstPage || i == 0) {
+                    blankPage = new BlankFragment();
+                    return blankPage;
+                } else {
+                    return createCommentPageFragment(i - 1);
+                }
+            } else {
+                return createCommentPageFragment(i);
+            }
+        }
+
         @Override
         public int getCount() {
-            return currentPosts.size();
+            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                return currentPosts.size() + 1;
+            } else {
+                return currentPosts.size();
+            }
         }
     }
 }

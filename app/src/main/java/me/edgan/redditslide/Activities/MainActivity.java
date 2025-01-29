@@ -3988,7 +3988,7 @@ public class MainActivity extends BaseActivity
                         }
                         switch (i) {
                             case 0:
-                                if(id.equals("frontpage")) {
+                                if (id.equals("frontpage")) {
                                     SortingUtil.frontpageSorting = Sorting.HOT;
                                 } else {
                                     SortingUtil.setSorting(id, Sorting.HOT);
@@ -3996,7 +3996,7 @@ public class MainActivity extends BaseActivity
                                 reloadSubs();
                                 break;
                             case 1:
-                                if(id.equals("frontpage")) {
+                                if (id.equals("frontpage")) {
                                     SortingUtil.frontpageSorting = Sorting.NEW;
                                 } else {
                                     SortingUtil.setSorting(id, Sorting.NEW);
@@ -4004,7 +4004,7 @@ public class MainActivity extends BaseActivity
                                 reloadSubs();
                                 break;
                             case 2:
-                                if(id.equals("frontpage")) {
+                                if (id.equals("frontpage")) {
                                     SortingUtil.frontpageSorting = Sorting.RISING;
                                 } else {
                                     SortingUtil.setSorting(id, Sorting.RISING);
@@ -4012,7 +4012,7 @@ public class MainActivity extends BaseActivity
                                 reloadSubs();
                                 break;
                             case 3:
-                                if(id.equals("frontpage")) {
+                                if (id.equals("frontpage")) {
                                     SortingUtil.frontpageSorting = Sorting.TOP;
                                 } else {
                                     SortingUtil.setSorting(id, Sorting.TOP);
@@ -4020,7 +4020,7 @@ public class MainActivity extends BaseActivity
                                 openPopupTime();
                                 break;
                             case 4:
-                                if(id.equals("frontpage")) {
+                                if (id.equals("frontpage")) {
                                     SortingUtil.frontpageSorting = Sorting.CONTROVERSIAL;
                                 } else {
                                     SortingUtil.setSorting(id, Sorting.CONTROVERSIAL);
@@ -4028,7 +4028,7 @@ public class MainActivity extends BaseActivity
                                 openPopupTime();
                                 break;
                             case 5:
-                                if(id.equals("frontpage")) {
+                                if (id.equals("frontpage")) {
                                     SortingUtil.frontpageSorting = Sorting.BEST;
                                 } else {
                                     SortingUtil.setSorting(id, Sorting.BEST);

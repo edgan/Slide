@@ -98,9 +98,9 @@ public class ExoVideoView extends RelativeLayout {
         // Create a track selector so we can set specific video quality for DASH
         trackSelector = new DefaultTrackSelector(context);
         if ((SettingValues.lowResAlways
-                || (NetworkUtil.isConnected(context)
-                    && !NetworkUtil.isConnectedWifi(context)
-                    && SettingValues.lowResMobile))
+                        || (NetworkUtil.isConnected(context)
+                                && !NetworkUtil.isConnectedWifi(context)
+                                && SettingValues.lowResMobile))
                 && SettingValues.lqVideos) {
             trackSelector.setParameters(
                     trackSelector.buildUponParameters().setForceLowestBitrate(true));
@@ -139,16 +139,20 @@ public class ExoVideoView extends RelativeLayout {
                     public void onTracksChanged(@NonNull Tracks tracks) {
                         // Logging example
                         StringBuilder toLog = new StringBuilder();
-                        for (int groupIndex = 0; groupIndex < tracks.getGroups().size(); groupIndex++) {
+                        for (int groupIndex = 0;
+                                groupIndex < tracks.getGroups().size();
+                                groupIndex++) {
                             Group group = tracks.getGroups().get(groupIndex);
-                            for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
+                            for (int trackIndex = 0;
+                                    trackIndex < group.getMediaTrackGroup().length;
+                                    trackIndex++) {
                                 Format format = group.getTrackFormat(trackIndex);
                                 boolean isSelected = group.isTrackSelected(trackIndex);
 
                                 toLog.append("Format:\t")
-                                     .append(format)
-                                     .append(isSelected ? " (selected)" : "")
-                                     .append("\n");
+                                        .append(format)
+                                        .append(isSelected ? " (selected)" : "")
+                                        .append("\n");
                             }
                         }
                         Log.v(LogUtil.getTag(), toLog.toString());
@@ -188,7 +192,8 @@ public class ExoVideoView extends RelativeLayout {
         // Create the data sources used to retrieve and cache the video
         DataSource.Factory downloader =
                 new OkHttpDataSource.Factory(Reddit.client)
-                        .setDefaultRequestProperties(GifUtils.AsyncLoadGif.makeHeaderMap(uri.getHost()));
+                        .setDefaultRequestProperties(
+                                GifUtils.AsyncLoadGif.makeHeaderMap(uri.getHost()));
         DataSource.Factory cacheDataSourceFactory =
                 new CacheDataSource.Factory()
                         .setCache(Reddit.videoCache)
@@ -293,10 +298,13 @@ public class ExoVideoView extends RelativeLayout {
                         // Check if we have any selected audio track
                         boolean foundAudio = false;
                         for (Tracks.Group group : tracks.getGroups()) {
-                            for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
+                            for (int trackIndex = 0;
+                                    trackIndex < group.getMediaTrackGroup().length;
+                                    trackIndex++) {
                                 if (group.isTrackSelected(trackIndex)) {
                                     Format format = group.getTrackFormat(trackIndex);
-                                    if (format != null && MimeTypes.isAudio(format.sampleMimeType)) {
+                                    if (format != null
+                                            && MimeTypes.isAudio(format.sampleMimeType)) {
                                         foundAudio = true;
                                         break;
                                     }
@@ -380,7 +388,9 @@ public class ExoVideoView extends RelativeLayout {
 
                         int videoTrackCounter = 0;
                         for (Tracks.Group group : tracks.getGroups()) {
-                            for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
+                            for (int trackIndex = 0;
+                                    trackIndex < group.getMediaTrackGroup().length;
+                                    trackIndex++) {
                                 Format format = group.getTrackFormat(trackIndex);
                                 if (format != null && MimeTypes.isVideo(format.sampleMimeType)) {
                                     videoTrackCounter++;
@@ -432,7 +442,8 @@ public class ExoVideoView extends RelativeLayout {
                                 .setUsage(AudioAttributesCompat.USAGE_MEDIA)
                                 .build();
                 request =
-                        new AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT)
+                        new AudioFocusRequestCompat.Builder(
+                                        AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT)
                                 .setAudioAttributes(audioAttributes)
                                 .setOnAudioFocusChangeListener(this)
                                 .setWillPauseWhenDucked(true)

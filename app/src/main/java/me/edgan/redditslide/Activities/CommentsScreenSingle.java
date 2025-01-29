@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Autocache.AutoCacheScheduler;
+import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.CommentPage;
 import me.edgan.redditslide.HasSeen;
 import me.edgan.redditslide.LastComments;
@@ -27,7 +29,9 @@ import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SwipeLayout.Utils;
 import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.NavigationModeDetector;
 
 import net.dean.jraw.models.Submission;
 
@@ -50,6 +54,9 @@ public class CommentsScreenSingle extends BaseActivityAnim {
     private String context;
     private int contextNumber;
     private Boolean doneTranslucent = false;
+
+    private View rootView;
+    private int navigationMode;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -92,6 +99,10 @@ public class CommentsScreenSingle extends BaseActivityAnim {
         applyColorTheme();
         setContentView(R.layout.activity_slide);
         name = getIntent().getExtras().getString(EXTRA_SUBMISSION, "");
+
+        rootView = findViewById(android.R.id.content);
+
+        navigationMode = NavigationModeDetector.getNavigationMode(this, rootView);
 
         subreddit = getIntent().getExtras().getString(EXTRA_SUBREDDIT, "");
         np = getIntent().getExtras().getBoolean(EXTRA_NP, false);
@@ -167,6 +178,16 @@ public class CommentsScreenSingle extends BaseActivityAnim {
         }
     }
 
+    private class CommonPageChangeListener extends ViewPager.SimpleOnPageChangeListener {
+        @Override
+        public void onPageScrollStateChanged(int state) {
+            if (!doneTranslucent) {
+                doneTranslucent = true;
+                Utils.convertActivityToTranslucent(CommentsScreenSingle.this);
+            }
+        }
+    }
+
     private void setupAdapter() {
         themeSystemBars(subreddit);
         setRecentBar(subreddit);
@@ -176,16 +197,29 @@ public class CommentsScreenSingle extends BaseActivityAnim {
         pager.setAdapter(comments);
         pager.setBackgroundColor(Color.TRANSPARENT);
         pager.setCurrentItem(1);
-        pager.addOnPageChangeListener(
-                new ViewPager.SimpleOnPageChangeListener() {
-                    @Override
-                    public void onPageScrollStateChanged(int state) {
-                        if (!doneTranslucent) {
-                            doneTranslucent = true;
-                            Utils.convertActivityToTranslucent(CommentsScreenSingle.this);
-                        }
+
+        if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            pager.addOnPageChangeListener(new CommonPageChangeListener() {
+                @Override
+                public void onPageScrolled(
+                        int position, float positionOffset, int positionOffsetPixels) {
+                    if (position == 0 && positionOffsetPixels == 0) {
+                        finish();
                     }
-                });
+                    if (position == 0
+                            && ((CommentsScreenSinglePagerAdapter) pager.getAdapter())
+                                        .blankPage
+                                != null) {
+                        ((CommentsScreenSinglePagerAdapter) pager.getAdapter())
+                                .blankPage.doOffset(positionOffset);
+                        pager.setBackgroundColor(
+                                Palette.adjustAlpha(positionOffset * 0.7f));
+                    }
+                }
+            });
+        } else {
+            pager.addOnPageChangeListener(new CommonPageChangeListener());
+        }
     }
 
     boolean locked;
@@ -251,6 +285,7 @@ public class CommentsScreenSingle extends BaseActivityAnim {
 
     private class CommentsScreenSinglePagerAdapter extends FragmentStatePagerAdapter {
         private Fragment mCurrentFragment;
+        public BlankFragment blankPage;
 
         CommentsScreenSinglePagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -269,21 +304,36 @@ public class CommentsScreenSingle extends BaseActivityAnim {
             super.setPrimaryItem(container, position, object);
         }
 
+        private void processNameAndHistory(String name, String context, Bundle args) {
+            if (name.contains("t3_")) name = name.substring(3);
+            args.putString("id", name);
+            args.putString("context", context);
+            if (SettingValues.storeHistory) {
+                if (context != null
+                        && !context.isEmpty()
+                        && !context.equals(Reddit.EMPTY_STRING)) {
+                    HasSeen.addSeen("t1_" + context);
+                } else {
+                    HasSeen.addSeen(name);
+                }
+            }
+        }
+
         @NonNull
         @Override
         public Fragment getItem(int i) {
             Fragment f = new CommentPage();
             Bundle args = new Bundle();
-            if (name.contains("t3_")) name = name.substring(3);
 
-            args.putString("id", name);
-            args.putString("context", context);
-            if (SettingValues.storeHistory) {
-                if (context != null && !context.isEmpty() && !context.equals(Reddit.EMPTY_STRING)) {
-                    HasSeen.addSeen("t1_" + context);
+            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                if (i == 0) {
+                    blankPage = new BlankFragment();
+                    return blankPage;
                 } else {
-                    HasSeen.addSeen(name);
+                    processNameAndHistory(name, context, args);
                 }
+            } else {
+                processNameAndHistory(name, context, args);
             }
 
             args.putBoolean("archived", archived);
@@ -300,7 +350,11 @@ public class CommentsScreenSingle extends BaseActivityAnim {
 
         @Override
         public int getCount() {
-            return 1;
+            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                return 2;
+            } else {
+                return 1;
+            }
         }
     }
 }

@@ -32,6 +32,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -47,6 +48,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.CommentPage;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.ImageFlairs;
@@ -69,6 +71,7 @@ import me.edgan.redditslide.ui.settings.SettingsSubAdapter;
 import me.edgan.redditslide.util.LayoutUtils;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.MiscUtil;
+import me.edgan.redditslide.util.NavigationModeDetector;
 import me.edgan.redditslide.util.OnSingleClickListener;
 import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.StringUtil;
@@ -112,6 +115,9 @@ public class SubredditView extends BaseActivity {
     Subreddit sub;
     private DrawerLayout drawerLayout;
     private boolean currentlySubbed = false;
+
+    private View rootView;
+    private int navigationMode = NavigationModeDetector.NAVIGATION_MODE_GESTURE;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -173,6 +179,10 @@ public class SubredditView extends BaseActivity {
         } else {
             restarting = false;
         }
+
+        rootView = findViewById(android.R.id.content);
+
+        navigationMode = NavigationModeDetector.getNavigationMode(this, rootView);
 
         subreddit = getIntent().getExtras().getString(EXTRA_SUBREDDIT, "");
         applyColorTheme(subreddit);
@@ -2073,30 +2083,80 @@ public class SubredditView extends BaseActivity {
 
     public class SubredditPagerAdapter extends FragmentStatePagerAdapter {
         private SubmissionsView mCurrentFragment;
+        private BlankFragment blankPage;
 
         public SubredditPagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             pager.clearOnPageChangeListeners();
+
+            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                pager.addOnPageChangeListener(
+                        new ViewPager.SimpleOnPageChangeListener() {
+                            @Override
+                            public void onPageScrolled(
+                                    int position, float positionOffset, int positionOffsetPixels) {
+                                if (position == 0) {
+                                    CoordinatorLayout.LayoutParams params =
+                                            (CoordinatorLayout.LayoutParams)
+                                                    header.getLayoutParams();
+                                    params.setMargins(
+                                            header.getWidth() - positionOffsetPixels,
+                                            0,
+                                            -((header.getWidth() - positionOffsetPixels)),
+                                            0);
+                                    header.setLayoutParams(params);
+                                    if (positionOffsetPixels == 0) {
+                                        finish();
+                                        overridePendingTransition(0, R.anim.fade_out);
+                                    }
+
+                                    ((SubredditPagerAdapter) pager.getAdapter())
+                                            .blankPage.doOffset(positionOffset);
+                                    pager.setBackgroundColor(
+                                            Palette.adjustAlpha(positionOffset * 0.7f));
+                                }
+                            }
+                        });
+            }
+
             pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {});
             if (pager.getAdapter() != null) {
-                pager.setCurrentItem(0);
+                int startPage = 0;
+
+                if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                    startPage = 1;
+                }
+
+                pager.setCurrentItem(startPage);
             }
         }
 
         @Override
         public int getCount() {
-            return 1;
+            int count = 1;
+
+            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                count = 2;
+            }
+
+            return count;
         }
 
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            SubmissionsView f = new SubmissionsView();
-            Bundle args = new Bundle();
-            args.putString("id", subreddit);
-            f.setArguments(args);
+            if ((i == 1)
+                    || !(navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON)) {
+                SubmissionsView f = new SubmissionsView();
+                Bundle args = new Bundle();
+                args.putString("id", subreddit);
+                f.setArguments(args);
 
-            return f;
+                return f;
+            } else {
+                blankPage = new BlankFragment();
+                return blankPage;
+            }
         }
 
         @Override
@@ -2131,47 +2191,70 @@ public class SubredditView extends BaseActivity {
     public class SubredditPagerAdapterComment extends SubredditPagerAdapter {
         public int size = 2;
         public Fragment storedFragment;
+        BlankFragment blankPage;
         private SubmissionsView mCurrentFragment;
 
         public SubredditPagerAdapterComment(FragmentManager fm) {
             super(fm);
             pager.clearOnPageChangeListeners();
-            pager.addOnPageChangeListener(
-                    new ViewPager.SimpleOnPageChangeListener() {
-                        @Override
-                        public void onPageScrolled(
-                                int position, float positionOffset, int positionOffsetPixels) {
-                            if (positionOffset == 0) {
-                                if (position == 0) {
-                                    doPageSelectedComments(position);
-                                } else {
-                                    // todo if (mAsyncGetSubreddit != null) {
-                                    // mAsyncGetSubreddit.cancel(true);
-                                    // }
+            pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                        handleThreeButtonScrolling(position, positionOffset, positionOffsetPixels);
+                    } else {
+                        handleDefaultScrolling(position, positionOffset);
+                    }
+                }
+            });
 
-                                    if (header.getTranslationY() == 0) {
-                                        header.animate()
-                                                .translationY(-header.getHeight())
-                                                .setInterpolator(new LinearInterpolator())
-                                                .setDuration(180);
-                                    }
-
-                                    pager.setSwipeLeftOnly(true);
-                                    themeSystemBars(
-                                            openingComments
-                                                    .getSubredditName()
-                                                    .toLowerCase(Locale.ENGLISH));
-                                    setRecentBar(
-                                            openingComments
-                                                    .getSubredditName()
-                                                    .toLowerCase(Locale.ENGLISH));
-                                }
-                            }
-                        }
-                    });
             if (pager.getAdapter() != null) {
                 pager.getAdapter().notifyDataSetChanged();
-                pager.setCurrentItem(0);
+                pager.setCurrentItem(navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON ? 1 : 0);
+            }
+        }
+
+        private void handleThreeButtonScrolling(int position, float positionOffset, int positionOffsetPixels) {
+            if (position == 0) {
+                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) header.getLayoutParams();
+                params.setMargins(
+                        header.getWidth() - positionOffsetPixels,
+                        0,
+                        -((header.getWidth() - positionOffsetPixels)),
+                        0);
+                header.setLayoutParams(params);
+
+                if (positionOffsetPixels == 0) {
+                    finish();
+                    overridePendingTransition(0, R.anim.fade_out);
+                }
+                blankPage.doOffset(positionOffset);
+                pager.setBackgroundColor(Palette.adjustAlpha(positionOffset * 0.7f));
+            } else if (positionOffset == 0) {
+                handlePositionOffset(position);
+            }
+        }
+
+        private void handleDefaultScrolling(int position, float positionOffset) {
+            if (positionOffset == 0) {
+                handlePositionOffset(position);
+            }
+        }
+
+        private void handlePositionOffset(int position) {
+            if (position == (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON ? 1 : 0)) {
+                doPageSelectedComments(position);
+            } else {
+                if (header.getTranslationY() == 0) {
+                    header.animate()
+                            .translationY(-header.getHeight())
+                            .setInterpolator(new LinearInterpolator())
+                            .setDuration(180);
+                }
+                pager.setSwipeLeftOnly(true);
+                String subredditName = openingComments.getSubredditName().toLowerCase(Locale.ENGLISH);
+                themeSystemBars(subredditName);
+                setRecentBar(subredditName);
             }
         }
 
@@ -2207,13 +2290,16 @@ public class SubredditView extends BaseActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (openingComments == null || i != 2) {
+            if ((i == 0)
+                    || !(navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON)) {
+                blankPage = new BlankFragment();
+                return blankPage;
+            } else if (openingComments == null || i != 2) {
                 SubmissionsView f = new SubmissionsView();
                 Bundle args = new Bundle();
                 args.putString("id", subreddit);
                 f.setArguments(args);
                 return f;
-
             } else {
                 Fragment f = new CommentPage();
                 Bundle args = new Bundle();

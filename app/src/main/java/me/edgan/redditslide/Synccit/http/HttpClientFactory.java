@@ -2,7 +2,6 @@ package me.edgan.redditslide.Synccit.http;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
-import okhttp3.internal.Util;
 
 import java.util.Collections;
 import java.util.List;

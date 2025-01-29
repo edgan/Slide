@@ -554,7 +554,7 @@ public class SettingValues {
                     prefs.getString(
                             "frontpageSort" + sub.toLowerCase(Locale.ENGLISH),
                             SortingUtil.frontpageSorting.name()));
-	} else if (SortingUtil.sorting.containsKey(subreddit)) {
+        } else if (SortingUtil.sorting.containsKey(subreddit)) {
             return SortingUtil.sorting.get(subreddit);
         } else {
             return Sorting.valueOf(

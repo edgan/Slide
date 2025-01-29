@@ -167,7 +167,11 @@ public class GifUtils {
                 if (submissionTitle != null && !submissionTitle.trim().isEmpty()) {
                     fileName = FileUtil.getValidFileName(submissionTitle, "", ".gif");
                 } else {
-                    fileName = System.currentTimeMillis() + "_" + (int)(Math.random()*100000) + ".gif";
+                    fileName =
+                            System.currentTimeMillis()
+                                    + "_"
+                                    + (int) (Math.random() * 100000)
+                                    + ".gif";
                 }
                 File gifFile = new File(context.getCacheDir(), fileName);
 
