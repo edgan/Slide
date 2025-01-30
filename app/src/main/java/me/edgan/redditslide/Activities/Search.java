@@ -41,8 +41,6 @@ import java.util.Locale;
 
 public class Search extends BaseActivityAnim {
 
-    // todo NFC support
-
     public static final String EXTRA_TERM = "term";
     public static final String EXTRA_SUBREDDIT = "subreddit";
     public static final String EXTRA_MULTIREDDIT = "multi";

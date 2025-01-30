@@ -21,8 +21,6 @@ import me.edgan.redditslide.handler.ToolbarScrollHideHandler;
 
 public class Related extends BaseActivityAnim {
 
-    // todo NFC support
-
     public static final String EXTRA_URL = "url";
 
     private int totalItemCount;
