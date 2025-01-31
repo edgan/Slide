@@ -31,7 +31,6 @@ import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LinkUtil;
-import me.edgan.redditslide.util.NavigationModeDetector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,9 +49,6 @@ public class RedditGallery extends BaseSaveActivity {
     public String subreddit;
     private String submissionTitle;
     public RedditGalleryPagerAdapter album;
-
-    private View rootView;
-    private int navigationMode;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -140,10 +136,6 @@ public class RedditGallery extends BaseSaveActivity {
                         true);
         setContentView(R.layout.album);
 
-        rootView = findViewById(android.R.id.content);
-
-        navigationMode = NavigationModeDetector.getNavigationMode(this, rootView);
-
         // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -159,7 +151,7 @@ public class RedditGallery extends BaseSaveActivity {
         album = new RedditGalleryPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(album);
         pager.setCurrentItem(1);
-        if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+        if (SettingValues.oldSwipeMode) {
             pager.addOnPageChangeListener(
                     new ViewPager.SimpleOnPageChangeListener() {
                         @Override
@@ -214,7 +206,7 @@ public class RedditGallery extends BaseSaveActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 if (i == 0) {
                     blankPage = new BlankFragment();
                     return blankPage;
@@ -231,7 +223,7 @@ public class RedditGallery extends BaseSaveActivity {
 
         @Override
         public int getCount() {
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 return 2;
             } else {
                 return 1;

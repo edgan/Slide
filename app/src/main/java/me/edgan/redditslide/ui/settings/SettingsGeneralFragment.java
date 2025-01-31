@@ -316,6 +316,23 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
         }
 
         {
+            SwitchCompat oldSwipeModeSwitch =
+                    context.findViewById(R.id.settings_general_old_swipe_mode);
+            if (oldSwipeModeSwitch != null) {
+                oldSwipeModeSwitch.setChecked(SettingValues.oldSwipeMode);
+                oldSwipeModeSwitch.setOnCheckedChangeListener(
+                        (buttonView, isChecked) -> {
+                            SettingsThemeFragment.changed = true;
+                            SettingValues.oldSwipeMode = isChecked;
+                            SettingValues.prefs
+                                    .edit()
+                                    .putBoolean(SettingValues.PREF_OLD_SWIPE_MODE, isChecked)
+                                    .apply();
+                        });
+            }
+        }
+
+        {
             SwitchCompat highClrSpaceSwitch =
                     context.findViewById(R.id.settings_general_high_colorspace);
             if (highClrSpaceSwitch != null) {

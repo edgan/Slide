@@ -66,7 +66,6 @@ import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.FileUtil;
 import me.edgan.redditslide.util.GifUtils;
 import me.edgan.redditslide.util.LinkUtil;
-import me.edgan.redditslide.util.NavigationModeDetector;
 import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.ShareUtil;
 import me.edgan.redditslide.util.StorageUtil;
@@ -93,9 +92,6 @@ public class TumblrPager extends BaseSaveActivity {
     // Add fields to store last save attempt
     private String lastContentUrl;
     private int lastIndex = -1;
-
-    private View rootView;
-    private int navigationMode = NavigationModeDetector.NAVIGATION_MODE_GESTURE;
 
     ViewPager p;
 
@@ -159,10 +155,6 @@ public class TumblrPager extends BaseSaveActivity {
                         true);
         setContentView(R.layout.album_pager);
 
-        rootView = findViewById(android.R.id.content);
-
-        navigationMode = NavigationModeDetector.getNavigationMode(this, rootView);
-
         // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -223,7 +215,7 @@ public class TumblrPager extends BaseSaveActivity {
 
             int startPage = 0;
 
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 startPage = 1;
             }
 
@@ -272,8 +264,7 @@ public class TumblrPager extends BaseSaveActivity {
                         @Override
                         public void onPageScrolled(
                                 int position, float positionOffset, int positionOffsetPixels) {
-                            if (navigationMode
-                                    == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                            if (SettingValues.oldSwipeMode) {
                                 if (position != 0) {
                                     if (getSupportActionBar() != null) {
                                         getSupportActionBar()
@@ -315,7 +306,7 @@ public class TumblrPager extends BaseSaveActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 if (i == 0) {
                     return new BlankFragment();
                 }
@@ -357,7 +348,7 @@ public class TumblrPager extends BaseSaveActivity {
             if (images == null) {
                 return 0;
             }
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 return images.size() + 1;
             } else {
                 return images.size();

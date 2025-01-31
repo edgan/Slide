@@ -81,6 +81,7 @@ public class SettingValues {
     public static final String PREF_COLOR_SUB_NAME = "colorSubName";
     public static final String PREF_OVERRIDE_LANGUAGE = "overrideLanguage";
     public static final String PREF_IMMERSIVE_MODE = "immersiveMode";
+    public static final String PREF_OLD_SWIPE_MODE = "oldSwipeMode";
     public static final String PREF_SHOW_DOMAIN = "showDomain";
     public static final String PREF_CARD_TEXT = "cardText";
     public static final String PREF_ZOOM_DEFAULT = "zoomDefault";
@@ -258,6 +259,7 @@ public class SettingValues {
     public static boolean hideSelftextLeadImage;
     public static boolean overrideLanguage;
     public static boolean immersiveMode;
+    public static boolean oldSwipeMode;
     public static boolean showDomain;
     public static boolean cardText;
     public static boolean alwaysZoom;
@@ -325,6 +327,7 @@ public class SettingValues {
         blurCheck = prefs.getBoolean(PREF_BLUR, false);
         overrideLanguage = prefs.getBoolean(PREF_OVERRIDE_LANGUAGE, false);
         immersiveMode = prefs.getBoolean(PREF_IMMERSIVE_MODE, false);
+	oldSwipeMode = prefs.getBoolean(PREF_OLD_SWIPE_MODE, false);
         largeDepth = prefs.getBoolean(PREF_LARGE_DEPTH, false);
         readerMode = prefs.getBoolean(PREF_READER_MODE, false);
         imageSubfolders = prefs.getBoolean(PREF_IMAGE_SUBFOLDERS, false);

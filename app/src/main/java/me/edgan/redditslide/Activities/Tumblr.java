@@ -34,7 +34,6 @@ import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LinkUtil;
-import me.edgan.redditslide.util.NavigationModeDetector;
 import me.edgan.redditslide.util.StorageUtil;
 
 import java.util.ArrayList;
@@ -52,9 +51,6 @@ public class Tumblr extends BaseSaveActivity {
     public static final String SUBREDDIT = "subreddit";
     private int adapterPosition;
     public String subreddit;
-
-    private View rootView;
-    private int navigationMode = NavigationModeDetector.NAVIGATION_MODE_GESTURE;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -126,16 +122,12 @@ public class Tumblr extends BaseSaveActivity {
                         true);
         setContentView(R.layout.album);
 
-        rootView = findViewById(android.R.id.content);
-
-        navigationMode = NavigationModeDetector.getNavigationMode(this, rootView);
-
         // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         final ViewPager pager = (ViewPager) findViewById(R.id.images);
 
-        album = new TumblrPagerAdapter(getSupportFragmentManager(), navigationMode);
+        album = new TumblrPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(album);
         pager.setCurrentItem(1);
         if (getIntent().hasExtra(SUBREDDIT)) {
@@ -146,7 +138,7 @@ public class Tumblr extends BaseSaveActivity {
             this.submissionTitle = getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE);
         }
 
-        if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+        if (SettingValues.oldSwipeMode) {
             pager.addOnPageChangeListener(
                     new ViewPager.SimpleOnPageChangeListener() {
                         @Override
@@ -177,17 +169,14 @@ public class Tumblr extends BaseSaveActivity {
         public AlbumFrag album;
         public BlankFragment blankPage;
 
-        private final int navigationMode;
-
-        public TumblrPagerAdapter(FragmentManager fm, int navigationMode) {
+        public TumblrPagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-            this.navigationMode = navigationMode;
         }
 
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 if (i == 0) {
                     blankPage = new BlankFragment();
                     return blankPage;
@@ -203,7 +192,7 @@ public class Tumblr extends BaseSaveActivity {
         public int getCount() {
             int count = 1;
 
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 count = 2;
             }
 

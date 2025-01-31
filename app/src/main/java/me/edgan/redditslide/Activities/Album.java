@@ -37,7 +37,6 @@ import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LinkUtil;
-import me.edgan.redditslide.util.NavigationModeDetector;
 import me.edgan.redditslide.util.StorageUtil;
 
 import java.util.ArrayList;
@@ -54,9 +53,6 @@ public class Album extends BaseSaveActivity {
     public static final String SUBREDDIT = "subreddit";
     private List<Image> images;
     private int adapterPosition;
-
-    private View rootView;
-    private int navigationMode = NavigationModeDetector.NAVIGATION_MODE_GESTURE;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -156,10 +152,6 @@ public class Album extends BaseSaveActivity {
                         true);
         setContentView(R.layout.album);
 
-        rootView = findViewById(android.R.id.content);
-
-        navigationMode = NavigationModeDetector.getNavigationMode(this, rootView);
-
         // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -172,10 +164,10 @@ public class Album extends BaseSaveActivity {
 
         final ViewPager pager = (ViewPager) findViewById(R.id.images);
 
-        album = new AlbumPagerAdapter(getSupportFragmentManager(), navigationMode);
+        album = new AlbumPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(album);
         pager.setCurrentItem(1);
-        if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+        if (SettingValues.oldSwipeMode) {
             pager.addOnPageChangeListener(
                     new ViewPager.SimpleOnPageChangeListener() {
                         @Override
@@ -204,17 +196,15 @@ public class Album extends BaseSaveActivity {
     public static class AlbumPagerAdapter extends FragmentStatePagerAdapter {
         public BlankFragment blankPage;
         public AlbumFrag album;
-        private final int navigationMode;
 
-        public AlbumPagerAdapter(FragmentManager fm, int navigationMode) {
+        public AlbumPagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-            this.navigationMode = navigationMode;
         }
 
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 if (i == 0) {
                     blankPage = new BlankFragment();
                     return blankPage;
@@ -230,7 +220,7 @@ public class Album extends BaseSaveActivity {
         public int getCount() {
             int count = 1;
 
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 count = 2;
             }
 

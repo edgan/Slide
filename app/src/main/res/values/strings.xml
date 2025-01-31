@@ -639,6 +639,9 @@
     <string name="settings_set_storage_location">Files will be saved to %s</string>
     <string name="settings_general_immersive_mode">Immersive fullscreen mode</string>
     <string name="settings_general_immersive_mode_desc">Hide the status and navigation bars (experimental)</string>
+    <string name="settings_general_old_swipe_mode">Old swipe mode</string>
+    <string name="settings_general_old_swipe_mode_desc">Old Slide swipe style. Meant for 3-button navigation mode and Samsung gestures.</string>
+
     <string name="settings_general_title_drawer_items">Drawer Items</string>
     <string name="settings_general_subtitle_drawer_items">Select which drawer items to display</string>
     <string name="settings_moderation">Moderation</string>

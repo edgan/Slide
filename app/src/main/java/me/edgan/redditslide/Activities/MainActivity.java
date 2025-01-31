@@ -242,6 +242,8 @@ public class MainActivity extends BaseActivity
     private int headerHeight; // height of the header
     public int reloadItemNumber = -2;
 
+    private View rootView;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SETTINGS_RESULT) {
@@ -941,6 +943,8 @@ public class MainActivity extends BaseActivity
         applyColorTheme();
 
         setContentView(R.layout.activity_overview);
+
+        rootView = findViewById(android.R.id.content);
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setPopupTheme(new ColorPreferences(this).getFontStyle().getBaseId());

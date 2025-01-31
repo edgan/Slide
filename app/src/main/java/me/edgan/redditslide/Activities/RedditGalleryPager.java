@@ -43,7 +43,6 @@ import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.GifUtils;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.LogUtil;
-import me.edgan.redditslide.util.NavigationModeDetector;
 import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.ShareUtil;
 import me.edgan.redditslide.util.StorageUtil;
@@ -66,9 +65,6 @@ public class RedditGalleryPager extends BaseSaveActivity {
     private BottomSheet.Builder bottomSheetBuilder;
     private String lastContentUrl; // Track URL for retry after permission
     private int lastIndex = -1; // Track index for retry after permission
-
-    private View rootView;
-    private int navigationMode;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -158,10 +154,6 @@ public class RedditGalleryPager extends BaseSaveActivity {
                         true);
         setContentView(R.layout.album_pager);
 
-        rootView = findViewById(android.R.id.content);
-
-        navigationMode = NavigationModeDetector.getNavigationMode(this, rootView);
-
         // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -235,7 +227,7 @@ public class RedditGalleryPager extends BaseSaveActivity {
 
         int startPage = 0;
 
-        if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+        if (SettingValues.oldSwipeMode) {
             startPage = 1;
         }
 
@@ -258,7 +250,7 @@ public class RedditGalleryPager extends BaseSaveActivity {
     private void setupGridAndPagerListeners(final GalleryViewPagerAdapter adapter) {
         findViewById(R.id.grid).setOnClickListener(v -> showGridView());
 
-        if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+        if (SettingValues.oldSwipeMode) {
             p.addOnPageChangeListener(
                     new ViewPager.SimpleOnPageChangeListener() {
                         @Override
@@ -384,7 +376,7 @@ public class RedditGalleryPager extends BaseSaveActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 if (i == 0) {
                     return new BlankFragment();
                 }
@@ -411,7 +403,7 @@ public class RedditGalleryPager extends BaseSaveActivity {
             if (images == null) {
                 return 0;
             }
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 return images.size() + 1;
             } else {
                 return images.size();

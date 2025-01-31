@@ -9,6 +9,8 @@ import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.TextureView;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -82,26 +84,13 @@ public class ExoVideoView extends RelativeLayout {
 
     /** Initializes the view to render onto and the SimpleExoPlayer instance */
     private void setupPlayer() {
-        // Create a view to render the video onto and an AspectRatioFrameLayout to size the video
-        // correctly
-        AspectRatioFrameLayout frame = new AspectRatioFrameLayout(context);
-        LayoutParams params =
-                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        params.addRule(CENTER_IN_PARENT, TRUE);
-        frame.setLayoutParams(params);
-        frame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-
-        SurfaceView renderView = new SurfaceView(context);
-        frame.addView(renderView);
-        addView(frame);
-
         // Create a track selector so we can set specific video quality for DASH
         trackSelector = new DefaultTrackSelector(context);
         if ((SettingValues.lowResAlways
-                        || (NetworkUtil.isConnected(context)
-                                && !NetworkUtil.isConnectedWifi(context)
-                                && SettingValues.lowResMobile))
-                && SettingValues.lqVideos) {
+                || (NetworkUtil.isConnected(context)
+                    && !NetworkUtil.isConnectedWifi(context)
+                    && SettingValues.lowResMobile))
+            && SettingValues.lqVideos) {
             trackSelector.setParameters(
                     trackSelector.buildUponParameters().setForceLowestBitrate(true));
         } else {
@@ -109,18 +98,55 @@ public class ExoVideoView extends RelativeLayout {
                     trackSelector.buildUponParameters().setForceHighestSupportedBitrate(true));
         }
 
-        // Create the player, attach it to the view, make it repeat infinitely
-        player = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
-        player.setVideoSurfaceView(renderView);
+        // If this method can be called multiple times, release the old player first
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+
+        // Create the player
+        player = new SimpleExoPlayer.Builder(context)
+                .setTrackSelector(trackSelector)
+                .build();
+
+        // Create an AspectRatioFrameLayout to size the video correctly
+        AspectRatioFrameLayout frame = new AspectRatioFrameLayout(context);
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        params.addRule(CENTER_IN_PARENT, TRUE);
+        frame.setLayoutParams(params);
+        frame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+
+        if (SettingValues.oldSwipeMode) {
+            TextureView textureView = new TextureView(context);
+
+            frame.addView(textureView, new LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT
+            ));
+            player.setVideoTextureView(textureView);
+        } else {
+            SurfaceView surfaceView = new SurfaceView(context);
+            frame.addView(surfaceView, new LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT
+            ));
+            player.setVideoSurfaceView(surfaceView);
+        }
+
+        addView(frame);
+
+        // Make the video repeat infinitely
         player.setRepeatMode(Player.REPEAT_MODE_ALL);
 
         // Mute by default
         player.setVolume(0f);
 
         // Create audio focus helper
-        audioFocusHelper =
-                new AudioFocusHelper(ContextCompat.getSystemService(context, AudioManager.class));
+        audioFocusHelper = new AudioFocusHelper(
+                ContextCompat.getSystemService(context, AudioManager.class)
+        );
 
+        // Add a Player.Listener for aspect ratio changes, logging, etc.
         player.addListener(
                 new Player.Listener() {
                     // Make the video use the correct aspect ratio
@@ -137,15 +163,10 @@ public class ExoVideoView extends RelativeLayout {
                     // Logging
                     @Override
                     public void onTracksChanged(@NonNull Tracks tracks) {
-                        // Logging example
                         StringBuilder toLog = new StringBuilder();
-                        for (int groupIndex = 0;
-                                groupIndex < tracks.getGroups().size();
-                                groupIndex++) {
-                            Group group = tracks.getGroups().get(groupIndex);
-                            for (int trackIndex = 0;
-                                    trackIndex < group.getMediaTrackGroup().length;
-                                    trackIndex++) {
+                        for (int groupIndex = 0; groupIndex < tracks.getGroups().size(); groupIndex++) {
+                            Tracks.Group group = tracks.getGroups().get(groupIndex);
+                            for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
                                 Format format = group.getTrackFormat(trackIndex);
                                 boolean isSelected = group.isTrackSelected(trackIndex);
 
@@ -166,7 +187,11 @@ public class ExoVideoView extends RelativeLayout {
         playerUI = new PlayerControlView(context);
         playerUI.setPlayer(player);
         playerUI.setShowTimeoutMs(2000);
-        playerUI.hide();
+
+        if (!SettingValues.oldSwipeMode) {
+            playerUI.hide();
+	}
+
         addView(playerUI);
 
         // Show/hide the player UI on tap

@@ -17,6 +17,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Autocache.AutoCacheScheduler;
 import me.edgan.redditslide.Fragments.BlankFragment;
@@ -31,13 +35,8 @@ import me.edgan.redditslide.SwipeLayout.Utils;
 import me.edgan.redditslide.UserSubscriptions;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LogUtil;
-import me.edgan.redditslide.util.NavigationModeDetector;
 
 import net.dean.jraw.models.Submission;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by ccrama on 9/17/2015.
@@ -54,9 +53,6 @@ public class CommentsScreenSingle extends BaseActivityAnim {
     private String context;
     private int contextNumber;
     private Boolean doneTranslucent = false;
-
-    private View rootView;
-    private int navigationMode;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -99,10 +95,6 @@ public class CommentsScreenSingle extends BaseActivityAnim {
         applyColorTheme();
         setContentView(R.layout.activity_slide);
         name = getIntent().getExtras().getString(EXTRA_SUBMISSION, "");
-
-        rootView = findViewById(android.R.id.content);
-
-        navigationMode = NavigationModeDetector.getNavigationMode(this, rootView);
 
         subreddit = getIntent().getExtras().getString(EXTRA_SUBREDDIT, "");
         np = getIntent().getExtras().getBoolean(EXTRA_NP, false);
@@ -198,7 +190,7 @@ public class CommentsScreenSingle extends BaseActivityAnim {
         pager.setBackgroundColor(Color.TRANSPARENT);
         pager.setCurrentItem(1);
 
-        if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+        if (SettingValues.oldSwipeMode) {
             pager.addOnPageChangeListener(new CommonPageChangeListener() {
                 @Override
                 public void onPageScrolled(
@@ -325,7 +317,7 @@ public class CommentsScreenSingle extends BaseActivityAnim {
             Fragment f = new CommentPage();
             Bundle args = new Bundle();
 
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 if (i == 0) {
                     blankPage = new BlankFragment();
                     return blankPage;
@@ -350,7 +342,7 @@ public class CommentsScreenSingle extends BaseActivityAnim {
 
         @Override
         public int getCount() {
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 return 2;
             } else {
                 return 1;

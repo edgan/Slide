@@ -32,7 +32,6 @@ import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.CustomViewPager;
 import me.edgan.redditslide.util.KeyboardUtil;
-import me.edgan.redditslide.util.NavigationModeDetector;
 
 import net.dean.jraw.models.Submission;
 
@@ -68,9 +67,6 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
 
     String multireddit;
     String profile;
-
-    private View rootView;
-    private int navigationMode;
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -160,10 +156,6 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
             setContentView(R.layout.activity_slide);
         }
 
-        rootView = findViewById(android.R.id.content);
-
-        navigationMode = NavigationModeDetector.getNavigationMode(this, rootView);
-
         Reddit.setDefaultErrorHandler(this);
 
         firstPage = getIntent().getExtras().getInt(EXTRA_PAGE, -1);
@@ -218,7 +210,7 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
             pager.setAdapter(comments);
             currentPage = firstPage;
 
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 pager.setCurrentItem(firstPage + 1);
             } else {
                 pager.setCurrentItem(firstPage);
@@ -226,7 +218,7 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
 
             pager.setEntryPageIndex(firstPage);
 
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 pager.addOnPageChangeListener(new CommonPageChangeListener() {
                     @Override
                     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -342,7 +334,7 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 if (i <= firstPage || i == 0) {
                     blankPage = new BlankFragment();
                     return blankPage;
@@ -356,7 +348,7 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
 
         @Override
         public int getCount() {
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 return currentPosts.size() + 1;
             } else {
                 return currentPosts.size();

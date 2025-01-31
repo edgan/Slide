@@ -71,7 +71,6 @@ import me.edgan.redditslide.ui.settings.SettingsSubAdapter;
 import me.edgan.redditslide.util.LayoutUtils;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.MiscUtil;
-import me.edgan.redditslide.util.NavigationModeDetector;
 import me.edgan.redditslide.util.OnSingleClickListener;
 import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.StringUtil;
@@ -115,9 +114,6 @@ public class SubredditView extends BaseActivity {
     Subreddit sub;
     private DrawerLayout drawerLayout;
     private boolean currentlySubbed = false;
-
-    private View rootView;
-    private int navigationMode = NavigationModeDetector.NAVIGATION_MODE_GESTURE;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -179,10 +175,6 @@ public class SubredditView extends BaseActivity {
         } else {
             restarting = false;
         }
-
-        rootView = findViewById(android.R.id.content);
-
-        navigationMode = NavigationModeDetector.getNavigationMode(this, rootView);
 
         subreddit = getIntent().getExtras().getString(EXTRA_SUBREDDIT, "");
         applyColorTheme(subreddit);
@@ -2089,7 +2081,7 @@ public class SubredditView extends BaseActivity {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
             pager.clearOnPageChangeListeners();
 
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 pager.addOnPageChangeListener(
                         new ViewPager.SimpleOnPageChangeListener() {
                             @Override
@@ -2123,7 +2115,7 @@ public class SubredditView extends BaseActivity {
             if (pager.getAdapter() != null) {
                 int startPage = 0;
 
-                if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                if (SettingValues.oldSwipeMode) {
                     startPage = 1;
                 }
 
@@ -2135,7 +2127,7 @@ public class SubredditView extends BaseActivity {
         public int getCount() {
             int count = 1;
 
-            if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+            if (SettingValues.oldSwipeMode) {
                 count = 2;
             }
 
@@ -2146,7 +2138,7 @@ public class SubredditView extends BaseActivity {
         @Override
         public Fragment getItem(int i) {
             if ((i == 1)
-                    || !(navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON)) {
+                    || !(SettingValues.oldSwipeMode)) {
                 SubmissionsView f = new SubmissionsView();
                 Bundle args = new Bundle();
                 args.putString("id", subreddit);
@@ -2193,6 +2185,7 @@ public class SubredditView extends BaseActivity {
         public Fragment storedFragment;
         BlankFragment blankPage;
         private SubmissionsView mCurrentFragment;
+        int currentItem = 0;
 
         public SubredditPagerAdapterComment(FragmentManager fm) {
             super(fm);
@@ -2200,7 +2193,7 @@ public class SubredditView extends BaseActivity {
             pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                    if (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON) {
+                    if (SettingValues.oldSwipeMode) {
                         handleThreeButtonScrolling(position, positionOffset, positionOffsetPixels);
                     } else {
                         handleDefaultScrolling(position, positionOffset);
@@ -2208,9 +2201,13 @@ public class SubredditView extends BaseActivity {
                 }
             });
 
+            if (SettingValues.oldSwipeMode) {
+                currentItem = 1;
+	    }
+
             if (pager.getAdapter() != null) {
                 pager.getAdapter().notifyDataSetChanged();
-                pager.setCurrentItem(navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON ? 1 : 0);
+                pager.setCurrentItem(currentItem);
             }
         }
 
@@ -2242,7 +2239,8 @@ public class SubredditView extends BaseActivity {
         }
 
         private void handlePositionOffset(int position) {
-            if (position == (navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON ? 1 : 0)) {
+
+            if ((position == 0) || (position == 1)) {
                 doPageSelectedComments(position);
             } else {
                 if (header.getTranslationY() == 0) {
@@ -2291,7 +2289,7 @@ public class SubredditView extends BaseActivity {
         @Override
         public Fragment getItem(int i) {
             if ((i == 0)
-                    || !(navigationMode == NavigationModeDetector.NAVIGATION_MODE_THREE_BUTTON)) {
+                    || !(SettingValues.oldSwipeMode)) {
                 blankPage = new BlankFragment();
                 return blankPage;
             } else if (openingComments == null || i != 2) {
