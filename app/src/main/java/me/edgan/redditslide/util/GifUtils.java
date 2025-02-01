@@ -616,13 +616,37 @@ public class GifUtils {
                 this.expireAt = expireAt;
             }
 
-            public static AuthToken expireIn10Mins(@NonNull String token) {
-                return new AuthToken(token, SystemClock.uptimeMillis() + 10L * 60 * 1000);
+            public static AuthToken expireIn1day(@NonNull String token) {
+                // 23 not 24 to give an hour leeway
+                long expireTime = 1000 * 60 * 60 * 23;
+                return new AuthToken(token, SystemClock.uptimeMillis() + expireTime);
             }
 
             public boolean isValid() {
                 return !token.isEmpty() && expireAt > SystemClock.uptimeMillis();
             }
+        }
+
+
+        private AuthToken getNewToken(OkHttpClient client) throws IOException {
+            Request tokenRequest = new Request.Builder()
+                .url("https://api.redgifs.com/v2/auth/temporary")
+                .get()
+                .build();
+            Response tokenResponse = client.newCall(tokenRequest).execute();
+            JsonObject tokenResult = gson.fromJson(tokenResponse.body().string(), JsonObject.class);
+            String accessToken = tokenResult.get("token").getAsString();
+            AuthToken newToken = AuthToken.expireIn1day(accessToken);
+            TOKEN.set(newToken);
+            return newToken;
+        }
+
+        private Response makeApiCall(OkHttpClient client, String name, AuthToken currentToken) throws IOException {
+            Request request = new Request.Builder()
+                .url("https://api.redgifs.com/v2/gifs/" + name)
+                .header("Authorization", "Bearer " + currentToken.token)
+                .build();
+            return client.newCall(request).execute();
         }
 
         Uri loadRedGifs(String name, String fullUrl) {
@@ -635,33 +659,20 @@ public class GifUtils {
                 // Check if existing token is valid
                 AuthToken currentToken = TOKEN.get();
                 if (!currentToken.isValid()) {
-                    // Get new auth token
-                    Request tokenRequest = new Request.Builder()
-                        .url("https://api.redgifs.com/v2/oauth/client")
-                        .post(new FormBody.Builder()
-                            .add("grant_type", "client_credentials")
-                            .add("client_id", SecretConstants.getRedGifsClientId(c))
-                            .add("client_secret", SecretConstants.getRedGifsClientSecret(c))
-                            .build())
-                        .build();
-
-                    Response tokenResponse = client.newCall(tokenRequest).execute();
-                    JsonObject tokenResult = gson.fromJson(tokenResponse.body().string(), JsonObject.class);
-
-                    String accessToken = tokenResult.get("access_token").getAsString();
-                    TOKEN.set(AuthToken.expireIn10Mins(accessToken));
-                    currentToken = TOKEN.get();
+                    currentToken = getNewToken(client);
                 }
 
                 // Call RedGifs API with token
-                Request request = new Request.Builder()
-                    .url("https://api.redgifs.com/v2/gifs/" + name)
-                    .header("Authorization", "Bearer " + currentToken.token)
-                    .build();
+                Response response = makeApiCall(client, name, currentToken);
 
-                Response response = client.newCall(request).execute();
+                // If we get a 401, try once more with a new token
+                if (response.code() == 401) {
+                    currentToken = getNewToken(client);
+                    response = makeApiCall(client, name, currentToken);
+                }
+
+                // Process the response
                 JsonObject result = gson.fromJson(response.body().string(), JsonObject.class);
-
                 if (result == null || !result.has("gif")) {
                     onError();
                     if (closeIfNull) {
@@ -677,7 +688,6 @@ public class GifUtils {
                     gif.getAsJsonObject("urls").get("sd").getAsString() :
                     gif.getAsJsonObject("urls").get("hd").getAsString();
                 return Uri.parse(url);
-
             } catch (Exception e) {
                 LogUtil.e(e, "Error loading RedGifs video url = [" + fullUrl + "]");
                 onError();
