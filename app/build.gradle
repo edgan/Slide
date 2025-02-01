@@ -38,7 +38,7 @@ android {
         applicationId "me.edgan.redditslide"
         minSdk 21
         targetSdk 34
-        versionCode 705
+        versionCode 706
         versionName androidGitVersion.name()
 
         multiDexEnabled true
