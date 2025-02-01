@@ -541,10 +541,6 @@ public class GifUtils {
                 return VideoType.VREDDIT;
             }
 
-            if (realURL.matches(".*redgifs\\.com/watch/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]")) {
-                return VideoType.REDGIFS;
-            }
-
             if (realURL.contains(".mp4")
                     || realURL.contains("webm")
                     || realURL.contains("redditmedia.com")
@@ -554,7 +550,7 @@ public class GifUtils {
 
             if (realURL.contains("gfycat") && !realURL.contains("mp4")) return VideoType.GFYCAT;
 
-            if (realURL.contains("redgifs") && !realURL.contains("mp4")) return VideoType.GFYCAT;
+            if (realURL.contains("redgifs.com") && !realURL.contains("mp4")) return VideoType.REDGIFS;
 
             if (realURL.contains("imgur.com")) return VideoType.IMGUR;
 
