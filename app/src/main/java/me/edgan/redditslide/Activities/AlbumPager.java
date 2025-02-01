@@ -46,6 +46,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import me.edgan.redditslide.Adapters.ImageGridAdapter;
+import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.ImgurAlbum.AlbumUtils;
 import me.edgan.redditslide.ImgurAlbum.Image;
@@ -127,9 +128,6 @@ public class AlbumPager extends BaseSaveActivity {
             int adapterPosition = getIntent().getIntExtra(MediaView.ADAPTER_POSITION, -1);
             finish();
             SubmissionsView.datachanged(adapterPosition);
-            // getIntent().getStringExtra(MediaView.SUBMISSION_SUBREDDIT));
-            // SubmissionAdapter.setOpen(this,
-            // getIntent().getStringExtra(MediaView.SUBMISSION_URL));
         }
 
         if (id == R.id.download && images != null) {
@@ -180,10 +178,6 @@ public class AlbumPager extends BaseSaveActivity {
         String url = getIntent().getExtras().getString("url", "");
         pagerLoad = new LoadIntoPager(url, this);
         pagerLoad.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        if (!Reddit.appRestart.contains("tutorialSwipe")) {
-            startActivityForResult(new Intent(this, SwipeTutorial.class), 3);
-        }
     }
 
     LoadIntoPager pagerLoad;
@@ -250,8 +244,24 @@ public class AlbumPager extends BaseSaveActivity {
                             AlbumViewPagerAdapter adapter =
                                     new AlbumViewPagerAdapter(getSupportFragmentManager());
                             p.setAdapter(adapter);
-                            p.setCurrentItem(1);
 
+                            int startPage = 0;
+
+                            if (SettingValues.oldSwipeMode) {
+                                startPage = 1;
+                            }
+
+                            p.setCurrentItem(startPage);
+
+                            p.post(
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // Force load first two positions
+                                            adapter.instantiateItem(p, 0);
+                                            adapter.instantiateItem(p, 1);
+                                        }
+                                    });
                             findViewById(R.id.grid)
                                     .setOnClickListener(
                                             new View.OnClickListener() {
@@ -295,12 +305,27 @@ public class AlbumPager extends BaseSaveActivity {
                                                 int position,
                                                 float positionOffset,
                                                 int positionOffsetPixels) {
-                                            if (getSupportActionBar() != null) {
-                                                getSupportActionBar()
-                                                        .setSubtitle(
-                                                                (position + 1)
-                                                                        + "/"
-                                                                        + images.size());
+                                            if (SettingValues.oldSwipeMode) {
+                                                if (position != 0) {
+                                                    if (getSupportActionBar() != null) {
+                                                        getSupportActionBar()
+                                                                .setSubtitle(
+                                                                        (position)
+                                                                                + "/"
+                                                                                + images.size());
+                                                    }
+                                                }
+                                                if (position == 0 && positionOffset < 0.2) {
+                                                    finish();
+                                                }
+                                            } else {
+                                                if (getSupportActionBar() != null) {
+                                                    getSupportActionBar()
+                                                            .setSubtitle(
+                                                                    (position + 1)
+                                                                            + "/"
+                                                                            + images.size());
+                                                }
                                             }
                                         }
                                     });
@@ -330,6 +355,14 @@ public class AlbumPager extends BaseSaveActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
+            if (SettingValues.oldSwipeMode) {
+                if (i == 0) {
+                    return new BlankFragment();
+                }
+
+                i--;
+            }
+
             Image current = images.get(i);
 
             Fragment f;
@@ -352,7 +385,11 @@ public class AlbumPager extends BaseSaveActivity {
             if (images == null) {
                 return 0;
             }
-            return images.size();
+            if (SettingValues.oldSwipeMode) {
+                return images.size() + 1;
+            } else {
+                return images.size();
+            }
         }
     }
 

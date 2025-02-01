@@ -461,8 +461,7 @@
     <string name="settings_title_notifications">Obavijesti</string>
     <string name="settings_title_pro">Kupi Pro</string>
     <string name="settings_title_sub_theme">Podreddit teme</string>
-    <string name="settings_title_sorting">Zadano sortiranje</string>
-    <string name="settings_title_support">Doniraj</string>
+    <string name="settings_title_sort">Zadano sortiranje</string>
     <string name="settings_title_about">O nama</string>
     <string name="settings_title_multi_column">Više-stupačni način</string>
     <string name="settings_title_fab">Plutajući akcijski gumb</string>
@@ -508,7 +507,6 @@
     <string name="settings_view_type">Vrsta prikaza</string>
     <string name="settings_data">Ušteda podataka</string>
     <string name="settings_section_content">Sadržaj</string>
-    <string name="settings_backup_include_personal_title">Uključi osobne informacije?</string>
     <string name="settings_backup_view">Pogledaj kopiju</string>
     <string name="settings_support_slide">Podrži Slide for Reddit kupovinom Pro!</string>
     <string name="settings_theme_night_start_at">Početak u\u0020</string>

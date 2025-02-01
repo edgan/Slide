@@ -27,6 +27,8 @@ import android.widget.OverScroller;
 
 import java.util.Arrays;
 
+import me.edgan.redditslide.SettingValues;
+
 /**
  * ViewDragHelper is a utility class for writing custom ViewGroups. It offers a number of useful
  * operations and state tracking for allowing a user to drag and reposition views within their
@@ -1537,6 +1539,21 @@ public class ViewDragHelper {
 
     private int getEdgeTouched(int x, int y) {
         int result = 0;
+
+        if (SettingValues.oldSwipeMode) {
+            if (mFullScreenSwipe) {
+                result = mTrackingEdges;
+            } else {
+                if (x < mParentView.getLeft() + mEdgeSize)
+                    result = EDGE_LEFT;
+                if (y < mParentView.getTop() + mEdgeSize)
+                    result = EDGE_TOP;
+                if (x > mParentView.getRight() - mEdgeSize)
+                    result = EDGE_RIGHT;
+                if (y > mParentView.getBottom() - mEdgeSize)
+                    result = EDGE_BOTTOM;
+            }
+        }
 
         return result;
     }

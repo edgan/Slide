@@ -544,8 +544,7 @@
     <string name="settings_title_notifications">Notificações</string>
     <string name="settings_title_pro">Passar a Pro</string>
     <string name="settings_title_sub_theme">Temas de Subreddit</string>
-    <string name="settings_title_sorting">Padrão de classificação</string>
-    <string name="settings_title_support">Faça uma doação</string>
+    <string name="settings_title_sort">Padrão de classificação</string>
     <string name="settings_title_about">Acerca de</string>
     <string name="settings_title_multi_column">Multi-coluna</string>
     <string name="settings_title_fab">Botão de ação flutuante</string>
@@ -615,8 +614,6 @@
     <string name="settings_handling_external_desc">Domínios introduzidos abaixo serão abertos sempre externamente</string>
     <string name="settings_handling_enterdomain">Insira um domínio ou parte de um domínio</string>
     <string name="settings_section_content">Conteúdo</string>
-    <string name="settings_backup_include_personal_title">Incluir informações pessoais?</string>
-    <string name="settings_backup_include_personal_text">Isto inclui tokens de autenticação, nomes de utilizador, tags e histórico</string>
     <string name="settings_backup_view">Ver copia de segurança</string>
     <string name="settings_backup_err_no_explorer">Nenhum explorador de ficheiros encontrado, ficheiro localizado em %1$s</string>
     <string name="settings_about_version_copied_toast">Número de versão copiado para a área de transferência</string>
@@ -764,7 +761,7 @@
     <string name="over18_desc">É maior de dezoito anos e está disposto a ver conteúdo adulto?</string>
     <string name="over18_desc_loggedout">Inicie a sessão para ocultar este aviso permanentemente</string>
     <string name="over18_desc_loggedin">Pode desativar essa opção permanentemente em Definições → Preferências do reddit → Mostrar conteúdo NSFW</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Sincronização completa</string>
     <plurals name="color_sync_colored">
         <item quantity="one">O subreddit %d foi colorido</item>
@@ -922,7 +919,7 @@
     <string name="submit_replies_to_inbox">Enviar respostas para caixa de entrada</string>
     <string name="btn_open_comments">Abrir comentários</string>
     <string name="btn_preview">Pré-Visualização</string>
-    <string name="sorting_default_comment">Ordenação padrão de comentários</string>
+    <string name="default_comment_sort">Ordenação padrão de comentários</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Continuar esta discussão</string>
     <string name="type_selftext">Texto</string>
@@ -959,8 +956,6 @@
     <string name="comment_discard_msg">Quer realmente descartar esta publicação?</string>
     <string name="backup_complete">Cópia de segurança completa!</string>
     <string name="backup_saved_downloads">Copia de segurança guardada em downloads</string>
-    <string name="include_personal_info">Incluir informações pessoais?</string>
-    <string name="include_personal_info_msg">Isto inclui tokens de autenticação, nomes de utilizador, etiquetas e histórico</string>
     <string name="really_remove_subreddit_title">Remover realmente este subreddit?</string>
     <string name="choose_sync_time">Escolha uma hora de sincronização</string>
     <string name="account_suspended">Esta conta está suspensa</string>
@@ -1023,7 +1018,7 @@
     <string name="authors_above">Autores acima</string>
     <string name="btn_crosspost">Publicação cruzada</string>
     <string name="btn_reset_color">REPOR COR</string>
-    <string name="settings_shortlink_description">As ligações serão partilhadas como \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">As ligações serão partilhadas como \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">Partilhar shortlink Reddit sempre que possível</string>
     <string name="disable_replies_comment">Desativar comentários de resposta na caixa de entrada</string>
     <string name="replies_disabled_comment">Respostas a comentários desativadas</string>

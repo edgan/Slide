@@ -86,7 +86,6 @@
     <string name="settings_google">Slide veido savienojumu ar Google</string>
     <!-- Settings titles displayed in settings activity-->
     <string name="settings_title_pro">Pirkt Pro versiju</string>
-    <string name="settings_title_support">Ziedot</string>
     <string name="settings_title_about">Par aplikāciju</string>
     <!-- Quick setting toggles in the drawer -->
     <!-- View types -->

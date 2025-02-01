@@ -554,8 +554,7 @@
     <string name="settings_title_history">歷史</string>
     <string name="settings_title_notifications">通知</string>
     <string name="settings_title_sub_theme">Subreddit 主題</string>
-    <string name="settings_title_sorting">預設排序</string>
-    <string name="settings_title_support">捐款</string>
+    <string name="settings_title_sort">預設排序</string>
     <string name="settings_title_about">關於</string>
     <string name="settings_title_multi_column">多列版面</string>
     <string name="settings_title_fab">浮動動作按鈕</string>
@@ -823,7 +822,7 @@
     <string name="submit_replies_to_inbox">把回應發送至收件匣</string>
     <string name="btn_open_comments">開啟留言</string>
     <string name="btn_preview">預覽</string>
-    <string name="sorting_default_comment">預設留言排序</string>
+    <string name="default_comment_sort">預設留言排序</string>
     <string name="thread_continue">檢視更多留言</string>
     <string name="type_selftext">文字貼文</string>
     <string name="submission_unhide">取消隱藏貼文</string>
@@ -854,8 +853,6 @@
     <string name="comment_discard_msg">你肯定要放棄你的留言嗎？</string>
     <string name="backup_complete">備份完成！</string>
     <string name="backup_saved_downloads">備份已存至下載資料夾</string>
-    <string name="include_personal_info">要包括你的個人資料嗎？</string>
-    <string name="include_personal_info_msg">這包括驗證代碼、用戶名稱、標籤及瀏覽歷史</string>
     <string name="really_remove_subreddit_title">你肯定要移除這個 Subreddit 嗎？</string>
     <string name="choose_sync_time">選擇同步時間</string>
     <string name="account_suspended">此用戶已被封禁</string>

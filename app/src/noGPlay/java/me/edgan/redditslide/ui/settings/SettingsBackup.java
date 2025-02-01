@@ -350,7 +350,7 @@ public class SettingsBackup extends BaseActivityAnim {
                                     Log.d(
                                             TAG,
                                             "ProcessPhoenix.triggerRebirth() from onDismiss for"
-                                                + " local file restore.");
+                                                    + " local file restore.");
                                     ProcessPhoenix.triggerRebirth(SettingsBackup.this);
                                 })
                         .setPositiveButton(
@@ -359,7 +359,7 @@ public class SettingsBackup extends BaseActivityAnim {
                                     Log.d(
                                             TAG,
                                             "ProcessPhoenix.triggerRebirth() from OK button for"
-                                                + " local file restore.");
+                                                    + " local file restore.");
                                     ProcessPhoenix.triggerRebirth(SettingsBackup.this);
                                 })
                         .setCancelable(false)

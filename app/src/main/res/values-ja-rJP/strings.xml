@@ -570,8 +570,7 @@
     <string name="settings_title_notifications">通知設定</string>
     <string name="settings_title_pro">Pro 版</string>
     <string name="settings_title_sub_theme">Subreddit テーマ</string>
-    <string name="settings_title_sorting">デフォルトの並べ替え</string>
-    <string name="settings_title_support">寄付</string>
+    <string name="settings_title_sort">デフォルトの並べ替え</string>
     <string name="settings_title_about">アプリついて</string>
     <string name="settings_title_multi_column">複数列</string>
     <string name="settings_title_fab">フローティング アクションボタン</string>
@@ -648,8 +647,6 @@
     <string name="settings_handling_external_desc">下部に入力されたドメインは常に外部ブラウザ等で開かれます</string>
     <string name="settings_handling_enterdomain">ドメインもしくはその一部を入力</string>
     <string name="settings_section_content">コンテンツ</string>
-    <string name="settings_backup_include_personal_title">個人情報を含めますか?</string>
-    <string name="settings_backup_include_personal_text">これは、認証トークン、ユーザー名、タグ、履歴を含みます</string>
     <string name="settings_backup_view">バックアップを表示</string>
     <string name="settings_backup_err_no_explorer">ファイルエクスプローラーが見つかりません。ファイルの場所は %1$s</string>
     <string name="settings_about_version_copied_toast">バージョン番号をクリップボードにコピーしました</string>
@@ -810,7 +807,7 @@
     <string name="over18_desc">あなたは18歳以上で、成人向けコンテンツを閲覧しますか?</string>
     <string name="over18_desc_loggedout">この注意を永久に表示しない為にはログインして下さい</string>
     <string name="over18_desc_loggedin">この機能は 設定 → Reddit 設定 → NSFWコンテンツを表示する で無効化できます</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">同期が完了しました</string>
     <plurals name="color_sync_colored">
         <item quantity="other">%d個のサブレディットに色が付けられました</item>
@@ -974,7 +971,7 @@
     <string name="submit_replies_to_inbox">受信トレイに返信を送信</string>
     <string name="btn_open_comments">コメントを開く</string>
     <string name="btn_preview">プレビュー</string>
-    <string name="sorting_default_comment">デフォルトのコメントのソート順</string>
+    <string name="default_comment_sort">デフォルトのコメントのソート順</string>
     <string name="content_deleted">[削除済]</string>
     <string name="thread_continue">このスレッドの続きを読む</string>
     <string name="type_selftext">自己投稿文</string>
@@ -1011,8 +1008,6 @@
     <string name="comment_discard_msg">このコメントを破棄してもよろしいですか?</string>
     <string name="backup_complete">バックアップが完了しました!</string>
     <string name="backup_saved_downloads">バックアップを downloads に保存しました</string>
-    <string name="include_personal_info">個人情報を含めますか?</string>
-    <string name="include_personal_info_msg">これは、認証トークン、ユーザー名、タグ、履歴を含みます</string>
     <string name="really_remove_subreddit_title">この Subreddit を削除してもよろしいですか?</string>
     <string name="choose_sync_time">同期時刻を選択</string>
     <string name="account_suspended">このアカウントは停止されています</string>
@@ -1078,7 +1073,7 @@
     <string name="authors_above">上の作者</string>
     <string name="btn_crosspost">クロスポスト</string>
     <string name="btn_reset_color">色をリセット</string>
-    <string name="settings_shortlink_description">\'https://redd.it/\' としてリンクが共有されます</string>
+    <string name="settings_shortlink_description">\'https://reddit.com/comments/\' としてリンクが共有されます</string>
     <string name="settings_shortlink">可能な場合 Reddit 短縮リンクを共有</string>
     <string name="disable_replies_comment">コメントの受信トレイの返信を無効にする</string>
     <string name="replies_disabled_comment">コメントの返信は無効です</string>

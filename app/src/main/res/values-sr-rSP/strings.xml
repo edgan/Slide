@@ -530,8 +530,7 @@
     <string name="settings_title_history">Историјат</string>
     <string name="settings_title_notifications">Обавештења</string>
     <string name="settings_title_sub_theme">Субредит теме</string>
-    <string name="settings_title_sorting">Подразумеванo сортирањe</string>
-    <string name="settings_title_support">Донирајте</string>
+    <string name="settings_title_sort">Подразумеванo сортирањe</string>
     <string name="settings_title_about">О програму</string>
     <string name="settings_title_multi_column">Више колона</string>
     <string name="settings_title_comments">Коментари</string>
@@ -580,7 +579,6 @@
     <string name="settings_card_show_selftext">Прикажи први пасус selftext-а</string>
     <string name="settings_handling_enterdomain">Унесите домен или део домена</string>
     <string name="settings_section_content">Садржај</string>
-    <string name="settings_backup_include_personal_title">Укључи и личне податке?</string>
     <string name="settings_about_version_copied_toast">Број верзије копиран у оставу</string>
     <string name="settings_general_inbox_snd">Звук и вибрација</string>
     <string name="settings_enable_notifs">Укључи обавештења за пријемно сандуче</string>
@@ -822,7 +820,7 @@
     <string name="handling_browser">Веб читач</string>
     <string name="submit_replies_to_inbox">Пошаљи одговоре у пријемно сандуче</string>
     <string name="btn_preview">Претпреглед</string>
-    <string name="sorting_default_comment">Подразумевано сортирање коментара</string>
+    <string name="default_comment_sort">Подразумевано сортирање коментара</string>
     <string name="content_deleted">[обрисано]</string>
     <string name="thread_continue">Настави ову тему</string>
     <string name="type_selftext">Selftext</string>
@@ -853,7 +851,6 @@
     <string name="btn_offline">Уђи у режим ван мреже</string>
     <string name="discard_comment_title">Одбаците коментар?</string>
     <string name="comment_discard_msg">Да ли стварно желите да одбаците коментар?</string>
-    <string name="include_personal_info">Укључи и личне податке?</string>
     <string name="really_remove_subreddit_title">Стварно желите да уклоните овај субредит?</string>
     <string name="choose_sync_time">Одаберите време синхронизације</string>
     <string name="account_suspended">Овај налог је суспендован</string>

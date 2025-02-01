@@ -613,6 +613,7 @@
     <string name="share_image">Share image</string>
     <string name="settings_libs">Open-source libraries</string>
     <string name="settings_about_libs">About Libs</string>
+    <string name="settings_privacy">Privacy policy</string>
     <string name="settings_bugs">Report bugs</string>
     <string name="settings_changelog">View changelog</string>
     <string name="settings_google">Connecting to Google</string>
@@ -638,6 +639,9 @@
     <string name="settings_set_storage_location">Files will be saved to %s</string>
     <string name="settings_general_immersive_mode">Immersive fullscreen mode</string>
     <string name="settings_general_immersive_mode_desc">Hide the status and navigation bars (experimental)</string>
+    <string name="settings_general_old_swipe_mode">Old swipe mode</string>
+    <string name="settings_general_old_swipe_mode_desc">Old Slide swipe style. Meant for 3-button navigation mode and Samsung gestures.</string>
+
     <string name="settings_general_title_drawer_items">Drawer Items</string>
     <string name="settings_general_subtitle_drawer_items">Select which drawer items to display</string>
     <string name="settings_moderation">Moderation</string>
@@ -651,7 +655,8 @@
     <string name="settings_title_notifications">Notifications</string>
     <string name="settings_title_pro">Go Pro</string>
     <string name="settings_title_sub_theme">Subreddit themes</string>
-    <string name="settings_title_sorting">Default sorting</string>
+    <string name="settings_title_sort">Default sort</string>
+    <string name="settings_title_sort_frontpage">Frontpage sort</string>
     <string name="settings_title_about">About</string>
     <string name="settings_title_multi_column">Multi-column</string>
     <string name="settings_title_fab">Floating action button</string>
@@ -820,7 +825,7 @@
     <string name="profile_saved_categories">Saved categories</string>
 
     <!-- Setting subheaders -->
-    <string name="sorting">Sorting</string>
+    <string name="sorting">Sorts</string>
     <string name="display">Display</string>
     <string name="images">Images</string>
     <string name="storage">Storage</string>
@@ -919,7 +924,7 @@
     <string name="over18_desc_loggedin">You can disable this permanently in Settings → Reddit preferences → Show NSFW content</string>
 
 
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Sync complete</string>
     <plurals name="color_sync_colored">
         <item quantity="one">%d subreddit was colored</item>
@@ -1101,7 +1106,7 @@
     <string name="submit_replies_to_inbox">Send replies to inbox</string>
     <string name="btn_open_comments">Open comments</string>
     <string name="btn_preview">Preview</string>
-    <string name="sorting_default_comment">Default comment sorting</string>
+    <string name="default_comment_sort">Default comment sort</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Continue this thread</string>
     <string name="type_selftext">Selftext</string>
@@ -1203,7 +1208,7 @@
     <string name="authors_above">Authors above</string>
     <string name="btn_crosspost">Crosspost</string>
     <string name="btn_reset_color">RESET COLOR</string>
-    <string name="settings_shortlink_description">Links will be shared as \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Links will be shared as \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">Share Reddit shortlink where possible</string>
     <string name="disable_replies_comment">Disable comment inbox replies</string>
     <string name="replies_disabled_comment">Comment replies disabled</string>
@@ -1243,4 +1248,6 @@
     <string name="sign_in_failed_msg">Unable to sign in to your Google account. Please try again.</string>
     <string name="backup_no_files">No Backup Files Found</string>
     <string name="backup_no_files_msg">There are no backup files available to restore.</string>
+
+    <string name="settings_set_image_location">Images will be saved to %s</string>
 </resources>

@@ -25,16 +25,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import me.edgan.redditslide.Adapters.AlbumView;
+import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.ImgurAlbum.AlbumUtils;
 import me.edgan.redditslide.ImgurAlbum.Image;
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.StorageUtil;
 
@@ -166,22 +167,34 @@ public class Album extends BaseSaveActivity {
         album = new AlbumPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(album);
         pager.setCurrentItem(1);
-        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {});
-
-        if (!Reddit.appRestart.contains("tutorialSwipe")) {
-            startActivityForResult(new Intent(this, SwipeTutorial.class), 3);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 3) {
-            Reddit.appRestart.edit().putBoolean("tutorialSwipe", true).apply();
+        if (SettingValues.oldSwipeMode) {
+            pager.addOnPageChangeListener(
+                    new ViewPager.SimpleOnPageChangeListener() {
+                        @Override
+                        public void onPageScrolled(
+                                int position, float positionOffset, int positionOffsetPixels) {
+                            if (position == 0 && positionOffsetPixels == 0) {
+                                finish();
+                            }
+                            if (position == 0
+                                    && ((AlbumPagerAdapter) pager.getAdapter()).blankPage != null) {
+                                if (((AlbumPagerAdapter) pager.getAdapter()).blankPage != null) {
+                                    ((AlbumPagerAdapter) pager.getAdapter())
+                                            .blankPage.doOffset(positionOffset);
+                                }
+                                ((AlbumPagerAdapter) pager.getAdapter())
+                                        .blankPage.realBack.setBackgroundColor(
+                                                Palette.adjustAlpha(positionOffset * 0.7f));
+                            }
+                        }
+                    });
+        } else {
+            pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {});
         }
     }
 
     public static class AlbumPagerAdapter extends FragmentStatePagerAdapter {
+        public BlankFragment blankPage;
         public AlbumFrag album;
 
         public AlbumPagerAdapter(FragmentManager fm) {
@@ -191,6 +204,13 @@ public class Album extends BaseSaveActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
+            if (SettingValues.oldSwipeMode) {
+                if (i == 0) {
+                    blankPage = new BlankFragment();
+                    return blankPage;
+                }
+            }
+
             album = new AlbumFrag();
 
             return album;
@@ -198,7 +218,13 @@ public class Album extends BaseSaveActivity {
 
         @Override
         public int getCount() {
-            return 1;
+            int count = 1;
+
+            if (SettingValues.oldSwipeMode) {
+                count = 2;
+            }
+
+            return count;
         }
     }
 

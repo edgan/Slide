@@ -575,8 +575,7 @@
     <string name="settings_title_notifications">Ustawienia powiadomień</string>
     <string name="settings_title_pro">Kup Pro</string>
     <string name="settings_title_sub_theme">Motywy subredditów</string>
-    <string name="settings_title_sorting">Domyślnie sortowanie</string>
-    <string name="settings_title_support">Wesprzyj</string>
+    <string name="settings_title_sort">Domyślnie sortowanie</string>
     <string name="settings_title_about">O aplikacji</string>
     <string name="settings_title_multi_column">Tryb wielokulumnowy</string>
     <string name="settings_title_fab">Przycisk akcji</string>
@@ -653,8 +652,6 @@
     <string name="settings_handling_external_desc">Domeny poniżej będą zawsze otwierane zewnętrznie</string>
     <string name="settings_handling_enterdomain">Wpisz domenę lub jej część</string>
     <string name="settings_section_content">Zawartość</string>
-    <string name="settings_backup_include_personal_title">Zawrzeć informacje osobiste?</string>
-    <string name="settings_backup_include_personal_text">Zawiera to tokeny uwierzytelniania, nazwy użytkownika, tagi i historię</string>
     <string name="settings_backup_view">Zobacz kopię zapasową</string>
     <string name="settings_backup_err_no_explorer">Nie znaleziono przeglądarki plików, plik w %1$s</string>
     <string name="settings_about_version_copied_toast">Numer wersji skopiowany do schowka</string>
@@ -828,7 +825,7 @@
     <string name="over18_desc">Czy masz więcej niż 18 lat i chcesz zobaczyć zawartość dla dorosłych?</string>
     <string name="over18_desc_loggedout">Zaloguj się, by permamentnie wyłączyć to ostrzeżenie</string>
     <string name="over18_desc_loggedin">Możesz to wyłączyć permamentnie w Ustawienia → Preferencje Reddita → Pokazuj obrazy NSFW</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Synchronizacja zakończona</string>
     <!-- Discover section: find -->
     <string name="discover_title">Odkrywaj</string>
@@ -989,7 +986,7 @@
     <string name="submit_replies_to_inbox">Informuj o odpowiedziach</string>
     <string name="btn_open_comments">Otwórz komentarze</string>
     <string name="btn_preview">Podgląd</string>
-    <string name="sorting_default_comment">Domyślnie sortowanie komentarzy</string>
+    <string name="default_comment_sort">Domyślnie sortowanie komentarzy</string>
     <string name="content_deleted">[usunięte]</string>
     <string name="thread_continue">Kontynuuj wątek</string>
     <string name="type_selftext">Tekst</string>
@@ -1026,8 +1023,6 @@
     <string name="comment_discard_msg">Czy chcesz odrzucić swój komentarz?</string>
     <string name="backup_complete">Ukończono kopię!</string>
     <string name="backup_saved_downloads">Kopia zapisana do pobranych</string>
-    <string name="include_personal_info">Zawrzeć informacje osobiste?</string>
-    <string name="include_personal_info_msg">Zawiera to tokeny uwierzytelniania, nazwy użytkownika, tagi i historię</string>
     <string name="really_remove_subreddit_title">Naprawdę usunąć ten subreddit?</string>
     <string name="choose_sync_time">Wybierz czas synchronizacji</string>
     <string name="account_suspended">To konto jest zawieszone</string>
@@ -1080,7 +1075,7 @@
     <string name="success_block_user">Użytkownik został zablokowany</string>
     <string name="theme_deep">Głęboki</string>
     <string name="btn_reset_color">ZRESTARTUJ KOLOR</string>
-    <string name="settings_shortlink_description">Linki będą udostępniane jako \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Linki będą udostępniane jako \'https://reddit.com/comments/\'</string>
     <string name="replies_disabled_comment">Odpowiedzi do komentarzy są wyłączone</string>
     <string name="replies_enabled_comment">Odpowiedzi do komentarzy są włączone</string>
     <string name="replies_switch_accounts">Przełącz na inne konto</string>

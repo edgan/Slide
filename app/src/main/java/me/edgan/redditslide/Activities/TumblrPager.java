@@ -47,6 +47,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import me.edgan.redditslide.Adapters.ImageGridAdapterTumblr;
 import me.edgan.redditslide.ContentType;
+import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
@@ -131,9 +132,6 @@ public class TumblrPager extends BaseSaveActivity {
             int adapterPosition = getIntent().getIntExtra(MediaView.ADAPTER_POSITION, -1);
             finish();
             SubmissionsView.datachanged(adapterPosition);
-            // getIntent().getStringExtra(MediaView.SUBMISSION_SUBREDDIT));
-            // SubmissionAdapter.setOpen(this,
-            // getIntent().getStringExtra(MediaView.SUBMISSION_URL));
         }
 
         if (id == R.id.download) {
@@ -145,14 +143,6 @@ public class TumblrPager extends BaseSaveActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 3) {
-            Reddit.appRestart.edit().putBoolean("tutorialSwipe", true).apply();
-        }
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -188,10 +178,6 @@ public class TumblrPager extends BaseSaveActivity {
 
         String url = getIntent().getExtras().getString("url", "");
         new LoadIntoPager(url, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        if (!Reddit.appRestart.contains("tutorialSwipe")) {
-            startActivityForResult(new Intent(this, SwipeTutorial.class), 3);
-        }
     }
 
     public class LoadIntoPager extends TumblrUtils.GetTumblrPostWithCallback {
@@ -226,7 +212,25 @@ public class TumblrPager extends BaseSaveActivity {
             TumblrViewPagerAdapter adapter =
                     new TumblrViewPagerAdapter(getSupportFragmentManager());
             p.setAdapter(adapter);
-            p.setCurrentItem(1);
+
+            int startPage = 0;
+
+            if (SettingValues.oldSwipeMode) {
+                startPage = 1;
+            }
+
+            p.setCurrentItem(startPage);
+
+
+            p.post(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            // Force load first two positions
+                            adapter.instantiateItem(p, 0);
+                            adapter.instantiateItem(p, 1);
+                        }
+                    });
             findViewById(R.id.grid)
                     .setOnClickListener(
                             new View.OnClickListener() {
@@ -260,9 +264,21 @@ public class TumblrPager extends BaseSaveActivity {
                         @Override
                         public void onPageScrolled(
                                 int position, float positionOffset, int positionOffsetPixels) {
-                            if (getSupportActionBar() != null) {
-                                getSupportActionBar()
-                                        .setSubtitle((position + 1) + "/" + images.size());
+                            if (SettingValues.oldSwipeMode) {
+                                if (position != 0) {
+                                    if (getSupportActionBar() != null) {
+                                        getSupportActionBar()
+                                                .setSubtitle((position) + "/" + images.size());
+                                    }
+                                }
+                                if (position == 0 && positionOffset < 0.2) {
+                                    finish();
+                                }
+                            } else {
+                                if (getSupportActionBar() != null) {
+                                    getSupportActionBar()
+                                            .setSubtitle((position + 1) + "/" + images.size());
+                                }
                             }
                         }
                     });
@@ -290,6 +306,14 @@ public class TumblrPager extends BaseSaveActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
+            if (SettingValues.oldSwipeMode) {
+                if (i == 0) {
+                    return new BlankFragment();
+                }
+
+                i--;
+            }
+
             Photo current = images.get(i);
 
             try {
@@ -324,7 +348,11 @@ public class TumblrPager extends BaseSaveActivity {
             if (images == null) {
                 return 0;
             }
-            return images.size();
+            if (SettingValues.oldSwipeMode) {
+                return images.size() + 1;
+            } else {
+                return images.size();
+            }
         }
     }
 

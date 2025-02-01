@@ -575,8 +575,7 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="settings_title_notifications">Benachrichtigungen</string>
     <string name="settings_title_pro">Hol dir die Pro-Version</string>
     <string name="settings_title_sub_theme">Subreddit Theme</string>
-    <string name="settings_title_sorting">Standard-Sortierung</string>
-    <string name="settings_title_support">Spenden</string>
+    <string name="settings_title_sort">Standard-Sortierung</string>
     <string name="settings_title_about">Über</string>
     <string name="settings_title_multi_column">Mehrspaltiges Layout</string>
     <string name="settings_title_fab">Schwebender Aktionsknopf</string>
@@ -648,8 +647,6 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="settings_handling_external_desc">Eingegebene Domains werden immer extern geöffnet</string>
     <string name="settings_handling_enterdomain">Gib einen Domainnamen oder einen Teil eines Domainnamens ein</string>
     <string name="settings_section_content">Inhalt</string>
-    <string name="settings_backup_include_personal_title">Persönliche Informationen einschließen?</string>
-    <string name="settings_backup_include_personal_text">Dies beinhaltet Authentifizierungs-Tokens, Benutzernamen, Tags und den Verlauf</string>
     <string name="settings_backup_view">Zeige Sicherung</string>
     <string name="settings_backup_err_no_explorer">Kein Dateiexplorer gefunden, Datei befindet sich hier: %1$s</string>
     <string name="settings_about_version_copied_toast">Versionsnummer in die Zwischenablage kopiert</string>
@@ -816,7 +813,7 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="over18_desc">Bist du volljährig und möchtest jugendfreie Inhalte sehen?</string>
     <string name="over18_desc_loggedout">Log dich ein, um diese Warnung dauerhaft zu deaktivieren</string>
     <string name="over18_desc_loggedin">Sie können das auch permanent in den Einstellungen→Reddit Einstellungen→ Zeige NSFW Inhalt deaktivieren</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Synchronisation abgeschlossen</string>
     <plurals name="color_sync_colored">
         <item quantity="one">Ein Subreddit wurde gefärbt</item>
@@ -982,7 +979,7 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="submit_replies_to_inbox">Über Antworten benachrichtigen</string>
     <string name="btn_open_comments">Kommentare anzeigen</string>
     <string name="btn_preview">Vorschau</string>
-    <string name="sorting_default_comment">Standardmäßige Kommentar-Sortierung</string>
+    <string name="default_comment_sort">Standardmäßige Kommentar-Sortierung</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Diesen Beitrag fortsetzen</string>
     <string name="type_selftext">Selftext</string>
@@ -1019,8 +1016,6 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="comment_discard_msg">Willst du deinen Kommentar wirklich verwerfen?</string>
     <string name="backup_complete">Sicherung abgeschlossen!</string>
     <string name="backup_saved_downloads">Sicherung in Downloads gespeichert</string>
-    <string name="include_personal_info">Personenbezogene Daten inkludieren?</string>
-    <string name="include_personal_info_msg">Dies beinhaltet Authentifizierungs-Tokens, Benutzernamen, Tags und den Verlauf</string>
     <string name="really_remove_subreddit_title">Diesen Subreddit wirklich entfernen?</string>
     <string name="choose_sync_time">Wähle die Synchronisierungszeit</string>
     <string name="account_suspended">Dieses Konto ist gesperrt</string>
@@ -1084,7 +1079,7 @@ Möchten Sie Slide for Reddit unterstützen?</string>
     <string name="authors_above">Autoren oberhalb</string>
     <string name="btn_crosspost">Crossposten</string>
     <string name="btn_reset_color">FARBE ZURÜCKSETZEN</string>
-    <string name="settings_shortlink_description">Links werden geteilt als \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Links werden geteilt als \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">Wenn möglich Reddit-Kurzlink teilen</string>
     <string name="disable_replies_comment">Kommentar Antworten im Posteingang deaktivieren</string>
     <string name="replies_disabled_comment">Kommentar Antworten deaktiviert</string>

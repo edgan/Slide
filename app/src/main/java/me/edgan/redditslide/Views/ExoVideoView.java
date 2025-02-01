@@ -4,9 +4,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.TextureView;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -19,17 +23,17 @@ import androidx.media.AudioAttributesCompat;
 import androidx.media.AudioFocusRequestCompat;
 import androidx.media.AudioManagerCompat;
 
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Tracks;
+import com.google.android.exoplayer2.Tracks.Group;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.ExoTrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -54,6 +58,7 @@ public class ExoVideoView extends RelativeLayout {
     private boolean muteAttached = false;
     private boolean hqAttached = false;
     private AudioFocusHelper audioFocusHelper;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     public ExoVideoView(final Context context) {
         this(context, null, true);
@@ -79,26 +84,13 @@ public class ExoVideoView extends RelativeLayout {
 
     /** Initializes the view to render onto and the SimpleExoPlayer instance */
     private void setupPlayer() {
-        // Create a view to render the video onto and an AspectRatioFrameLayout to size the video
-        // correctly
-        AspectRatioFrameLayout frame = new AspectRatioFrameLayout(context);
-        LayoutParams params =
-                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        params.addRule(CENTER_IN_PARENT, TRUE);
-        frame.setLayoutParams(params);
-        frame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-
-        SurfaceView renderView = new SurfaceView(context);
-        frame.addView(renderView);
-        addView(frame);
-
         // Create a track selector so we can set specific video quality for DASH
         trackSelector = new DefaultTrackSelector(context);
         if ((SettingValues.lowResAlways
-                        || (NetworkUtil.isConnected(context)
-                                && !NetworkUtil.isConnectedWifi(context)
-                                && SettingValues.lowResMobile))
-                && SettingValues.lqVideos) {
+                || (NetworkUtil.isConnected(context)
+                    && !NetworkUtil.isConnectedWifi(context)
+                    && SettingValues.lowResMobile))
+            && SettingValues.lqVideos) {
             trackSelector.setParameters(
                     trackSelector.buildUponParameters().setForceLowestBitrate(true));
         } else {
@@ -106,18 +98,55 @@ public class ExoVideoView extends RelativeLayout {
                     trackSelector.buildUponParameters().setForceHighestSupportedBitrate(true));
         }
 
-        // Create the player, attach it to the view, make it repeat infinitely
-        player = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
-        player.setVideoSurfaceView(renderView);
+        // If this method can be called multiple times, release the old player first
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+
+        // Create the player
+        player = new SimpleExoPlayer.Builder(context)
+                .setTrackSelector(trackSelector)
+                .build();
+
+        // Create an AspectRatioFrameLayout to size the video correctly
+        AspectRatioFrameLayout frame = new AspectRatioFrameLayout(context);
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        params.addRule(CENTER_IN_PARENT, TRUE);
+        frame.setLayoutParams(params);
+        frame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+
+        if (SettingValues.oldSwipeMode) {
+            TextureView textureView = new TextureView(context);
+
+            frame.addView(textureView, new LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT
+            ));
+            player.setVideoTextureView(textureView);
+        } else {
+            SurfaceView surfaceView = new SurfaceView(context);
+            frame.addView(surfaceView, new LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT
+            ));
+            player.setVideoSurfaceView(surfaceView);
+        }
+
+        addView(frame);
+
+        // Make the video repeat infinitely
         player.setRepeatMode(Player.REPEAT_MODE_ALL);
 
         // Mute by default
         player.setVolume(0f);
 
         // Create audio focus helper
-        audioFocusHelper =
-                new AudioFocusHelper(ContextCompat.getSystemService(context, AudioManager.class));
+        audioFocusHelper = new AudioFocusHelper(
+                ContextCompat.getSystemService(context, AudioManager.class)
+        );
 
+        // Add a Player.Listener for aspect ratio changes, logging, etc.
         player.addListener(
                 new Player.Listener() {
                     // Make the video use the correct aspect ratio
@@ -133,22 +162,20 @@ public class ExoVideoView extends RelativeLayout {
 
                     // Logging
                     @Override
-                    public void onTracksChanged(
-                            @NonNull TrackGroupArray trackGroups,
-                            @NonNull TrackSelectionArray trackSelections) {
+                    public void onTracksChanged(@NonNull Tracks tracks) {
                         StringBuilder toLog = new StringBuilder();
-                        for (int i = 0; i < trackGroups.length; i++) {
-                            for (int j = 0; j < trackGroups.get(i).length; j++) {
+                        for (int groupIndex = 0; groupIndex < tracks.getGroups().size(); groupIndex++) {
+                            Tracks.Group group = tracks.getGroups().get(groupIndex);
+                            for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
+                                Format format = group.getTrackFormat(trackIndex);
+                                boolean isSelected = group.isTrackSelected(trackIndex);
+
                                 toLog.append("Format:\t")
-                                        .append(trackGroups.get(i).getFormat(j))
+                                        .append(format)
+                                        .append(isSelected ? " (selected)" : "")
                                         .append("\n");
                             }
                         }
-                        // FIXME: How do I make onTracksChanged work with ExoTrackSelection?
-                        /*for (TrackSelection i : trackSelections.getAll()) {
-                            if (i != null)
-                                toLog.append("Selected format:\t").append(i.getSelectedFormat()).append("\n");
-                        }*/
                         Log.v(LogUtil.getTag(), toLog.toString());
                     }
                 });
@@ -160,7 +187,11 @@ public class ExoVideoView extends RelativeLayout {
         playerUI = new PlayerControlView(context);
         playerUI.setPlayer(player);
         playerUI.setShowTimeoutMs(2000);
-        playerUI.hide();
+
+        if (!SettingValues.oldSwipeMode) {
+            playerUI.hide();
+	}
+
         addView(playerUI);
 
         // Show/hide the player UI on tap
@@ -180,7 +211,7 @@ public class ExoVideoView extends RelativeLayout {
      *
      * @param uri URI
      * @param type Type of video
-     * @param listener EventLister attached to the player, helpful for player state
+     * @param listener Additional Player.Listener (optional)
      */
     public void setVideoURI(Uri uri, VideoType type, Player.Listener listener) {
         // Create the data sources used to retrieve and cache the video
@@ -222,6 +253,9 @@ public class ExoVideoView extends RelativeLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
         // If we don't release the player here, hardware decoders won't be released, breaking
         // ExoPlayer device-wide
         stop();
@@ -239,15 +273,18 @@ public class ExoVideoView extends RelativeLayout {
 
     /** Stops the video and releases the player */
     public void stop() {
-        player.stop();
-        player.release();
+        if (player != null) {
+            player.stop();
+            player.release();
+            player = null;
+        }
         audioFocusHelper.loseFocus(); // do this last so audio doesn't overlap
     }
 
     /**
      * Seeks to a specific timestamp
      *
-     * @param time timestamp
+     * @param time timestamp (ms)
      */
     public void seekTo(long time) {
         player.seekTo(time);
@@ -256,7 +293,7 @@ public class ExoVideoView extends RelativeLayout {
     /**
      * Gets the current timestamp
      *
-     * @return current timestamp
+     * @return current position in ms
      */
     public long getCurrentPosition() {
         return player.getCurrentPosition();
@@ -275,68 +312,73 @@ public class ExoVideoView extends RelativeLayout {
         player.addListener(
                 new Player.Listener() {
                     @Override
-                    public void onTracksChanged(
-                            @NonNull TrackGroupArray trackGroups,
-                            @NonNull TrackSelectionArray trackSelections) {
-                        // We only need to run this on the first track change, i.e. when the video
-                        // is loaded
-                        // Skip this if mute has already been configured, otherwise mark it as
-                        // configured
-                        if (muteAttached && trackGroups.length > 0) {
+                    public void onTracksChanged(@NonNull Tracks tracks) {
+                        // Only run on first valid track change
+                        if (muteAttached && !tracks.getGroups().isEmpty()) {
                             return;
                         } else {
                             muteAttached = true;
                         }
-                        // Loop through the tracks and check if any contain audio, if so set up the
-                        // mute button
-                        for (int i = 0; i < trackSelections.length; i++) {
-                            final ExoTrackSelection selection =
-                                    (ExoTrackSelection) trackSelections.get(i);
-                            if (selection != null
-                                    && selection.getSelectedFormat() != null
-                                    && MimeTypes.isAudio(
-                                            selection.getSelectedFormat().sampleMimeType)) {
 
-                                mute.setVisibility(VISIBLE);
-                                // Set initial mute state
-                                if (!SettingValues.isMuted) {
-                                    player.setVolume(1f);
-                                    BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
-                                    audioFocusHelper.gainFocus();
-                                } else {
-                                    player.setVolume(0f);
-                                    BlendModeUtil.tintImageViewAsSrcAtop(
-                                            mute, getResources().getColor(R.color.md_red_500));
+                        // Check if we have any selected audio track
+                        boolean foundAudio = false;
+                        for (Tracks.Group group : tracks.getGroups()) {
+                            for (int trackIndex = 0;
+                                    trackIndex < group.getMediaTrackGroup().length;
+                                    trackIndex++) {
+                                if (group.isTrackSelected(trackIndex)) {
+                                    Format format = group.getTrackFormat(trackIndex);
+                                    if (format != null
+                                            && MimeTypes.isAudio(format.sampleMimeType)) {
+                                        foundAudio = true;
+                                        break;
+                                    }
                                 }
-
-                                mute.setOnClickListener(
-                                        (v) -> {
-                                            if (SettingValues.isMuted) {
-                                                player.setVolume(1f);
-                                                SettingValues.isMuted = false;
-                                                SettingValues.prefs
-                                                        .edit()
-                                                        .putBoolean(SettingValues.PREF_MUTE, false)
-                                                        .apply();
-                                                BlendModeUtil.tintImageViewAsSrcAtop(
-                                                        mute, Color.WHITE);
-                                                audioFocusHelper.gainFocus();
-                                            } else {
-                                                player.setVolume(0f);
-                                                SettingValues.isMuted = true;
-                                                SettingValues.prefs
-                                                        .edit()
-                                                        .putBoolean(SettingValues.PREF_MUTE, true)
-                                                        .apply();
-                                                BlendModeUtil.tintImageViewAsSrcAtop(
-                                                        mute,
-                                                        getResources()
-                                                                .getColor(R.color.md_red_500));
-                                                audioFocusHelper.loseFocus();
-                                            }
-                                        });
-                                return;
                             }
+                            if (foundAudio) {
+                                break;
+                            }
+                        }
+
+                        // If an audio track is present/selected, show the mute button
+                        if (foundAudio) {
+                            mute.setVisibility(VISIBLE);
+                            // Set initial volume state
+                            if (!SettingValues.isMuted) {
+                                player.setVolume(1f);
+                                BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
+                                audioFocusHelper.gainFocus();
+                            } else {
+                                player.setVolume(0f);
+                                BlendModeUtil.tintImageViewAsSrcAtop(
+                                        mute, getResources().getColor(R.color.md_red_500));
+                            }
+
+                            // Toggle mute on button click
+                            mute.setOnClickListener(
+                                    (v) -> {
+                                        if (SettingValues.isMuted) {
+                                            player.setVolume(1f);
+                                            SettingValues.isMuted = false;
+                                            SettingValues.prefs
+                                                    .edit()
+                                                    .putBoolean(SettingValues.PREF_MUTE, false)
+                                                    .apply();
+                                            BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
+                                            audioFocusHelper.gainFocus();
+                                        } else {
+                                            player.setVolume(0f);
+                                            SettingValues.isMuted = true;
+                                            SettingValues.prefs
+                                                    .edit()
+                                                    .putBoolean(SettingValues.PREF_MUTE, true)
+                                                    .apply();
+                                            BlendModeUtil.tintImageViewAsSrcAtop(
+                                                    mute,
+                                                    getResources().getColor(R.color.md_red_500));
+                                            audioFocusHelper.loseFocus();
+                                        }
+                                    });
                         }
                     }
                 });
@@ -355,11 +397,11 @@ public class ExoVideoView extends RelativeLayout {
         player.addListener(
                 new Player.Listener() {
                     @Override
-                    public void onTracksChanged(
-                            @NonNull TrackGroupArray trackGroups,
-                            @NonNull TrackSelectionArray trackSelections) {
+                    public void onTracksChanged(@NonNull Tracks tracks) {
+                        // Only run if not already attached, we have track groups,
+                        // and we're not already forcing highest bitrates
                         if (hqAttached
-                                || trackGroups.length == 0
+                                || tracks.getGroups().isEmpty()
                                 || trackSelector.getParameters().forceHighestSupportedBitrate) {
                             return;
                         } else {
@@ -368,30 +410,28 @@ public class ExoVideoView extends RelativeLayout {
                         // Lopp through the tracks, check if they're video. If we have at least 2
                         // video tracks we can set
                         // up quality selection.
+
                         int videoTrackCounter = 0;
-                        for (int trackGroup = 0; trackGroup < trackGroups.length; trackGroup++) {
-                            for (int format = 0;
-                                    format < trackGroups.get(trackGroup).length;
-                                    format++) {
-                                if (MimeTypes.isVideo(
-                                        trackGroups
-                                                .get(trackGroup)
-                                                .getFormat(format)
-                                                .sampleMimeType)) {
+                        for (Tracks.Group group : tracks.getGroups()) {
+                            for (int trackIndex = 0;
+                                    trackIndex < group.getMediaTrackGroup().length;
+                                    trackIndex++) {
+                                Format format = group.getTrackFormat(trackIndex);
+                                if (format != null && MimeTypes.isVideo(format.sampleMimeType)) {
                                     videoTrackCounter++;
-                                }
-                                if (videoTrackCounter > 1) {
-                                    break;
+                                    if (videoTrackCounter > 1) {
+                                        break;
+                                    }
                                 }
                             }
                             if (videoTrackCounter > 1) {
                                 break;
                             }
                         }
+
                         // If we have enough video tracks to have a quality button, set it up.
                         if (videoTrackCounter > 1) {
                             hq.setVisibility(VISIBLE);
-
                             hq.setOnClickListener(
                                     (v) -> {
                                         trackSelector.setParameters(
@@ -429,7 +469,6 @@ public class ExoVideoView extends RelativeLayout {
                 request =
                         new AudioFocusRequestCompat.Builder(
                                         AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT)
-                                // .setAcceptsDelayedFocusGain(false)
                                 .setAudioAttributes(audioAttributes)
                                 .setOnAudioFocusChangeListener(this)
                                 .setWillPauseWhenDucked(true)
@@ -475,10 +514,10 @@ public class ExoVideoView extends RelativeLayout {
             alphaAnimation.setDuration(duration);
 
             addAnimation(alphaAnimation);
-            setAnimationListener(new PlayerUIFadeInAnimation.Listener());
+            setAnimationListener(new PlayerUIFadeInAnimationListener());
         }
 
-        private class Listener implements AnimationListener {
+        private class PlayerUIFadeInAnimationListener implements AnimationListener {
 
             @Override
             public void onAnimationStart(Animation animation) {
@@ -487,8 +526,11 @@ public class ExoVideoView extends RelativeLayout {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (toVisible) animationView.show();
-                else animationView.hide();
+                if (toVisible) {
+                    animationView.show();
+                } else {
+                    animationView.hide();
+                }
             }
 
             @Override

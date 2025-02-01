@@ -564,8 +564,7 @@
     <string name="settings_title_notifications">Bildirimler</string>
     <string name="settings_title_pro">Pro sürüme geç</string>
     <string name="settings_title_sub_theme">Subreddit temaları</string>
-    <string name="settings_title_sorting">Varsayılan Sıralama</string>
-    <string name="settings_title_support">Bağış yapın</string>
+    <string name="settings_title_sort">Varsayılan Sıralama</string>
     <string name="settings_title_about">Hakkında</string>
     <string name="settings_title_multi_column">Çoklu-sütun</string>
     <string name="settings_title_fab">Kayan eylem butonu</string>
@@ -637,8 +636,6 @@
     <string name="settings_handling_external_desc">Aşağıda girili alan adları her zaman başka uygulamalarla açılacak</string>
     <string name="settings_handling_enterdomain">Alan adının tamamını veya bir kısmını girin</string>
     <string name="settings_section_content">Içerik</string>
-    <string name="settings_backup_include_personal_title">Kişisel bilgileri de içer?</string>
-    <string name="settings_backup_include_personal_text">Bu, kimlik doğrulama bilgilerini, kullanıcı adlarını, etiketleri ve geçmişi içerir</string>
     <string name="settings_backup_view">Yedeği gör</string>
     <string name="settings_backup_err_no_explorer">Bir dosya gezgini bulunamadı, dosya %1$s konumunda</string>
     <string name="settings_about_version_copied_toast">Sürüm numarası panoya kopyalandı</string>
@@ -805,7 +802,7 @@
     <string name="over18_desc">On sekiz yaşın üzerinde ve yetişkin içeriği görmek istiyor musunuz?</string>
     <string name="over18_desc_loggedout">Bu uyarıyı devre dışı bırakmak için oturum açın</string>
     <string name="over18_desc_loggedin">Bu uyarıyı Ayarlar → Reddit tercihleri → NSFW içeriği göster kısmından kapatabilirsiniz</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Eşleme tamamlandı</string>
     <plurals name="color_sync_colored">
         <item quantity="one">%d subreddit renklendirildi</item>
@@ -971,7 +968,7 @@
     <string name="submit_replies_to_inbox">Cevapları gelen kutusuna gönder</string>
     <string name="btn_open_comments">Yorumları aç</string>
     <string name="btn_preview">Önizleme</string>
-    <string name="sorting_default_comment">Varsayılan yorum sıralaması</string>
+    <string name="default_comment_sort">Varsayılan yorum sıralaması</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Yorumların devamı</string>
     <string name="type_selftext">Metin</string>
@@ -1008,8 +1005,6 @@
     <string name="comment_discard_msg">Yorumu gerçekten silmek istiyor musunuz?</string>
     <string name="backup_complete">Yedekleme tamamlandı!</string>
     <string name="backup_saved_downloads">Yedek dosyası indirilenlere kaydedildi</string>
-    <string name="include_personal_info">Kişisel bilgileri de içer?</string>
-    <string name="include_personal_info_msg">Bu, kimlik doğrulama bilgilerini, kullanıcı adlarını, etiketleri ve geçmişi içerir</string>
     <string name="really_remove_subreddit_title">Bu subreddit gerçekten silinsin mi?</string>
     <string name="choose_sync_time">Eşitleme zamanını seç</string>
     <string name="account_suspended">Bu hesap askıya alınmış</string>
@@ -1073,7 +1068,7 @@
     <string name="authors_above">Yukarıdaki yazarlar</string>
     <string name="btn_crosspost">Crosspost</string>
     <string name="btn_reset_color">RENGİ SIFIRLA</string>
-    <string name="settings_shortlink_description">Bağlantılar \'https://redd.it/\' şeklinde paylaşılacaktır</string>
+    <string name="settings_shortlink_description">Bağlantılar \'https://reddit.com/comments/\' şeklinde paylaşılacaktır</string>
     <string name="settings_shortlink">Mümkünse Reddit kısa bağlantısı olarak paylaş</string>
     <string name="disable_replies_comment">Yorum gelen kutusu yanıtlarını devre dışı bırak</string>
     <string name="replies_disabled_comment">Yorum yanıtları devre dışı bırakıldı</string>

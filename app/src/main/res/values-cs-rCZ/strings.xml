@@ -576,8 +576,7 @@
     <string name="settings_title_notifications">Oznámení</string>
     <string name="settings_title_pro">Povýšit na verzi Pro</string>
     <string name="settings_title_sub_theme">Motivy Subredditů</string>
-    <string name="settings_title_sorting">Výchozí řazení</string>
-    <string name="settings_title_support">Darovat</string>
+    <string name="settings_title_sort">Výchozí řazení</string>
     <string name="settings_title_about">O nás</string>
     <string name="settings_title_multi_column">Vícenásobný sloupec</string>
     <string name="settings_title_fab">Plovoucí tlačítko akce</string>
@@ -649,8 +648,6 @@
     <string name="settings_handling_external_desc">Domény zadané níže budou vždy otevřeny externě</string>
     <string name="settings_handling_enterdomain">Zadejte doménu nebo část domény</string>
     <string name="settings_section_content">Obsah</string>
-    <string name="settings_backup_include_personal_title">Zahrnout osobní informace?</string>
-    <string name="settings_backup_include_personal_text">To zahrnuje ověřovací tokeny, uživatelská jména, štítky a historii</string>
     <string name="settings_backup_view">Zobrazit zálohu</string>
     <string name="settings_backup_err_no_explorer">Nebyl nalezen žádný průzkumník souborů, soubor umístěný v %1$s</string>
     <string name="settings_about_version_copied_toast">Číslo verze zkopírováno do schránky</string>
@@ -831,7 +828,7 @@
     <string name="over18_desc">Je Vám přes osmnáct a chcete vidět obsah pro dospělé?</string>
     <string name="over18_desc_loggedout">Pro trvalé vypnutí tohoto varování se přihlaste</string>
     <string name="over18_desc_loggedin">Můžete to trvale zakázat v Nastavení → Reddit nastavení → Zobrazit NSFW obsah</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Synchronizace dokončena</string>
     <plurals name="color_sync_colored">
         <item quantity="one">%d subreddit byl zabarven</item>
@@ -1003,7 +1000,7 @@
     <string name="submit_replies_to_inbox">Odeslat odpovědi do složky Doručená pošta</string>
     <string name="btn_open_comments">Otevřít komentáře</string>
     <string name="btn_preview">Náhled</string>
-    <string name="sorting_default_comment">Výchozí řazení komentářů</string>
+    <string name="default_comment_sort">Výchozí řazení komentářů</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Pokračovat v tomto vlákně</string>
     <string name="type_selftext">Samotext</string>
@@ -1040,8 +1037,6 @@
     <string name="comment_discard_msg">Opravdu chcete zahodit svůj komentář?</string>
     <string name="backup_complete">Záloha dokončena!</string>
     <string name="backup_saved_downloads">Záloha uložena do adresáře stažených souborů</string>
-    <string name="include_personal_info">Zahrnout osobní údaje?</string>
-    <string name="include_personal_info_msg">Zahrnuje přihlašovací token, uživatelské jméno, štítky a historii</string>
     <string name="really_remove_subreddit_title">Opravdu odstranit tento subreddit?</string>
     <string name="choose_sync_time">Zvolte čas pro synchronizaci</string>
     <string name="account_suspended">Tento účet je pozastaven</string>
@@ -1105,7 +1100,7 @@
     <string name="authors_above">Autoři výše</string>
     <string name="btn_crosspost">Crosspost</string>
     <string name="btn_reset_color">OBNOVIT BARVY</string>
-    <string name="settings_shortlink_description">Odkazy budou sdíleny jako \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Odkazy budou sdíleny jako \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">Sdílet Reddit shortlink tam, kde je to možné</string>
     <string name="disable_replies_comment">Vypnout odpovědi na komentáře v inboxu</string>
     <string name="replies_disabled_comment">Odpovědi na komentáře vypnuty</string>

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import me.edgan.redditslide.Adapters.RedditGalleryView;
+import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
@@ -28,6 +29,7 @@ import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LinkUtil;
 
 import java.util.ArrayList;
@@ -149,24 +151,36 @@ public class RedditGallery extends BaseSaveActivity {
         album = new RedditGalleryPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(album);
         pager.setCurrentItem(1);
+        if (SettingValues.oldSwipeMode) {
+            pager.addOnPageChangeListener(
+                    new ViewPager.SimpleOnPageChangeListener() {
+                        @Override
+                        public void onPageScrolled(
+                                int position, float positionOffset, int positionOffsetPixels) {
+                            if (position == 0 && positionOffsetPixels == 0) {
+                                finish();
+                            }
+                            if (position == 0
+                                    && ((RedditGalleryPagerAdapter) pager.getAdapter()).blankPage
+                                            != null) {
+                                if (((RedditGalleryPagerAdapter) pager.getAdapter()).blankPage
+                                        != null) {
+                                    ((RedditGalleryPagerAdapter) pager.getAdapter())
+                                            .blankPage.doOffset(positionOffset);
+                                }
+                                ((RedditGalleryPagerAdapter) pager.getAdapter())
+                                        .blankPage.realBack.setBackgroundColor(
+                                                Palette.adjustAlpha(positionOffset * 0.7f));
+                            }
+                        }
+                    });
+        }
 
         configureViewPager(pager);
-
-        if (!Reddit.appRestart.contains("tutorialSwipe")) {
-            startActivityForResult(new Intent(this, SwipeTutorial.class), 3);
-        }
     }
 
     private void configureViewPager(final ViewPager pager) {
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {});
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 3) {
-            Reddit.appRestart.edit().putBoolean("tutorialSwipe", true).apply();
-        }
     }
 
     @Override
@@ -183,6 +197,7 @@ public class RedditGallery extends BaseSaveActivity {
 
     public class RedditGalleryPagerAdapter extends FragmentStatePagerAdapter {
         public AlbumFrag album;
+        BlankFragment blankPage;
 
         RedditGalleryPagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -191,14 +206,28 @@ public class RedditGallery extends BaseSaveActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            album = new AlbumFrag();
+            if (SettingValues.oldSwipeMode) {
+                if (i == 0) {
+                    blankPage = new BlankFragment();
+                    return blankPage;
+                } else {
+                    album = new AlbumFrag();
+                    return album;
+                }
+            } else {
+                album = new AlbumFrag();
 
-            return album;
+                return album;
+            }
         }
 
         @Override
         public int getCount() {
-            return 1;
+            if (SettingValues.oldSwipeMode) {
+                return 2;
+            } else {
+                return 1;
+            }
         }
     }
 

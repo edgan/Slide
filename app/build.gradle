@@ -7,26 +7,6 @@ plugins {
     id 'com.github.breadmoirai.github-release' version '2.5.2'
 }
 
-// Load github properties from github.properties
-def githubProperties = new Properties()
-def githubPropertiesFile = rootProject.file("github.properties")
-
-if (githubPropertiesFile.exists()) {
-    githubProperties.load(new FileInputStream(githubPropertiesFile))
-} else {
-    throw new GradleException("github.properties file not found. Please create one with the necessary github configurations.")
-}
-
-// Load keystore properties from keystore.properties
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file("keystore.properties")
-
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-} else {
-    throw new GradleException("keystore.properties file not found. Please create one with the necessary keystore configurations.")
-}
-
 android {
     compileSdk 34
     namespace "me.edgan.redditslide"
@@ -57,9 +37,8 @@ android {
     defaultConfig {
         applicationId "me.edgan.redditslide"
         minSdk 21
-        //Change to 28 for F-Droid, need to add this to the scheme
         targetSdk 34
-        versionCode 700
+        versionCode 705
         versionName androidGitVersion.name()
 
         multiDexEnabled true
@@ -78,28 +57,41 @@ android {
         }
     }
 
-    signingConfigs {
-        withGPlay {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+    def keystorePropertiesFile = rootProject.file("keystore.properties")
+
+    if (keystorePropertiesFile.exists()) {
+        def keystoreProperties = new Properties()
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+        signingConfigs {
+            withGPlay {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
         }
+    } else {
+        println("Warning: keystore.properties file not found. Skipping signing configuration for withGPlay.")
     }
 
-    buildTypes {
-        release {
+
+buildTypes {
+    release {
+        if (keystorePropertiesFile.exists()) {
             signingConfig signingConfigs.withGPlay
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            resValue "string", "app_name", "Slide"
+        } else {
+            println("Warning: keystore.properties file not found. Skipping signing configuration for release.")
         }
-        debug {
-            applicationIdSuffix ".debug"
-            resValue "string", "app_name", "Slide Debug"
-        }
+        minifyEnabled false
+        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        resValue "string", "app_name", "Slide"
     }
-
+    debug {
+        applicationIdSuffix ".debug"
+        resValue "string", "app_name", "Slide Debug"
+    }
+}
     packagingOptions {
         exclude 'META-INF/*'
     }
@@ -137,21 +129,34 @@ configurations {
     }
 }
 
-githubRelease {
-    token = githubProperties["githubToken"]
-    owner = "edgan"
-    repo = "Slide"
-    tagName = "${android.defaultConfig.versionName}"
-    targetCommitish = "master"
-    releaseName = "Release ${android.defaultConfig.versionName}"
-    body = "Automated release of version ${android.defaultConfig.versionName}"
-    draft = false
-    prerelease = false
-    overwrite = false
+def githubPropertiesFile = rootProject.file("github.properties")
 
-    // Dynamically set releaseAssets by searching the APK path
-    // This assumes only one APK is present in the specified directory
-    releaseAssets = fileTree(dir: "build/outputs/apk/withGPlay/release/", include: "*.apk").files.toList()
+if (githubPropertiesFile.exists()) {
+    def githubProperties = new Properties()
+    githubProperties.load(new FileInputStream(githubPropertiesFile))
+
+    githubRelease {
+       token = githubProperties["githubToken"]
+        owner = "edgan"
+        repo = "Slide"
+        tagName = android.defaultConfig.versionName ?: "default-version"
+        targetCommitish = "master"
+        releaseName = "Release ${android.defaultConfig.versionName ?: "default-version"}"
+        body = "Automated release of version ${android.defaultConfig.versionName ?: "default-version"}"
+        draft = false
+        prerelease = false
+        overwrite = false
+
+        // Dynamically set releaseAssets by searching the APK path
+        def apkFiles = fileTree(dir: "build/outputs/apk/withGPlay/release/", include: "*.apk").files.toList()
+        if (apkFiles.isEmpty()) {
+            println("Warning: No APK files found in the directory 'build/outputs/apk/withGPlay/release/'.")
+        } else {
+            releaseAssets = apkFiles
+        }
+    }
+} else {
+    println("Warning: github.properties file not found. Skipping GitHub release configuration.")
 }
 
 dependencies {
@@ -167,7 +172,7 @@ dependencies {
 /** Custom **/
     // Draggable sliding up panel
     implementation 'com.github.edgan:AndroidSlidingUpPanel:8413b22a2a'
-    implementation 'com.github.edgan:JRAW:ac8f33e1a7'
+    implementation 'com.github.edgan:JRAW:b592539706'
     implementation 'io.github.ParkSangGwon:tedimagepicker:1.6.1'
     def commonmarkVersion = '0ebc0749c7'
     implementation "com.github.Haptic-Apps.commonmark-java:commonmark:$commonmarkVersion"
@@ -193,13 +198,10 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 /** ExoPlayer **/
     // Application level media player
-    // Cannot update beyond this point: extension's minimum SDK version is 21 in 2.15.0 and above
-    def exoPlayerVersion = '2.14.2'
-    implementation "com.google.android.exoplayer:exoplayer-core:$exoPlayerVersion"
-    implementation "com.google.android.exoplayer:exoplayer-dash:$exoPlayerVersion"
-    implementation "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
-    implementation "com.google.android.exoplayer:extension-okhttp:$exoPlayerVersion"
-
+    implementation "com.google.android.exoplayer:exoplayer-core:2.19.1"
+    implementation "com.google.android.exoplayer:exoplayer-dash:2.19.1"
+    implementation "com.google.android.exoplayer:exoplayer-ui:2.19.1"
+    implementation "com.google.android.exoplayer:extension-okhttp:2.19.1"
 
 /** Third-party **/
 
@@ -280,7 +282,8 @@ dependencies {
     implementation 'com.github.suckgamony.RapidDecoder:library:7cdfca47fa'
 
     // HTTP client
-    implementation 'com.squareup.okhttp3:okhttp:3.12.13'
+    //implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
 
     // Convert Java objects into JSON and back
     implementation 'com.google.code.gson:gson:2.8.9'

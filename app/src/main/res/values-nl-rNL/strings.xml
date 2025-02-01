@@ -454,8 +454,7 @@
     <string name="settings_title_notifications">Notificaties</string>
     <string name="settings_title_pro">Neem Pro</string>
     <string name="settings_title_sub_theme">Subredditthema \'s</string>
-    <string name="settings_title_sorting">Standaardsortering</string>
-    <string name="settings_title_support">Doneer</string>
+    <string name="settings_title_sort">Standaardsortering</string>
     <string name="settings_title_about">Over</string>
     <string name="settings_title_multi_column">Multikolom</string>
     <string name="settings_title_fab">Zwevende actieknop</string>
@@ -701,7 +700,7 @@
     <string name="submit_replies_to_inbox">Stuur reacties naar de inbox</string>
     <string name="btn_open_comments">Toon reacties</string>
     <string name="btn_preview">Voorbeeld</string>
-    <string name="sorting_default_comment">Standaard reactiesortering</string>
+    <string name="default_comment_sort">Standaard reactiesortering</string>
     <string name="thread_continue">Verdergaan met deze thread</string>
     <string name="type_selftext">Zelftekst</string>
     <string name="submission_unhide">Bericht weer tonen</string>
@@ -736,8 +735,6 @@
     <string name="comment_discard_msg">Weet je zeker dat je de reactie wil annuleren?</string>
     <string name="backup_complete">Back-up voltooid.</string>
     <string name="backup_saved_downloads">Back-up opgeslagen in downloads</string>
-    <string name="include_personal_info">Persoonlijke gegevens toevoegen?</string>
-    <string name="include_personal_info_msg">Dit houd in: authenticatie-tokens, gebruikersnamen, tags en geschiedenis</string>
     <string name="really_remove_subreddit_title">Ben je zeker dat je deze subreddit wilt verwijderen?</string>
     <string name="choose_sync_time">Kies een tijd om te synchroniseren</string>
     <string name="account_suspended">Dit account is geschorst</string>

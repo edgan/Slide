@@ -564,8 +564,7 @@
     <string name="settings_title_notifications">Notificacions</string>
     <string name="settings_title_pro">Pasaar-se a la versió Pro</string>
     <string name="settings_title_sub_theme">Temes del subreddit</string>
-    <string name="settings_title_sorting">Ordre per defecte</string>
-    <string name="settings_title_support">Donar</string>
+    <string name="settings_title_sort">Ordre per defecte</string>
     <string name="settings_title_about">Sobre</string>
     <string name="settings_title_multi_column">Multi-columna</string>
     <string name="settings_title_fab">Barra d\'acció flotant</string>
@@ -637,8 +636,6 @@
     <string name="settings_handling_external_desc">Els dominis introduïts a continuació s\'obriran sempre externament</string>
     <string name="settings_handling_enterdomain">Insereixi un domini o part d\'aquest</string>
     <string name="settings_section_content">Contingut</string>
-    <string name="settings_backup_include_personal_title">Incluir informació personal?</string>
-    <string name="settings_backup_include_personal_text">Això inclou cadenes d\'autentificació, noms d\'usuari, etiquetes i cronologia</string>
     <string name="settings_backup_view">Veure còpia de seguretat</string>
     <string name="settings_backup_err_no_explorer">No s\'ha trobat exploradors de fitxers, el fitxer rau a %1$s</string>
     <string name="settings_about_version_copied_toast">Número de la versió copiat al porta-retalls</string>
@@ -805,7 +802,7 @@
     <string name="over18_desc">Sou major d\'edat i voleu veure contingut per adults?</string>
     <string name="over18_desc_loggedout">Conecteu-vos per deshabitar aquest avís permanentment</string>
     <string name="over18_desc_loggedin">Podeu deshabilitar-ho permanentment a Configuració → Preferències de Reddit → Mostrar contingut NSFW</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Sincronització finalitzada</string>
     <plurals name="color_sync_colored">
         <item quantity="one">%d subreddit ha estat tintat</item>
@@ -971,7 +968,7 @@
     <string name="submit_replies_to_inbox">Enviar les respostes a la safata d\'entrada</string>
     <string name="btn_open_comments">Obrir comentaris</string>
     <string name="btn_preview">Vista prèvia</string>
-    <string name="sorting_default_comment">Ordre de comentaris per defecte</string>
+    <string name="default_comment_sort">Ordre de comentaris per defecte</string>
     <string name="content_deleted">[eliminat]</string>
     <string name="thread_continue">Continuar aquest fil</string>
     <string name="type_selftext">Publicació escrita</string>
@@ -1008,8 +1005,6 @@
     <string name="comment_discard_msg">Esteu segurs que voleu descartar el vostre comentari?</string>
     <string name="backup_complete">Còpia de seguretat completada!</string>
     <string name="backup_saved_downloads">Còpia de seguretat desada a descàrregues</string>
-    <string name="include_personal_info">Incloure informació personal?</string>
-    <string name="include_personal_info_msg">Això inclou cadenes d\'autentificació, noms d\'usuari, etiquetes i cronologia</string>
     <string name="really_remove_subreddit_title">Esteu segurs que voleu el·liminar aquest subreddit?</string>
     <string name="choose_sync_time">Escollir horari de sincronització</string>
     <string name="account_suspended">Aquest compte està suspès</string>
@@ -1073,7 +1068,7 @@
     <string name="authors_above">Autors a dalt</string>
     <string name="btn_crosspost">Publicació creuada</string>
     <string name="btn_reset_color">RESTABLIR EL COLOR</string>
-    <string name="settings_shortlink_description">Els enllaços es compartiran com a \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Els enllaços es compartiran com a \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">Compartir enllaços de Reddit escurçats quan sigui possible</string>
     <string name="disable_replies_comment">Desactivar les respostes a comentaris de la bústia d\'entrada</string>
     <string name="replies_disabled_comment">Respostes de comentari desactivades</string>

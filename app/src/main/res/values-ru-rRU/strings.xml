@@ -590,8 +590,7 @@
     <string name="settings_title_notifications">Уведомления</string>
     <string name="settings_title_pro">Перейти на Pro</string>
     <string name="settings_title_sub_theme">Темы сабреддитов</string>
-    <string name="settings_title_sorting">Сортировка по умолчанию</string>
-    <string name="settings_title_support">Пожертвовать</string>
+    <string name="settings_title_sort">Сортировка по умолчанию</string>
     <string name="settings_title_about">О приложении</string>
     <string name="settings_title_multi_column">Многостолбцовый режим</string>
     <string name="settings_title_fab">Плавающая кнопка действий</string>
@@ -668,8 +667,6 @@
     <string name="settings_handling_external_desc">Домены, указанные внизу, будут всегда открываться во внешнем браузере</string>
     <string name="settings_handling_enterdomain">Введите домен или часть домена</string>
     <string name="settings_section_content">Содержимое</string>
-    <string name="settings_backup_include_personal_title">Включать персональную информацию?</string>
-    <string name="settings_backup_include_personal_text">Включает токены аутентификации, имена пользователей, теги и историю</string>
     <string name="settings_backup_view">Просмотр резервной копии</string>
     <string name="settings_backup_err_no_explorer">Файловый менеджер не найден, файл расположен в %1$s</string>
     <string name="settings_about_version_copied_toast">Номер версии скопирован в буфер обмена</string>
@@ -851,7 +848,7 @@
     <string name="over18_desc">Вам больше восемнадцати и вы желаете видеть контент для взрослых?</string>
     <string name="over18_desc_loggedout">Авторизируйтесь, чтобы отключить это предупреждение навсегда</string>
     <string name="over18_desc_loggedin">Вы можете отключить это навсегда в Настройки → Предпочтения Reddit → Показывать NSFW-контент</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Синхронизация завершена</string>
     <plurals name="color_sync_colored">
         <item quantity="one">%d сабреддит был раскрашен</item>
@@ -1024,7 +1021,7 @@
     <string name="submit_replies_to_inbox">Присылать ответы во входящие</string>
     <string name="btn_open_comments">Открыть комментарии</string>
     <string name="btn_preview">Предварительный просмотр</string>
-    <string name="sorting_default_comment">Сортировка комментариев по умолчанию</string>
+    <string name="default_comment_sort">Сортировка комментариев по умолчанию</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Раскрыть эту ветку</string>
     <string name="type_selftext">Текстовые записи</string>
@@ -1061,8 +1058,6 @@
     <string name="comment_discard_msg">Вы действительно хотите удалить свой комментарий?</string>
     <string name="backup_complete">Резервирование завершено!</string>
     <string name="backup_saved_downloads">Резервная копия сохранена в загрузках</string>
-    <string name="include_personal_info">Включать персональную информацию?</string>
-    <string name="include_personal_info_msg">Включает в себя токены авторизации, логины, теги и историю</string>
     <string name="really_remove_subreddit_title">Действительно удалить этот сабреддит?</string>
     <string name="choose_sync_time">Выберите время синхронизации</string>
     <string name="account_suspended">Эта учетная запись временно заблокирована</string>
@@ -1128,7 +1123,7 @@
     <string name="authors_above">Авторы выше</string>
     <string name="btn_crosspost">Кросспост</string>
     <string name="btn_reset_color">СБРОСИТЬ ЦВЕТ</string>
-    <string name="settings_shortlink_description">Ссылки будут в виде \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Ссылки будут в виде \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">По возможности делиться укороченной ссылкой на Reddit</string>
     <string name="disable_replies_comment">Отключить ответы на комментарии во входящие</string>
     <string name="replies_disabled_comment">Ответы на комментарии отключены</string>

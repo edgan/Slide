@@ -29,6 +29,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.cocosw.bottomsheet.BottomSheet;
 
 import me.edgan.redditslide.Adapters.ImageGridAdapter;
+import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
@@ -51,6 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Created by ccrama on 11/7/2020
  * Displays gallery content in a horizontal paging view. This class extends BaseSaveActivity to use
  * the Storage Access Framework for saving images, replacing the old file-based approach.
  */
@@ -142,14 +144,6 @@ public class RedditGalleryPager extends BaseSaveActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 3) {
-            Reddit.appRestart.edit().putBoolean("tutorialSwipe", true).apply();
-        }
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         overrideSwipeFromAnywhere();
         super.onCreate(savedInstanceState);
@@ -174,10 +168,6 @@ public class RedditGalleryPager extends BaseSaveActivity {
         setupToolbar();
 
         adapterPosition = getIntent().getIntExtra(MediaView.ADAPTER_POSITION, -1);
-
-        if (!Reddit.appRestart.contains("tutorialSwipe")) {
-            startActivityForResult(new Intent(this, SwipeTutorial.class), 3);
-        }
 
         findViewById(R.id.progress).setVisibility(View.GONE);
         images =
@@ -235,7 +225,13 @@ public class RedditGalleryPager extends BaseSaveActivity {
                             }
                         });
 
-        p.setCurrentItem(0);
+        int startPage = 0;
+
+        if (SettingValues.oldSwipeMode) {
+            startPage = 1;
+        }
+
+        p.setCurrentItem(startPage);
 
         setupGridAndPagerListeners(adapter);
     }
@@ -254,16 +250,36 @@ public class RedditGalleryPager extends BaseSaveActivity {
     private void setupGridAndPagerListeners(final GalleryViewPagerAdapter adapter) {
         findViewById(R.id.grid).setOnClickListener(v -> showGridView());
 
-        p.addOnPageChangeListener(
-                new ViewPager.SimpleOnPageChangeListener() {
-                    @Override
-                    public void onPageScrolled(
-                            int position, float positionOffset, int positionOffsetPixels) {
-                        if (getSupportActionBar() != null) {
-                            getSupportActionBar().setSubtitle((position + 1) + "/" + images.size());
+        if (SettingValues.oldSwipeMode) {
+            p.addOnPageChangeListener(
+                    new ViewPager.SimpleOnPageChangeListener() {
+                        @Override
+                        public void onPageScrolled(
+                                int position, float positionOffset, int positionOffsetPixels) {
+                            if (position != 0) {
+                                if (getSupportActionBar() != null) {
+                                    getSupportActionBar()
+                                            .setSubtitle((position) + "/" + images.size());
+                                }
+                            }
+                            if (position == 0 && positionOffset < 0.2) {
+                                finish();
+                            }
                         }
-                    }
-                });
+                    });
+        } else {
+            p.addOnPageChangeListener(
+                    new ViewPager.SimpleOnPageChangeListener() {
+                        @Override
+                        public void onPageScrolled(
+                                int position, float positionOffset, int positionOffsetPixels) {
+                            if (getSupportActionBar() != null) {
+                                getSupportActionBar()
+                                        .setSubtitle((position + 1) + "/" + images.size());
+                            }
+                        }
+                    });
+        }
         adapter.notifyDataSetChanged();
     }
 
@@ -360,6 +376,13 @@ public class RedditGalleryPager extends BaseSaveActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
+            if (SettingValues.oldSwipeMode) {
+                if (i == 0) {
+                    return new BlankFragment();
+                }
+                i--;
+            }
+
             GalleryImage current = images.get(i);
 
             Fragment f;
@@ -380,7 +403,11 @@ public class RedditGalleryPager extends BaseSaveActivity {
             if (images == null) {
                 return 0;
             }
-            return images.size();
+            if (SettingValues.oldSwipeMode) {
+                return images.size() + 1;
+            } else {
+                return images.size();
+            }
         }
     }
 

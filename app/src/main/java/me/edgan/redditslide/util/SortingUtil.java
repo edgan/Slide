@@ -26,6 +26,7 @@ public class SortingUtil {
     public static SubmissionSearchPaginator.SearchSort search =
             SubmissionSearchPaginator.SearchSort.RELEVANCE;
     public static Sorting defaultSorting;
+    public static Sorting frontpageSorting;
     public static TimePeriod timePeriod;
 
     public static Integer getSortingId(Sorting sort) {
@@ -76,8 +77,17 @@ public class SortingUtil {
 
     public static Integer getSortingId(String subreddit) {
         subreddit = subreddit.toLowerCase(Locale.ENGLISH);
-        Sorting sort = sorting.containsKey(subreddit) ? sorting.get(subreddit) : defaultSorting;
+        Sorting sort;
+        if (subreddit.equals("frontpage")) {
+            sort = frontpageSorting;
+        } else {
+            sort = sorting.containsKey(subreddit) ? sorting.get(subreddit) : defaultSorting;
+        }
+        return getSortingId(sort);
+    }
 
+    public static Integer getSortingIdFrontpage() {
+        Sorting sort = frontpageSorting;
         return getSortingId(sort);
     }
 

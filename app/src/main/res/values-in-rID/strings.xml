@@ -558,8 +558,7 @@
     <string name="settings_title_notifications">Pemberitahuan</string>
     <string name="settings_title_pro">Go Pro</string>
     <string name="settings_title_sub_theme">Tema Subreddit</string>
-    <string name="settings_title_sorting">Menyetel ke semula</string>
-    <string name="settings_title_support">Donasi</string>
+    <string name="settings_title_sort">Menyetel ke semula</string>
     <string name="settings_title_about">Tentang</string>
     <string name="settings_title_multi_column">Multi kolom</string>
     <string name="settings_title_fab">Tombol tindakan mengambang</string>
@@ -634,8 +633,6 @@
     <string name="settings_handling_external_desc">Domain yang masuk di bawah ini akan selalu terbuka eksternal</string>
     <string name="settings_handling_enterdomain">Masukkan domain atau bagian dari domain</string>
     <string name="settings_section_content">Konten</string>
-    <string name="settings_backup_include_personal_title">Ubah informasi pribadi?</string>
-    <string name="settings_backup_include_personal_text">Ini termasuk token otentikasi, nama pengguna, tag, dan riwayat</string>
     <string name="settings_backup_view">Lihat cadangan</string>
     <string name="settings_backup_err_no_explorer">Jelajah file tidak ditemukan, file yang terletak di %1$s</string>
     <string name="settings_about_version_copied_toast">Nomor versi disalin ke papan klip</string>
@@ -792,7 +789,7 @@
     <string name="over18_desc">Apakah Anda selama delapan belas dan bersedia untuk melihat konten dewasa?</string>
     <string name="over18_desc_loggedout">Log in untuk menonaktifkan peringatan ini secara permanen</string>
     <string name="over18_desc_loggedin">Anda dapat menonaktifkan ini secara permanen dalam pengaturan → Reddit preferensi → Tampilkan NSFW konten</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Sinkronisasi lengkap</string>
     <plurals name="color_sync_colored">
         <item quantity="other">%d subreddits diwarnai</item>
@@ -956,7 +953,7 @@
     <string name="submit_replies_to_inbox">Kirim balasan ke kotak masuk</string>
     <string name="btn_open_comments">Komentar terbuka</string>
     <string name="btn_preview">Pratinjau</string>
-    <string name="sorting_default_comment">Komentar pengurutan bawaan</string>
+    <string name="default_comment_sort">Komentar pengurutan bawaan</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Lanjutkan saat ini</string>
     <string name="type_selftext">Teks diri</string>
@@ -993,8 +990,6 @@
     <string name="comment_discard_msg">Apakah anda benar-benar ingin membuang komentar anda?</string>
     <string name="backup_complete">Pencadangan selesai!</string>
     <string name="backup_saved_downloads">Cadangan disimpan ke unduhan</string>
-    <string name="include_personal_info">Sertakan informasi personal?</string>
-    <string name="include_personal_info_msg">Ini termasuk token otentikasi, nama pengguna, tag, dan riwayat</string>
     <string name="really_remove_subreddit_title">Yakin hapus subreddit ini?</string>
     <string name="choose_sync_time">Pilih waktu sinkron</string>
     <string name="account_suspended">Akun ini ditangguhkan</string>
@@ -1058,7 +1053,7 @@
     <string name="authors_above">Pengirim diatas</string>
     <string name="btn_crosspost">Crosspost</string>
     <string name="btn_reset_color">SETEL ULANG WARNA</string>
-    <string name="settings_shortlink_description">Tautan akan dibagikan sebagai \'https://redd.it/\'</string>
+    <string name="settings_shortlink_description">Tautan akan dibagikan sebagai \'https://reddit.com/comments/\'</string>
     <string name="settings_shortlink">Bagikan tautan pendek Reddit jika memungkinkan</string>
     <string name="disable_replies_comment">Nonaktifkan balasan inbox komentar</string>
     <string name="replies_disabled_comment">Balasan komentar dinonaktifkan</string>

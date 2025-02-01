@@ -172,7 +172,11 @@ public class GifUtils {
                 if (submissionTitle != null && !submissionTitle.trim().isEmpty()) {
                     fileName = FileUtil.getValidFileName(submissionTitle, "", ".gif");
                 } else {
-                    fileName = FileUtil.getValidFileName("redditslide", "gif_", ".gif");
+                    fileName =
+                            System.currentTimeMillis()
+                                    + "_"
+                                    + (int) (Math.random() * 100000)
+                                    + ".gif";
                 }
                 File gifFile = new File(context.getCacheDir(), fileName);
 
@@ -1087,7 +1091,7 @@ public class GifUtils {
                             for (Representation r : as.representations) {
                                 if (r.format.bitrate > bitrate) {
                                     bitrate = r.format.bitrate;
-                                    hqUri = r.baseUrl;
+                                    hqUri = r.baseUrls.get(0).url.toString();
                                 }
                                 if (MimeTypes.isAudio(r.format.sampleMimeType)) {
                                     isAudio = true;

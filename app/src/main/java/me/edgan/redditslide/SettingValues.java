@@ -81,6 +81,7 @@ public class SettingValues {
     public static final String PREF_COLOR_SUB_NAME = "colorSubName";
     public static final String PREF_OVERRIDE_LANGUAGE = "overrideLanguage";
     public static final String PREF_IMMERSIVE_MODE = "immersiveMode";
+    public static final String PREF_OLD_SWIPE_MODE = "oldSwipeMode";
     public static final String PREF_SHOW_DOMAIN = "showDomain";
     public static final String PREF_CARD_TEXT = "cardText";
     public static final String PREF_ZOOM_DEFAULT = "zoomDefault";
@@ -150,6 +151,7 @@ public class SettingValues {
 
     public static CreateCardView.CardEnum defaultCardView;
     public static Sorting defaultSorting;
+    public static Sorting frontpageSorting;
     public static TimePeriod timePeriod;
     public static CommentSort defaultCommentSorting;
     public static boolean middleImage;
@@ -257,6 +259,7 @@ public class SettingValues {
     public static boolean hideSelftextLeadImage;
     public static boolean overrideLanguage;
     public static boolean immersiveMode;
+    public static boolean oldSwipeMode;
     public static boolean showDomain;
     public static boolean cardText;
     public static boolean alwaysZoom;
@@ -311,18 +314,20 @@ public class SettingValues {
         colorIndicator =
                 ColorIndicator.valueOf(settings.getString("colorIndicatorNew", "CARD_BACKGROUND"));
         defaultSorting = Sorting.valueOf(settings.getString("defaultSorting", "HOT"));
+        frontpageSorting = Sorting.valueOf(settings.getString("frontpageSorting", "BEST"));
         timePeriod = TimePeriod.valueOf(settings.getString("timePeriod", "DAY"));
         defaultCommentSorting =
                 CommentSort.valueOf(settings.getString("defaultCommentSortingNew", "CONFIDENCE"));
         showNSFWContent = prefs.getBoolean(PREF_SHOW_NSFW_CONTENT, false);
         hideNSFWCollection = prefs.getBoolean(PREF_HIDE_NSFW_COLLECTION, true);
-        ignoreSubSetting = prefs.getBoolean(PREF_IGNORE_SUB_SETTINGS, false);
+        ignoreSubSetting = prefs.getBoolean(PREF_IGNORE_SUB_SETTINGS, true);
 
         single = prefs.getBoolean(PREF_SINGLE, false);
         readerNight = prefs.getBoolean(PREF_READER_NIGHT, false);
         blurCheck = prefs.getBoolean(PREF_BLUR, false);
         overrideLanguage = prefs.getBoolean(PREF_OVERRIDE_LANGUAGE, false);
         immersiveMode = prefs.getBoolean(PREF_IMMERSIVE_MODE, false);
+	oldSwipeMode = prefs.getBoolean(PREF_OLD_SWIPE_MODE, false);
         largeDepth = prefs.getBoolean(PREF_LARGE_DEPTH, false);
         readerMode = prefs.getBoolean(PREF_READER_MODE, false);
         imageSubfolders = prefs.getBoolean(PREF_IMAGE_SUBFOLDERS, false);
@@ -547,7 +552,12 @@ public class SettingValues {
 
     public static Sorting getSubmissionSort(String sub) {
         String subreddit = sub.toLowerCase(Locale.ENGLISH);
-        if (SortingUtil.sorting.containsKey(subreddit)) {
+        if (sub.equals("frontpage")) {
+            return Sorting.valueOf(
+                    prefs.getString(
+                            "frontpageSort" + sub.toLowerCase(Locale.ENGLISH),
+                            SortingUtil.frontpageSorting.name()));
+        } else if (SortingUtil.sorting.containsKey(subreddit)) {
             return SortingUtil.sorting.get(subreddit);
         } else {
             return Sorting.valueOf(

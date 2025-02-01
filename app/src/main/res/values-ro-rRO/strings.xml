@@ -417,7 +417,7 @@
     <string name="settings_title_history">Istoric</string>
     <string name="settings_title_notifications">Notificări</string>
     <string name="settings_title_sub_theme">Teme subreddits</string>
-    <string name="settings_title_sorting">Modul implicit pentru sortare</string>
+    <string name="settings_title_sort">Modul implicit pentru sortare</string>
     <string name="settings_title_about">Desde</string>
     <string name="settings_title_multi_column">Coloane multiple</string>
     <string name="settings_title_fab">Butonul flotant de acțiuni</string>
@@ -455,7 +455,6 @@
     <string name="settings_view_type">Tip de vizualizare</string>
     <string name="settings_data">Economisire de date</string>
     <string name="settings_section_content">Conținut</string>
-    <string name="settings_backup_include_personal_title">Incluzi informații personale?</string>
     <string name="settings_theme_night_start_at">Începe la\u0020</string>
     <string name="settings_theme_night_end_at">Înceie la\u0020</string>
     <string name="settings_general_inbox_snd">Sunete și vibrații</string>
@@ -675,7 +674,7 @@
     <string name="handling_browser">Browser</string>
     <string name="btn_open_comments">Deschide comentariile</string>
     <string name="btn_preview">Previzualizare</string>
-    <string name="sorting_default_comment">Mod implicit de sortare a comentariilor</string>
+    <string name="default_comment_sort">Mod implicit de sortare a comentariilor</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Continuă acest subiect</string>
     <string name="type_selftext">Selftext</string>
@@ -708,8 +707,6 @@
     <string name="comment_discard_msg">Chiar doriți anularea comentariului?</string>
     <string name="backup_complete">Copie de rezervă completă!</string>
     <string name="backup_saved_downloads">Copie de rezervă salvată la descărcări</string>
-    <string name="include_personal_info">Incluzi informații personale?</string>
-    <string name="include_personal_info_msg">Asta include autentificări, nume de utilizator, etichete și istoric</string>
     <string name="really_remove_subreddit_title">Sigur elimini acest subreddit?</string>
     <string name="choose_sync_time">Alege un timp de sincronizare</string>
     <string name="account_suspended">Acest cont a fost suspendat</string>

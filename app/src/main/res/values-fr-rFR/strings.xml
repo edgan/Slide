@@ -570,8 +570,7 @@
     <string name="settings_title_notifications">Notifications</string>
     <string name="settings_title_pro">Passez à la version Pro</string>
     <string name="settings_title_sub_theme">Thèmes de subreddit</string>
-    <string name="settings_title_sorting">Tri par défaut</string>
-    <string name="settings_title_support">Faire un don</string>
+    <string name="settings_title_sort">Tri par défaut</string>
     <string name="settings_title_about">À propos</string>
     <string name="settings_title_multi_column">Multi-colonnes</string>
     <string name="settings_title_fab">Bouton d\'action flottant</string>
@@ -647,8 +646,6 @@
     <string name="settings_handling_external_desc">Les domaines inscrits ci-dessous seront toujours ouverts en externe</string>
     <string name="settings_handling_enterdomain">Entrez un domaine ou une partie d\'un domaine</string>
     <string name="settings_section_content">Contenu</string>
-    <string name="settings_backup_include_personal_title">Inclure les informations personnelles?</string>
-    <string name="settings_backup_include_personal_text">Ceci inclut les jetons d\'authentification, les noms d\'utilisateurs, les tags et l\'historique</string>
     <string name="settings_backup_view">Voir la sauvegarde</string>
     <string name="settings_backup_err_no_explorer">Aucun explorateur de fichiers trouvé, le fichier se trouve dans %1$s</string>
     <string name="settings_about_version_copied_toast">Numéro de la version copiée dans le presse-papier</string>
@@ -816,7 +813,7 @@
     <string name="over18_desc">Avez-vous plus de 18 ans et voulez vous voir du contenu pour adultes ?</string>
     <string name="over18_desc_loggedout">Connectez-vous pour désactiver cet avertissement définitivement</string>
     <string name="over18_desc_loggedin">Vous pouvez désactiver cela définitivement dans Paramètres → Préférences Reddit → Afficher le contenu NSFW</string>
-    <!-- Subreddit color synchronization - https://redd.it/41054l -->
+    <!-- Subreddit color synchronization - https://reddit.com/comments/41054l -->
     <string name="color_sync_complete">Synchronisation réussie</string>
     <plurals name="color_sync_colored">
         <item quantity="one">%d subreddit a été coloré</item>
@@ -983,7 +980,7 @@
     <string name="submit_replies_to_inbox">Envoyez les réponses dans la boite de réception</string>
     <string name="btn_open_comments">Ouvrir les commentaires</string>
     <string name="btn_preview">Prévisualiser</string>
-    <string name="sorting_default_comment">Tri des commentaires par défaut</string>
+    <string name="default_comment_sort">Tri des commentaires par défaut</string>
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Continuer ce fil</string>
     <string name="type_selftext">Texte brut</string>
@@ -1020,8 +1017,6 @@
     <string name="comment_discard_msg">Désirez-vous vraiment rejeter ce commentaire ?</string>
     <string name="backup_complete">Sauvegarde terminée!</string>
     <string name="backup_saved_downloads">Sauvegarde effectué vers Téléchargements</string>
-    <string name="include_personal_info">Inclure vos informations personnelles ?</string>
-    <string name="include_personal_info_msg">Cela comprend l\'historique, les noms d\'utilisateur, tags et jetons d\'authentification</string>
     <string name="really_remove_subreddit_title">Vraiment supprimer ce subreddit ?</string>
     <string name="choose_sync_time">Choisir l\'heure de la synchronisation</string>
     <string name="account_suspended">Ce compte est suspendu</string>
@@ -1085,7 +1080,7 @@
     <string name="authors_above">Auteurs ci-dessus</string>
     <string name="btn_crosspost">Crosspost</string>
     <string name="btn_reset_color">RÉINITIALISER LA COULEUR</string>
-    <string name="settings_shortlink_description">Les liens seront partagées comme « https://redd.it/ »</string>
+    <string name="settings_shortlink_description">Les liens seront partagées comme « https://reddit.com/comments/ »</string>
     <string name="settings_shortlink">Partager le lien court de Reddit lorsque c’est possible</string>
     <string name="disable_replies_comment">Désactiver les réponses de boîte de réception de commentaire</string>
     <string name="replies_disabled_comment">Réponses de commentaire désactivées</string>

@@ -22,16 +22,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import me.edgan.redditslide.Adapters.TumblrView;
+import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Tumblr.Photo;
 import me.edgan.redditslide.Tumblr.TumblrUtils;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.StorageUtil;
 
@@ -137,23 +138,36 @@ public class Tumblr extends BaseSaveActivity {
             this.submissionTitle = getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE);
         }
 
-        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {});
-
-        if (!Reddit.appRestart.contains("tutorialSwipe")) {
-            startActivityForResult(new Intent(this, SwipeTutorial.class), 3);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 3) {
-            Reddit.appRestart.edit().putBoolean("tutorialSwipe", true).apply();
+        if (SettingValues.oldSwipeMode) {
+            pager.addOnPageChangeListener(
+                    new ViewPager.SimpleOnPageChangeListener() {
+                        @Override
+                        public void onPageScrolled(
+                                int position, float positionOffset, int positionOffsetPixels) {
+                            if (position == 0 && positionOffsetPixels == 0) {
+                                finish();
+                            }
+                            if (position == 0
+                                    && ((TumblrPagerAdapter) pager.getAdapter()).blankPage
+                                            != null) {
+                                if (((TumblrPagerAdapter) pager.getAdapter()).blankPage != null) {
+                                    ((TumblrPagerAdapter) pager.getAdapter())
+                                            .blankPage.doOffset(positionOffset);
+                                }
+                                ((TumblrPagerAdapter) pager.getAdapter())
+                                        .blankPage.realBack.setBackgroundColor(
+                                                Palette.adjustAlpha(positionOffset * 0.7f));
+                            }
+                        }
+                    });
+        } else {
+            pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {});
         }
     }
 
     public static class TumblrPagerAdapter extends FragmentStatePagerAdapter {
         public AlbumFrag album;
+        public BlankFragment blankPage;
 
         public TumblrPagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -162,6 +176,13 @@ public class Tumblr extends BaseSaveActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
+            if (SettingValues.oldSwipeMode) {
+                if (i == 0) {
+                    blankPage = new BlankFragment();
+                    return blankPage;
+                }
+            }
+
             album = new AlbumFrag();
 
             return album;
@@ -169,7 +190,13 @@ public class Tumblr extends BaseSaveActivity {
 
         @Override
         public int getCount() {
-            return 1;
+            int count = 1;
+
+            if (SettingValues.oldSwipeMode) {
+                count = 2;
+            }
+
+            return count;
         }
     }
 

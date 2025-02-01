@@ -24,6 +24,7 @@ public class SettingsAbout extends BaseActivityAnim {
         setContentView(R.layout.activity_settings_about);
         setupAppBar(R.id.toolbar, R.string.settings_title_about, true, true);
 
+        View privacy = findViewById(R.id.privacy);
         View report = findViewById(R.id.report);
         View libs = findViewById(R.id.libs);
         View changelog = findViewById(R.id.changelog);
@@ -60,6 +61,14 @@ public class SettingsAbout extends BaseActivityAnim {
                                         R.string.settings_about_version_copied_toast,
                                         Toast.LENGTH_SHORT)
                                 .show();
+                    }
+                });
+
+        privacy.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        LinkUtil.openExternally("https://cygnusx-1.org/Slide/privacy.txt");
                     }
                 });
 
