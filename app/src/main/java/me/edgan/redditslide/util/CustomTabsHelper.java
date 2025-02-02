@@ -58,6 +58,7 @@ public class CustomTabsHelper {
      */
     public static String getPackageNameToUse(Context context) {
         if (SettingValues.linkHandlingMode != LinkHandlingMode.CUSTOM_TABS.getValue()) return null;
+        if (SettingValues.selectedBrowser != null) return SettingValues.selectedBrowser;
         if (sPackageNameToUse != null) return sPackageNameToUse;
 
         PackageManager pm = context.getPackageManager();
