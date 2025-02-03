@@ -188,9 +188,14 @@ public class RedditGalleryPager extends BaseSaveActivity {
                 new Runnable() {
                     @Override
                     public void run() {
-                        // Force load first two positions
-                        adapter.instantiateItem(p, 0);
-                        adapter.instantiateItem(p, 1);
+                        // If there is more than one position, load both position 0 and 1.
+                        if (adapter.getCount() > 1) {
+                            adapter.instantiateItem(p, 0);
+                            adapter.instantiateItem(p, 1);
+                        } else {
+                            // Otherwise, only load position 0.
+                            adapter.instantiateItem(p, 0);
+                        }
                     }
                 });
 
