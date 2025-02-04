@@ -91,18 +91,28 @@ public class OpenRedditLink {
         String path = Objects.requireNonNull(uri.getPath());
 
         if (path.matches("(?i)/r/[a-z0-9-_.]+/s/.*")) {
-            try {
-                StrictMode.ThreadPolicy gfgPolicy =
-                        new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                StrictMode.setThreadPolicy(gfgPolicy);
-                URL newUrl = new URL(url);
-                HttpURLConnection ucon = (HttpURLConnection) newUrl.openConnection();
-                ucon.setInstanceFollowRedirects(false);
-                url = new URL(ucon.getHeaderField("location")).toString();
-                uri = formatRedditUrl(ucon.getHeaderField("location"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            new Thread(() -> {
+                try {
+                    StrictMode.ThreadPolicy gfgPolicy =
+                            new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                    StrictMode.setThreadPolicy(gfgPolicy);
+                    URL newUrl = new URL(url);
+                    HttpURLConnection ucon = (HttpURLConnection) newUrl.openConnection();
+                    ucon.setInstanceFollowRedirects(false);
+                    String location = ucon.getHeaderField("location");
+                    if (location != null) {
+                        String finalUrl = new URL(location).toString();
+                        Uri finalUri = formatRedditUrl(location);
+                        // Return to main thread to handle the UI
+                        ((Activity) context).runOnUiThread(() -> {
+                            openUrl(context, finalUrl, openIfOther);
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
+            return true;
         }
 
         RedditLinkType type = getRedditLinkType(uri);
