@@ -311,22 +311,64 @@ public class GifUtils {
                             }
 
                             String urlStr = uri.toString();
-                            if (urlStr.contains("v.redd.it")
-                                    && urlStr.contains("DASHPlaylist.mpd")) {
-                                // ... existing DASH handling code ...
+                            if (urlStr.contains("v.redd.it") && urlStr.contains("DASHPlaylist.mpd")) {
+                                // Handle DASH video
+                                DataSource.Factory downloader = new OkHttpDataSource.Factory(Reddit.client)
+                                        .setUserAgent(activity.getString(R.string.app_name));
+                                DataSource.Factory cacheDataSourceFactory = new CacheDataSource.Factory()
+                                        .setCache(Reddit.videoCache)
+                                        .setUpstreamDataSourceFactory(downloader);
+
+                                InputStream dashManifestStream = new DataSourceInputStream(
+                                        cacheDataSourceFactory.createDataSource(),
+                                        new DataSpec(Uri.parse(urlStr)));
+
+                                DashManifest dashManifest = new DashManifestParser().parse(Uri.parse(urlStr), dashManifestStream);
+                                dashManifestStream.close();
+
+                                // Find highest quality video URL
+                                String videoUrl = null;
+                                int maxBitrate = 0;
+                                for (int i = 0; i < dashManifest.getPeriodCount(); i++) {
+                                    for (AdaptationSet as : dashManifest.getPeriod(i).adaptationSets) {
+                                        for (Representation r : as.representations) {
+                                            if (!MimeTypes.isAudio(r.format.sampleMimeType)
+                                                    && r.format.bitrate > maxBitrate) {
+                                                maxBitrate = r.format.bitrate;
+                                                videoUrl = r.baseUrls.get(0).url.toString();
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (videoUrl == null) {
+                                    saveError = new Exception("Could not find video stream in DASH manifest");
+                                    return null;
+                                }
+
+                                // Download the actual video file
+                                Request videoRequest = new Request.Builder().url(videoUrl).build();
+                                Response videoResponse = Reddit.client.newCall(videoRequest).execute();
+
+                                if (!videoResponse.isSuccessful()) {
+                                    saveError = new Exception("Failed to download video: " + videoResponse);
+                                    return null;
+                                }
+
+                                in = videoResponse.body().byteStream();
+                            } else {
+                                // Handle non-DASH video as before
+                                Request videoRequest = new Request.Builder().url(urlStr).build();
+                                Response videoResponse = Reddit.client.newCall(videoRequest).execute();
+
+                                if (!videoResponse.isSuccessful()) {
+                                    saveError = new Exception("Failed to download video: " + videoResponse);
+                                    return null;
+                                }
+
+                                in = videoResponse.body().byteStream();
                             }
 
-                            // Download and save the video
-                            Request videoRequest = new Request.Builder().url(urlStr).build();
-                            Response videoResponse = Reddit.client.newCall(videoRequest).execute();
-
-                            if (!videoResponse.isSuccessful()) {
-                                saveError =
-                                        new Exception("Failed to download video: " + videoResponse);
-                                return null;
-                            }
-
-                            in = videoResponse.body().byteStream();
                             out =
                                     activity.getContentResolver()
                                             .openOutputStream(outDocFile.getUri());
