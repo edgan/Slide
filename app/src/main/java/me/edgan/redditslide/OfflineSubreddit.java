@@ -314,7 +314,7 @@ public class OfflineSubreddit {
     }
 
     public void hideMulti(int index) {
-        if (submissions != null) {
+        if (submissions != null && index >= 0 && index < submissions.size()) {
             submissions.remove(index);
         }
     }
