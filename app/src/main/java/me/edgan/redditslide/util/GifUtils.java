@@ -441,6 +441,7 @@ public class GifUtils {
         public String submissionTitle;
 
         private TextView size;
+        private boolean wasPlayingBeforePause = false;
 
         public AsyncLoadGif(
                 @NonNull Activity c,
@@ -1185,6 +1186,19 @@ public class GifUtils {
                 web.putExtra(LinkUtil.EXTRA_COLOR, Color.BLACK);
                 c.startActivity(web);
                 c.finish();
+            }
+        }
+
+        public void onPause() {
+            if (video != null) {
+                wasPlayingBeforePause = video.isPlaying();
+                video.pause();
+            }
+        }
+
+        public void onResume() {
+            if (video != null && !wasPlayingBeforePause) {
+                video.pause(); // Ensure it stays paused if it was paused before
             }
         }
     }

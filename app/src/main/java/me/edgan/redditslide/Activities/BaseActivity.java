@@ -28,6 +28,7 @@ import me.edgan.redditslide.SwipeLayout.app.SwipeBackActivityHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.FontPreferences;
 import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.GifUtils;
 
 import java.util.Locale;
 
@@ -42,6 +43,7 @@ public class BaseActivity extends PeekViewActivity implements SwipeBackActivityB
     protected boolean enableSwipeBackLayout = true;
     protected boolean overrideSwipeFromAnywhere = false;
     protected boolean verticalExit = false;
+    protected GifUtils.AsyncLoadGif currentGif;
 
     /** Enable fullscreen immersive mode if setting is checked */
     @Override
@@ -273,6 +275,9 @@ public class BaseActivity extends PeekViewActivity implements SwipeBackActivityB
         super.onResume();
         Reddit.setDefaultErrorHandler(this); // set defualt reddit api issue handler
         hideDecor();
+        if (currentGif != null) {
+            currentGif.onResume();
+        }
     }
 
     @Override
@@ -467,6 +472,14 @@ public class BaseActivity extends PeekViewActivity implements SwipeBackActivityB
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), icon);
             setTaskDescription(new ActivityManager.TaskDescription(title, bitmap, color));
             bitmap.recycle();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (currentGif != null) {
+            currentGif.onPause();
         }
     }
 }

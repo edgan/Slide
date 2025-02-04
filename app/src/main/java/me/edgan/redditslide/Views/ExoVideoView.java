@@ -281,6 +281,10 @@ public class ExoVideoView extends RelativeLayout {
         audioFocusHelper.loseFocus(); // do this last so audio doesn't overlap
     }
 
+    public boolean isPlaying() {
+        return player.getPlaybackState() == Player.STATE_READY && player.getPlayWhenReady();
+    }
+
     /**
      * Seeks to a specific timestamp
      *
