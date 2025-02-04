@@ -318,10 +318,11 @@ public class DoEditorActions {
                             TedImagePicker.with(editText.getContext())
                                     .title("Choose a photo")
                                     .start(
-                                            uriList -> {
-                                                List<Uri> castedList = (List<Uri>) uriList;
+                                            uri -> {
+                                                ArrayList<Uri> uriList = new ArrayList<>();
+                                                uriList.add(uri);
                                                 handleImageIntent(
-                                                        castedList,
+                                                        uriList,
                                                         editText,
                                                         editText.getContext());
                                                 KeyboardUtil.hideKeyboard(

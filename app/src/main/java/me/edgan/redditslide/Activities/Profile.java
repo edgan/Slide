@@ -443,8 +443,9 @@ public class Profile extends BaseActivityAnim {
         if (sortItem != null) {
             sortItem.setVisible(position < 3);
         }
-        if (categoryItem != null && Authentication.me != null && Authentication.me.hasGold()) {
-            categoryItem.setVisible(position == 6);
+        if (categoryItem != null && Authentication.me != null) {
+            Boolean hasGold = Authentication.me.hasGold();
+            categoryItem.setVisible(position == 6 && hasGold != null && hasGold);
         }
         return true;
     }
