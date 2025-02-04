@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:gravity="bottom"
     sothree:umanoOverlay="true"
-    sothree:umanoPanelHeight="48dp">
+    sothree:umanoPanelHeight="96dp">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -28,7 +28,8 @@
         android:id="@+id/base"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:background="#FF000000">
 
         <me.edgan.redditslide.Views.TitleTextView
             android:id="@+id/title"

@@ -15,6 +15,7 @@ import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.Fragments.AlbumFull;
 import me.edgan.redditslide.Fragments.MediaFragment;
+import me.edgan.redditslide.Fragments.RedditGalleryFull;
 import me.edgan.redditslide.Fragments.SelftextFull;
 import me.edgan.redditslide.Fragments.TitleFull;
 import me.edgan.redditslide.Fragments.TumblrFull;
@@ -164,6 +165,14 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
                 case EMBEDDED:
                 case XKCD:
                 case REDDIT_GALLERY:
+                    {
+                        f = new RedditGalleryFull();
+                        Bundle args = new Bundle();
+                        args.putInt("page", i);
+                        args.putString("sub", subreddit);
+                        f.setArguments(args);
+                    }
+                    break;
                 case VREDDIT_DIRECT:
                 case VREDDIT_REDIRECT:
                 case LINK:

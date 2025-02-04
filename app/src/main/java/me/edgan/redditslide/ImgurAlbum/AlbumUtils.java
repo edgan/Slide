@@ -29,17 +29,43 @@ public class AlbumUtils {
 
     public static SharedPreferences albumRequests;
 
+    public static String substringAfterLastDash(String s) {
+        if (s == null) {
+            return null;
+        }
+
+        int lastDashIndex = s.lastIndexOf('-');
+
+        // Only return the substring if a dash is found.
+        if (lastDashIndex != -1) {
+            return s.substring(lastDashIndex + 1);
+        } else {
+            return null;
+        }
+    }
+
     private static String getHash(String s) {
+        String last = substringAfterLastDash(s);
+        LogUtil.v("1 " + last);
+
+        if (last != null) {
+            return last;
+        }
+
         if (s.contains("/comment/")) {
             s = s.substring(0, s.indexOf("/comment"));
         }
+
         String next = s.substring(s.lastIndexOf("/"));
         if (next.contains(".")) {
             next = next.substring(0, next.indexOf("."));
         }
+
         if (next.startsWith("/")) {
             next = next.substring(1);
         }
+
+        LogUtil.v("2 " + next);
         if (next.length() < 5) {
             return getHash(s.replace(next, ""));
         } else {
@@ -59,6 +85,8 @@ public class AlbumUtils {
             extends AsyncTask<String, Void, ArrayList<JsonElement>> {
 
         public String hash;
+        public String type;
+
         public Activity baseActivity;
 
         private OkHttpClient client;
@@ -87,6 +115,14 @@ public class AlbumUtils {
             }
 
             hash = getHash(rawDat);
+            String apiType = substringAfterLastDash(url);
+
+            if (apiType == null) {
+                type = "image";
+            } else {
+                type = "album";
+            }
+
             client = Reddit.client;
             gson = new Gson();
             imgurKey = SecretConstants.getImgurApiKey(baseActivity);
@@ -153,7 +189,8 @@ public class AlbumUtils {
                                 }
                             });
                 } else {
-                    String apiUrl = "https://api.imgur.com/3/image/" + hash;
+                    String apiUrl = "https://api.imgur.com/3/" + type + "/" + hash;
+                    LogUtil.v("3 " + type);
                     LogUtil.v(apiUrl);
                     JsonObject result = HttpUtil.getImgurJsonObject(client, gson, apiUrl, imgurKey);
                     try {
@@ -197,7 +234,8 @@ public class AlbumUtils {
                 for (String s : hash.split(",")) {
                     final int pos = count;
                     count++;
-                    String apiUrl = "https://api.imgur.com/3/image/" + s;
+                    String apiUrl = "https://api.imgur.com/3/" + type + "/" + s;
+                    LogUtil.v("4 " + type);
                     LogUtil.v(apiUrl);
                     JsonObject result = HttpUtil.getImgurJsonObject(client, gson, apiUrl, imgurKey);
                     target[pos] = result;

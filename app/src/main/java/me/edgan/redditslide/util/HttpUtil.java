@@ -46,7 +46,7 @@ public class HttpUtil {
             final String imgurKey) {
         Map<String, String> imgurHeadersMap = new HashMap<>();
         imgurHeadersMap.put("Authorization", "Client-ID " + Constants.IMGUR_CLIENT_ID);
-        imgurHeadersMap.put("Authorization", "Bearer" + imgurKey);
+        //imgurHeadersMap.put("Authorization", "Bearer" + imgurKey);
         return getJsonObject(client, gson, apiUrl, imgurHeadersMap);
     }
 
