@@ -398,6 +398,82 @@ public class HeaderImageLinkView extends RelativeLayout {
                         if (wrapArea != null) wrapArea.setVisibility(View.GONE);
                     }
                 }
+            } else if (type == ContentType.Type.VREDDIT_DIRECT || type == ContentType.Type.VREDDIT_REDIRECT) {
+                // Check if this is a crosspost
+                JsonNode dataNode = submission.getDataNode();
+                String previewUrl = null;
+
+                // If this is a crosspost, check the parent submission for preview data
+                if (dataNode.has("crosspost_parent_list") && dataNode.get("crosspost_parent_list").size() > 0) {
+                    JsonNode parentNode = dataNode.get("crosspost_parent_list").get(0);
+                    if (parentNode.has("preview") &&
+                        parentNode.get("preview").has("images") &&
+                        parentNode.get("preview").get("images").size() > 0) {
+
+                        previewUrl = parentNode.get("preview")
+                                .get("images")
+                                .get(0)
+                                .get("source")
+                                .get("url")
+                                .asText();
+                    }
+                }
+                // Also check the current submission for preview data as fallback
+                if (previewUrl == null && dataNode.has("preview") &&
+                    dataNode.get("preview").has("images") &&
+                    dataNode.get("preview").get("images").size() > 0) {
+
+                    previewUrl = dataNode.get("preview")
+                            .get("images")
+                            .get(0)
+                            .get("source")
+                            .get("url")
+                            .asText();
+                }
+
+                if (previewUrl != null) {
+                    // Handle the preview URL similar to regular images
+                    if (!full && !SettingValues.isPicsEnabled(baseSub) || forceThumb) {
+                        if (!submission.isSelfPost() || full) {
+                            if (!full) {
+                                thumbImage2.setVisibility(View.VISIBLE);
+                            } else {
+                                wrapArea.setVisibility(View.VISIBLE);
+                            }
+
+                            loadedUrl = previewUrl;
+                            if (!full) {
+                                ((Reddit) getContext().getApplicationContext())
+                                        .getImageLoader()
+                                        .displayImage(previewUrl, thumbImage2);
+                            } else {
+                                ((Reddit) getContext().getApplicationContext())
+                                        .getImageLoader()
+                                        .displayImage(previewUrl, thumbImage2, bigOptions);
+                            }
+                        } else {
+                            thumbImage2.setVisibility(View.GONE);
+                        }
+                        setVisibility(View.GONE);
+                    } else {
+                        loadedUrl = previewUrl;
+                        if (!full) {
+                            ((Reddit) getContext().getApplicationContext())
+                                    .getImageLoader()
+                                    .displayImage(previewUrl, backdrop);
+                        } else {
+                            ((Reddit) getContext().getApplicationContext())
+                                    .getImageLoader()
+                                    .displayImage(previewUrl, backdrop, bigOptions);
+                        }
+                        setVisibility(View.VISIBLE);
+                        if (!full) {
+                            thumbImage2.setVisibility(View.GONE);
+                        } else {
+                            wrapArea.setVisibility(View.GONE);
+                        }
+                    }
+                }
             } else if (type != ContentType.Type.IMAGE
                             && type != ContentType.Type.SELF
                             && (!thumbnail.isNull()
