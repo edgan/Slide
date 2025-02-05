@@ -1081,6 +1081,7 @@
     <string name="submission_share_reddit_url">Share comments</string>
     <string name="filter_content">Filter this content</string>
     <string name="content_to_hide">Content to hide on %1$s</string>
+    <string name="content_to_show">Content to show on %1$s</string>
     <string name="save_for_offline_viewing">Save submissions for offline viewing</string>
     <string name="btn_collapse_children_all">Collapse child comments</string>
     <string name="btn_open_content">Open content</string>

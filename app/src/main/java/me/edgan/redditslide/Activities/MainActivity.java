@@ -51,6 +51,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
@@ -1933,9 +1934,10 @@ public class MainActivity extends BaseActivity
                                                 .remove("backedCreds")
                                                 .commit();
                                     }
-                                    Authentication.isLoggedIn = true;
                                     Authentication.name = accName;
+
                                     UserSubscriptions.switchAccounts();
+
                                     Reddit.forceRestart(MainActivity.this, true);
                                 }
                             }
@@ -3880,52 +3882,76 @@ public class MainActivity extends BaseActivity
     }
 
     public void filterContent(final String subreddit) {
-        final boolean[] chosen =
-                new boolean[] {
-                    PostMatch.isAlbums(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isGallery(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isGif(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isImage(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isNsfw(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isSelftext(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isUrls(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isVideo(subreddit.toLowerCase(Locale.ENGLISH))
-                };
+        final boolean[] chosen = new boolean[]{
+                !PostMatch.isAlbums(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isGallery(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isGif(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isImage(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isNsfw(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isSelftext(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isUrls(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isVideo(subreddit.toLowerCase(Locale.ENGLISH))
+        };
 
         final String currentSubredditName = usedArray.get(Reddit.currentPosition);
 
         // Title of the filter dialog
         String filterTitle;
         if (currentSubredditName.contains("/m/")) {
-            filterTitle = getString(R.string.content_to_hide, currentSubredditName);
+            filterTitle = getString(R.string.content_to_show, currentSubredditName);
         } else {
             if (currentSubredditName.equals("frontpage")) {
-                filterTitle = getString(R.string.content_to_hide, "frontpage");
+                filterTitle = getString(R.string.content_to_show, "frontpage");
             } else {
-                filterTitle = getString(R.string.content_to_hide, "/r/" + currentSubredditName);
+                filterTitle = getString(R.string.content_to_show, "/r/" + currentSubredditName);
             }
         }
 
-        new AlertDialog.Builder(this)
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(filterTitle)
                 .setMultiChoiceItems(
-                        new String[] {
-                            getString(R.string.type_albums), getString(R.string.type_gallery),
-                            getString(R.string.type_gifs), getString(R.string.images),
-                            getString(R.string.type_nsfw_content),
-                                    getString(R.string.type_selftext),
-                            getString(R.string.type_links), getString(R.string.type_videos)
+                        new String[]{
+                                getString(R.string.type_albums),
+                                getString(R.string.type_gallery),
+                                getString(R.string.type_gifs),
+                                getString(R.string.images),
+                                getString(R.string.type_nsfw_content),
+                                getString(R.string.type_selftext),
+                                getString(R.string.type_links),
+                                getString(R.string.type_videos)
                         },
                         chosen,
                         (dialog, which, isChecked) -> chosen[which] = isChecked)
-                .setPositiveButton(
-                        R.string.btn_save,
-                        (dialog, which) -> {
-                            PostMatch.setChosen(chosen, subreddit);
-                            reloadSubs();
-                        })
-                .setNegativeButton(R.string.btn_cancel, null)
-                .show();
+                .setPositiveButton(R.string.btn_save, (dialog, which) -> {
+                    // Invert the chosen values before saving since we flipped the initial logic
+                    for (int i = 0; i < chosen.length; i++) {
+                        chosen[i] = !chosen[i];
+                    }
+                    PostMatch.setChosen(chosen, subreddit);
+                    reloadSubs();
+                })
+                .setNeutralButton("Toggle All", null)
+                .setNegativeButton(R.string.btn_cancel, null);
+
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialogInterface -> {
+            Button button = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+            button.setOnClickListener(view -> {
+                boolean allChecked = true;
+                ListView list = dialog.getListView();
+                for (int i = 0; i < chosen.length; i++) {
+                    if (!chosen[i]) {
+                        allChecked = false;
+                        break;
+                    }
+                }
+                for (int i = 0; i < chosen.length; i++) {
+                    chosen[i] = !allChecked;
+                    list.setItemChecked(i, !allChecked);
+                }
+            });
+        });
+        dialog.show();
     }
 
     public int getCurrentPage() {

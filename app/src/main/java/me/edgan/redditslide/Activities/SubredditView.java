@@ -21,9 +21,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -1159,43 +1161,65 @@ public class SubredditView extends BaseActivity {
     }
 
     public void filterContent(final String subreddit) {
-        final boolean[] chosen =
-                new boolean[] {
-                    PostMatch.isAlbums(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isGallery(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isGif(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isImage(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isNsfw(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isSelftext(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isUrls(subreddit.toLowerCase(Locale.ENGLISH)),
-                    PostMatch.isVideo(subreddit.toLowerCase(Locale.ENGLISH))
-                };
+        final boolean[] chosen = new boolean[]{
+                !PostMatch.isAlbums(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isGallery(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isGif(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isImage(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isNsfw(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isSelftext(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isUrls(subreddit.toLowerCase(Locale.ENGLISH)),
+                !PostMatch.isVideo(subreddit.toLowerCase(Locale.ENGLISH))
+        };
 
-        final String FILTER_TITLE =
-                (getString(
-                        R.string.content_to_hide,
-                        subreddit.equals("frontpage") ? "frontpage" : "/r/" + subreddit));
+        final String FILTER_TITLE = getString(R.string.content_to_show,
+                subreddit.equals("frontpage") ? "frontpage" : "/r/" + subreddit);
 
-        new AlertDialog.Builder(this)
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(FILTER_TITLE)
                 .setMultiChoiceItems(
-                        new String[] {
-                            getString(R.string.type_albums), getString(R.string.type_gallery),
-                            getString(R.string.type_gifs), getString(R.string.images),
+                        new String[]{
+                            getString(R.string.type_albums),
+                            getString(R.string.type_gallery),
+                            getString(R.string.type_gifs),
+                            getString(R.string.images),
                             getString(R.string.type_nsfw_content),
-                                    getString(R.string.type_selftext),
-                            getString(R.string.type_links), getString(R.string.type_videos)
+                            getString(R.string.type_selftext),
+                            getString(R.string.type_links),
+                            getString(R.string.type_videos)
                         },
                         chosen,
                         (dialog, which, isChecked) -> chosen[which] = isChecked)
-                .setPositiveButton(
-                        R.string.btn_save,
-                        (dialog, which) -> {
-                            PostMatch.setChosen(chosen, subreddit);
-                            reloadSubs();
-                        })
-                .setNegativeButton(R.string.btn_cancel, null)
-                .show();
+                .setPositiveButton(R.string.btn_save, (dialog, which) -> {
+                    // Invert the chosen values before saving since we flipped the initial logic
+                    for (int i = 0; i < chosen.length; i++) {
+                        chosen[i] = !chosen[i];
+                    }
+                    PostMatch.setChosen(chosen, subreddit);
+                    reloadSubs();
+                })
+                .setNeutralButton("Toogle All", null)
+                .setNegativeButton(R.string.btn_cancel, null);
+
+        final AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialogInterface -> {
+            Button button = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+            button.setOnClickListener(view -> {
+                boolean allChecked = true;
+                ListView list = dialog.getListView();
+                for (int i = 0; i < chosen.length; i++) {
+                    if (!chosen[i]) {
+                        allChecked = false;
+                        break;
+                    }
+                }
+                for (int i = 0; i < chosen.length; i++) {
+                    chosen[i] = !allChecked;
+                    list.setItemChecked(i, !allChecked);
+                }
+            });
+        });
+        dialog.show();
     }
 
     public int getCurrentPage() {
@@ -1956,16 +1980,16 @@ public class SubredditView extends BaseActivity {
                                                                         .cancelable(false)
                                                                         .show())
                                                 .setNegativeButton(R.string.btn_cancel, null)
-                                                .setNegativeButton(
-                                                        R.string.btn_cancel,
-                                                        (dialog, which) ->
-                                                                notifyStateCheckBox.setChecked(
-                                                                        false))
-                                                .setOnCancelListener(
-                                                        dialog ->
-                                                                notifyStateCheckBox.setChecked(
-                                                                        false))
-                                                .show();
+                                                                        .setNegativeButton(
+                                                                                R.string.btn_cancel,
+                                                                                (dialog, which) ->
+                                                                                        notifyStateCheckBox.setChecked(
+                                                                                                false))
+                                                                        .setOnCancelListener(
+                                                                                dialog ->
+                                                                                        notifyStateCheckBox.setChecked(
+                                                                                                false))
+                                                                        .show();
                                     } else {
                                         notifyStateCheckBox.setChecked(false);
                                         Toast.makeText(
