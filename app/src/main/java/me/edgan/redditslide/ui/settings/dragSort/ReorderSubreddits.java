@@ -384,8 +384,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                                                                     String.format(
                                                                                             "api/user/%s/m/%s",
                                                                                             username,
-                                                                                            multiName,
-                                                                                            sortMode);
+                                                                                            multiName);
 
                                                                             int pos =
                                                                                     addSubAlphabetically(
