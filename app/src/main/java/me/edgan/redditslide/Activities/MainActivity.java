@@ -3971,6 +3971,7 @@ public class MainActivity extends BaseActivity
         String id =
                 ((SubmissionsView) (((MainPagerAdapter) pager.getAdapter()).getCurrentFragment()))
                         .id;
+
         final Spannable[] base = SortingUtil.getSortingSpannables(id);
         for (Spannable s : base) {
             // Do not add option for "Best" in any subreddit except for the frontpage.
@@ -3982,7 +3983,6 @@ public class MainActivity extends BaseActivity
         popup.setOnMenuItemClickListener(
                 new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        LogUtil.v("Chosen is " + item.getOrder());
                         int i = 0;
                         for (Spannable s : base) {
                             if (s.equals(item.getTitle())) {
@@ -3990,6 +3990,8 @@ public class MainActivity extends BaseActivity
                             }
                             i++;
                         }
+
+                        LogUtil.v("Chosen is " + i);
                         switch (i) {
                             case 0:
                                 if (id.equals("frontpage")) {

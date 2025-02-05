@@ -382,7 +382,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                                                             // format
                                                                             String url =
                                                                                     String.format(
-                                                                                            "api/user/%s/m/%s/%s?limit=25",
+                                                                                            "api/user/%s/m/%s",
                                                                                             username,
                                                                                             multiName,
                                                                                             sortMode);
