@@ -11,10 +11,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Movie;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -33,6 +37,7 @@ import android.text.style.URLSpan;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
@@ -76,11 +81,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 import java.io.File;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 /** Created by carlo_000 on 1/11/2016. */
 public class SpoilerRobotoTextView extends RobotoTextView implements ClickableText {
@@ -91,6 +103,16 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
             Pattern.compile("<a href=\"[#/](?:spoiler|sp|s)\">([^<]*)</a>");
     private static final Pattern nativeSpoilerPattern =
             Pattern.compile("<span class=\"[^\"]*md-spoiler-text+[^\"]*\">([^<]*)</span>");
+
+    private static class MatchPair {
+        final int start;
+        final int end;
+
+        MatchPair(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+    }
 
     public SpoilerRobotoTextView(Context context) {
         super(context);
@@ -154,8 +176,11 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         String text = wrapAlternateSpoilers(saveEmotesFromDestruction(baseText.toString().trim()));
         SpannableStringBuilder builder = (SpannableStringBuilder) CompatUtil.fromHtml(text);
 
-        replaceQuoteSpans(
-                builder); // replace the <blockquote> blue line with something more colorful
+        // Add Reddit preview image processing
+        processRedditPreviewImages(builder);
+
+        // replace the <blockquote> blue line with something more colorful
+        replaceQuoteSpans(builder);
 
         if (text.contains("free_emotes_pack") || text.contains("giphy")) {
             setEmoteText(text, this);
@@ -183,7 +208,6 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         }
 
         builder = removeNewlines(builder);
-
         builder.append(" ");
 
         super.setText(builder, BufferType.SPANNABLE);
@@ -1321,5 +1345,120 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         }
 
         return sequence;
+    }
+
+    // Add this function to check if a URL is a Reddit preview image
+    private boolean isRedditPreviewImage(String url) {
+        return url.startsWith("https://preview.redd.it/") &&
+               (url.endsWith(".jpeg") || url.endsWith(".jpg") || url.endsWith(".png") ||
+                url.contains("format=pjpg") || url.contains("format=png"));
+    }
+
+    // Add this new method to process Reddit preview images
+    private void processRedditPreviewImages(SpannableStringBuilder builder) {
+        // Updated pattern to match Reddit preview URLs directly
+        Pattern pattern = Pattern.compile("https://preview\\.redd\\.it/[^\\s]+");
+        Matcher matcher = pattern.matcher(builder);
+
+        List<MatchPair> matches = new ArrayList<>();
+        while (matcher.find()) {
+            matches.add(new MatchPair(matcher.start(), matcher.end()));
+        }
+
+        // Process matches from last to first to avoid invalidating indices
+        for (int i = matches.size() - 1; i >= 0; i--) {
+            MatchPair match = matches.get(i);
+            String url = builder.subSequence(match.start, match.end).toString();
+            
+            if (isRedditPreviewImage(url)) {
+                // Set initial placeholder
+                ColorDrawable placeholder = new ColorDrawable(Color.LTGRAY);
+                placeholder.setBounds(0, 0, 300, 300);
+                builder.setSpan(
+                    new ImageSpan(placeholder),
+                    match.start,
+                    match.end,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                );
+                
+                // Load the actual image
+                loadImageFromUrl(url, bitmap -> {
+                    post(() -> {
+                        if (bitmap != null) {
+                            try {
+                                // Calculate dimensions maintaining aspect ratio
+                                int maxWidth = Math.min(getWidth() - getPaddingLeft() - getPaddingRight(), 500);
+                                int maxHeight = 300;  // Max height of 300dp
+                                
+                                float widthScale = (float) maxWidth / bitmap.getWidth();
+                                float heightScale = (float) maxHeight / bitmap.getHeight();
+                                float scale = Math.min(widthScale, heightScale);  // Use the smaller scale
+                                
+                                int scaledWidth = (int) (bitmap.getWidth() * scale);
+                                int scaledHeight = (int) (bitmap.getHeight() * scale);
+                                
+                                BitmapDrawable drawable = new BitmapDrawable(getResources(), bitmap);
+                                drawable.setBounds(0, 0, scaledWidth, scaledHeight);
+                                
+                                // Create new span with the loaded image
+                                ImageSpan newSpan = new ImageSpan(drawable);
+                                
+                                // Update the text
+                                if (getText() instanceof Spannable) {
+                                    Spannable spannable = (Spannable) getText();
+                                    ImageSpan[] oldSpans = spannable.getSpans(match.start, match.end, ImageSpan.class);
+                                    for (ImageSpan span : oldSpans) {
+                                        spannable.removeSpan(span);
+                                    }
+                                    spannable.setSpan(
+                                        newSpan,
+                                        match.start,
+                                        match.end,
+                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                                    );
+                                    
+                                    Log.d("SpoilerRobotoTextView", "Replaced placeholder with image: " + scaledWidth + "x" + scaledHeight);
+                                }
+                                
+                                invalidate();
+                                requestLayout();
+                            } catch (Exception e) {
+                                Log.e("SpoilerRobotoTextView", "Error updating image span", e);
+                            }
+                        }
+                    });
+                });
+            }
+        }
+    }
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    private void loadImageFromUrl(String url, ImageCallback callback) {
+        executor.execute(() -> {
+            try {
+                Log.d("SpoilerRobotoTextView", "Loading image from: " + url);
+                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                final Bitmap bitmap = BitmapFactory.decodeStream(input);
+                
+                if (bitmap != null) {
+                    Log.d("SpoilerRobotoTextView", "Image loaded successfully, size: " + bitmap.getWidth() + "x" + bitmap.getHeight());
+                    callback.onImageLoaded(bitmap);
+                } else {
+                    Log.e("SpoilerRobotoTextView", "Failed to decode bitmap from: " + url);
+                }
+            } catch (Exception e) {
+                Log.e("SpoilerRobotoTextView", "Error loading image: " + url, e);
+            }
+        });
+    }
+
+    // Simple callback interface
+    private interface ImageCallback {
+        void onImageLoaded(Bitmap bitmap);
     }
 }
