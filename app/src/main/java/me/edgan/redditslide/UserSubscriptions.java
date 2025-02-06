@@ -811,29 +811,33 @@ public class UserSubscriptions {
         return finals;
     }
 
-    public static class SubscribeTask extends AsyncTask<String, Void, Void> {
-        Context context;
+    public static class SubscribeTask extends AsyncTask<String, Void, Boolean> {
+        private Context context;
+        private String errorMessage;
 
         public SubscribeTask(Context context) {
             this.context = context;
         }
 
         @Override
-        protected Void doInBackground(String... subreddits) {
+        protected Boolean doInBackground(String... subreddits) {
             final AccountManager m = new AccountManager(Authentication.reddit);
-            for (String subreddit : subreddits) {
-                try {
+            try {
+                for (String subreddit : subreddits) {
                     m.subscribe(Authentication.reddit.getSubreddit(subreddit));
-                } catch (Exception e) {
-                    Toast.makeText(
-                                    context,
-                                    "Couldn't subscribe, subreddit is private, quarantined, or"
-                                            + " invite only",
-                                    Toast.LENGTH_SHORT)
-                            .show();
                 }
+                return true;
+            } catch (Exception e) {
+                errorMessage = "Couldn't subscribe, subreddit is private, quarantined, or invite only";
+                return false;
             }
-            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (!success && context != null) {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
