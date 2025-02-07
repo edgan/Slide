@@ -46,6 +46,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import me.edgan.redditslide.Authentication;
@@ -1175,21 +1176,23 @@ public class SubredditView extends BaseActivity {
         final String FILTER_TITLE = getString(R.string.content_to_show,
                 subreddit.equals("frontpage") ? "frontpage" : "/r/" + subreddit);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                 .setTitle(FILTER_TITLE)
                 .setMultiChoiceItems(
                         new String[]{
-                            getString(R.string.type_albums),
-                            getString(R.string.type_gallery),
-                            getString(R.string.type_gifs),
-                            getString(R.string.images),
-                            getString(R.string.type_nsfw_content),
-                            getString(R.string.type_selftext),
-                            getString(R.string.type_links),
-                            getString(R.string.type_videos)
+                                getString(R.string.type_albums),
+                                getString(R.string.type_gallery),
+                                getString(R.string.type_gifs),
+                                getString(R.string.images),
+                                getString(R.string.type_nsfw_content),
+                                getString(R.string.type_selftext),
+                                getString(R.string.type_links),
+                                getString(R.string.type_videos)
                         },
                         chosen,
-                        (dialog, which, isChecked) -> chosen[which] = isChecked)
+                        (dialog, which, isChecked) -> chosen[which] = isChecked
+                )
+                // Positive: Saves changes
                 .setPositiveButton(R.string.btn_save, (dialog, which) -> {
                     // Invert the chosen values before saving since we flipped the initial logic
                     for (int i = 0; i < chosen.length; i++) {
@@ -1198,27 +1201,35 @@ public class SubredditView extends BaseActivity {
                     PostMatch.setChosen(chosen, subreddit);
                     reloadSubs();
                 })
-                .setNeutralButton("Toogle All", null)
+                // Neutral: "Toggle All" (we override its click later to avoid auto-dismiss)
+                .setNeutralButton(R.string.btn_toggle_all, null)
                 .setNegativeButton(R.string.btn_cancel, null);
 
-        final AlertDialog dialog = builder.create();
+        AlertDialog dialog = builder.create();
+
+        // Make the neutral button behave like a "toggle" without dismissing the dialog
         dialog.setOnShowListener(dialogInterface -> {
-            Button button = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-            button.setOnClickListener(view -> {
+            Button toggleButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+            toggleButton.setOnClickListener(view -> {
                 boolean allChecked = true;
                 ListView list = dialog.getListView();
+
+                // Check if everything is currently selected
                 for (int i = 0; i < chosen.length; i++) {
                     if (!chosen[i]) {
                         allChecked = false;
                         break;
                     }
                 }
+
+                // Toggle all (choose or un-choose them all)
                 for (int i = 0; i < chosen.length; i++) {
                     chosen[i] = !allChecked;
                     list.setItemChecked(i, !allChecked);
                 }
             });
         });
+
         dialog.show();
     }
 

@@ -390,6 +390,7 @@
     <string name="btn_add">Add</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_close">Close</string>
+    <string name="btn_toggle_all">Toggle all</string>
     <string name="btn_open">Open</string>
     <string name="btn_discard">Discard</string>
     <string name="btn_done">Done</string>

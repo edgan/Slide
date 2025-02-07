@@ -89,6 +89,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.lusfold.androidkeyvaluestore.KVStore;
@@ -3897,17 +3898,16 @@ public class MainActivity extends BaseActivity
 
         // Title of the filter dialog
         String filterTitle;
+
         if (currentSubredditName.contains("/m/")) {
             filterTitle = getString(R.string.content_to_show, currentSubredditName);
+        } else if (currentSubredditName.equals("frontpage")) {
+            filterTitle = getString(R.string.content_to_show, "frontpage");
         } else {
-            if (currentSubredditName.equals("frontpage")) {
-                filterTitle = getString(R.string.content_to_show, "frontpage");
-            } else {
-                filterTitle = getString(R.string.content_to_show, "/r/" + currentSubredditName);
-            }
+            filterTitle = getString(R.string.content_to_show, "/r/" + currentSubredditName);
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                 .setTitle(filterTitle)
                 .setMultiChoiceItems(
                         new String[]{
@@ -3921,7 +3921,10 @@ public class MainActivity extends BaseActivity
                                 getString(R.string.type_videos)
                         },
                         chosen,
-                        (dialog, which, isChecked) -> chosen[which] = isChecked)
+                        (dialog, which, isChecked) -> chosen[which] = isChecked
+                )
+
+                // Save button: inverts and stores the user’s choices
                 .setPositiveButton(R.string.btn_save, (dialog, which) -> {
                     // Invert the chosen values before saving since we flipped the initial logic
                     for (int i = 0; i < chosen.length; i++) {
@@ -3930,13 +3933,18 @@ public class MainActivity extends BaseActivity
                     PostMatch.setChosen(chosen, subreddit);
                     reloadSubs();
                 })
-                .setNeutralButton("Toggle All", null)
+                // Neutral button: We'll override its click so it does NOT dismiss automatically
+                .setNeutralButton(R.string.btn_toggle_all, null)
                 .setNegativeButton(R.string.btn_cancel, null);
 
+        // Create the dialog from the builder
         final AlertDialog dialog = builder.create();
+
+        // Override the neutral (toggle) button’s click to NOT dismiss the dialog
         dialog.setOnShowListener(dialogInterface -> {
-            Button button = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-            button.setOnClickListener(view -> {
+            Button toggleButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+            toggleButton.setOnClickListener(view -> {
+                // Check if all boxes are currently checked
                 boolean allChecked = true;
                 ListView list = dialog.getListView();
                 for (int i = 0; i < chosen.length; i++) {
@@ -3945,12 +3953,15 @@ public class MainActivity extends BaseActivity
                         break;
                     }
                 }
+
+                // Toggle them all at once
                 for (int i = 0; i < chosen.length; i++) {
                     chosen[i] = !allChecked;
                     list.setItemChecked(i, !allChecked);
                 }
             });
         });
+
         dialog.show();
     }
 
@@ -4245,30 +4256,25 @@ public class MainActivity extends BaseActivity
 
     public void saveOffline(final List<Submission> submissions, final String subreddit) {
         final boolean[] chosen = new boolean[2];
-        new AlertDialog.Builder(this)
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.save_for_offline_viewing)
                 .setMultiChoiceItems(
-                        new String[] {getString(R.string.type_gifs)},
-                        new boolean[] {false},
-                        (dialog, which, isChecked) -> chosen[which] = isChecked)
-                .setPositiveButton(
-                        R.string.btn_save,
-                        (dialog, which) ->
-                                caching =
-                                        new CommentCacheAsync(
-                                                        submissions,
-                                                        MainActivity.this,
-                                                        subreddit,
-                                                        chosen)
-                                                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR))
-                .setPositiveButton(
-                        R.string.btn_save,
-                        (dialog, which) -> {
-                            ExecutorService service = Executors.newSingleThreadExecutor();
-                            new CommentCacheAsync(submissions, MainActivity.this, subreddit, chosen)
-                                    .executeOnExecutor(service);
-                        })
-                .show();
+                        new String[]{ getString(R.string.type_gifs) },
+                        new boolean[]{ false },
+                        (dialog, which, isChecked) -> chosen[which] = isChecked
+                )
+                .setPositiveButton(R.string.btn_save, (dialog, which) -> {
+                    // The user clicked Save, so carry out caching logic
+                    // e.g. spin up an AsyncTask or ExecutorService
+                    ExecutorService service = Executors.newSingleThreadExecutor();
+                    new CommentCacheAsync(submissions, MainActivity.this, subreddit, chosen)
+                            .executeOnExecutor(service);
+                })
+                .setNegativeButton(R.string.btn_cancel, null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void scrollToTop() {

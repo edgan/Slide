@@ -152,7 +152,6 @@
         <item name="bs_listStyle">@style/BottomSheetDark.StyleList</item>
     </style>
 
-
     <style parent="BottomSheet.Dialog.Dark" name="BottomSheet.StyleDialog.PIXEL">
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">#8Affffff</item>
@@ -334,103 +333,151 @@
     </style>
 
     <!-- AMOLED Theme Subthemes !-->
-
+    <!-- Matches parent's android:colorBackground = #FF000000 -->
     <style parent="Theme.AMOLED" name="amber_AMOLED">
         <item name="colorAccent">@color/md_amber_A400</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED" name="blue_AMOLED">
         <item name="colorAccent">@color/md_blue_A400</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED" name="cyan_AMOLED">
         <item name="colorAccent">@color/md_cyan_A400</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED" name="deeporange_AMOLED">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED" name="green_AMOLED">
         <item name="colorAccent">@color/md_green_A400</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED" name="indigo_AMOLED">
         <item name="colorAccent">@color/md_indigo_A400</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED" name="lightblue_AMOLED">
         <item name="colorAccent">@color/md_light_blue_A400</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED" name="lime_AMOLED">
         <item name="colorAccent">@color/md_lime_A400</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED" name="pink_amoled">
         <item name="colorAccent">@color/md_pink_A200</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED" name="teal_amoled">
         <item name="colorAccent">@color/md_teal_A700</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED" name="white_amoled">
         <item name="colorAccent">@color/md_blue_grey_200</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED" name="yellow_AMOLED">
         <item name="colorAccent">@color/md_yellow_A400</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <!-- AMOLED with Contrast Theme Subthemes !-->
-
+    <!-- Matches parent's android:colorBackground = #121212 -->
     <style parent="Theme.AMOLED_lighter" name="amber_AMOLED_lighter">
         <item name="colorAccent">@color/md_amber_A400</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED_lighter" name="blue_AMOLED_lighter">
         <item name="colorAccent">@color/md_blue_A400</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED_lighter" name="cyan_AMOLED_lighter">
         <item name="colorAccent">@color/md_cyan_A400</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED_lighter" name="deeporange_AMOLED_lighter">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED_lighter" name="green_AMOLED_lighter">
         <item name="colorAccent">@color/md_green_A400</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED_lighter" name="indigo_AMOLED_lighter">
         <item name="colorAccent">@color/md_indigo_A400</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED_lighter" name="lightblue_AMOLED_lighter">
         <item name="colorAccent">@color/md_light_blue_A400</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED_lighter" name="lime_AMOLED_lighter">
         <item name="colorAccent">@color/md_lime_A400</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED_lighter" name="pink_AMOLED_lighter">
         <item name="colorAccent">@color/md_pink_A200</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED_lighter" name="teal_AMOLED_lighter">
         <item name="colorAccent">@color/md_teal_A700</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED_lighter" name="white_AMOLED_lighter">
         <item name="colorAccent">@color/md_blue_grey_200</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AMOLED_lighter" name="yellow_AMOLED_lighter">
         <item name="colorAccent">@color/md_yellow_A400</item>
+        <item name="colorSurface">#121212</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AppCompat.Dialog.Alert" name="popup">
@@ -439,13 +486,15 @@
 
     <style parent="Theme.AppCompat.Light.NoActionBar" name="swipestylelight">
         <item name="colorAccent">@color/md_amber_A400</item>
+        <!-- We keep colorSurface as #FF000000 here unless changed. -->
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.AppCompat.NoActionBar" name="swipeable">
         <item name="android:windowBackground">@null</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
-
 
     <style parent="Theme.AppCompat.NoActionBar" name="swipeableweb">
         <item name="android:windowBackground">@null</item>
@@ -456,364 +505,533 @@
         <item name="tp_selectionColor">?android:colorAccent</item>
         <item name="tp_textColor">?attr/fontColor</item>
         <item name="tp_backgroundColor">?attr/card_background</item>
-
     </style>
 
     <style parent="Theme.AppCompat.NoActionBar" name="swipestyle">
         <item name="colorAccent">@color/md_amber_A400</item>
+        <item name="colorSurface">#FF000000</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
         <item name="android:windowActivityTransitions">true</item>
     </style>
 
     <!-- Dark Theme Subthemes !-->
-
+    <!-- Matches parent's android:colorBackground = #212121 -->
     <style parent="Theme.DARK" name="amber_dark">
         <item name="colorAccent">@color/md_amber_A400</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="blue_dark">
         <item name="colorAccent">@color/md_blue_A400</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="cyan_dark">
         <item name="colorAccent">@color/md_cyan_A400</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="deeporange_dark">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="green_dark">
         <item name="colorAccent">@color/md_green_A400</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="indigo_dark">
         <item name="colorAccent">@color/md_indigo_A400</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="lightblue_dark">
         <item name="colorAccent">@color/md_light_blue_A400</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="lime_dark">
         <item name="colorAccent">@color/md_lime_A400</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="pink_dark">
         <item name="colorAccent">@color/md_pink_A200</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="teal_dark">
         <item name="colorAccent">@color/md_teal_A700</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="white_dark">
         <item name="colorAccent">@color/md_blue_grey_200</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="yellow_dark">
         <item name="colorAccent">@color/md_yellow_A400</item>
+        <item name="colorSurface">#212121</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <!-- Night Red Blue Theme Subthemes !-->
-
+    <!-- Matches parent's android:colorBackground = #402c2c -->
     <style parent="Theme.NIGHT_RED" name="amber_night_red">
         <item name="colorAccent">@color/md_amber_A400</item>
+        <item name="colorSurface">#402c2c</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="blue_night_red">
         <item name="colorAccent">@color/md_blue_A400</item>
+        <item name="colorSurface">#402c2c</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="cyan_night_red">
         <item name="colorAccent">@color/md_cyan_A400</item>
+        <item name="colorSurface">#402c2c</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="deeporange_night_red">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
+        <item name="colorSurface">#402c2c</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="green_night_red">
         <item name="colorAccent">@color/md_green_A400</item>
+        <item name="colorSurface">#402c2c</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="indigo_night_red">
         <item name="colorAccent">@color/md_indigo_A400</item>
+        <item name="colorSurface">#402c2c</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="lightblue_night_red">
         <item name="colorAccent">@color/md_light_blue_A400</item>
+        <item name="colorSurface">#402c2c</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="lime_night_red">
         <item name="colorAccent">@color/md_lime_A400</item>
+        <item name="colorSurface">#402c2c</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="pink_night_red">
         <item name="colorAccent">@color/md_pink_A200</item>
+        <item name="colorSurface">#402c2c</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="teal_night_red">
         <item name="colorAccent">@color/md_teal_A700</item>
+        <item name="colorSurface">#402c2c</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="white_night_red">
         <item name="colorAccent">@color/md_blue_grey_200</item>
+        <item name="colorSurface">#402c2c</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="yellow_night_red">
         <item name="colorAccent">@color/md_yellow_A400</item>
+        <item name="colorSurface">#402c2c</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <!-- Dark Blue Theme Subthemes !-->
-
+    <!-- Matches parent's android:colorBackground = #37474F -->
     <style parent="Theme.DARK_BLUE" name="amber_blue">
         <item name="colorAccent">@color/md_amber_A400</item>
+        <item name="colorSurface">#37474F</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK_BLUE" name="blue_blue">
         <item name="colorAccent">@color/md_blue_A400</item>
+        <item name="colorSurface">#37474F</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK_BLUE" name="cyan_blue">
         <item name="colorAccent">@color/md_cyan_A400</item>
+        <item name="colorSurface">#37474F</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK_BLUE" name="deeporange_blue">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
+        <item name="colorSurface">#37474F</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK_BLUE" name="green_blue">
         <item name="colorAccent">@color/md_green_A400</item>
+        <item name="colorSurface">#37474F</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK_BLUE" name="indigo_blue">
         <item name="colorAccent">@color/md_indigo_A400</item>
+        <item name="colorSurface">#37474F</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK_BLUE" name="lightblue_blue">
         <item name="colorAccent">@color/md_light_blue_A400</item>
+        <item name="colorSurface">#37474F</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK_BLUE" name="lime_blue">
         <item name="colorAccent">@color/md_lime_A400</item>
+        <item name="colorSurface">#37474F</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK_BLUE" name="pink_blue">
         <item name="colorAccent">@color/md_pink_A200</item>
+        <item name="colorSurface">#37474F</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK_BLUE" name="teal_blue">
         <item name="colorAccent">@color/md_teal_A700</item>
+        <item name="colorSurface">#37474F</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK_BLUE" name="white_blue">
         <item name="colorAccent">@color/md_blue_grey_200</item>
+        <item name="colorSurface">#37474F</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK_BLUE" name="yellow_blue">
         <item name="colorAccent">@color/md_yellow_A400</item>
+        <item name="colorSurface">#37474F</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <!-- Pixel Theme Subthemes !-->
-
+    <!-- Matches parent's android:colorBackground = #2d2d2d -->
     <style parent="Theme.PIXEL" name="amber_pixel">
         <item name="colorAccent">@color/md_amber_A400</item>
+        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="blue_pixel">
         <item name="colorAccent">@color/md_blue_400</item>
+        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="cyan_pixel">
         <item name="colorAccent">@color/md_cyan_A400</item>
+        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="deeporange_pixel">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
+        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="green_pixel">
         <item name="colorAccent">@color/md_green_A400</item>
+        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="indigo_pixel">
         <item name="colorAccent">@color/md_indigo_A400</item>
+        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="lightblue_pixel">
         <item name="colorAccent">@color/md_light_blue_A400</item>
+        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="lime_pixel">
         <item name="colorAccent">@color/md_lime_A400</item>
+        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="pink_pixel">
         <item name="colorAccent">@color/md_pink_A200</item>
+        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="teal_pixel">
         <item name="colorAccent">@color/md_teal_A700</item>
+        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="white_pixel">
         <item name="colorAccent">@color/md_blue_grey_200</item>
+        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="yellow_pixel">
         <item name="colorAccent">@color/md_yellow_A400</item>
+        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <!-- Light Theme Subthemes !-->
-
+    <!-- Matches parent's android:colorBackground = #e5e5e5 -->
     <style parent="Theme.LIGHT" name="amber_LIGHT">
         <item name="colorAccent">@color/md_amber_A400</item>
+        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="blue_LIGHT">
         <item name="colorAccent">@color/md_blue_A400</item>
+        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="cyan_LIGHT">
         <item name="colorAccent">@color/md_cyan_A400</item>
+        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="deeporange_LIGHT">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
+        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="green_LIGHT">
         <item name="colorAccent">@color/md_green_A400</item>
+        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="indigo_LIGHT">
         <item name="colorAccent">@color/md_indigo_A400</item>
+        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="lightblue_LIGHT">
         <item name="colorAccent">@color/md_light_blue_A400</item>
+        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="lime_LIGHT">
         <item name="colorAccent">@color/md_lime_A400</item>
+        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="pink_light">
         <item name="colorAccent">@color/md_pink_A200</item>
+        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="teal_light">
         <item name="colorAccent">@color/md_teal_A700</item>
+        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="white_light">
         <item name="colorAccent">@color/md_blue_grey_200</item>
+        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="yellow_LIGHT">
         <item name="colorAccent">@color/md_yellow_A400</item>
+        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
-    <!--Sepia Theme Subthemes !-->
-
+    <!-- Sepia Theme Subthemes !-->
+    <!-- Matches parent's android:colorBackground = #e2dfd7 -->
     <style parent="Theme.SEPIA" name="amber_sepia">
         <item name="colorAccent">@color/md_amber_A400</item>
+        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="blue_sepia">
         <item name="colorAccent">@color/md_blue_A400</item>
+        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="cyan_sepia">
         <item name="colorAccent">@color/md_cyan_A400</item>
+        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="deeporange_sepia">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
+        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="green_sepia">
         <item name="colorAccent">@color/md_green_A400</item>
+        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="indigo_sepia">
         <item name="colorAccent">@color/md_indigo_A400</item>
+        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="lightblue_sepia">
         <item name="colorAccent">@color/md_light_blue_A400</item>
+        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="lime_sepia">
         <item name="colorAccent">@color/md_lime_A400</item>
+        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="pink_sepia">
         <item name="colorAccent">@color/md_pink_A200</item>
+        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="teal_sepia">
         <item name="colorAccent">@color/md_teal_A700</item>
+        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="white_sepia">
         <item name="colorAccent">@color/md_blue_grey_200</item>
+        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="yellow_sepia">
         <item name="colorAccent">@color/md_yellow_A400</item>
+        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
-
-    <!--Dark Purple Theme Subthemes !-->
-
+    <!-- Dark Purple (DEEP) Theme Subthemes !-->
+    <!-- Matches parent's android:colorBackground = #1f1e26 -->
     <style parent="Theme.DEEP" name="amber_deep">
         <item name="colorAccent">@color/md_amber_A400</item>
+        <item name="colorSurface">#1f1e26</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DEEP" name="blue_deep">
         <item name="colorAccent">@color/md_blue_A400</item>
+        <item name="colorSurface">#1f1e26</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DEEP" name="cyan_deep">
         <item name="colorAccent">@color/md_cyan_A400</item>
+        <item name="colorSurface">#1f1e26</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DEEP" name="deeporange_deep">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
+        <item name="colorSurface">#1f1e26</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DEEP" name="green_deep">
         <item name="colorAccent">@color/md_green_A400</item>
+        <item name="colorSurface">#1f1e26</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DEEP" name="indigo_deep">
         <item name="colorAccent">@color/md_indigo_A400</item>
+        <item name="colorSurface">#1f1e26</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DEEP" name="lightblue_deep">
         <item name="colorAccent">@color/md_light_blue_A400</item>
+        <item name="colorSurface">#1f1e26</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DEEP" name="lime_deep">
         <item name="colorAccent">@color/md_lime_A400</item>
+        <item name="colorSurface">#1f1e26</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DEEP" name="pink_deep">
         <item name="colorAccent">@color/md_pink_A200</item>
+        <item name="colorSurface">#1f1e26</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DEEP" name="teal_deep">
         <item name="colorAccent">@color/md_teal_A700</item>
+        <item name="colorSurface">#1f1e26</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DEEP" name="white_deep">
         <item name="colorAccent">@color/md_blue_grey_200</item>
+        <item name="colorSurface">#1f1e26</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DEEP" name="yellow_deep">
         <item name="colorAccent">@color/md_yellow_A400</item>
+        <item name="colorSurface">#1f1e26</item>
+        <item name="colorOnSurface">?android:colorAccent</item>
     </style>
+
     <style name="Theme.Transparent" parent="android:Theme">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -822,4 +1040,5 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+
 </resources>
