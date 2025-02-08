@@ -675,6 +675,40 @@ public class MainActivity extends BaseActivity
                                             startActivity(i);
                                         }
                                     });
+                } else if (subreddit.startsWith("/m/")) {
+                    // Add search for multireddit
+                    builder.positiveText(getString(R.string.search_subreddit, subreddit))
+                            .onPositive(
+                                    new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(
+                                                @NonNull MaterialDialog materialDialog,
+                                                @NonNull DialogAction dialogAction) {
+                                            Intent i = new Intent(MainActivity.this, Search.class);
+                                            i.putExtra(Search.EXTRA_TERM, term);
+                                            // Set the searchMulti before starting the search
+                                            for (MultiReddit r : UserSubscriptions.multireddits) {
+                                                if (r.getDisplayName().equalsIgnoreCase(subreddit.substring(3))) {
+                                                    MultiredditOverview.searchMulti = r;
+                                                    break;
+                                                }
+                                            }
+                                            i.putExtra(Search.EXTRA_MULTIREDDIT, subreddit.substring(3)); // Remove "/m/"
+                                            startActivity(i);
+                                        }
+                                    });
+                    builder.neutralText(R.string.search_all)
+                            .onNeutral(
+                                    new MaterialDialog.SingleButtonCallback() {
+                                        @Override
+                                        public void onClick(
+                                                @NonNull MaterialDialog materialDialog,
+                                                @NonNull DialogAction dialogAction) {
+                                            Intent i = new Intent(MainActivity.this, Search.class);
+                                            i.putExtra(Search.EXTRA_TERM, term);
+                                            startActivity(i);
+                                        }
+                                    });
                 } else {
                     builder.positiveText(R.string.search_all)
                             .onPositive(
@@ -3924,7 +3958,7 @@ public class MainActivity extends BaseActivity
                         (dialog, which, isChecked) -> chosen[which] = isChecked
                 )
 
-                // Save button: inverts and stores the user’s choices
+                // Save button: inverts and stores the user's choices
                 .setPositiveButton(R.string.btn_save, (dialog, which) -> {
                     // Invert the chosen values before saving since we flipped the initial logic
                     for (int i = 0; i < chosen.length; i++) {
@@ -3940,7 +3974,7 @@ public class MainActivity extends BaseActivity
         // Create the dialog from the builder
         final AlertDialog dialog = builder.create();
 
-        // Override the neutral (toggle) button’s click to NOT dismiss the dialog
+        // Override the neutral (toggle) button's click to NOT dismiss the dialog
         dialog.setOnShowListener(dialogInterface -> {
             Button toggleButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
             toggleButton.setOnClickListener(view -> {
