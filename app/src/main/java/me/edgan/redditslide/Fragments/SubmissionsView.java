@@ -31,6 +31,7 @@ import com.mikepenz.itemanimators.SlideUpAlphaAnimator;
 
 import me.edgan.redditslide.Activities.BaseActivity;
 import me.edgan.redditslide.Activities.MainActivity;
+import me.edgan.redditslide.Activities.MultiredditOverview;
 import me.edgan.redditslide.Activities.Search;
 import me.edgan.redditslide.Activities.Submit;
 import me.edgan.redditslide.Activities.SubredditView;
@@ -44,13 +45,16 @@ import me.edgan.redditslide.OfflineSubreddit;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.UserSubscriptions;
 import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
 import me.edgan.redditslide.Views.CreateCardView;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.handler.ToolbarScrollHideHandler;
 import me.edgan.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.LogUtil;
 
+import net.dean.jraw.models.MultiReddit;
 import net.dean.jraw.models.Submission;
 
 import java.util.List;
@@ -197,6 +201,10 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                                                             }
                                                         });
 
+                                if (id.startsWith("api/user")) {
+                                    id = id.replaceFirst(".*?/m/", "/m/");
+                                }
+
                                 // Add "search current sub" if it is not frontpage/all/random
                                 if (!id.equalsIgnoreCase("frontpage")
                                         && !id.equalsIgnoreCase("all")
@@ -223,6 +231,46 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                                                                             Search.class);
                                                             i.putExtra(Search.EXTRA_TERM, term);
                                                             i.putExtra(Search.EXTRA_SUBREDDIT, id);
+                                                            startActivity(i);
+                                                        }
+                                                    });
+                                    builder.neutralText(R.string.search_all)
+                                            .onNeutral(
+                                                    new MaterialDialog.SingleButtonCallback() {
+                                                        @Override
+                                                        public void onClick(
+                                                                @NonNull
+                                                                        MaterialDialog
+                                                                                materialDialog,
+                                                                @NonNull
+                                                                        DialogAction dialogAction) {
+                                                            Intent i =
+                                                                    new Intent(
+                                                                            getActivity(),
+                                                                            Search.class);
+                                                            i.putExtra(Search.EXTRA_TERM, term);
+                                                            startActivity(i);
+                                                        }
+                                                    });
+                                } else if (id.contains("/m/")) {
+                                    String subreddit = id;
+                                    // Set the searchMulti for multireddit search
+                                    for (MultiReddit r : UserSubscriptions.multireddits) {
+                                        if (r.getDisplayName().equalsIgnoreCase(subreddit.substring(3))) {
+                                            MultiredditOverview.searchMulti = r;
+                                            break;
+                                        }
+                                    }
+                                    builder.positiveText(getString(R.string.search_subreddit, id))
+                                            .onPositive(
+                                                    new MaterialDialog.SingleButtonCallback() {
+                                                        @Override
+                                                        public void onClick(
+                                                                @NonNull MaterialDialog materialDialog,
+                                                                @NonNull DialogAction dialogAction) {
+                                                            Intent i = new Intent(getActivity(), Search.class);
+                                                            i.putExtra(Search.EXTRA_TERM, term);
+                                                            i.putExtra(Search.EXTRA_MULTIREDDIT, id.substring(3));
                                                             startActivity(i);
                                                         }
                                                     });
