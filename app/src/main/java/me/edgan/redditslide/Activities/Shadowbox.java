@@ -28,6 +28,7 @@ import me.edgan.redditslide.SettingValues;
 
 import net.dean.jraw.models.Submission;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Created by ccrama on 9/17/2015. */
@@ -47,12 +48,11 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
     public void onCreate(Bundle savedInstance) {
         overrideSwipeFromAnywhere();
 
-        subreddit = getIntent().getExtras().getString(EXTRA_SUBREDDIT);
-
         firstPage = getIntent().getExtras().getInt(EXTRA_PAGE, 0);
         subreddit = getIntent().getExtras().getString(EXTRA_SUBREDDIT);
         String multireddit = getIntent().getExtras().getString(EXTRA_MULTIREDDIT);
         String profile = getIntent().getExtras().getString(EXTRA_PROFILE, "");
+
         if (multireddit != null) {
             subredditPosts = new MultiredditPosts(multireddit, profile);
         } else {
@@ -70,6 +70,7 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
                 OfflineSubreddit.getSubreddit(subreddit, offline, !Authentication.didOnline, this);
 
         subredditPosts.getPosts().addAll(submissions.submissions);
+        filterValidPosts(); // Only keep valid content types
         count = subredditPosts.getPosts().size();
 
         pager = (ViewPager) findViewById(R.id.content_view);
@@ -83,15 +84,26 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
                         if (SettingValues.storeHistory) {
                             if (subredditPosts.getPosts().get(position).isNsfw()
                                     && !SettingValues.storeNSFWHistory) {
-                            } else
-                                HasSeen.addSeen(
-                                        subredditPosts.getPosts().get(position).getFullName());
+                                return;
+                            }
+                            HasSeen.addSeen(subredditPosts.getPosts().get(position).getFullName());
                         }
                     }
                 });
     }
 
     ShadowboxPagerAdapter submissionsPager;
+
+    private void filterValidPosts() {
+        List<Submission> filteredPosts = new ArrayList<>();
+        for (Submission post : subredditPosts.getPosts()) {
+            if (isValidType(ContentType.getContentType(post))) {
+                filteredPosts.add(post);
+            }
+        }
+        subredditPosts.getPosts().clear();
+        subredditPosts.getPosts().addAll(filteredPosts);
+    }
 
     @Override
     public void updateSuccess(final List<Submission> submissions, final int startIndex) {
@@ -149,38 +161,14 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
         public Fragment getItem(int i) {
             Fragment f = null;
             ContentType.Type t = ContentType.getContentType(subredditPosts.getPosts().get(i));
+            Bundle args = new Bundle();
 
-            if (subredditPosts.getPosts().size() - 2 <= i && subredditPosts.hasMore()) {
-                subredditPosts.loadMore(
-                        Shadowbox.this.getApplicationContext(), Shadowbox.this, false);
-            }
             switch (t) {
-                case GIF:
-                case IMAGE:
-                case IMGUR:
-                case REDDIT:
-                case EXTERNAL:
-                case SPOILER:
-                case DEVIANTART:
-                case EMBEDDED:
-                case XKCD:
                 case REDDIT_GALLERY:
-                    {
-                        f = new RedditGalleryFull();
-                        Bundle args = new Bundle();
-                        args.putInt("page", i);
-                        args.putString("sub", subreddit);
-                        f.setArguments(args);
-                    }
+                    f = new RedditGalleryFull();
                     break;
-                case VREDDIT_DIRECT:
-                case VREDDIT_REDIRECT:
-                case LINK:
-                case STREAMABLE:
                 case VIDEO:
-                    {
                         f = new MediaFragment();
-                        Bundle args = new Bundle();
                         Submission submission = subredditPosts.getPosts().get(i);
                         String previewUrl = "";
                         if (t != ContentType.Type.XKCD
@@ -206,44 +194,25 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
                         }
                         args.putString("contentUrl", submission.getUrl());
                         args.putString("firstUrl", previewUrl);
-                        args.putInt("page", i);
-                        args.putString("sub", subreddit);
-                        f.setArguments(args);
-                    }
-                    break;
-                case SELF:
+                        break;
                 case NONE:
-                    {
-                        if (subredditPosts.getPosts().get(i).getSelftext().isEmpty()) {
-                            f = new TitleFull();
-                        } else {
-                            f = new SelftextFull();
-                        }
-                        Bundle args = new Bundle();
-                        args.putInt("page", i);
-                        args.putString("sub", subreddit);
-                        f.setArguments(args);
-                    }
+                    f = subredditPosts.getPosts().get(i).getSelftext().isEmpty()
+                            ? new TitleFull()
+                            : new SelftextFull();
                     break;
                 case TUMBLR:
-                    {
-                        f = new TumblrFull();
-                        Bundle args = new Bundle();
-                        args.putInt("page", i);
-                        args.putString("sub", subreddit);
-                        f.setArguments(args);
-                    }
+                    f = new TumblrFull();
                     break;
                 case ALBUM:
-                    {
-                        f = new AlbumFull();
-                        Bundle args = new Bundle();
-                        args.putInt("page", i);
-                        args.putString("sub", subreddit);
-                        f.setArguments(args);
-                    }
+                    f = new AlbumFull();
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected content type: " + t);
             }
+
+            args.putInt("page", i);
+            args.putString("sub", subreddit);
+            f.setArguments(args);
 
             return f;
         }
@@ -252,5 +221,13 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
         public int getCount() {
             return count;
         }
+    }
+
+    private boolean isValidType(ContentType.Type t) {
+        return t == ContentType.Type.REDDIT_GALLERY ||
+               t == ContentType.Type.VIDEO ||
+               t == ContentType.Type.NONE ||
+               t == ContentType.Type.TUMBLR ||
+               t == ContentType.Type.ALBUM;
     }
 }

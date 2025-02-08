@@ -115,41 +115,6 @@ public class RedditGalleryFull extends Fragment {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         ((RecyclerView) list).setLayoutManager(layoutManager);
 
-//        ((RecyclerView) list).addOnScrollListener(
-//                new RecyclerView.OnScrollListener() {
-//                    @Override
-//                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                        ValueAnimator va = null;
-//                        if (dy > 0 && !hidden) {
-//                            hidden = true;
-//                            if (va != null && va.isRunning()) va.cancel();
-//
-//                            final View base = rootView.findViewById(R.id.base);
-//                            va = ValueAnimator.ofFloat(1.0f, 0.2f);
-//                            int mDuration = 250;
-//                            va.setDuration(mDuration);
-//                            va.addUpdateListener(animation -> {
-//                                Float value = (Float) animation.getAnimatedValue();
-//                                base.setAlpha(value);
-//                            });
-//                            va.start();
-//                        } else if (hidden && dy <= 0) {
-//                            hidden = false;
-//                            if (va != null && va.isRunning()) va.cancel();
-//
-//                            final View base = rootView.findViewById(R.id.base);
-//                            va = ValueAnimator.ofFloat(0.2f, 1.0f);
-//                            int mDuration = 250;
-//                            va.setDuration(mDuration);
-//                            va.addUpdateListener(animation -> {
-//                                Float value = (Float) animation.getAnimatedValue();
-//                                base.setAlpha(value);
-//                            });
-//                            va.start();
-//                        }
-//                    }
-//                });
-//
         final View.OnClickListener openClick = view -> {
             if (rootView.findViewById(R.id.base).getAlpha() <= 0.8) {
                 rootView.findViewById(R.id.base).setAlpha(1f);
