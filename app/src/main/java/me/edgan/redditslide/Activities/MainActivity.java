@@ -1978,6 +1978,10 @@ public class MainActivity extends BaseActivity
                                                 .remove("backedCreds")
                                                 .commit();
                                     }
+
+                                    // Removing this will break Guest mode
+                                    Authentication.isLoggedIn = true;
+
                                     Authentication.name = accName;
 
                                     UserSubscriptions.switchAccounts();
