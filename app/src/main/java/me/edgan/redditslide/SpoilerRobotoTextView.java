@@ -1369,7 +1369,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         for (int i = matches.size() - 1; i >= 0; i--) {
             MatchPair match = matches.get(i);
             String url = builder.subSequence(match.start, match.end).toString();
-            
+
             if (isRedditPreviewImage(url)) {
                 // Set initial placeholder
                 ColorDrawable placeholder = new ColorDrawable(Color.LTGRAY);
@@ -1380,7 +1380,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                     match.end,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 );
-                
+
                 // Load the actual image
                 loadImageFromUrl(url, bitmap -> {
                     post(() -> {
@@ -1389,20 +1389,20 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                                 // Calculate dimensions maintaining aspect ratio
                                 int maxWidth = Math.min(getWidth() - getPaddingLeft() - getPaddingRight(), 500);
                                 int maxHeight = 300;  // Max height of 300dp
-                                
+
                                 float widthScale = (float) maxWidth / bitmap.getWidth();
                                 float heightScale = (float) maxHeight / bitmap.getHeight();
                                 float scale = Math.min(widthScale, heightScale);  // Use the smaller scale
-                                
+
                                 int scaledWidth = (int) (bitmap.getWidth() * scale);
                                 int scaledHeight = (int) (bitmap.getHeight() * scale);
-                                
+
                                 BitmapDrawable drawable = new BitmapDrawable(getResources(), bitmap);
                                 drawable.setBounds(0, 0, scaledWidth, scaledHeight);
-                                
+
                                 // Create new span with the loaded image
                                 ImageSpan newSpan = new ImageSpan(drawable);
-                                
+
                                 // Update the text
                                 if (getText() instanceof Spannable) {
                                     Spannable spannable = (Spannable) getText();
@@ -1416,10 +1416,10 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                                         match.end,
                                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                                     );
-                                    
+
                                     Log.d("SpoilerRobotoTextView", "Replaced placeholder with image: " + scaledWidth + "x" + scaledHeight);
                                 }
-                                
+
                                 invalidate();
                                 requestLayout();
                             } catch (Exception e) {
@@ -1444,7 +1444,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
                 connection.connect();
                 InputStream input = connection.getInputStream();
                 final Bitmap bitmap = BitmapFactory.decodeStream(input);
-                
+
                 if (bitmap != null) {
                     Log.d("SpoilerRobotoTextView", "Image loaded successfully, size: " + bitmap.getWidth() + "x" + bitmap.getHeight());
                     callback.onImageLoaded(bitmap);
