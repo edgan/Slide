@@ -3,6 +3,7 @@ package me.edgan.redditslide.Activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -40,6 +42,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Fragments.ContributionsView;
@@ -1036,7 +1039,10 @@ public class Profile extends BaseActivityAnim {
                                             "%d",
                                             account.getCommentKarma() + account.getLinkKarma()));
 
-                    new AlertDialog.Builder(Profile.this)
+                    final Context contextThemeWrapper = new ContextThemeWrapper(Profile.this,
+                            new ColorPreferences(Profile.this).getFontStyle().getBaseId());
+
+                    new MaterialAlertDialogBuilder(contextThemeWrapper)
                             .setOnDismissListener(
                                     dialogInterface -> {
                                         findViewById(R.id.header).setBackgroundColor(currentColor);

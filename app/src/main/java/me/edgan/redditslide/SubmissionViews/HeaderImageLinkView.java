@@ -77,6 +77,7 @@ public class HeaderImageLinkView extends RelativeLayout {
     private TextView title;
     private TextView info;
     public ImageView backdrop;
+    private boolean forceThumb;
 
     public HeaderImageLinkView(Context context) {
         super(context);
@@ -95,12 +96,8 @@ public class HeaderImageLinkView extends RelativeLayout {
 
     boolean thumbUsed;
 
-    public void doImageAndText(
-            final Submission submission, boolean full, String baseSub, boolean news) {
-
-        backdrop.setLayoutParams(
-                new RelativeLayout.LayoutParams(
-                        LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+    public void doImageAndText(final Submission submission, boolean full, String baseSub, boolean news) {
+        backdrop.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         boolean fullImage = ContentType.fullImage(type);
         thumbUsed = false;
@@ -121,68 +118,12 @@ public class HeaderImageLinkView extends RelativeLayout {
             thumbImage2.setVisibility(View.GONE);
         } else {
             if (submission.getThumbnails() != null) {
-
                 int height = submission.getThumbnails().getSource().getHeight();
                 int width = submission.getThumbnails().getSource().getWidth();
-
-                if (full) {
-                    if (!fullImage && height < dpToPx(50) && type != ContentType.Type.SELF) {
-                        forceThumb = true;
-                    } else if (SettingValues.cropImage) {
-                        backdrop.setLayoutParams(
-                                new RelativeLayout.LayoutParams(
-                                        LayoutParams.MATCH_PARENT, dpToPx(200)));
-                    } else {
-                        double h = getHeightFromAspectRatio(height, width);
-                        if (h != 0) {
-                            if (h > 3200) {
-                                backdrop.setLayoutParams(
-                                        new RelativeLayout.LayoutParams(
-                                                LayoutParams.MATCH_PARENT, 3200));
-                            } else {
-                                backdrop.setLayoutParams(
-                                        new RelativeLayout.LayoutParams(
-                                                LayoutParams.MATCH_PARENT, (int) h));
-                            }
-                        } else {
-                            backdrop.setLayoutParams(
-                                    new RelativeLayout.LayoutParams(
-                                            LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-                        }
-                    }
-                } else if (SettingValues.bigPicCropped) {
-                    if (!fullImage && height < dpToPx(50)) {
-                        forceThumb = true;
-                    } else {
-                        backdrop.setLayoutParams(
-                                new RelativeLayout.LayoutParams(
-                                        LayoutParams.MATCH_PARENT, dpToPx(200)));
-                    }
-                } else if (fullImage || height >= dpToPx(50)) {
-                    double h = getHeightFromAspectRatio(height, width);
-                    if (h != 0) {
-                        if (h > 3200) {
-                            backdrop.setLayoutParams(
-                                    new RelativeLayout.LayoutParams(
-                                            LayoutParams.MATCH_PARENT, 3200));
-                        } else {
-                            backdrop.setLayoutParams(
-                                    new RelativeLayout.LayoutParams(
-                                            LayoutParams.MATCH_PARENT, (int) h));
-                        }
-                    } else {
-                        backdrop.setLayoutParams(
-                                new RelativeLayout.LayoutParams(
-                                        LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-                    }
-                } else {
-                    forceThumb = true;
-                }
+                setBackdropLayoutParams(height, width, full, fullImage, type);
             } else if (type == ContentType.Type.REDDIT_GALLERY) {
                 if (full) {
-                    backdrop.setLayoutParams(
-                            new RelativeLayout.LayoutParams(
-                                    LayoutParams.MATCH_PARENT, dpToPx(200)));
+                    setFixedHeightLayoutParams(200);
                 }
             }
 
@@ -221,265 +162,24 @@ public class HeaderImageLinkView extends RelativeLayout {
                                     || baseSub.equals("all")
                                     || baseSub.contains("+")
                                     || baseSub.equals("popular")))) {
-                setVisibility(View.GONE);
-                if (!full || forceThumb) {
-                    thumbImage2.setVisibility(View.VISIBLE);
-                } else {
-                    wrapArea.setVisibility(View.VISIBLE);
-                }
-                if (submission.isSelfPost() && full) {
-                    wrapArea.setVisibility(View.GONE);
-                } else {
-                    thumbImage2.setImageDrawable(
-                            ContextCompat.getDrawable(getContext(), R.drawable.nsfw));
-                    thumbUsed = true;
-                }
-                loadedUrl = submission.getUrl();
+                handleSpecialSubmissionType(submission, full, forceThumb, R.drawable.nsfw);
             } else if (submission.getDataNode().get("spoiler").asBoolean()) {
-                setVisibility(View.GONE);
-                if (!full || forceThumb) {
-                    thumbImage2.setVisibility(View.VISIBLE);
-                } else {
-                    wrapArea.setVisibility(View.VISIBLE);
-                }
-                if (submission.isSelfPost() && full) {
-                    wrapArea.setVisibility(View.GONE);
-                } else {
-                    thumbImage2.setImageDrawable(
-                            ContextCompat.getDrawable(getContext(), R.drawable.spoiler));
-                    thumbUsed = true;
-                }
-                loadedUrl = submission.getUrl();
+                handleSpecialSubmissionType(submission, full, forceThumb, R.drawable.spoiler);
             } else if (type == ContentType.Type.GIF) {
-                JsonNode dataNode = submission.getDataNode();
-
-                url = submission.getUrl();
-                String redditPreviewUrl = null;
-
-                // Check for preview data
-                if (dataNode.has("preview")) {
-                    JsonNode previewNode = dataNode.get("preview").get("images");
-                    if (previewNode != null && previewNode.size() > 0) {
-                        JsonNode sourceNode = previewNode.get(0).get("source");
-                        if (sourceNode != null && sourceNode.has("url")) {
-                            redditPreviewUrl = sourceNode.get("url").asText();
-                        }
-                    }
-                }
-
-                // Use Reddit preview URL if available
-                if (redditPreviewUrl != null) {
-                    url = redditPreviewUrl;
-                } else if (dataNode.has("thumbnail")) {
-                    url = dataNode.get("thumbnail").asText();
-                }
-
-                // Load the URL
-                if (!full && !SettingValues.isPicsEnabled(baseSub)) {
-                    thumbImage2.setVisibility(View.VISIBLE);
-                    ((Reddit) getContext().getApplicationContext())
-                            .getImageLoader()
-                            .displayImage(url, thumbImage2);
-                    setVisibility(View.GONE);
-                } else {
-                    backdrop.setVisibility(View.VISIBLE);
-                    ((Reddit) getContext().getApplicationContext())
-                            .getImageLoader()
-                            .displayImage(url, backdrop);
-                    setVisibility(View.VISIBLE);
-                }
-                if (wrapArea != null) wrapArea.setVisibility(View.GONE);
+                handleGifType(submission, baseSub, full);
             } else if (type == ContentType.Type.REDDIT_GALLERY) {
-                JsonNode dataNode = submission.getDataNode();
-
-                // If this is a crosspost, we need to load the gallery data from the parent
-                // submission
-                if (dataNode.has("crosspost_parent_list")
-                        && dataNode.get("crosspost_parent_list").size() > 0) {
-                    dataNode = dataNode.get("crosspost_parent_list").get(0);
-                }
-
-                if (dataNode.has("gallery_data")) {
-                    JsonNode galleryData = dataNode.get("gallery_data");
-                    JsonNode mediaMetadata = dataNode.get("media_metadata");
-
-                    if (galleryData.has("items") && galleryData.get("items").size() > 0) {
-                        boolean allFailed = true;
-                        for (JsonNode item : galleryData.get("items")) {
-                            String mediaId = item.get("media_id").asText();
-                            if (mediaMetadata != null && mediaMetadata.has(mediaId)) {
-                                JsonNode mediaInfo = mediaMetadata.get(mediaId);
-                                if (!"failed".equals(mediaInfo.get("status").asText())) {
-                                    allFailed = false;
-                                    if (mediaInfo.has("p") && mediaInfo.get("p").size() > 0) {
-                                        url =
-                                                mediaInfo
-                                                        .get("p")
-                                                        .get(0)
-                                                        .get("u")
-                                                        .asText()
-                                                        .replace("preview", "i")
-                                                        .replaceAll("\\?.*", "");
-
-                                        // Handle the URL similar to regular images
-                                        if (!full && !SettingValues.isPicsEnabled(baseSub)
-                                                || forceThumb) {
-                                            if (!submission.isSelfPost() || full) {
-                                                if (!full && thumbImage2 != null) {
-                                                    thumbImage2.setVisibility(View.VISIBLE);
-                                                } else if (wrapArea != null) {
-                                                    wrapArea.setVisibility(View.VISIBLE);
-                                                }
-
-                                                loadedUrl = url;
-                                                if (!full) {
-                                                    ((Reddit) getContext().getApplicationContext())
-                                                            .getImageLoader()
-                                                            .displayImage(url, thumbImage2);
-                                                } else {
-                                                    ((Reddit) getContext().getApplicationContext())
-                                                            .getImageLoader()
-                                                            .displayImage(
-                                                                    url, thumbImage2, bigOptions);
-                                                }
-                                            } else if (thumbImage2 != null) {
-                                                thumbImage2.setVisibility(View.GONE);
-                                            }
-                                            setVisibility(View.GONE);
-                                        } else {
-                                            loadedUrl = url;
-                                            if (!full) {
-                                                ((Reddit) getContext().getApplicationContext())
-                                                        .getImageLoader()
-                                                        .displayImage(url, backdrop);
-                                            } else {
-                                                ((Reddit) getContext().getApplicationContext())
-                                                        .getImageLoader()
-                                                        .displayImage(url, backdrop, bigOptions);
-                                            }
-                                            setVisibility(View.VISIBLE);
-                                            if (!full && thumbImage2 != null) {
-                                                thumbImage2.setVisibility(View.GONE);
-                                            } else if (wrapArea != null) {
-                                                wrapArea.setVisibility(View.GONE);
-                                            }
-                                        }
-
-                                        // Dimension handling
-                                        if (mediaInfo.has("s")
-                                                && mediaInfo.get("s").has("x")
-                                                && mediaInfo.get("s").has("y")) {
-                                            int width = mediaInfo.get("s").get("x").asInt();
-                                            int height = mediaInfo.get("s").get("y").asInt();
-                                            double h = getHeightFromAspectRatio(height, width);
-                                            if (h > 0) {
-                                                backdrop.setLayoutParams(
-                                                        new RelativeLayout.LayoutParams(
-                                                                LayoutParams.MATCH_PARENT,
-                                                                (int) Math.min(h, 3200)));
-                                            }
-                                        }
-                                    }
-                                    break; // Break on the first valid image
-                                }
-                            }
-                        }
-
-                        if (allFailed) {
-                            // Handle the case where all media failed
-                            setVisibility(View.GONE);
-                            if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
-                            if (wrapArea != null) wrapArea.setVisibility(View.GONE);
-                        }
-                    } else {
-                        // Handle the case where gallery_data is missing or empty
-                        setVisibility(View.GONE);
-                        if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
-                        if (wrapArea != null) wrapArea.setVisibility(View.GONE);
-                    }
-                }
+                handleRedditGalleryType(submission, baseSub, full, forceThumb);
             } else if (type == ContentType.Type.VREDDIT_DIRECT || type == ContentType.Type.VREDDIT_REDIRECT) {
-                // Check if this is a crosspost
-                JsonNode dataNode = submission.getDataNode();
-                String previewUrl = null;
-
-                // If this is a crosspost, check the parent submission for preview data
-                if (dataNode.has("crosspost_parent_list") && dataNode.get("crosspost_parent_list").size() > 0) {
-                    JsonNode parentNode = dataNode.get("crosspost_parent_list").get(0);
-                    if (parentNode.has("preview") &&
-                        parentNode.get("preview").has("images") &&
-                        parentNode.get("preview").get("images").size() > 0) {
-
-                        previewUrl = parentNode.get("preview")
-                                .get("images")
-                                .get(0)
-                                .get("source")
-                                .get("url")
-                                .asText();
-                    }
-                }
-                // Also check the current submission for preview data as fallback
-                if (previewUrl == null && dataNode.has("preview") &&
-                    dataNode.get("preview").has("images") &&
-                    dataNode.get("preview").get("images").size() > 0) {
-
-                    previewUrl = dataNode.get("preview")
-                            .get("images")
-                            .get(0)
-                            .get("source")
-                            .get("url")
-                            .asText();
-                }
-
-                if (previewUrl != null) {
-                    // Handle the preview URL similar to regular images
-                    if (!full && !SettingValues.isPicsEnabled(baseSub) || forceThumb) {
-                        if (!submission.isSelfPost() || full) {
-                            if (!full) {
-                                thumbImage2.setVisibility(View.VISIBLE);
-                            } else {
-                                wrapArea.setVisibility(View.VISIBLE);
-                            }
-
-                            loadedUrl = previewUrl;
-                            if (!full) {
-                                ((Reddit) getContext().getApplicationContext())
-                                        .getImageLoader()
-                                        .displayImage(previewUrl, thumbImage2);
-                            } else {
-                                ((Reddit) getContext().getApplicationContext())
-                                        .getImageLoader()
-                                        .displayImage(previewUrl, thumbImage2, bigOptions);
-                            }
-                        } else {
-                            thumbImage2.setVisibility(View.GONE);
-                        }
-                        setVisibility(View.GONE);
-                    } else {
-                        loadedUrl = previewUrl;
-                        if (!full) {
-                            ((Reddit) getContext().getApplicationContext())
-                                    .getImageLoader()
-                                    .displayImage(previewUrl, backdrop);
-                        } else {
-                            ((Reddit) getContext().getApplicationContext())
-                                    .getImageLoader()
-                                    .displayImage(previewUrl, backdrop, bigOptions);
-                        }
-                        setVisibility(View.VISIBLE);
-                        if (!full) {
-                            thumbImage2.setVisibility(View.GONE);
-                        } else {
-                            wrapArea.setVisibility(View.GONE);
-                        }
-                    }
-                }
+                handleVRedditType(submission, baseSub, full, forceThumb);
+            } else if (type == ContentType.Type.TUMBLR) {
+                handleTumblrType(submission, full);
+            } else if (type == ContentType.Type.REDDIT) {
+                handleRedditType(submission, full);
             } else if (type != ContentType.Type.IMAGE
                             && type != ContentType.Type.SELF
                             && (!thumbnail.isNull()
                                     && (thumbnailType != Submission.ThumbnailType.URL))
                     || thumbnail.asText().isEmpty() && !submission.isSelfPost()) {
-
                 setVisibility(View.GONE);
                 if (!full) {
                     thumbImage2.setVisibility(View.VISIBLE);
@@ -494,229 +194,17 @@ public class HeaderImageLinkView extends RelativeLayout {
             } else if (type == ContentType.Type.IMAGE
                     && !thumbnail.isNull()
                     && !thumbnail.asText().isEmpty()) {
-                if (loadLq
-                        && submission.getThumbnails() != null
-                        && submission.getThumbnails().getVariations() != null
-                        && submission.getThumbnails().getVariations().length > 0) {
-
-                    if (ContentType.isImgurImage(submission.getUrl())) {
-                        url = submission.getUrl();
-                        url =
-                                url.substring(0, url.lastIndexOf("."))
-                                        + (SettingValues.lqLow
-                                                ? "m"
-                                                : (SettingValues.lqMid ? "l" : "h"))
-                                        + url.substring(url.lastIndexOf("."));
-                    } else {
-                        int length = submission.getThumbnails().getVariations().length;
-                        if (SettingValues.lqLow && length >= 3) {
-                            url =
-                                    CompatUtil.fromHtml(
-                                                    submission
-                                                            .getThumbnails()
-                                                            .getVariations()[2]
-                                                            .getUrl())
-                                            .toString(); // unescape url characters
-                        } else if (SettingValues.lqMid && length >= 4) {
-                            url =
-                                    CompatUtil.fromHtml(
-                                                    submission
-                                                            .getThumbnails()
-                                                            .getVariations()[3]
-                                                            .getUrl())
-                                            .toString(); // unescape url characters
-                        } else if (length >= 5) {
-                            url =
-                                    CompatUtil.fromHtml(
-                                                    submission
-                                                            .getThumbnails()
-                                                            .getVariations()[length - 1]
-                                                            .getUrl())
-                                            .toString(); // unescape url characters
-                        } else {
-                            url =
-                                    CompatUtil.fromHtml(
-                                                    submission.getThumbnails().getSource().getUrl())
-                                            .toString(); // unescape url characters
-                        }
-                    }
-                    lq = true;
-
-                } else {
-                    if (submission.getDataNode().has("preview")
-                            && submission
-                                    .getDataNode()
-                                    .get("preview")
-                                    .get("images")
-                                    .get(0)
-                                    .get("source")
-                                    .has("height")) { // Load the preview image which has
-                        // probably already been cached in memory
-                        // instead of the direct link
-                        url =
-                                submission
-                                        .getDataNode()
-                                        .get("preview")
-                                        .get("images")
-                                        .get(0)
-                                        .get("source")
-                                        .get("url")
-                                        .asText();
-                    } else {
-                        url = submission.getUrl();
-                    }
-                }
-
-                if (!full && !SettingValues.isPicsEnabled(baseSub) || forceThumb) {
-
-                    if (!submission.isSelfPost() || full) {
-                        if (!full) {
-                            thumbImage2.setVisibility(View.VISIBLE);
-                        } else {
-                            wrapArea.setVisibility(View.VISIBLE);
-                        }
-
-                        loadedUrl = url;
-                        if (!full) {
-                            ((Reddit) getContext().getApplicationContext())
-                                    .getImageLoader()
-                                    .displayImage(url, thumbImage2);
-                        } else {
-                            ((Reddit) getContext().getApplicationContext())
-                                    .getImageLoader()
-                                    .displayImage(url, thumbImage2, bigOptions);
-                        }
-                    } else {
-                        thumbImage2.setVisibility(View.GONE);
-                    }
-                    setVisibility(View.GONE);
-
-                } else {
-                    loadedUrl = url;
-                    if (!full) {
-                        ((Reddit) getContext().getApplicationContext())
-                                .getImageLoader()
-                                .displayImage(url, backdrop);
-                    } else {
-                        ((Reddit) getContext().getApplicationContext())
-                                .getImageLoader()
-                                .displayImage(url, backdrop, bigOptions);
-                    }
-                    setVisibility(View.VISIBLE);
-                    if (!full) {
-                        thumbImage2.setVisibility(View.GONE);
-                    } else {
-                        wrapArea.setVisibility(View.GONE);
-                    }
-                }
+                handleImageType(submission, baseSub, full, forceThumb, loadLq);
             } else if (submission.getThumbnails() != null) {
-
-                if (loadLq && submission.getThumbnails().getVariations().length != 0) {
-                    if (ContentType.isImgurImage(submission.getUrl())) {
-                        url = submission.getUrl();
-                        url =
-                                url.substring(0, url.lastIndexOf("."))
-                                        + (SettingValues.lqLow
-                                                ? "m"
-                                                : (SettingValues.lqMid ? "l" : "h"))
-                                        + url.substring(url.lastIndexOf("."));
-                    } else {
-                        int length = submission.getThumbnails().getVariations().length;
-                        if (SettingValues.lqLow && length >= 3) {
-                            url =
-                                    CompatUtil.fromHtml(
-                                                    submission
-                                                            .getThumbnails()
-                                                            .getVariations()[2]
-                                                            .getUrl())
-                                            .toString(); // unescape url characters
-                        } else if (SettingValues.lqMid && length >= 4) {
-                            url =
-                                    CompatUtil.fromHtml(
-                                                    submission
-                                                            .getThumbnails()
-                                                            .getVariations()[3]
-                                                            .getUrl())
-                                            .toString(); // unescape url characters
-                        } else if (length >= 5) {
-                            url =
-                                    CompatUtil.fromHtml(
-                                                    submission
-                                                            .getThumbnails()
-                                                            .getVariations()[length - 1]
-                                                            .getUrl())
-                                            .toString(); // unescape url characters
-                        } else {
-                            url =
-                                    CompatUtil.fromHtml(
-                                                    submission.getThumbnails().getSource().getUrl())
-                                            .toString(); // unescape url characters
-                        }
-                    }
-                    lq = true;
-
-                } else {
-                    url =
-                            CompatUtil.fromHtml(
-                                            submission
-                                                            .getThumbnails()
-                                                            .getSource()
-                                                            .getUrl()
-                                                            .isEmpty()
-                                                    ? submission.getThumbnail()
-                                                    : submission
-                                                            .getThumbnails()
-                                                            .getSource()
-                                                            .getUrl())
-                                    .toString(); // unescape url characters
-                }
-                if (!SettingValues.isPicsEnabled(baseSub) && !full
-                        || forceThumb
-                        || (news && submission.getScore() < 5000)) {
-
-                    if (!full) {
-                        thumbImage2.setVisibility(View.VISIBLE);
-                    } else {
-                        wrapArea.setVisibility(View.VISIBLE);
-                    }
-                    loadedUrl = url;
-                    ((Reddit) getContext().getApplicationContext())
-                            .getImageLoader()
-                            .displayImage(url, thumbImage2);
-                    setVisibility(View.GONE);
-
-                } else {
-                    loadedUrl = url;
-
-                    if (!full) {
-                        ((Reddit) getContext().getApplicationContext())
-                                .getImageLoader()
-                                .displayImage(url, backdrop);
-                    } else {
-                        ((Reddit) getContext().getApplicationContext())
-                                .getImageLoader()
-                                .displayImage(url, backdrop, bigOptions);
-                    }
-                    setVisibility(View.VISIBLE);
-                    if (!full) {
-                        thumbImage2.setVisibility(View.GONE);
-                    } else {
-                        wrapArea.setVisibility(View.GONE);
-                    }
-                }
+                handleThumbnailDisplay(submission, full, forceThumb, loadLq, baseSub, news);
             } else if (!thumbnail.isNull()
                     && submission.getThumbnail() != null
                     && (submission.getThumbnailType() == Submission.ThumbnailType.URL
                             || (!thumbnail.isNull()
                                     && submission.isNsfw()
                                     && SettingValues.getIsNSFWEnabled()))) {
-
-                url = submission.getThumbnail();
-                if (!full) {
-                    thumbImage2.setVisibility(View.VISIBLE);
-                } else {
-                    wrapArea.setVisibility(View.VISIBLE);
-                }
+                        url = submission.getThumbnail();
+                setThumbAndWrapVisibility(full, true);
                 loadedUrl = url;
 
                 ((Reddit) getContext().getApplicationContext())
@@ -725,43 +213,11 @@ public class HeaderImageLinkView extends RelativeLayout {
                 setVisibility(View.GONE);
 
             } else {
-
-                if (!full) {
-                    thumbImage2.setVisibility(View.GONE);
-                } else {
-                    wrapArea.setVisibility(View.GONE);
-                }
+                setThumbAndWrapVisibility(full, false);
                 setVisibility(View.GONE);
             }
 
-            if (full) {
-                if (wrapArea.getVisibility() == View.VISIBLE) {
-                    title = secondTitle;
-                    info = secondSubTitle;
-                    setBottomSheet(wrapArea, submission, full);
-                } else {
-                    title = findViewById(R.id.textimage);
-                    info = findViewById(R.id.subtextimage);
-                    if (forceThumb
-                            || (submission.isNsfw()
-                                            && submission.getThumbnailType()
-                                                    == Submission.ThumbnailType.NSFW
-                                    || type != ContentType.Type.IMAGE
-                                            && type != ContentType.Type.SELF
-                                            && !submission.getDataNode().get("thumbnail").isNull()
-                                            && (submission.getThumbnailType()
-                                                    != Submission.ThumbnailType.URL))) {
-                        setBottomSheet(thumbImage2, submission, full);
-                    } else {
-                        setBottomSheet(this, submission, full);
-                    }
-                }
-            } else {
-                title = findViewById(R.id.textimage);
-                info = findViewById(R.id.subtextimage);
-                setBottomSheet(thumbImage2, submission, full);
-                setBottomSheet(this, submission, full);
-            }
+            setupTitleAndBottomSheet(submission, full, forceThumb, type);
 
             if (SettingValues.smallTag && !full && !news) {
                 title = findViewById(R.id.tag);
@@ -1061,5 +517,470 @@ public class HeaderImageLinkView extends RelativeLayout {
         this.title = findViewById(R.id.textimage);
         this.info = findViewById(R.id.subtextimage);
         this.backdrop = findViewById(R.id.leadimage);
+    }
+
+    private void handleGifType(Submission submission, String baseSub, boolean full) {
+        JsonNode dataNode = submission.getDataNode();
+        String url = submission.getUrl();
+        String redditPreviewUrl = null;
+
+        // Check for preview data
+        if (dataNode.has("preview")) {
+            JsonNode previewNode = dataNode.get("preview").get("images");
+            if (previewNode != null && previewNode.size() > 0) {
+                JsonNode sourceNode = previewNode.get(0).get("source");
+                if (sourceNode != null && sourceNode.has("url")) {
+                    redditPreviewUrl = sourceNode.get("url").asText();
+                }
+            }
+        }
+
+        // Use Reddit preview URL if available
+        if (redditPreviewUrl != null) {
+            url = redditPreviewUrl;
+        } else if (dataNode.has("thumbnail")) {
+            url = dataNode.get("thumbnail").asText();
+        }
+
+        // Load the URL
+        if (!full && !SettingValues.isPicsEnabled(baseSub)) {
+            thumbImage2.setVisibility(View.VISIBLE);
+            ((Reddit) getContext().getApplicationContext())
+                    .getImageLoader()
+                    .displayImage(url, thumbImage2);
+            setVisibility(View.GONE);
+        } else {
+            backdrop.setVisibility(View.VISIBLE);
+            ((Reddit) getContext().getApplicationContext())
+                    .getImageLoader()
+                    .displayImage(url, backdrop);
+            setVisibility(View.VISIBLE);
+        }
+        if (wrapArea != null) wrapArea.setVisibility(View.GONE);
+    }
+
+    private void handleRedditGalleryType(Submission submission, String baseSub, boolean full, boolean forceThumb) {
+        JsonNode dataNode = submission.getDataNode();
+
+        // If this is a crosspost, we need to load the gallery data from the parent submission
+        if (dataNode.has("crosspost_parent_list") && dataNode.get("crosspost_parent_list").size() > 0) {
+            dataNode = dataNode.get("crosspost_parent_list").get(0);
+        }
+
+        if (dataNode.has("gallery_data")) {
+            handleGalleryData(dataNode, submission, baseSub, full, forceThumb);
+        }
+    }
+
+    private void handleVRedditType(Submission submission, String baseSub, boolean full, boolean forceThumb) {
+        JsonNode dataNode = submission.getDataNode();
+        String previewUrl = getPreviewUrl(dataNode);
+
+        if (previewUrl != null) {
+            handlePreviewImage(previewUrl, submission, baseSub, full, forceThumb);
+        }
+    }
+
+    private void handleTumblrType(Submission submission, boolean full) {
+        JsonNode dataNode = submission.getDataNode();
+        String previewUrl = getPreviewUrl(dataNode);
+
+        if (previewUrl != null) {
+            handleFullPreviewImage(previewUrl, full);
+        }
+    }
+
+    private void handleRedditType(Submission submission, boolean full) {
+        if (submission != null && submission.getUrl() != null && submission.getUrl().contains("/comment/")) {
+            setVisibility(View.GONE);
+            thumbImage2.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        JsonNode dataNode = submission.getDataNode();
+        String previewUrl = getPreviewUrl(dataNode);
+
+        if (previewUrl != null) {
+            handleFullPreviewImage(previewUrl, full);
+        }
+    }
+
+    private String getPreviewUrl(JsonNode dataNode) {
+        String previewUrl = null;
+
+        // Check crosspost parent first
+        if (dataNode.has("crosspost_parent_list") && dataNode.get("crosspost_parent_list").size() > 0) {
+            JsonNode parentNode = dataNode.get("crosspost_parent_list").get(0);
+            previewUrl = extractPreviewUrl(parentNode);
+        }
+        // Fallback to current submission preview
+        if (previewUrl == null) {
+            previewUrl = extractPreviewUrl(dataNode);
+        }
+        return previewUrl;
+    }
+
+    private String extractPreviewUrl(JsonNode node) {
+        if (node.has("preview") &&
+            node.get("preview").has("images") &&
+            node.get("preview").get("images").size() > 0) {
+
+            return node.get("preview")
+                    .get("images")
+                    .get(0)
+                    .get("source")
+                    .get("url")
+                    .asText();
+        }
+        return null;
+    }
+
+    private void handlePreviewImage(String previewUrl, Submission submission, String baseSub, boolean full, boolean forceThumb) {
+        if (!full && !SettingValues.isPicsEnabled(baseSub) || forceThumb) {
+            if (!submission.isSelfPost() || full) {
+                if (!full) {
+                    thumbImage2.setVisibility(View.VISIBLE);
+                } else {
+                    wrapArea.setVisibility(View.VISIBLE);
+                }
+                loadedUrl = previewUrl;
+                displayImage(previewUrl, thumbImage2, full);
+            } else {
+                thumbImage2.setVisibility(View.GONE);
+            }
+            setVisibility(View.GONE);
+        } else {
+            handleFullPreviewImage(previewUrl, full);
+        }
+    }
+
+    private void handleFullPreviewImage(String previewUrl, boolean full) {
+        loadedUrl = previewUrl;
+        displayImage(previewUrl, backdrop, full);
+        setVisibility(View.VISIBLE);
+        if (!full) {
+            thumbImage2.setVisibility(View.GONE);
+        } else {
+            wrapArea.setVisibility(View.GONE);
+        }
+    }
+
+    private void displayImage(String url, ImageView target, boolean full) {
+        if (!full) {
+            ((Reddit) getContext().getApplicationContext())
+                    .getImageLoader()
+                    .displayImage(url, target);
+        } else {
+            ((Reddit) getContext().getApplicationContext())
+                    .getImageLoader()
+                    .displayImage(url, target, bigOptions);
+        }
+    }
+
+    private void handleImageType(Submission submission, String baseSub, boolean full, boolean forceThumb, boolean loadLq) {
+        String url = "";
+        boolean lq = false;
+
+        if (loadLq && submission.getThumbnails() != null && submission.getThumbnails().getVariations().length > 0) {
+            url = getLowQualityUrl(submission);
+            lq = true;
+        } else {
+            url = getHighQualityUrl(submission);
+        }
+
+        if (!full && !SettingValues.isPicsEnabled(baseSub) || forceThumb) {
+            if (!submission.isSelfPost() || full) {
+                if (!full) {
+                    thumbImage2.setVisibility(View.VISIBLE);
+                } else {
+                    wrapArea.setVisibility(View.VISIBLE);
+                }
+
+                loadedUrl = url;
+                displayImage(url, thumbImage2, full);
+            } else {
+                thumbImage2.setVisibility(View.GONE);
+            }
+            setVisibility(View.GONE);
+        } else {
+            loadedUrl = url;
+            displayImage(url, backdrop, full);
+            setVisibility(View.VISIBLE);
+            if (!full) {
+                thumbImage2.setVisibility(View.GONE);
+            } else {
+                wrapArea.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private String getThumbnailVariationUrl(Submission submission, int index) {
+        return CompatUtil.fromHtml(
+                submission.getThumbnails().getVariations()[index].getUrl()
+        ).toString(); // unescape url characters
+    }
+
+    private String getLowQualityUrl(Submission submission) {
+        if (ContentType.isImgurImage(submission.getUrl())) {
+            String url = submission.getUrl();
+            return url.substring(0, url.lastIndexOf("."))
+                    + (SettingValues.lqLow ? "m" : (SettingValues.lqMid ? "l" : "h"))
+                    + url.substring(url.lastIndexOf("."));
+        } else {
+            int length = submission.getThumbnails().getVariations().length;
+            if (SettingValues.lqLow && length >= 3) {
+                return getThumbnailVariationUrl(submission, 2);
+            } else if (SettingValues.lqMid && length >= 4) {
+                return getThumbnailVariationUrl(submission, 3);
+            } else if (length >= 5) {
+                return getThumbnailVariationUrl(submission, length - 1);
+            } else {
+                return CompatUtil.fromHtml(submission.getThumbnails().getSource().getUrl()).toString();
+            }
+        }
+    }
+
+    private String getHighQualityUrl(Submission submission) {
+        if (submission.getDataNode().has("preview")
+                && submission.getDataNode().get("preview").get("images").get(0).get("source").has("height")) {
+            return submission.getDataNode().get("preview").get("images").get(0).get("source").get("url").asText();
+        } else {
+            String sourceUrl = submission.getThumbnails().getSource().getUrl();
+            return CompatUtil.fromHtml(
+                    sourceUrl.isEmpty() ? submission.getThumbnail() : sourceUrl
+            ).toString();
+        }
+    }
+
+    private boolean setBackdropLayoutParams(int height, int width, boolean full, boolean fullImage, ContentType.Type type) {
+        if (full) {
+            if (!fullImage && height < dpToPx(50) && type != ContentType.Type.SELF) {
+                return true;
+            } else if (SettingValues.cropImage) {
+                setFixedHeightLayoutParams(200);
+            } else {
+                setAspectRatioLayoutParams(height, width);
+            }
+        } else if (SettingValues.bigPicCropped) {
+            if (!fullImage && height < dpToPx(50)) {
+                return true;
+            } else {
+                setFixedHeightLayoutParams(200);
+            }
+        } else if (fullImage || height >= dpToPx(50)) {
+            setAspectRatioLayoutParams(height, width);
+        } else {
+            return true;
+        }
+        return false;
+    }
+
+    private void setFixedHeightLayoutParams(int heightDp) {
+        backdrop.setLayoutParams(
+                new RelativeLayout.LayoutParams(
+                        LayoutParams.MATCH_PARENT, dpToPx(heightDp)));
+    }
+
+    private void setAspectRatioLayoutParams(int height, int width) {
+        double h = getHeightFromAspectRatio(height, width);
+        if (h != 0) {
+            if (h > 3200) {
+                backdrop.setLayoutParams(
+                        new RelativeLayout.LayoutParams(
+                                LayoutParams.MATCH_PARENT, 3200));
+            } else {
+                backdrop.setLayoutParams(
+                        new RelativeLayout.LayoutParams(
+                                LayoutParams.MATCH_PARENT, (int) h));
+            }
+        } else {
+            backdrop.setLayoutParams(
+                    new RelativeLayout.LayoutParams(
+                            LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        }
+    }
+
+    private void handleThumbnailDisplay(Submission submission, boolean full, boolean forceThumb,
+            boolean loadLq, String baseSub, boolean news) {
+        String url = getSubmissionUrl(submission, loadLq);
+        boolean shouldShowThumb = !SettingValues.isPicsEnabled(baseSub) && !full
+                || forceThumb
+                || (news && submission.getScore() < 5000);
+
+        if (shouldShowThumb) {
+            displayThumbnail(url, full);
+        } else {
+            displayFullImage(url, full);
+        }
+    }
+
+    private String getSubmissionUrl(Submission submission, boolean loadLq) {
+        if (loadLq && submission.getThumbnails().getVariations().length != 0) {
+            if (ContentType.isImgurImage(submission.getUrl())) {
+                return getImgurLowQualityUrl(submission.getUrl());
+            } else {
+                return getLowQualityVariationUrl(submission);
+            }
+        } else {
+            return getHighQualityUrl(submission);
+        }
+    }
+
+    private String getImgurLowQualityUrl(String url) {
+        return url.substring(0, url.lastIndexOf("."))
+                + (SettingValues.lqLow ? "m" : (SettingValues.lqMid ? "l" : "h"))
+                + url.substring(url.lastIndexOf("."));
+    }
+
+    private String getLowQualityVariationUrl(Submission submission) {
+        int length = submission.getThumbnails().getVariations().length;
+        if (SettingValues.lqLow && length >= 3) {
+            return getThumbnailVariationUrl(submission, 2);
+        } else if (SettingValues.lqMid && length >= 4) {
+            return getThumbnailVariationUrl(submission, 3);
+        } else if (length >= 5) {
+            return getThumbnailVariationUrl(submission, length - 1);
+        } else {
+            return CompatUtil.fromHtml(submission.getThumbnails().getSource().getUrl()).toString();
+        }
+    }
+
+    private void displayThumbnail(String url, boolean full) {
+        if (!full) {
+            thumbImage2.setVisibility(View.VISIBLE);
+        } else {
+            wrapArea.setVisibility(View.VISIBLE);
+        }
+        loadedUrl = url;
+        ((Reddit) getContext().getApplicationContext())
+                .getImageLoader()
+                .displayImage(url, thumbImage2);
+        setVisibility(View.GONE);
+    }
+
+    private void displayFullImage(String url, boolean full) {
+        loadedUrl = url;
+        if (!full) {
+            ((Reddit) getContext().getApplicationContext())
+                    .getImageLoader()
+                    .displayImage(url, backdrop);
+        } else {
+            ((Reddit) getContext().getApplicationContext())
+                    .getImageLoader()
+                    .displayImage(url, backdrop, bigOptions);
+        }
+        setVisibility(View.VISIBLE);
+        if (!full) {
+            thumbImage2.setVisibility(View.GONE);
+        } else {
+            wrapArea.setVisibility(View.GONE);
+        }
+    }
+
+    private void handleSpecialSubmissionType(Submission submission, boolean full, boolean forceThumb, int drawableResId) {
+        setVisibility(View.GONE);
+        if (!full || forceThumb) {
+            thumbImage2.setVisibility(View.VISIBLE);
+        } else {
+            wrapArea.setVisibility(View.VISIBLE);
+        }
+
+        if (submission.isSelfPost() && full) {
+            wrapArea.setVisibility(View.GONE);
+        } else {
+            thumbImage2.setImageDrawable(
+                    ContextCompat.getDrawable(getContext(), drawableResId));
+            thumbUsed = true;
+        }
+        loadedUrl = submission.getUrl();
+    }
+
+    private void setupTitleAndBottomSheet(Submission submission, boolean full, boolean forceThumb, ContentType.Type type) {
+        if (full) {
+            setupFullView(submission, full, forceThumb, type);
+        } else {
+            setupCompactView(submission, full);
+        }
+    }
+
+    private void setupFullView(Submission submission, boolean full, boolean forceThumb, ContentType.Type type) {
+        if (wrapArea.getVisibility() == View.VISIBLE) {
+            title = secondTitle;
+            info = secondSubTitle;
+            setBottomSheet(wrapArea, submission, full);
+        } else {
+            setupDefaultTitleAndInfo();
+            View targetView = determineBottomSheetTarget(submission, forceThumb, type);
+            setBottomSheet(targetView, submission, full);
+        }
+    }
+
+    private void setupCompactView(Submission submission, boolean full) {
+        setupDefaultTitleAndInfo();
+        setBottomSheet(thumbImage2, submission, full);
+        setBottomSheet(this, submission, full);
+    }
+
+    private void setupDefaultTitleAndInfo() {
+        title = findViewById(R.id.textimage);
+        info = findViewById(R.id.subtextimage);
+    }
+
+    private View determineBottomSheetTarget(Submission submission, boolean forceThumb, ContentType.Type type) {
+        boolean useThumb = forceThumb
+                || (submission.isNsfw()
+                        && submission.getThumbnailType() == Submission.ThumbnailType.NSFW
+                        || type != ContentType.Type.IMAGE
+                        && type != ContentType.Type.SELF
+                        && !submission.getDataNode().get("thumbnail").isNull()
+                        && (submission.getThumbnailType() != Submission.ThumbnailType.URL));
+
+        return useThumb ? thumbImage2 : this;
+    }
+
+    private void setThumbAndWrapVisibility(boolean full, boolean visible) {
+        if (!full) {
+            thumbImage2.setVisibility(visible ? View.VISIBLE : View.GONE);
+        } else {
+            wrapArea.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void handleGalleryData(JsonNode dataNode, Submission submission, String baseSub, boolean full, boolean forceThumb) {
+        JsonNode galleryData = dataNode.get("gallery_data");
+        JsonNode mediaMetadata = dataNode.get("media_metadata");
+
+        if (galleryData.has("items") && galleryData.get("items").size() > 0) {
+            boolean allFailed = true;
+            for (JsonNode item : galleryData.get("items")) {
+                String mediaId = item.get("media_id").asText();
+                if (mediaMetadata != null && mediaMetadata.has(mediaId)) {
+                    JsonNode mediaInfo = mediaMetadata.get(mediaId);
+                    if (!"failed".equals(mediaInfo.get("status").asText())) {
+                        allFailed = false;
+                        if (mediaInfo.has("p") && mediaInfo.get("p").size() > 0) {
+                            String url = mediaInfo.get("p").get(0).get("u").asText()
+                                    .replace("preview", "i")
+                                    .replaceAll("\\?.*", "");
+
+                            handlePreviewImage(url, submission, baseSub, full, forceThumb);
+                            break;  // Only handle the first image
+                        }
+                    }
+                }
+            }
+
+            if (allFailed) {
+                // Handle the case where all media failed
+                setVisibility(View.GONE);
+                if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
+                if (wrapArea != null) wrapArea.setVisibility(View.GONE);
+            }
+        } else {
+            // Handle the case where gallery_data is missing or empty
+            setVisibility(View.GONE);
+            if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
+            if (wrapArea != null) wrapArea.setVisibility(View.GONE);
+        }
     }
 }

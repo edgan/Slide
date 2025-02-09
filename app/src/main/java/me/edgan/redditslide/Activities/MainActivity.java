@@ -349,7 +349,10 @@ public class MainActivity extends BaseActivity
         } else if (SettingValues.backButtonBehavior
                 == Constants.BackButtonBehaviorOptions.ConfirmExit.getValue()) {
 
-            new AlertDialog.Builder(MainActivity.this)
+            final Context contextThemeWrapper = new ContextThemeWrapper(MainActivity.this,
+                    new ColorPreferences(MainActivity.this).getFontStyle().getBaseId());
+
+            new MaterialAlertDialogBuilder(contextThemeWrapper)
                     .setTitle(R.string.general_confirm_exit)
                     .setMessage(R.string.general_confirm_exit_msg)
                     .setPositiveButton(R.string.btn_yes, (dialog, which) -> finish())
@@ -802,7 +805,10 @@ public class MainActivity extends BaseActivity
 
         boolean first = false;
         if (Reddit.colors != null && !Reddit.colors.contains("firstStart53")) {
-            new AlertDialog.Builder(this)
+            final Context contextThemeWrapper = new ContextThemeWrapper(this,
+                    new ColorPreferences(this).getFontStyle().getBaseId());
+
+            new MaterialAlertDialogBuilder(contextThemeWrapper)
                     .setTitle("Content settings have moved!")
                     .setMessage(
                             "NSFW content is now disabled by default. If you are over the age of"
@@ -1540,7 +1546,10 @@ public class MainActivity extends BaseActivity
                                     @Override
                                     public void onClick(View v) {
 
-                                        new AlertDialog.Builder(MainActivity.this)
+                                        final Context contextThemeWrapper = new ContextThemeWrapper(MainActivity.this,
+                                                new ColorPreferences(MainActivity.this).getFontStyle().getBaseId());
+
+                                        new MaterialAlertDialogBuilder(contextThemeWrapper)
                                                 .setTitle(R.string.profile_remove)
                                                 .setMessage(R.string.profile_remove_account)
                                                 .setNegativeButton(
