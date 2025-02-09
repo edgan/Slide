@@ -673,16 +673,22 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                     });
         }
 
-        // FAB multi choice//
+        // FAB multi-choice
         final RelativeLayout fabLayout = context.findViewById(R.id.settings_general_fab);
         final TextView currentFabView = context.findViewById(R.id.settings_general_fab_current);
         if (currentFabView != null && fabLayout != null) {
-            currentFabView.setText(
-                    SettingValues.fab
-                            ? SettingValues.fabType == FAB_DISMISS
-                                    ? context.getString(R.string.fab_hide)
-                                    : context.getString(R.string.fab_create)
-                            : context.getString(R.string.fab_disabled));
+            // Update the text based on the current settings
+            if (SettingValues.fab) {
+                if (SettingValues.fabType == FAB_DISMISS) {
+                    currentFabView.setText(R.string.fab_hide);
+                } else if (SettingValues.fabType == FAB_POST) {
+                    currentFabView.setText(R.string.fab_create);
+                } else if (SettingValues.fabType == FAB_SEARCH) {
+                    currentFabView.setText(R.string.fab_search);
+                }
+            } else {
+                currentFabView.setText(R.string.fab_disabled);
+            }
 
             fabLayout.setOnClickListener(
                     v -> {
