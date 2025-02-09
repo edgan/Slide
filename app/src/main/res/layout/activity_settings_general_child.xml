@@ -15,18 +15,13 @@
         android:paddingTop="16dp"
         android:text="Reddit Client ID"
         android:tag="label"
-        android:textColor="?attr/colorAccent" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.25dp"
-        android:alpha=".25"
-        android:background="?attr/tintColor" />
+        android:textColor="?attr/colorAccent"
+        android:paddingBottom="8dp" />
 
     <RelativeLayout
         android:id="@+id/settings_general_client_id"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -53,7 +48,8 @@
                 android:alpha=".86"
                 android:text="Click to set custom client ID"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -61,12 +57,13 @@
         android:layout_width="match_parent"
         android:layout_height="0.25dp"
         android:alpha=".25"
-        android:background="?attr/tintColor" />
+        android:background="?attr/tintColor"
+        android:layout_marginTop="8dp" />
 
     <RelativeLayout
         android:id="@+id/settings_general_client_id_active"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingEnd="16dp"
@@ -91,7 +88,8 @@
                 android:layout_height="wrap_content"
                 android:alpha=".86"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -105,12 +103,13 @@
         android:paddingTop="16dp"
         android:text="@string/storage"
         android:tag="label"
-        android:textColor="?attr/colorAccent" />
+        android:textColor="?attr/colorAccent"
+        android:paddingBottom="8dp" />
 
     <RelativeLayout
         android:id="@+id/settings_general_set_save_location"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -139,7 +138,9 @@
                 android:layout_height="wrap_content"
                 android:alpha=".86"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
+
         </LinearLayout>
     </RelativeLayout>
 
@@ -153,12 +154,13 @@
         android:paddingTop="16dp"
         android:text="@string/display"
         android:tag="label"
-        android:textColor="?attr/colorAccent" />
+        android:textColor="?attr/colorAccent"
+        android:paddingBottom="8dp" />
 
     <RelativeLayout
         android:id="@+id/settings_general_viewtype"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -176,7 +178,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/settings_view_type"
                 android:textColor="?attr/fontColor"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:paddingBottom="8dp" />
+
         </LinearLayout>
     </RelativeLayout>
 
@@ -188,7 +192,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -216,7 +220,8 @@
                 android:alpha=".86"
                 android:text="@string/settings_general_expanded_toolbar_desc"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -242,7 +247,7 @@
     <RelativeLayout
         android:id="@+id/settings_general_fab"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -268,7 +273,9 @@
                 android:layout_height="wrap_content"
                 android:alpha=".86"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
+
         </LinearLayout>
     </RelativeLayout>
 
@@ -280,7 +287,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -308,7 +315,8 @@
                 android:alpha=".86"
                 android:text="@string/settings_always_show_floating_action_button_desc"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -334,7 +342,7 @@
     <RelativeLayout
         android:id="@+id/settings_general_subreddit_search_method"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -360,7 +368,8 @@
                 android:layout_height="wrap_content"
                 android:alpha=".86"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -412,7 +421,7 @@
     <RelativeLayout
         android:id="@+id/settings_general_redditnotifs"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -441,7 +450,8 @@
                 android:alpha=".86"
                 android:text="@string/setting_notification_piggybacking_desc"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -471,7 +481,7 @@
     <RelativeLayout
         android:id="@+id/settings_general_notifications"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -497,7 +507,8 @@
                 android:layout_height="wrap_content"
                 android:alpha=".86"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -510,7 +521,7 @@
     <RelativeLayout
         android:id="@+id/settings_general_sub_notifications"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -536,7 +547,8 @@
                 android:layout_height="wrap_content"
                 android:alpha=".86"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -550,12 +562,13 @@
         android:paddingTop="16dp"
         android:text="@string/sorting"
         android:tag="label"
-        android:textColor="?attr/colorAccent" />
+        android:textColor="?attr/colorAccent"
+        android:paddingBottom="8dp" />
 
     <RelativeLayout
         android:id="@+id/settings_general_sorting"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -581,14 +594,21 @@
                 android:layout_height="wrap_content"
                 android:alpha=".86"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
         </LinearLayout>
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.25dp"
+        android:alpha=".25"
+        android:background="?attr/tintColor" />
 
     <RelativeLayout
         android:id="@+id/settings_general_sorting_frontpage"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -614,7 +634,9 @@
                 android:layout_height="wrap_content"
                 android:alpha=".86"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
+
         </LinearLayout>
     </RelativeLayout>
 
@@ -627,7 +649,7 @@
     <RelativeLayout
         android:id="@+id/settings_general_sorting_comment"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -653,7 +675,8 @@
                 android:layout_height="wrap_content"
                 android:alpha=".86"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -667,17 +690,12 @@
         android:paddingTop="16dp"
         android:text="@string/images"
         android:tag="label"
-        android:textColor="?attr/colorAccent" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.25dp"
-        android:alpha=".25"
-        android:background="?attr/tintColor" />
+        android:textColor="?attr/colorAccent"
+        android:paddingBottom="8dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -705,7 +723,9 @@
                 android:alpha=".86"
                 android:text="@string/description_save_subfolders"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
+
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -730,7 +750,7 @@
 
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:background="?android:selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -758,7 +778,9 @@
                     android:alpha=".86"
                     android:text="@string/description_high_colorspace"
                     android:textColor="?attr/fontColor"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    android:paddingBottom="8dp" />
+
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -783,7 +805,7 @@
 
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:background="?android:selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -811,7 +833,9 @@
                     android:alpha=".86"
                     android:text="@string/description_comment_emote_animation"
                     android:textColor="?attr/fontColor"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    android:paddingBottom="8dp" />
+
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -836,7 +860,7 @@
 
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:background="?android:selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -864,7 +888,9 @@
                     android:alpha=".86"
                     android:text="@string/description_no_preview_image_longclick"
                     android:textColor="?attr/fontColor"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    android:paddingBottom="8dp" />
+
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -889,7 +915,7 @@
 
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:background="?android:selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -917,7 +943,9 @@
                     android:alpha=".86"
                     android:text="@string/description_image_download_button"
                     android:textColor="?attr/fontColor"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    android:paddingBottom="8dp" />
+
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -944,7 +972,8 @@
         android:paddingTop="16dp"
         android:text="@string/settings_section_other"
         android:tag="label"
-        android:textColor="?attr/colorAccent" />
+        android:textColor="?attr/colorAccent"
+        android:paddingBottom="8dp" />
 
     <LinearLayout
             android:id="@+id/settings_general_drawer_items"
@@ -953,7 +982,7 @@
             android:background="?android:selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingLeft="16dp">
 
         <TextView
                 android:layout_width="wrap_content"
@@ -968,12 +997,20 @@
                 android:alpha=".86"
                 android:text="@string/settings_general_subtitle_drawer_items"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp"/>
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
+
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.25dp"
+        android:alpha=".25"
+        android:background="?attr/tintColor" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -1000,7 +1037,9 @@
                 android:alpha=".86"
                 android:text="@string/settings_general_force_en_desc"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
+
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -1028,7 +1067,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -1056,7 +1095,9 @@
                 android:alpha=".86"
                 android:text="@string/settings_general_immersive_mode_desc"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
+
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -1073,9 +1114,15 @@
             android:paddingRight="16dp"/>
     </RelativeLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.25dp"
+        android:alpha=".25"
+        android:background="?attr/tintColor" />
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -1103,7 +1150,9 @@
                 android:alpha=".86"
                 android:text="@string/settings_general_old_swipe_mode_desc"
                 android:textColor="?attr/fontColor"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
+
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
@@ -1129,7 +1178,7 @@
     <RelativeLayout
         android:id="@+id/settings_general_back_button_behavior"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -1155,7 +1204,9 @@
                     android:layout_height="wrap_content"
                     android:alpha=".86"
                     android:textColor="?attr/fontColor"
-                    android:textSize="13sp" />
+                    android:textSize="13sp"
+                    android:paddingBottom="8dp" />
+
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>
