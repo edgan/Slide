@@ -1,4 +1,4 @@
-# Android USB Debugging
+# Android device debugging via USB
 
 ## What
 You can get crash logs from your `Android` device with `USB debugging` and `adb.
@@ -9,8 +9,11 @@ Crash logs, aka backtraces, make it sigificantly easier to fix the bug that caus
 ## How
 ### Further documentation
 [Official documentation](https://developer.android.com/studio/debug/dev-options) 
+
 [XDA documentation](https://www.xda-developers.com/install-adb-windows-macos-linux/)
+
 [Stackoverflow page about adb](https://stackoverflow.com/questions/6854127/filter-logcat-to-get-only-the-messages-from-my-application-in-android)
+
 [Howtogeek page about administrator privileges](https://www.howtogeek.com/194041/how-to-open-the-command-prompt-as-administrator-in-windows-10/)
 
 ### Things you will need
@@ -68,7 +71,9 @@ Crash logs, aka backtraces, make it sigificantly easier to fix the bug that caus
 
 #### ADB downloads
 [Windows](https://dl.google.com/android/repository/platform-tools-latest-windows.zip)
+
 [Linux](https://dl.google.com/android/repository/platform-tools-latest-linux.zip)
+
 [macOS](https://dl.google.com/android/repository/platform-tools-latest-darwin.zip)
 
 

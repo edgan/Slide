@@ -4,6 +4,9 @@ This project is back with this fork, and is being **maintained**.
 # Setup
 See [SETUP.md](/SETUP.md)
 
+# Android device debugging via USB
+See [DEBUGGING.md](/DEBUGGING.md)
+
 # Updates
 The easiest way, for now, to get updates is
 [Obtainium](https://github.com/ImranR98/Obtainium).
