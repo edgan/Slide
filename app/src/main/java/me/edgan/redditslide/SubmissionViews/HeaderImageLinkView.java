@@ -111,13 +111,17 @@ public class HeaderImageLinkView extends RelativeLayout {
                 (((!NetworkUtil.isConnectedWifi(getContext()) && SettingValues.lowResMobile)
                         || SettingValues.lowResAlways));
 
+        JsonNode dataNode = submission.getDataNode();
+        JsonNode spoiler = (dataNode != null) ? dataNode.get("spoiler") : null;
+        JsonNode thumbnail = (dataNode != null) ? dataNode.get("thumbnail") : null;
+
         if (type == ContentType.Type.SELF && SettingValues.hideSelftextLeadImage
                 || SettingValues.noImages && submission.isSelfPost()) {
             setVisibility(View.GONE);
             if (wrapArea != null) wrapArea.setVisibility(View.GONE);
             thumbImage2.setVisibility(View.GONE);
         } else {
-            if (submission.getThumbnails() != null) {
+            if (submission.getThumbnails() != null && submission.getThumbnails().getSource() != null) {
                 int height = submission.getThumbnails().getSource().getHeight();
                 int width = submission.getThumbnails().getSource().getWidth();
                 setBackdropLayoutParams(height, width, full, fullImage, type);
@@ -127,7 +131,6 @@ public class HeaderImageLinkView extends RelativeLayout {
                 }
             }
 
-            JsonNode thumbnail = submission.getDataNode().get("thumbnail");
             Submission.ThumbnailType thumbnailType;
             if (!submission.getDataNode().get("thumbnail").isNull()) {
                 thumbnailType = submission.getThumbnailType();
@@ -135,12 +138,11 @@ public class HeaderImageLinkView extends RelativeLayout {
                 thumbnailType = Submission.ThumbnailType.NONE;
             }
 
-            JsonNode node = submission.getDataNode();
             if (!SettingValues.ignoreSubSetting
-                    && node != null
-                    && node.has("sr_detail")
-                    && node.get("sr_detail").has("show_media")
-                    && !node.get("sr_detail").get("show_media").asBoolean()) {
+                    && dataNode != null
+                    && dataNode.has("sr_detail")
+                    && dataNode.get("sr_detail").has("show_media")
+                    && !dataNode.get("sr_detail").get("show_media").asBoolean()) {
                 thumbnailType = Submission.ThumbnailType.NONE;
             }
 
@@ -744,11 +746,14 @@ public class HeaderImageLinkView extends RelativeLayout {
         if (submission.getDataNode().has("preview")
                 && submission.getDataNode().get("preview").get("images").get(0).get("source").has("height")) {
             return submission.getDataNode().get("preview").get("images").get(0).get("source").get("url").asText();
-        } else {
+        } else if (submission.getThumbnails() != null && submission.getThumbnails().getSource() != null) {
             String sourceUrl = submission.getThumbnails().getSource().getUrl();
             return CompatUtil.fromHtml(
                     sourceUrl.isEmpty() ? submission.getThumbnail() : sourceUrl
             ).toString();
+        } else {
+            // Fallback in case there is no preview or thumbnails source available.
+            return submission.getThumbnail();
         }
     }
 
