@@ -8,7 +8,7 @@ Crash logs, aka backtraces, make it sigificantly easier to fix the bug that caus
 
 ## How
 ### Further documentation
-[Official documentation](https://developer.android.com/studio/debug/dev-options) 
+[Official documentation](https://developer.android.com/studio/debug/dev-options)
 
 [XDA documentation](https://www.xda-developers.com/install-adb-windows-macos-linux/)
 
@@ -26,29 +26,33 @@ Crash logs, aka backtraces, make it sigificantly easier to fix the bug that caus
 1. Enabling `Developer options` on your `Android` device
 2. Enable `USB debugging` on your `Android` device
 3. Connect the `USB` cable between the computer and `Android` device
-4. Unlock the `Android device`
+4. Download correct copy of `adb` for your operating system, [see below](https://github.com/edgan/Slide/blob/master/DEBUGGING.md#adb-downloads)
+5. Unzip `adb` zip
+6. Unlock the `Android device`
 
 #### Windows
-5. Open a command prompt with `administrator privileges` on the computer
-6. Run `adb shell`
+7. Open a command prompt with `administrator privileges` on the computer
+8. `cd` to directory with `adb`
+9. Run `adb.exe shell`
 
 #### Linux or macOS
-5. Open a terminal window on the computer
-6. Run `sudo adb shell` and enter your password
+7. Open a terminal window on the computer
+8. `cd` to directory with `adb`
+9. Run `sudo ./adb shell` and enter your password
 
-7. Allow the debugging when prompted
-8. Type `exit` and hit enter
+10. Allow the debugging when prompted
+11. Type `exit` and hit enter
 
-#### Windows                                                                     
-9. Run `adb logcat | findstr AndroidRuntime`                                     
-                                                                                 
-#### Linux or macOS                                                              
-9. Run `sudo adb logcat | grep AndroidRuntime`
+#### Windows
+12. Run `adb logcat | findstr AndroidRuntime`
 
-8. Look at the timestamps on the left, and copy the block of lines that have very close timestamps
-9. Paste it into a [new Github issue](https://github.com/edgan/Slide/issues/new?template=Blank+issue)
-10. Create the new [Github issue](https://github.com/edgan/Slide/issues)
-11. Disable `USB debugging` in `Developer options` on your `Android` device after you are done
+#### Linux or macOS
+12. Run `sudo adb logcat | grep AndroidRuntime`
+
+13. Look at the timestamps on the left, and copy the block of lines that have very close timestamps
+14. Paste it into a [new Github issue](https://github.com/edgan/Slide/issues/new?template=Blank+issue)
+15. Create the new [Github issue](https://github.com/edgan/Slide/issues)
+16. Disable `USB debugging` in `Developer options` on your `Android` device after you are done
 
 #### Example of the crash log
 ```
