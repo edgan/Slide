@@ -463,48 +463,120 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         }
     }
 
-    private void setEmoteText(String text, TextView textView) {
-        if (text == null || textView == null) {
-            Log.e("EmoteDebug", "Null text or textview in setEmoteText");
-            return;
-        }
+// In setEmoteText(...), after processing the raw HTML:
+public void setEmoteText(String text, TextView textView) {
+    if (text == null || textView == null) {
+        Log.e("EmoteDebug", "Null text or textview in setEmoteText");
+        return;
+    }
 
-        try {
-            // Clear existing state
-            cleanupGifs();
+    try {
+        // Clear existing state
+        cleanupGifs();
 
-            Pattern redditPattern =
-                    Pattern.compile(
-                            "<img\\s+src=\\\"(https://www\\.redditstatic\\.com/marketplace-assets/v1/core/emotes/snoomoji_emotes/free_emotes_pack/([^/\\\"]+)\\.gif)\\\"[^>]*>");
-            Pattern giphyPattern =
-                    Pattern.compile(
-                            "<img\\s+src=\\\"(https://external-preview\\.redd\\.it/([^?]+)\\?width=([0-9]+)&height=([0-9]+)&s=([^\\\"]+))\\\"[^>]*>");
+        Pattern redditPattern =
+                Pattern.compile(
+                    "<img\\s+src=\\\"(https://www\\.redditstatic\\.com/marketplace-assets/v1/core/emotes/snoomoji_emotes/free_emotes_pack/([^/\\\"]+)\\.gif)\\\"[^>]*>");
+        Pattern giphyPattern =
+                Pattern.compile(
+                    "<img\\s+src=\\\"(https://external-preview\\.redd\\.it/([^?]+)\\?width=([0-9]+)&height=([0-9]+)&s=([^\\\"]+))\\\"[^>]*>");
 
-            List<EmoteSpanRequest> spanRequests = new ArrayList<>();
-            StringBuilder processedText = new StringBuilder();
+        List<EmoteSpanRequest> spanRequests = new ArrayList<>();
+        StringBuilder processedText = new StringBuilder();
 
-            // Strip divs first
-            text = text.replaceAll("<div class=\\\"md\\\"><div>", "").replaceAll("</div>", "");
+        // Strip unwanted divs first
+        text = text.replaceAll("<div class=\\\"md\\\"><div>", "").replaceAll("</div>", "");
 
-            // Process the text for both patterns
-            processPattern(text, redditPattern, processedText, spanRequests);
-            processPattern(text, giphyPattern, processedText, spanRequests);
+        // Process the text for both patterns (note: free_emote_pack is handled by redditPattern)
+        processPattern(text, redditPattern, processedText, spanRequests);
+        processPattern(text, giphyPattern, processedText, spanRequests);
 
-            // Create builder and ensure it's a SpannableStringBuilder
-            SpannableStringBuilder builder = new SpannableStringBuilder(processedText);
+        // Create builder and ensure it's a SpannableStringBuilder
+        SpannableStringBuilder builder = new SpannableStringBuilder(processedText);
 
-            // Set initial text with the builder
-            setText(builder);
+        // Set the initial text
+        setText(builder);
 
-            // Load GIFs
-            for (EmoteSpanRequest request : spanRequests) {
+        // For each emote request, decide how to load it
+        for (EmoteSpanRequest request : spanRequests) {
+            // If this URL comes from external-preview (i.e. giphy emote), use the new inline image loader…
+            if (request.gifUrl.contains("external-preview.redd.it")) {
+                loadGiphyEmote(request, textView, request.start);
+            } else {
+                // …otherwise (e.g. free_emote_pack/snoomoji) leave it as before.
                 loadGifEmote(request, textView, request.start);
             }
-
-        } catch (Exception e) {
-            Log.e("EmoteDebug", "Error in setEmoteText", e);
         }
+
+    } catch (Exception e) {
+        Log.e("EmoteDebug", "Error in setEmoteText", e);
     }
+}
+
+/**
+ * Loads a giphy emote image asynchronously using loadImageFromUrl
+ * and replaces the placeholder ImageSpan (inserted as the object replacement character)
+ * with one that uses the downloaded image.
+ */
+private void loadGiphyEmote(EmoteSpanRequest request, TextView textView, int posCount) {
+    Log.d("EmoteDebug", "Starting image download for giphy emote: " + request.gifUrl);
+    loadImageFromUrl(request.gifUrl, new ImageCallback() {
+        @Override
+        public void onImageLoaded(Bitmap bitmap) {
+            post(() -> {
+                if (bitmap != null) {
+                    try {
+                        // Compute scaled dimensions (using similar limits as inline preview images)
+                        int maxWidth = Math.min(getWidth() - getPaddingLeft() - getPaddingRight(), 500);
+                        int maxHeight = 300;  // maximum height (you can adjust as needed)
+                        float widthScale = (float) maxWidth / bitmap.getWidth();
+                        float heightScale = (float) maxHeight / bitmap.getHeight();
+                        float scale = Math.min(widthScale, heightScale);
+                        int scaledWidth = (int) (bitmap.getWidth() * scale);
+                        int scaledHeight = (int) (bitmap.getHeight() * scale);
+
+                        BitmapDrawable drawable = new BitmapDrawable(getResources(), bitmap);
+                        drawable.setBounds(0, 0, scaledWidth, scaledHeight);
+                        ImageSpan newSpan = new ImageSpan(drawable);
+
+                        // Find the appropriate occurrence of the object replacement character in our text.
+                        CharSequence currentText = getText();
+                        if (currentText instanceof Spannable) {
+                            Spannable spannable = (Spannable) currentText;
+                            String content = spannable.toString();
+                            int occurrence = 0;
+                            int index = -1;
+                            int searchFrom = 0;
+                            while (occurrence <= posCount) {
+                                index = content.indexOf('\uFFFC', searchFrom);
+                                if (index == -1) break;
+                                if (occurrence == posCount) break;
+                                occurrence++;
+                                searchFrom = index + 1;
+                            }
+                            if (index != -1) {
+                                // Remove any existing ImageSpan at the placeholder position.
+                                ImageSpan[] spans = spannable.getSpans(index, index + 1, ImageSpan.class);
+                                for (ImageSpan span : spans) {
+                                    spannable.removeSpan(span);
+                                }
+                                // Replace the placeholder with the new ImageSpan.
+                                spannable.setSpan(newSpan, index, index + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                Log.d("GiphyEmote", "Replaced placeholder with image: " + scaledWidth + "x" + scaledHeight);
+                                invalidate();
+                                requestLayout();
+                            } else {
+                                Log.e("GiphyEmote", "Could not find placeholder for giphy emote: " + request.emoteName);
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e("GiphyEmote", "Error updating image span for giphy emote", e);
+                    }
+                }
+            });
+        }
+    });
+}
 
     private void processPattern(
             String text,
@@ -1347,23 +1419,30 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         return sequence;
     }
 
-    // Add this function to check if a URL is a Reddit preview image
     private boolean isRedditPreviewImage(String url) {
-        return url.startsWith("https://preview.redd.it/") &&
+        return (url.startsWith("https://preview.redd.it/") || url.startsWith("https://i.redd.it/")) &&
                (url.endsWith(".jpeg") || url.endsWith(".jpg") || url.endsWith(".png") ||
-                url.contains("format=pjpg") || url.contains("format=png"));
+                url.contains(".gif") || url.contains("format=pjpg") || url.contains("format=png"));
     }
 
-    // Add this new method to process Reddit preview images
     private void processRedditPreviewImages(SpannableStringBuilder builder) {
-        // Updated pattern to match Reddit preview URLs directly
-        Pattern pattern = Pattern.compile("https://preview\\.redd\\.it/[^\\s]+");
-        Matcher matcher = pattern.matcher(builder);
+        Pattern previewPattern = Pattern.compile("https://preview\\.redd\\.it/[^\\s]+");
+        Matcher previewMatcher = previewPattern.matcher(builder);
+
+        Pattern iPattern = Pattern.compile("https://i\\.redd\\.it/[^\\s]+");
+        Matcher iMatcher = iPattern.matcher(builder); 
 
         List<MatchPair> matches = new ArrayList<>();
-        while (matcher.find()) {
-            matches.add(new MatchPair(matcher.start(), matcher.end()));
+
+        // preview.redd.it
+        while (previewMatcher.find()) {
+            matches.add(new MatchPair(previewMatcher.start(), previewMatcher.end()));
         }
+
+        // i.redd.it
+        while (iMatcher.find()) {                                                 
+            matches.add(new MatchPair(iMatcher.start(), iMatcher.end()));          
+        } 
 
         // Process matches from last to first to avoid invalidating indices
         for (int i = matches.size() - 1; i >= 0; i--) {

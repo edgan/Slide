@@ -190,31 +190,11 @@ public class CommentCacheAsync extends AsyncTask<Void, Void, Void> {
                             case VREDDIT_REDIRECT:
                             case GIF:
                                 if (otherChoices[0]) {
-                                    if (context instanceof Activity) {
-                                        ((Activity) context)
-                                                .runOnUiThread(
-                                                        new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                GifUtils.cacheSaveGif(
-                                                                        Uri.parse(
-                                                                                GifUtils
-                                                                                        .AsyncLoadGif
-                                                                                        .formatUrl(
-                                                                                                s
-                                                                                                        .getUrl())),
-                                                                        (Activity) context,
-                                                                        s.getSubredditName(),
-                                                                        null,
-                                                                        false);
-                                                            }
-                                                        });
-                                    }
+                                    break;
                                 }
                                 break;
                             case ALBUM:
                                 if (otherChoices[1])
-                                // todo this AlbumUtils.saveAlbumToCache(context, s.getUrl());
                                 {
                                     break;
                                 }

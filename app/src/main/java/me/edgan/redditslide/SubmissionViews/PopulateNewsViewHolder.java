@@ -520,9 +520,11 @@ public class PopulateNewsViewHolder {
         }
 
         if (isAddedToReadLaterList) {
-            b.sheet(28, readLater, "Mark As Read");
+            CharSequence markAsReadCs = mContext.getString(R.string.mark_as_read);
+            b.sheet(28, readLater, markAsReadCs);
         } else {
-            b.sheet(28, readLater, "Read later");
+            CharSequence readLaterCs = mContext.getString(R.string.read_later);
+            b.sheet(28, readLater, readLaterCs);
         }
 
         if (Authentication.didOnline) {

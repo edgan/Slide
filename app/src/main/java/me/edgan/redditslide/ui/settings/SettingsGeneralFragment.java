@@ -35,6 +35,7 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.rey.material.widget.Slider;
@@ -48,6 +49,7 @@ import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.UserSubscriptions;
+import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.ImageLoaderUtils;
 import me.edgan.redditslide.util.OnSingleClickListener;
@@ -66,6 +68,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import android.view.ContextThemeWrapper;
+import android.widget.EditText;
 
 /** Created by ccrama on 3/5/2015. */
 public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
@@ -1251,54 +1256,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
 
         clientId.setOnClickListener(
                 v -> {
-                    View dialogView =
-                            LayoutInflater.from(context).inflate(R.layout.dialog_client_id, null);
-                    EditText input = dialogView.findViewById(R.id.client_id_input);
-
-                    input.setText(savedClientId);
-
-                    new AlertDialog.Builder(context)
-                            .setTitle("Reddit Client ID Override")
-                            .setView(dialogView)
-                            .setPositiveButton(
-                                    "Save",
-                                    (dialog, which) -> {
-                                        String newValue = input.getText().toString().trim();
-                                        // Save the value
-                                        SettingValues.redditClientIdOverride = newValue;
-                                        SettingValues.prefs
-                                                .edit()
-                                                .putString(
-                                                        SettingValues
-                                                                .PREF_REDDIT_CLIENT_ID_OVERRIDE,
-                                                        newValue)
-                                                .commit();
-
-                                        // Update the displays
-                                        currentClientId.setText(
-                                                newValue.isEmpty()
-                                                        ? "Click to set custom client ID"
-                                                        : newValue);
-                                        updateActiveClientId(activeClientId);
-
-                                        // Show confirmation
-                                        new AlertDialog.Builder(context)
-                                                .setMessage(
-                                                        "Client ID saved: "
-                                                                + (newValue.isEmpty()
-                                                                        ? "cleared"
-                                                                        : newValue))
-                                                .setPositiveButton(
-                                                        "OK",
-                                                        (d, w) -> {
-                                                            // Also restart if they press OK
-                                                            ProcessPhoenix.triggerRebirth(context);
-                                                        })
-                                                .setCancelable(false)
-                                                .show();
-                                    })
-                            .setNegativeButton("Cancel", null)
-                            .show();
+                    showClientIDDialog();
                 });
     }
 
@@ -1602,5 +1560,61 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                 return null;
             }
         }
+    }
+
+    private void showClientIDDialog() {
+        final Context contextThemeWrapper = new ContextThemeWrapper(context,
+                new ColorPreferences(context).getFontStyle().getBaseId());
+
+        final EditText input = new EditText(contextThemeWrapper);
+        String savedClientId = SettingValues.prefs.getString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
+        input.setText(savedClientId);
+
+        // Convert 16dp to pixels and set left padding
+        int paddingDp = 16;
+        float density = context.getResources().getDisplayMetrics().density;
+        int paddingPx = (int)(paddingDp * density);
+        input.setPadding(paddingPx, input.getPaddingTop(), input.getPaddingRight(), input.getPaddingBottom());
+
+        final TextView currentClientIdView = context.findViewById(R.id.settings_general_client_id_current);
+        final TextView activeClientIdView = context.findViewById(R.id.settings_general_client_id_active_value);
+
+        new MaterialAlertDialogBuilder(contextThemeWrapper)
+                .setTitle(R.string.reddit_client_id_override)
+                .setView(input)
+                .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
+                    String clientId = input.getText().toString().trim();
+
+                    // Set the value in memory
+                    SettingValues.redditClientIdOverride = clientId;
+
+                    // Save to preferences
+                    if (clientId.isEmpty()) {
+                        SettingValues.prefs.edit()
+                                .remove(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE)
+                                .commit();
+                    } else {
+                        SettingValues.prefs.edit()
+                                .putString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, clientId)
+                                .commit();
+                    }
+
+                    // Update displays
+                    currentClientIdView.setText(clientId.isEmpty() ?
+                            context.getString(R.string.click_custom_client_id) : clientId);
+                    updateActiveClientId(activeClientIdView);
+
+                    // Show confirmation dialog
+                    new MaterialAlertDialogBuilder(contextThemeWrapper)
+                            .setMessage(context.getString(R.string.client_id_saved) +
+                                    (clientId.isEmpty() ? "cleared" : clientId))
+                            .setPositiveButton(R.string.btn_ok, (d, w) -> {
+                                ((Reddit) context.getApplicationContext()).forceRestart(context, false);
+                            })
+                            .setCancelable(false)
+                            .show();
+                })
+                .setNegativeButton(R.string.btn_cancel, null)
+                .show();
     }
 }

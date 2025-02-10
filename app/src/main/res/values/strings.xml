@@ -1226,7 +1226,7 @@
     <string name="high_colorspace_images">High-Colorspace Images</string>
     <string name="description_high_colorspace">Loads full colorspace on images, potentially leading to higher memory usage</string>
     <string name="comment_emote_animation">Comment emote animation</string>
-    <string name="description_comment_emote_animation">Toggles if emotes in comments are animated or not</string>
+    <string name="description_comment_emote_animation">Toggles if non-giphy emotes in comments are animated or not</string>
     <string name="no_preview_image_longclick">No longclicks on preview images of any content type</string>
     <string name="description_no_preview_image_longclick">Toggles if longclicks work on preview images of any content type. It blocks the peek content feature.</string>
     <string name="editor_btn_select_flair">Select flair</string>
@@ -1252,4 +1252,12 @@
     <string name="backup_no_files_msg">There are no backup files available to restore.</string>
 
     <string name="settings_set_image_location">Images will be saved to %s</string>
+    <string name="read_later">Read later</string>
+    <string name="mark_as_read">Mark As Read</string>
+    <string name="read_later_location_title">Save Location Required</string>
+    <string name="read_later_location_msg">To use Read Later, you need to set a storage location in General settings first.</string>
+
+    <string name="reddit_client_id_override">Reddit Client ID Override</string>
+    <string name="click_custom_client_id">Click to set custom client ID</string>
+    <string name="client_id_saved">Client ID saved: </string>
 </resources>
