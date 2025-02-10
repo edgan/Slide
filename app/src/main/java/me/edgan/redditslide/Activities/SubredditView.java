@@ -2172,8 +2172,7 @@ public class SubredditView extends BaseActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if ((i == 1)
-                    || !(SettingValues.oldSwipeMode)) {
+            if ((i == 1) || !(SettingValues.oldSwipeMode)) {
                 SubmissionsView f = new SubmissionsView();
                 Bundle args = new Bundle();
                 args.putString("id", subreddit);
@@ -2323,8 +2322,7 @@ public class SubredditView extends BaseActivity {
         @NonNull
         @Override
         public Fragment getItem(int i) {
-            if ((i == 0)
-                    || !(SettingValues.oldSwipeMode)) {
+            if (i == 0 && SettingValues.oldSwipeMode) {
                 blankPage = new BlankFragment();
                 return blankPage;
             } else if (openingComments == null || i != 2) {
