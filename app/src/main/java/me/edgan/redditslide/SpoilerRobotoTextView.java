@@ -1430,7 +1430,7 @@ private void loadGiphyEmote(EmoteSpanRequest request, TextView textView, int pos
         Matcher previewMatcher = previewPattern.matcher(builder);
 
         Pattern iPattern = Pattern.compile("https://i\\.redd\\.it/[^\\s]+");
-        Matcher iMatcher = iPattern.matcher(builder); 
+        Matcher iMatcher = iPattern.matcher(builder);
 
         List<MatchPair> matches = new ArrayList<>();
 
@@ -1440,9 +1440,9 @@ private void loadGiphyEmote(EmoteSpanRequest request, TextView textView, int pos
         }
 
         // i.redd.it
-        while (iMatcher.find()) {                                                 
-            matches.add(new MatchPair(iMatcher.start(), iMatcher.end()));          
-        } 
+        while (iMatcher.find()) {
+            matches.add(new MatchPair(iMatcher.start(), iMatcher.end()));
+        }
 
         // Process matches from last to first to avoid invalidating indices
         for (int i = matches.size() - 1; i >= 0; i--) {
