@@ -1160,38 +1160,6 @@ public class MainActivity extends BaseActivity
     @Override
     public void networkUnavailable() {}
 
-    public void checkClipboard() {
-        try {
-            ClipboardManager clipboard =
-                    ContextCompat.getSystemService(this, ClipboardManager.class);
-
-            if (clipboard != null && clipboard.hasPrimaryClip()) {
-                ClipData data = clipboard.getPrimaryClip();
-                final String s = (String) data.getItemAt(0).getText();
-                if (!s.isEmpty()) {
-                    if (ContentType.getContentType(s) == ContentType.Type.REDDIT
-                            && !HasSeen.getSeen(s)) {
-                        Snackbar snack =
-                                Snackbar.make(
-                                        mToolbar,
-                                        "Reddit link found in your clipboard",
-                                        Snackbar.LENGTH_LONG);
-                        snack.setAction(
-                                "OPEN",
-                                new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        OpenRedditLink.openUrl(MainActivity.this, s, false);
-                                    }
-                                });
-                        snack.show();
-                    }
-                }
-            }
-        } catch (Exception e) {
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -1210,7 +1178,6 @@ public class MainActivity extends BaseActivity
                     .setChecked(SettingValues.isNight());
             restartTheme();
         }
-        checkClipboard();
 
         if (pager != null && commentPager) {
             if (pager.getCurrentItem() != toOpenComments && shouldLoad != null) {
