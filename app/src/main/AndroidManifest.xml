@@ -479,7 +479,6 @@
                 <data android:host="reddit.com"/>
                 <data android:host="*.reddit.com"/>
                 <data android:host="redd.it"/>
-                <data android:host="*.redd.it"/>
                 <!--Disable this for now
                 <data android:host="reddit.app.link"/>
                 <data android:host="reddit.onelink.me"/>
