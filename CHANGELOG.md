@@ -2,6 +2,71 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+7.1.2 / 2025-2-10
+=================
+* Removing *.redd.it for Open by default
+* Removed checkClipboard to fix #72
+* Fixed "Crash when scrolling through image posts" with more null checks #73
+* Fixed Slide crashes when trying to access subreddits #69
+* Fixed Read Later crash #62
+* Added support for i.redd.it links for inlined preview images
+* Converted giphy emotes to inlined preview images style #38
+* Themed Client ID override dialog
+* Fixed FAB multi-choice #66
+* Fixed separators, spacing, and padding for general settings #66
+* Added separator between emote animation and longclick settings #66
+
+7.1.1 / 2025-2-8
+================
+* Fixed crash when switching back from Guest mode #68
+* Themed exit dialog
+* Themed profile dialog
+
+7.1.0 / 2025-2-8
+================
+* Added multireddit search for the FAB search button #63
+* Made the search button at the top work for multireddit tabs #63
+* Converted subreddit content filter dialogs to use the theme
+
+7.0.9 / 2025-2-6
+================
+* Fixed crash in UserSubscriptions.java
+* Converted preview reddit links to inline images #40
+* Reversed the Subreddit content filter logic #55
+
+
+7.0.8 / 2025-2-5
+================
+* Fixed sorting for multireddit tabs #44
+* Fixed crash in AlbumPager.java
+* Fixed comment emotes advance when you leave Slide and come back #56
+* Fixed preview images for crossposts of Reddit videos #57
+
+
+7.0.7 / 2025-2-3
+================
+* Fixed ability to download Reddit videos #49
+* Fixed image picking crash #53
+* Fixed ANR related to opening a Reddit link #52
+* Fixed crash related to viewing a user's profile and gold #51
+* Fixed crash related to blocking a subreddit #50
+* Fixed Imgur for the various types #42
+* Show galleries as images instead of thumbnails in Shadowbox mode #41
+* Improved the strings related to no longclicks #48
+* Fixed web browser selection in Settings | Link handling
+* Made custom tabs setting use the selected web browser
+* Improved RedGifs where more should have sound
+
+7.0.6 / 2025-2-1
+=================
+* Added Old Swipe mode in General settings
+
+* Improved support for RedGifs
+
+7.0.5 / 2025-1-28
+=================
+* Restored BlankFragment for 3-button navigation
+
 7.0.4 / 2025-1-27
 =================
 * Added a link to the privacy policy in the app
@@ -12,7 +77,7 @@ The non-abridged changelog can be read in the [releases page](https://github.com
 
 7.0.2 / 2025-1-25
 =================
-* Fixed frontpage sort inconsistency #39    
+* Fixed frontpage sort inconsistency #39
 * Added Frontpage sort setting #39
 * Fixed media controls by reverting the upgrade to media3
 
