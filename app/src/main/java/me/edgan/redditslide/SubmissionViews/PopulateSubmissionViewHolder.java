@@ -2313,6 +2313,8 @@ public class PopulateSubmissionViewHolder {
                     if (holder.itemView != null) {
                         SubmissionCache.updateTitleFlair(submission, flair, mContext);
                         doText(holder, submission, mContext, submission.getSubredditName(), false);
+                        // Force the title view to re-measure itself
+                        holder.title.requestLayout();
                     }
                 } else {
                     if (holder.itemView != null) {
@@ -4079,6 +4081,8 @@ public class PopulateSubmissionViewHolder {
                                                                                                                                                                     .getTitleLine(
                                                                                                                                                                             submission,
                                                                                                                                                                             mContext));
+                                                                                                                                            // Force the title view to re-measure itself
+                                                                                                                                            holder.title.requestLayout();
                                                                                                                                         }
                                                                                                                                     } else {
                                                                                                                                         if (holder.itemView
@@ -4177,6 +4181,8 @@ public class PopulateSubmissionViewHolder {
                                                                                                                                             .getTitleLine(
                                                                                                                                                     submission,
                                                                                                                                                     mContext));
+                                                                                                                    // Force the title view to re-measure itself
+                                                                                                                    holder.title.requestLayout();
                                                                                                                 }
                                                                                                             } else {
                                                                                                                 if (holder.itemView
