@@ -79,7 +79,6 @@ public class CustomTabsHelper {
             serviceIntent.setPackage(info.activityInfo.packageName);
             // Samsung browser custom tabs has a bug that harms user experience, pressing back
             // navigates between pages rather than exiting back to Slide
-            // TODO: Reevaluate at a later date
             if (pm.resolveService(serviceIntent, 0) != null
                     && !info.activityInfo.packageName.equals("com.sec.android.app.sbrowser")) {
                 packagesSupportingCustomTabs.add(info.activityInfo.packageName);

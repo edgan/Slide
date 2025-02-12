@@ -270,52 +270,6 @@ public class SettingsSubAdapter extends RecyclerView.Adapter<SettingsSubAdapter.
                         }
                     });
 
-            {
-                /* TODO   TextView dialogButton = (TextView) dialoglayout.findViewById(R.id.reset);
-
-                // if button is clicked, close the custom dialog
-                dialogButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Palette.removeColor(subreddit);
-                        hea.setBackgroundColor(Palette.getDefaultColor());
-                        findViewById(R.id.header).setBackgroundColor(Palette.getDefaultColor());
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            Window window = getWindow();
-                            window.setStatusBarColor(Palette.getDarkerColor(Palette.getDefaultColor()));
-                            context.setTaskDescription(new ActivityManager.TaskDescription(subreddit, ((BitmapDrawable) getResources().getDrawable(R.drawable.ic_launcher)).getBitmap(), colorPicker2.getColor()));
-
-                        }
-                        title.setBackgroundColor(Palette.getDefaultColor());
-
-
-                        int cx = center.getWidth() / 2;
-                        int cy = center.getHeight() / 2;
-
-                        int initialRadius = body.getWidth();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-                            Animator anim =
-                                    ViewAnimationUtils.createCircularReveal(body, cx, cy, initialRadius, 0);
-
-                            anim.addListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    super.onAnimationEnd(animation);
-                                    body.setVisibility(View.GONE);
-                                }
-                            });
-                            anim.start();
-
-                        } else {
-                            body.setVisibility(View.GONE);
-
-                        }
-
-                    }
-                });*/
-            }
-
             // Accent color picker
             final LineColorPicker colorPickerAcc = dialoglayout.findViewById(R.id.picker3);
 

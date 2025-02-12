@@ -47,6 +47,4 @@ public class EditTextValidator {
 
         editText.setFilters(new InputFilter[] {filter});
     }
-
-    // TODO: Add validation for subreddits/multireddits
 }

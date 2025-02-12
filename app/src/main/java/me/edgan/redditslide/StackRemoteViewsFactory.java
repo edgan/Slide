@@ -131,12 +131,7 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
     }
 
     public void onDataSetChanged() {
-        // if (posts == null) {
-        //    posts = new SubredditPosts("all", StackWidgetService.this);
         Log.v(LogUtil.getTag(), "MAKING POSTS");
-        // }
-        // posts.loadMore(mContext, null, true);
-        // TODO
         submissions = posts.posts;
         Log.v(LogUtil.getTag(), "POSTS IS SIZE " + submissions.size());
     }

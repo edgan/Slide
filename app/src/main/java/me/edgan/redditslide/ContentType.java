@@ -258,14 +258,6 @@ public class ContentType {
         final String url = submission.getUrl();
         final Type basicType = getContentType(url);
 
-        // TODO: Decide whether internal youtube links should be EMBEDDED or LINK
-        /* Disable this for nowif (basicType.equals(Type.LINK) && submission.getDataNode().has("media_embed") && submission
-                .getDataNode()
-                .get("media_embed")
-                .has("content")) {
-            return Type.EMBEDDED;
-        }*/
-
         return basicType;
     }
 

@@ -52,9 +52,13 @@ public class ForceTouchLink extends BaseActivityAnim {
         mainVideo.setVisibility(View.GONE);
         switch (t) {
             case REDDIT:
+                break;
             case IMGUR:
+                break;
             case ALBUM:
+                break;
             case REDDIT_GALLERY:
+                break;
             case VIDEO:
                 break;
             case IMAGE:
@@ -67,26 +71,6 @@ public class ForceTouchLink extends BaseActivityAnim {
                         .execute(url);
                 break;
             case LINK:
-                new AsyncTask<Void, Void, Void>() {
-                    String urlGotten;
-
-                    @Override
-                    protected Void doInBackground(Void... params) {
-                        /*try {
-                           urlGotten =  ImageExtractor.extractImageUrl(url);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }*/
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Void aVoid) {
-                        ((Reddit) getApplication())
-                                .getImageLoader()
-                                .displayImage(urlGotten, mainImage);
-                    }
-                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
         }
     }

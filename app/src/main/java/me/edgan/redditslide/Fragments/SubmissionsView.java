@@ -417,29 +417,6 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
 
         header = getActivity().findViewById(R.id.header);
 
-        // TODO, have it so that if the user clicks anywhere in the rv to hide and cancel
-        // GoToSubreddit?
-        //        final TextInputEditText GO_TO_SUB_FIELD = (TextInputEditText)
-        // getActivity().findViewById(R.id.toolbar_search);
-        //        final Toolbar TOOLBAR = ((Toolbar) getActivity().findViewById(R.id.toolbar));
-        //        final String PREV_TITLE = TOOLBAR.getTitle().toString();
-        //        final ImageView CLOSE_BUTTON = (ImageView) getActivity().findViewById(R.id.close);
-        //
-        //        rv.setOnTouchListener(new View.OnTouchListener() {
-        //            @Override
-        //            public boolean onTouch(View v, MotionEvent event) {
-        //                System.out.println("touched");
-        //                KeyboardUtil.hideKeyboard(getActivity(), v.getWindowToken(), 0);
-        //
-        //                GO_TO_SUB_FIELD.setText("");
-        //                GO_TO_SUB_FIELD.setVisibility(View.GONE);
-        //                CLOSE_BUTTON.setVisibility(View.GONE);
-        //                TOOLBAR.setTitle(PREV_TITLE);
-        //
-        //                return false;
-        //            }
-        //        });
-
         resetScroll();
 
         Reddit.isLoading = false;
