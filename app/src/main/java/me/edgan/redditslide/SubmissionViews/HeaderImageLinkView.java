@@ -593,17 +593,16 @@ public class HeaderImageLinkView extends RelativeLayout {
     }
 
     private void handleRedditType(Submission submission, boolean full) {
-        if (submission != null && submission.getUrl() != null && submission.getUrl().contains("/comment/")) {
-            setVisibility(View.GONE);
-            thumbImage2.setVisibility(View.VISIBLE);
-            return;
-        }
+        if (submission != null && submission.getUrl() != null) {
+            JsonNode dataNode = submission.getDataNode();
+            String previewUrl = getPreviewUrl(dataNode);
 
-        JsonNode dataNode = submission.getDataNode();
-        String previewUrl = getPreviewUrl(dataNode);
-
-        if (previewUrl != null) {
-            handleFullPreviewImage(previewUrl, full);
+            if (previewUrl != null) {
+                handleFullPreviewImage(previewUrl, full);
+            } else {
+                setVisibility(View.GONE);
+                thumbImage2.setVisibility(View.VISIBLE);
+            }
         }
     }
 
