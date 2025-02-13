@@ -70,7 +70,6 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
                 OfflineSubreddit.getSubreddit(subreddit, offline, !Authentication.didOnline, this);
 
         subredditPosts.getPosts().addAll(submissions.submissions);
-        filterValidPosts(); // Only keep valid content types
         count = subredditPosts.getPosts().size();
 
         pager = (ViewPager) findViewById(R.id.content_view);
@@ -93,17 +92,6 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
     }
 
     ShadowboxPagerAdapter submissionsPager;
-
-    private void filterValidPosts() {
-        List<Submission> filteredPosts = new ArrayList<>();
-        for (Submission post : subredditPosts.getPosts()) {
-            if (isValidType(ContentType.getContentType(post))) {
-                filteredPosts.add(post);
-            }
-        }
-        subredditPosts.getPosts().clear();
-        subredditPosts.getPosts().addAll(filteredPosts);
-    }
 
     @Override
     public void updateSuccess(final List<Submission> submissions, final int startIndex) {
@@ -164,9 +152,19 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
             Bundle args = new Bundle();
 
             switch (t) {
-                case REDDIT_GALLERY:
-                    f = new RedditGalleryFull();
-                    break;
+                case GIF:
+                case IMAGE:
+                case IMGUR:
+                case REDDIT:
+                case EXTERNAL:
+                case SPOILER:
+                case DEVIANTART:
+                case EMBEDDED:
+                case XKCD:
+                case VREDDIT_DIRECT:
+                case VREDDIT_REDIRECT:
+                case LINK:
+                case STREAMABLE:
                 case VIDEO:
                         f = new MediaFragment();
                         Submission submission = subredditPosts.getPosts().get(i);
@@ -195,6 +193,10 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
                         args.putString("contentUrl", submission.getUrl());
                         args.putString("firstUrl", previewUrl);
                         break;
+                case REDDIT_GALLERY:
+                    f = new RedditGalleryFull();
+                    break;
+                case SELF:
                 case NONE:
                     f = subredditPosts.getPosts().get(i).getSelftext().isEmpty()
                             ? new TitleFull()
@@ -221,13 +223,5 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
         public int getCount() {
             return count;
         }
-    }
-
-    private boolean isValidType(ContentType.Type t) {
-        return t == ContentType.Type.REDDIT_GALLERY ||
-               t == ContentType.Type.VIDEO ||
-               t == ContentType.Type.NONE ||
-               t == ContentType.Type.TUMBLR ||
-               t == ContentType.Type.ALBUM;
     }
 }
