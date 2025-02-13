@@ -37,6 +37,7 @@ import android.text.style.URLSpan;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.LruCache;
 import android.util.Pair;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -81,6 +82,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -514,13 +516,13 @@ public void setEmoteText(String text, TextView textView) {
 }
 
 /**
- * Loads a giphy emote image asynchronously using loadImageFromUrl
+ * Loads a giphy emote image asynchronously using loadThumbnailFromUrl
  * and replaces the placeholder ImageSpan (inserted as the object replacement character)
  * with one that uses the downloaded image.
  */
 private void loadGiphyEmote(EmoteSpanRequest request, TextView textView, int posCount) {
     Log.d("EmoteDebug", "Starting image download for giphy emote: " + request.gifUrl);
-    loadImageFromUrl(request.gifUrl, new ImageCallback() {
+    loadThumbnailFromUrl(request.gifUrl, new ImageCallback() {
         @Override
         public void onImageLoaded(Bitmap bitmap) {
             post(() -> {
@@ -1461,7 +1463,7 @@ private void loadGiphyEmote(EmoteSpanRequest request, TextView textView, int pos
                 );
 
                 // Load the actual image
-                loadImageFromUrl(url, bitmap -> {
+                loadThumbnailFromUrl(url, bitmap -> {
                     post(() -> {
                         if (bitmap != null) {
                             try {
@@ -1514,26 +1516,86 @@ private void loadGiphyEmote(EmoteSpanRequest request, TextView textView, int pos
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    private void loadImageFromUrl(String url, ImageCallback callback) {
+    // Define a cache for thumbnails.
+    private LruCache<String, Bitmap> thumbnailCache = new LruCache<>(calculateCacheSize());
+
+    private int calculateCacheSize() {
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        return maxMemory / 8; // Use 1/8th of available memory for caching.
+    }
+
+    private void loadThumbnailFromUrl(final String url, final ImageCallback callback) {
+        Bitmap cachedThumbnail = thumbnailCache.get(url);
+        if (cachedThumbnail != null) {
+            callback.onImageLoaded(cachedThumbnail);
+            return;
+        }
         executor.execute(() -> {
+            HttpURLConnection connection = null;
+            InputStream input = null;
             try {
-                Log.d("SpoilerRobotoTextView", "Loading image from: " + url);
-                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                Log.d("SpoilerRobotoTextView", "Loading thumbnail from: " + url);
+                connection = (HttpURLConnection) new URL(url).openConnection();
                 connection.setDoInput(true);
                 connection.connect();
-                InputStream input = connection.getInputStream();
-                final Bitmap bitmap = BitmapFactory.decodeStream(input);
+                input = connection.getInputStream();
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeStream(input, null, options);
+                input.close();
+                connection.disconnect();
 
-                if (bitmap != null) {
-                    Log.d("SpoilerRobotoTextView", "Image loaded successfully, size: " + bitmap.getWidth() + "x" + bitmap.getHeight());
-                    callback.onImageLoaded(bitmap);
+                int reqWidth = 300;
+                int reqHeight = 300;
+
+                options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+                options.inJustDecodeBounds = false;
+
+                connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                input = connection.getInputStream();
+                final Bitmap thumbnail = BitmapFactory.decodeStream(input, null, options);
+                input.close();
+
+                if (thumbnail != null) {
+                    thumbnailCache.put(url, thumbnail);
+                    Log.d("SpoilerRobotoTextView", "Thumbnail loaded successfully, size: "
+                            + thumbnail.getWidth() + "x" + thumbnail.getHeight());
+                    callback.onImageLoaded(thumbnail);
                 } else {
-                    Log.e("SpoilerRobotoTextView", "Failed to decode bitmap from: " + url);
+                    Log.e("SpoilerRobotoTextView", "Failed to decode thumbnail from: " + url);
                 }
             } catch (Exception e) {
-                Log.e("SpoilerRobotoTextView", "Error loading image: " + url, e);
+                Log.e("SpoilerRobotoTextView", "Error loading thumbnail: " + url, e);
+            } finally {
+                if (input != null) {
+                    try {
+                        input.close();
+                    } catch (Exception e) {
+                        Log.e("SpoilerRobotoTextView", "Error loading image: " + url, e);
+                    }
+                }
+                if (connection != null) {
+                    connection.disconnect();
+                }
             }
         });
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+            int heightRatio = (int) Math.floor((float) height / reqHeight);
+            int widthRatio = (int) Math.floor((float) width / reqWidth);
+            int ratio = Math.min(heightRatio, widthRatio);
+            while (inSampleSize < ratio) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 
     // Simple callback interface
