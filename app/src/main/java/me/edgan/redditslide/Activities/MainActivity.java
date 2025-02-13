@@ -2,6 +2,7 @@ package me.edgan.redditslide.Activities;
 
 import static me.edgan.redditslide.UserSubscriptions.modOf;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
@@ -72,6 +73,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
@@ -243,6 +245,7 @@ public class MainActivity extends BaseActivity
     private AsyncGetSubreddit mAsyncGetSubreddit = null;
     private int headerHeight; // height of the header
     public int reloadItemNumber = -2;
+    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1001;
 
     private View rootView;
 
@@ -790,6 +793,20 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted – you can now post notifications.
+            } else {
+                // Permission denied – handle accordingly.
+            }
+        }
+    }
+
+    @Override
     protected void onCreate(final Bundle savedInstanceState) {
         inNightMode = SettingValues.isNight();
         disableSwipeBackLayout();
@@ -802,6 +819,17 @@ public class MainActivity extends BaseActivity
         if (!Slide.hasStarted) {
             Slide.hasStarted = true;
         }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                NOTIFICATION_PERMISSION_REQUEST_CODE
+            );
+        }
+    }
 
         boolean first = false;
         if (Reddit.colors != null && !Reddit.colors.contains("firstStart53")) {
