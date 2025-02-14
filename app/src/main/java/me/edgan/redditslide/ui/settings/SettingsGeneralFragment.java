@@ -9,6 +9,7 @@ import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_DRAWER;
 import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR;
 import static me.edgan.redditslide.Constants.getClientId;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -32,6 +34,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -53,6 +57,7 @@ import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.ImageLoaderUtils;
 import me.edgan.redditslide.util.OnSingleClickListener;
+import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.StorageUtil;
 import me.edgan.redditslide.util.StringUtil;
@@ -71,6 +76,7 @@ import java.util.Locale;
 
 import android.view.ContextThemeWrapper;
 import android.widget.EditText;
+import android.content.ActivityNotFoundException;
 
 /** Created by ccrama on 3/5/2015. */
 public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
@@ -78,6 +84,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
     public static boolean searchChanged; // whether or not the subreddit search method changed
     private final ActivityType context;
     private String input;
+    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1337;
 
     public SettingsGeneralFragment(ActivityType context) {
         this.context = context;
@@ -1258,6 +1265,53 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                 v -> {
                     showClientIDDialog();
                 });
+
+        // Add notification permission request button for Android 13+
+        RelativeLayout notifPermLayout = context.findViewById(R.id.settings_general_notification_permission);
+        if (notifPermLayout != null) {
+            LogUtil.v("Found notification permission layout");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                notifPermLayout.setVisibility(View.VISIBLE);
+                notifPermLayout.setOnClickListener(new OnSingleClickListener() {
+                    @Override
+                    public void onSingleClick(View v) {
+                        LogUtil.v("Notification permission button clicked");
+                        // First check notification permission for Android 13+
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(context,
+                                Manifest.permission.POST_NOTIFICATIONS)) {
+                            LogUtil.v("Showing rationale dialog");
+                            new MaterialAlertDialogBuilder(context)
+                                    .setTitle(R.string.notifications_permission_title)
+                                    .setMessage(R.string.notifications_permission_message)
+                                    .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
+                                        LogUtil.v("Requesting permission after rationale");
+                                        ActivityCompat.requestPermissions(
+                                            context,
+                                            new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                                            NOTIFICATION_PERMISSION_REQUEST_CODE
+                                        );
+                                    })
+                                    .setNegativeButton(R.string.btn_cancel, null)
+                                    .show();
+                        } else {
+                            LogUtil.v("Requesting permission directly");
+                            ActivityCompat.requestPermissions(
+                                context,
+                                new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                                NOTIFICATION_PERMISSION_REQUEST_CODE
+                            );
+                        }
+                        // Then check notification listener permission
+                        checkNotificationListenerPermission();
+                    }
+                });
+            } else {
+                LogUtil.v("Hiding notification permission layout - not Android 13+");
+                notifPermLayout.setVisibility(View.GONE);
+            }
+        } else {
+            LogUtil.v("Could not find notification permission layout");
+        }
     }
 
     // Add helper method
@@ -1616,5 +1670,32 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                 })
                 .setNegativeButton(R.string.btn_cancel, null)
                 .show();
+    }
+
+    private void checkNotificationListenerPermission() {
+        String packageName = context.getPackageName();
+        String flat = Settings.Secure.getString(context.getContentResolver(),
+                "enabled_notification_listeners");
+        boolean enabled = flat != null && flat.contains(packageName);
+
+        LogUtil.v("Notification Listener enabled: " + enabled);
+
+        if (!enabled) {
+            new MaterialAlertDialogBuilder(context)
+                    .setTitle(R.string.notification_listener_permission_title)
+                    .setMessage(R.string.notification_listener_permission_message)
+                    .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
+                        Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                        try {
+                            context.startActivity(intent);
+                        } catch (ActivityNotFoundException e) {
+                            Toast.makeText(context,
+                                "Could not open notification listener settings",
+                                Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton(R.string.btn_cancel, null)
+                    .show();
+        }
     }
 }

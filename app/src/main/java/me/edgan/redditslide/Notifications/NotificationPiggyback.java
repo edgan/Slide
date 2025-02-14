@@ -11,6 +11,8 @@ import android.text.TextUtils;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
+import me.edgan.redditslide.util.LogUtil;
+
 /** Created by Carlos on 9/27/2017. */
 @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class NotificationPiggyback extends NotificationListenerService {

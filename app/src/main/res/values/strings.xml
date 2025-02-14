@@ -1264,4 +1264,6 @@
     <!-- Notification permission strings -->
     <string name="notifications_permission_title">Enable Notifications</string>
     <string name="notifications_permission_message">Slide needs notification permission to notify you about new messages, posts, and other updates from Reddit. You can manage notification settings later.</string>
+    <string name="notification_listener_permission_title">Enable Notification Access</string>
+    <string name="notification_listener_permission_message">Slide needs notification access to intercept Reddit notifications and provide a better notification experience. Please enable notification access for Slide in the following screen.</string>
 </resources>
