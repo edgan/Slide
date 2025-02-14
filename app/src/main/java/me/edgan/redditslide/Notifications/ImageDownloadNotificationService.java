@@ -158,6 +158,11 @@ public class ImageDownloadNotificationService extends Service {
                                                 DocumentFile parentDir =
                                                         DocumentFile.fromTreeUri(activity, baseUri);
 
+                                                if (parentDir == null || !parentDir.canWrite()) {
+                                                    onError(new IOException("Invalid directory URI or no write permission."));
+                                                    return;
+                                                }
+
                                                 // Create subreddit subfolder if needed
                                                 if (SettingValues.imageSubfolders
                                                         && !subreddit.isEmpty()) {
@@ -195,9 +200,11 @@ public class ImageDownloadNotificationService extends Service {
                                                     // Only create if no matching directory was
                                                     // found
                                                     if (subFolder == null) {
-                                                        subFolder =
-                                                                parentDir.createDirectory(
-                                                                        subreddit);
+                                                        subFolder = parentDir.createDirectory(subreddit);
+                                                        if (subFolder == null) {
+                                                            onError(new IOException("Failed to create subfolder."));
+                                                            return;
+                                                        }
                                                     }
 
                                                     parentDir = subFolder;
