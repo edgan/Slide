@@ -31,6 +31,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -820,16 +821,46 @@ public class MainActivity extends BaseActivity
             Slide.hasStarted = true;
         }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                this,
-                new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                NOTIFICATION_PERMISSION_REQUEST_CODE
-            );
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            LogUtil.v("Checking notification permission on Android 13+");
+            int permissionState = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.POST_NOTIFICATIONS);
+            LogUtil.v("Permission state: " + (permissionState == PackageManager.PERMISSION_GRANTED ? "GRANTED" : "DENIED"));
+
+            if (permissionState != PackageManager.PERMISSION_GRANTED) {
+                LogUtil.v("Permission not granted, checking if we should show rationale");
+
+                // Post the permission request to the main handler
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.POST_NOTIFICATIONS)) {
+                        LogUtil.v("Showing permission rationale dialog");
+                        new MaterialAlertDialogBuilder(this)
+                                .setTitle(R.string.notifications_permission_title)
+                                .setMessage(R.string.notifications_permission_message)
+                                .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
+                                    LogUtil.v("User accepted rationale, requesting permission");
+                                    ActivityCompat.requestPermissions(
+                                        this,
+                                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                                        NOTIFICATION_PERMISSION_REQUEST_CODE
+                                    );
+                                })
+                                .setNegativeButton(R.string.btn_cancel, (dialog, which) -> {
+                                    LogUtil.v("User declined rationale");
+                                })
+                                .show();
+                    } else {
+                        LogUtil.v("No rationale needed, requesting permission directly");
+                        ActivityCompat.requestPermissions(
+                            this,
+                            new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                            NOTIFICATION_PERMISSION_REQUEST_CODE
+                        );
+                    }
+                }, 500); // Half second delay
+            }
         }
-    }
 
         boolean first = false;
         if (Reddit.colors != null && !Reddit.colors.contains("firstStart53")) {
@@ -841,7 +872,7 @@ public class MainActivity extends BaseActivity
                     .setMessage(
                             "NSFW content is now disabled by default. If you are over the age of"
                                     + " 18, to re-enable NSFW content, visit Settings > Content"
-                                    + " settings")
+                                     + " settings")
                     .setPositiveButton(R.string.btn_ok, null)
                     .setCancelable(false)
                     .show();

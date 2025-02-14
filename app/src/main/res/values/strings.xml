@@ -1260,4 +1260,8 @@
     <string name="reddit_client_id_override">Reddit Client ID Override</string>
     <string name="click_custom_client_id">Click to set custom client ID</string>
     <string name="client_id_saved">Client ID saved: </string>
+
+    <!-- Notification permission strings -->
+    <string name="notifications_permission_title">Enable Notifications</string>
+    <string name="notifications_permission_message">Slide needs notification permission to notify you about new messages, posts, and other updates from Reddit. You can manage notification settings later.</string>
 </resources>
