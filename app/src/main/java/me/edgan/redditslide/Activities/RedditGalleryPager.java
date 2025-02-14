@@ -321,8 +321,7 @@ public class RedditGalleryPager extends BaseSaveActivity {
         return true;
     }
 
-    public void showBottomSheetImage(
-            final String contentUrl, final boolean isGif, final int index) {
+    public void showBottomSheetImage(final String contentUrl, final boolean isGif, final int index) {
         lastContentUrl = contentUrl; // Store for potential retry after permission grant
 
         int[] attrs = new int[] {R.attr.tintColor};

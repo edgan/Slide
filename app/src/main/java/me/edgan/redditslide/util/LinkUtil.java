@@ -208,6 +208,11 @@ public class LinkUtil {
      * @param url URL to open
      */
     public static void openExternally(String url) {
+        if (url == null) {
+            LogUtil.e("Attempted to open null URL externally");
+            return;
+        }
+
         url = StringEscapeUtils.unescapeHtml4(CompatUtil.fromHtml(url).toString());
         Uri uri = formatURL(url);
 
