@@ -1,21 +1,33 @@
 package me.edgan.redditslide.Fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.view.MarginLayoutParamsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
@@ -28,6 +40,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.mikepenz.itemanimators.AlphaInAnimator;
 import com.mikepenz.itemanimators.SlideUpAlphaAnimator;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputLayout;
 
 import me.edgan.redditslide.Activities.BaseActivity;
 import me.edgan.redditslide.Activities.MainActivity;
@@ -185,21 +199,60 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
 
                             @Override
                             public void onClick(View v) {
-                                MaterialDialog.Builder builder =
-                                        new MaterialDialog.Builder(getActivity())
-                                                .title(R.string.search_title)
-                                                .alwaysCallInputCallback()
-                                                .input(
-                                                        getString(R.string.search_msg),
-                                                        "",
-                                                        new MaterialDialog.InputCallback() {
-                                                            @Override
-                                                            public void onInput(
-                                                                    MaterialDialog materialDialog,
-                                                                    CharSequence charSequence) {
-                                                                term = charSequence.toString();
-                                                            }
-                                                        });
+                                FrameLayout frameLayout = new FrameLayout(getActivity());
+                                int padding = getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin);
+
+                                // Set max width for the dialog content
+                                frameLayout.setLayoutParams(new FrameLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT
+                                ));
+
+                                TextInputLayout inputLayout = new TextInputLayout(getActivity());
+                                EditText editText = new EditText(inputLayout.getContext());
+                                editText.setLayoutParams(new LinearLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT
+                                ));
+                                editText.setHint(R.string.search_msg);
+
+                                // Use theme's font color
+                                TypedValue typedValue = new TypedValue();
+                                getActivity().getTheme().resolveAttribute(R.attr.fontColor, typedValue, true);
+                                int textColor = typedValue.data;
+                                int hintColor = ColorUtils.setAlphaComponent(textColor, 138); // 54% opacity for hint
+
+                                editText.setTextColor(textColor);
+                                editText.setHintTextColor(hintColor);
+                                inputLayout.setHintTextColor(ColorStateList.valueOf(hintColor));
+                                inputLayout.setDefaultHintTextColor(ColorStateList.valueOf(hintColor));
+
+                                editText.setMaxWidth(getResources().getDisplayMetrics().widthPixels / 2);
+
+                                inputLayout.addView(editText);
+
+                                frameLayout.addView(inputLayout);
+                                frameLayout.setPadding(padding, padding/2, padding, 0);
+
+                                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity(),
+                                        new ColorPreferences(getActivity()).getThemeSubreddit(id))
+                                    .setTitle(R.string.search_title)
+                                    .setView(frameLayout)
+                                    .setBackgroundInsetStart(padding)
+                                    .setBackgroundInsetEnd(padding);
+
+                                editText.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                        term = s.toString();
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable s) {}
+                                });
 
                                 if (id.startsWith("api/user")) {
                                     id = id.replaceFirst(".*?/m/", "/m/");
@@ -215,42 +268,18 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                                         && !id.equalsIgnoreCase("popular")
                                         && !id.equalsIgnoreCase("myrandom")
                                         && !id.equalsIgnoreCase("randnsfw")) {
-                                    builder.positiveText(getString(R.string.search_subreddit, id))
-                                            .onPositive(
-                                                    new MaterialDialog.SingleButtonCallback() {
-                                                        @Override
-                                                        public void onClick(
-                                                                @NonNull
-                                                                        MaterialDialog
-                                                                                materialDialog,
-                                                                @NonNull
-                                                                        DialogAction dialogAction) {
-                                                            Intent i =
-                                                                    new Intent(
-                                                                            getActivity(),
-                                                                            Search.class);
-                                                            i.putExtra(Search.EXTRA_TERM, term);
-                                                            i.putExtra(Search.EXTRA_SUBREDDIT, id);
-                                                            startActivity(i);
-                                                        }
-                                                    });
-                                    builder.neutralText(R.string.search_all)
-                                            .onNeutral(
-                                                    new MaterialDialog.SingleButtonCallback() {
-                                                        @Override
-                                                        public void onClick(
-                                                                @NonNull
-                                                                        MaterialDialog
-                                                                                materialDialog,
-                                                                @NonNull
-                                                                        DialogAction dialogAction) {
-                                                            Intent i =
-                                                                    new Intent(
-                                                                            getActivity(),
-                                                                            Search.class);
-                                                            i.putExtra(Search.EXTRA_TERM, term);
-                                                            startActivity(i);
-                                                        }
+                                    builder.setPositiveButton(getString(R.string.search_subreddit, id),
+                                            (dialog, which) -> {
+                                                Intent i = new Intent(getActivity(), Search.class);
+                                                i.putExtra(Search.EXTRA_TERM, term);
+                                                i.putExtra(Search.EXTRA_SUBREDDIT, id);
+                                                startActivity(i);
+                                            })
+                                            .setNeutralButton(R.string.search_all,
+                                                    (dialog, which) -> {
+                                                        Intent i = new Intent(getActivity(), Search.class);
+                                                        i.putExtra(Search.EXTRA_TERM, term);
+                                                        startActivity(i);
                                                     });
                                 } else if (id.contains("/m/")) {
                                     String subreddit = id;
@@ -261,58 +290,44 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                                             break;
                                         }
                                     }
-                                    builder.positiveText(getString(R.string.search_subreddit, id))
-                                            .onPositive(
-                                                    new MaterialDialog.SingleButtonCallback() {
-                                                        @Override
-                                                        public void onClick(
-                                                                @NonNull MaterialDialog materialDialog,
-                                                                @NonNull DialogAction dialogAction) {
-                                                            Intent i = new Intent(getActivity(), Search.class);
-                                                            i.putExtra(Search.EXTRA_TERM, term);
-                                                            i.putExtra(Search.EXTRA_MULTIREDDIT, id.substring(3));
-                                                            startActivity(i);
-                                                        }
-                                                    });
-                                    builder.neutralText(R.string.search_all)
-                                            .onNeutral(
-                                                    new MaterialDialog.SingleButtonCallback() {
-                                                        @Override
-                                                        public void onClick(
-                                                                @NonNull
-                                                                        MaterialDialog
-                                                                                materialDialog,
-                                                                @NonNull
-                                                                        DialogAction dialogAction) {
-                                                            Intent i =
-                                                                    new Intent(
-                                                                            getActivity(),
-                                                                            Search.class);
-                                                            i.putExtra(Search.EXTRA_TERM, term);
-                                                            startActivity(i);
-                                                        }
+                                    builder.setPositiveButton(getString(R.string.search_subreddit, id),
+                                            (dialog, which) -> {
+                                                Intent i = new Intent(getActivity(), Search.class);
+                                                i.putExtra(Search.EXTRA_TERM, term);
+                                                i.putExtra(Search.EXTRA_MULTIREDDIT, id.substring(3));
+                                                startActivity(i);
+                                            })
+                                            .setNeutralButton(R.string.search_all,
+                                                    (dialog, which) -> {
+                                                        Intent i = new Intent(getActivity(), Search.class);
+                                                        i.putExtra(Search.EXTRA_TERM, term);
+                                                        startActivity(i);
                                                     });
                                 } else {
-                                    builder.positiveText(R.string.search_all)
-                                            .onPositive(
-                                                    new MaterialDialog.SingleButtonCallback() {
-                                                        @Override
-                                                        public void onClick(
-                                                                @NonNull
-                                                                        MaterialDialog
-                                                                                materialDialog,
-                                                                @NonNull
-                                                                        DialogAction dialogAction) {
-                                                            Intent i =
-                                                                    new Intent(
-                                                                            getActivity(),
-                                                                            Search.class);
-                                                            i.putExtra(Search.EXTRA_TERM, term);
-                                                            startActivity(i);
-                                                        }
-                                                    });
+                                    builder.setPositiveButton(R.string.search_all,
+                                            (dialog, which) -> {
+                                                Intent i = new Intent(getActivity(), Search.class);
+                                                i.putExtra(Search.EXTRA_TERM, term);
+                                                startActivity(i);
+                                            });
                                 }
-                                builder.show();
+
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+
+                                // Set colors for buttons and text
+                                int accentColor = new ColorPreferences(getActivity()).getColor(id);
+                                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(accentColor);
+                                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setTextColor(accentColor);
+
+                                // Set max width for the dialog window
+                                Window window = dialog.getWindow();
+                                if (window != null) {
+                                    window.setLayout(
+                                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                                        ViewGroup.LayoutParams.WRAP_CONTENT
+                                    );
+                                }
                             }
                         });
             } else {
@@ -323,22 +338,17 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                             @Override
                             public void onClick(View v) {
                                 if (!Reddit.fabClear) {
-                                    new AlertDialog.Builder(getActivity())
+                                    new MaterialAlertDialogBuilder(getActivity(),
+                                            new ColorPreferences(getActivity()).getDarkThemeSubreddit(id))
                                             .setTitle(R.string.settings_fabclear)
                                             .setMessage(R.string.settings_fabclear_msg)
-                                            .setPositiveButton(
-                                                    R.string.btn_ok,
-                                                    (dialog, which) -> {
-                                                        Reddit.colors
-                                                                .edit()
-                                                                .putBoolean(
-                                                                        SettingValues
-                                                                                .PREF_FAB_CLEAR,
-                                                                        true)
-                                                                .apply();
-                                                        Reddit.fabClear = true;
-                                                        clearSeenPosts(false);
-                                                    })
+                                            .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
+                                                Reddit.colors.edit()
+                                                        .putBoolean(SettingValues.PREF_FAB_CLEAR, true)
+                                                        .apply();
+                                                Reddit.fabClear = true;
+                                                clearSeenPosts(false);
+                                            })
                                             .show();
                                 } else {
                                     clearSeenPosts(false);
@@ -372,22 +382,17 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                             public void run() {
                                 fab.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                                 if (!Reddit.fabClear) {
-                                    new AlertDialog.Builder(getActivity())
+                                    new MaterialAlertDialogBuilder(getActivity(),
+                                            new ColorPreferences(getActivity()).getDarkThemeSubreddit(id))
                                             .setTitle(R.string.settings_fabclear)
                                             .setMessage(R.string.settings_fabclear_msg)
-                                            .setPositiveButton(
-                                                    R.string.btn_ok,
-                                                    (dialog, which) -> {
-                                                        Reddit.colors
-                                                                .edit()
-                                                                .putBoolean(
-                                                                        SettingValues
-                                                                                .PREF_FAB_CLEAR,
-                                                                        true)
-                                                                .apply();
-                                                        Reddit.fabClear = true;
-                                                        clearSeenPosts(true);
-                                                    })
+                                            .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
+                                                Reddit.colors.edit()
+                                                        .putBoolean(SettingValues.PREF_FAB_CLEAR, true)
+                                                        .apply();
+                                                Reddit.fabClear = true;
+                                                clearSeenPosts(true);
+                                            })
                                             .show();
                                 } else {
                                     clearSeenPosts(true);

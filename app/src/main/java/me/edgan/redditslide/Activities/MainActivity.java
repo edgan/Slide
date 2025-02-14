@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -32,9 +33,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.Spannable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -55,6 +59,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -94,8 +99,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.textfield.TextInputLayout;
 import com.lusfold.androidkeyvaluestore.KVStore;
 import com.lusfold.androidkeyvaluestore.core.KVManger;
+
 
 import me.edgan.redditslide.Adapters.SideArrayAdapter;
 import me.edgan.redditslide.Adapters.SubredditPosts;
@@ -527,12 +534,7 @@ public class MainActivity extends BaseActivity
                                     arrayList.add(subreddit);
                                     SettingsSubAdapter.showSubThemeEditor(
                                             arrayList, MainActivity.this, dialoglayout);
-                                    /*
-                                    boolean old = SettingValues.isPicsEnabled(selectedSub);
-                                    SettingValues.setPicsEnabled(selectedSub, !item.isChecked());
-                                    item.setChecked(!item.isChecked());
-                                    reloadSubs();
-                                    invalidateOptionsMenu();*/
+
                                     return false;
                                 }
                             });
@@ -627,109 +629,107 @@ public class MainActivity extends BaseActivity
                 }
                 return true;
             case R.id.search:
-                MaterialDialog.Builder builder =
-                        new MaterialDialog.Builder(this)
-                                .title(R.string.search_title)
-                                .alwaysCallInputCallback()
-                                .input(
-                                        getString(R.string.search_msg),
-                                        "",
-                                        new MaterialDialog.InputCallback() {
-                                            @Override
-                                            public void onInput(
-                                                    MaterialDialog materialDialog,
-                                                    CharSequence charSequence) {
-                                                term = charSequence.toString();
-                                            }
-                                        });
+                final Context contextThemeWrapper = new ContextThemeWrapper(this,
+                        new ColorPreferences(this).getFontStyle().getBaseId());
+                final String currentSubreddit = usedArray.get(Reddit.currentPosition);
+
+                EditText input = new EditText(contextThemeWrapper);
+                input.setHint(R.string.search_msg);
+
+                // Set the underline color to the accent color for the current subreddit
+                final int accentColor = new ColorPreferences(contextThemeWrapper).getColor(currentSubreddit);
+                input.getBackground().setColorFilter(accentColor, PorterDuff.Mode.SRC_ATOP);
+
+                // Create a FrameLayout with padding
+                FrameLayout frameLayout = new FrameLayout(contextThemeWrapper);
+                int padding = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, 24,
+                        getResources().getDisplayMetrics());
+                frameLayout.setPadding(padding, 0, padding, 0);
+
+                // Add EditText to FrameLayout
+                frameLayout.addView(input, new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.WRAP_CONTENT));
+
+                input.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        term = s.toString();
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {}
+                });
+
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(contextThemeWrapper)
+                        .setTitle(R.string.search_title)
+                        .setView(frameLayout);
 
                 // Add "search current sub" if it is not frontpage/all/random
-                if (!subreddit.equalsIgnoreCase("frontpage")
-                        && !subreddit.equalsIgnoreCase("all")
-                        && !subreddit.contains(".")
-                        && !subreddit.contains("/m/")
-                        && !subreddit.equalsIgnoreCase("friends")
-                        && !subreddit.equalsIgnoreCase("random")
-                        && !subreddit.equalsIgnoreCase("popular")
-                        && !subreddit.equalsIgnoreCase("myrandom")
-                        && !subreddit.equalsIgnoreCase("randnsfw")) {
-                    builder.positiveText(getString(R.string.search_subreddit, subreddit))
-                            .onPositive(
-                                    new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(
-                                                @NonNull MaterialDialog materialDialog,
-                                                @NonNull DialogAction dialogAction) {
-                                            Intent i = new Intent(MainActivity.this, Search.class);
-                                            i.putExtra(Search.EXTRA_TERM, term);
-                                            i.putExtra(Search.EXTRA_SUBREDDIT, subreddit);
-                                            Log.v(
-                                                    LogUtil.getTag(),
-                                                    "INTENT SHOWS " + term + " AND " + subreddit);
-                                            startActivity(i);
-                                        }
+                if (!currentSubreddit.equalsIgnoreCase("frontpage")
+                        && !currentSubreddit.equalsIgnoreCase("all")
+                        && !currentSubreddit.contains(".")
+                        && !currentSubreddit.contains("/m/")
+                        && !currentSubreddit.equalsIgnoreCase("friends")
+                        && !currentSubreddit.equalsIgnoreCase("random")
+                        && !currentSubreddit.equalsIgnoreCase("popular")
+                        && !currentSubreddit.equalsIgnoreCase("myrandom")
+                        && !currentSubreddit.equalsIgnoreCase("randnsfw")) {
+                    builder.setPositiveButton(getString(R.string.search_subreddit, currentSubreddit),
+                            (dialog, which) -> {
+                                Intent i = new Intent(MainActivity.this, Search.class);
+                                i.putExtra(Search.EXTRA_TERM, term);
+                                i.putExtra(Search.EXTRA_SUBREDDIT, currentSubreddit);
+                                Log.v(LogUtil.getTag(), "INTENT SHOWS " + term + " AND " + currentSubreddit);
+                                startActivity(i);
+                            })
+                            .setNeutralButton(R.string.search_all,
+                                    (dialog, which) -> {
+                                        Intent i = new Intent(MainActivity.this, Search.class);
+                                        i.putExtra(Search.EXTRA_TERM, term);
+                                        startActivity(i);
                                     });
-                    builder.neutralText(R.string.search_all)
-                            .onNeutral(
-                                    new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(
-                                                @NonNull MaterialDialog materialDialog,
-                                                @NonNull DialogAction dialogAction) {
-                                            Intent i = new Intent(MainActivity.this, Search.class);
-                                            i.putExtra(Search.EXTRA_TERM, term);
-                                            startActivity(i);
-                                        }
-                                    });
-                } else if (subreddit.startsWith("/m/")) {
-                    // Add search for multireddit
-                    builder.positiveText(getString(R.string.search_subreddit, subreddit))
-                            .onPositive(
-                                    new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(
-                                                @NonNull MaterialDialog materialDialog,
-                                                @NonNull DialogAction dialogAction) {
-                                            Intent i = new Intent(MainActivity.this, Search.class);
-                                            i.putExtra(Search.EXTRA_TERM, term);
-                                            // Set the searchMulti before starting the search
-                                            for (MultiReddit r : UserSubscriptions.multireddits) {
-                                                if (r.getDisplayName().equalsIgnoreCase(subreddit.substring(3))) {
-                                                    MultiredditOverview.searchMulti = r;
-                                                    break;
-                                                }
-                                            }
-                                            i.putExtra(Search.EXTRA_MULTIREDDIT, subreddit.substring(3)); // Remove "/m/"
-                                            startActivity(i);
-                                        }
-                                    });
-                    builder.neutralText(R.string.search_all)
-                            .onNeutral(
-                                    new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(
-                                                @NonNull MaterialDialog materialDialog,
-                                                @NonNull DialogAction dialogAction) {
-                                            Intent i = new Intent(MainActivity.this, Search.class);
-                                            i.putExtra(Search.EXTRA_TERM, term);
-                                            startActivity(i);
-                                        }
+                } else if (currentSubreddit.startsWith("/m/")) {
+                    builder.setPositiveButton(getString(R.string.search_subreddit, currentSubreddit),
+                            (dialog, which) -> {
+                                Intent i = new Intent(MainActivity.this, Search.class);
+                                i.putExtra(Search.EXTRA_TERM, term);
+                                // Set the searchMulti before starting the search
+                                for (MultiReddit r : UserSubscriptions.multireddits) {
+                                    if (r.getDisplayName().equalsIgnoreCase(currentSubreddit.substring(3))) {
+                                        MultiredditOverview.searchMulti = r;
+                                        break;
+                                    }
+                                }
+                                i.putExtra(Search.EXTRA_MULTIREDDIT, currentSubreddit.substring(3)); // Remove "/m/"
+                                startActivity(i);
+                            })
+                            .setNeutralButton(R.string.search_all,
+                                    (dialog, which) -> {
+                                        Intent i = new Intent(MainActivity.this, Search.class);
+                                        i.putExtra(Search.EXTRA_TERM, term);
+                                        startActivity(i);
                                     });
                 } else {
-                    builder.positiveText(R.string.search_all)
-                            .onPositive(
-                                    new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(
-                                                @NonNull MaterialDialog materialDialog,
-                                                @NonNull DialogAction dialogAction) {
-                                            Intent i = new Intent(MainActivity.this, Search.class);
-                                            i.putExtra(Search.EXTRA_TERM, term);
-                                            startActivity(i);
-                                        }
-                                    });
+                    builder.setPositiveButton(R.string.search_all,
+                            (dialog, which) -> {
+                                Intent i = new Intent(MainActivity.this, Search.class);
+                                i.putExtra(Search.EXTRA_TERM, term);
+                                startActivity(i);
+                            });
                 }
-                builder.show();
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                // Set button colors using the same accent color
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(accentColor);
+                dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setTextColor(accentColor);
+
                 return true;
             case R.id.save:
                 saveOffline(
@@ -1339,63 +1339,13 @@ public class MainActivity extends BaseActivity
                                     }
                                 }
                             });
-            header.findViewById(R.id.multi)
-                    .setOnLongClickListener(
-                            new View.OnLongClickListener() {
-                                @Override
-                                public boolean onLongClick(View v) {
-                                    new MaterialDialog.Builder(MainActivity.this)
-                                            .inputRange(3, 20)
-                                            .alwaysCallInputCallback()
-                                            .input(
-                                                    getString(R.string.user_enter),
-                                                    null,
-                                                    new MaterialDialog.InputCallback() {
-                                                        @Override
-                                                        public void onInput(
-                                                                @NonNull MaterialDialog dialog,
-                                                                CharSequence input) {
-                                                            final EditText editText =
-                                                                    dialog.getInputEditText();
-                                                            EditTextValidator.validateUsername(
-                                                                    editText);
-                                                            if (input.length() >= 3
-                                                                    && input.length() <= 20) {
-                                                                dialog.getActionButton(
-                                                                                DialogAction
-                                                                                        .POSITIVE)
-                                                                        .setEnabled(true);
-                                                            }
-                                                        }
-                                                    })
-                                            .positiveText(R.string.user_btn_gotomultis)
-                                            .onPositive(
-                                                    new MaterialDialog.SingleButtonCallback() {
-                                                        @Override
-                                                        public void onClick(
-                                                                @NonNull MaterialDialog dialog,
-                                                                @NonNull DialogAction which) {
-                                                            if (runAfterLoad == null) {
-                                                                Intent inte =
-                                                                        new Intent(
-                                                                                MainActivity.this,
-                                                                                MultiredditOverview
-                                                                                        .class);
-                                                                inte.putExtra(
-                                                                        Profile.EXTRA_PROFILE,
-                                                                        dialog.getInputEditText()
-                                                                                .getText()
-                                                                                .toString());
-                                                                MainActivity.this.startActivity(
-                                                                        inte);
-                                                            }
-                                                        }
-                                                    })
-                                            .negativeText(R.string.btn_cancel)
-                                            .show();
-                                    return true;
-                                }
-                            });
+            header.findViewById(R.id.multi).setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    showUsernameDialog(true);  // true for multireddit view
+                    return true;
+                }
+            });
 
             header.findViewById(R.id.discover)
                     .setOnClickListener(
@@ -1412,9 +1362,7 @@ public class MainActivity extends BaseActivity
                             new OnSingleClickListener() {
                                 @Override
                                 public void onSingleClick(View view) {
-                                    Intent inte = new Intent(MainActivity.this, Profile.class);
-                                    inte.putExtra(Profile.EXTRA_PROFILE, Authentication.name);
-                                    MainActivity.this.startActivity(inte);
+                                    showUsernameDialog(false);  // false for profile view
                                 }
                             });
             header.findViewById(R.id.saved)
@@ -2207,58 +2155,13 @@ public class MainActivity extends BaseActivity
 
             support.setVisibility(View.GONE);
             header.findViewById(R.id.prof)
-                    .setOnClickListener(
-                            new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    new MaterialDialog.Builder(MainActivity.this)
-                                            .inputRange(3, 20)
-                                            .alwaysCallInputCallback()
-                                            .input(
-                                                    getString(R.string.user_enter),
-                                                    null,
-                                                    new MaterialDialog.InputCallback() {
-                                                        @Override
-                                                        public void onInput(
-                                                                @NonNull MaterialDialog dialog,
-                                                                CharSequence input) {
-                                                            final EditText editText =
-                                                                    dialog.getInputEditText();
-                                                            EditTextValidator.validateUsername(
-                                                                    editText);
-                                                            if (input.length() >= 3
-                                                                    && input.length() <= 20) {
-                                                                dialog.getActionButton(
-                                                                                DialogAction
-                                                                                        .POSITIVE)
-                                                                        .setEnabled(true);
-                                                            }
-                                                        }
-                                                    })
-                                            .positiveText(R.string.user_btn_goto)
-                                            .onPositive(
-                                                    new MaterialDialog.SingleButtonCallback() {
-                                                        @Override
-                                                        public void onClick(
-                                                                @NonNull MaterialDialog dialog,
-                                                                @NonNull DialogAction which) {
-                                                            Intent inte =
-                                                                    new Intent(
-                                                                            MainActivity.this,
-                                                                            Profile.class);
-                                                            // noinspection ConstantConditions
-                                                            inte.putExtra(
-                                                                    Profile.EXTRA_PROFILE,
-                                                                    dialog.getInputEditText()
-                                                                            .getText()
-                                                                            .toString());
-                                                            MainActivity.this.startActivity(inte);
-                                                        }
-                                                    })
-                                            .negativeText(R.string.btn_cancel)
-                                            .show();
-                                }
-                            });
+                .setOnClickListener(new OnSingleClickListener() {
+                    @Override
+                    public void onSingleClick(View view) {
+                        showUsernameDialog(false);  // false for profile view
+                    }
+                });
+
         }
 
         header.findViewById(R.id.settings)
@@ -5626,5 +5529,76 @@ public class MainActivity extends BaseActivity
                 return "";
             }
         }
+    }
+
+    private void showUsernameDialog(boolean isMultireddit) {
+        final Context contextThemeWrapper = new ContextThemeWrapper(MainActivity.this,
+                new ColorPreferences(MainActivity.this).getFontStyle().getBaseId());
+
+        // Create TextInputLayout for proper error handling
+        TextInputLayout inputLayout = new TextInputLayout(contextThemeWrapper);
+        inputLayout.setErrorIconDrawable(null); // Remove error icon
+        inputLayout.setErrorEnabled(true);
+
+        final EditText input = new EditText(contextThemeWrapper);
+        input.setHint(getString(R.string.user_enter));
+        input.setHintTextColor(getResources().getColor(R.color.md_grey_700));
+
+        // Match search box styling
+        int underlineColor = new ColorPreferences(contextThemeWrapper).getColor(selectedSub);
+        input.getBackground().setColorFilter(underlineColor, PorterDuff.Mode.SRC_ATOP);
+
+        // Add EditText to TextInputLayout
+        inputLayout.addView(input);
+
+        FrameLayout frameLayout = new FrameLayout(contextThemeWrapper);
+        int padding = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics());
+        frameLayout.setPadding(padding, 0, padding, 0);
+        frameLayout.addView(inputLayout, new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(contextThemeWrapper)
+                .setTitle(R.string.user_enter)
+                .setView(frameLayout)
+                .setPositiveButton(R.string.user_btn_goto, null)
+                .setNegativeButton(R.string.btn_cancel, null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Set accent color for buttons
+        int accentColor = new ColorPreferences(contextThemeWrapper).getColor(selectedSub);
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(accentColor);
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(accentColor);
+
+        // Set up the positive button click listener after dialog is shown
+        Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        positiveButton.setEnabled(true);
+        positiveButton.setOnClickListener(view1 -> {
+            String username = input.getText().toString().trim();
+            if (username.length() >= 3 && username.length() <= 20) {
+                Intent inte;
+                if (isMultireddit) {
+                    inte = new Intent(MainActivity.this, MultiredditOverview.class);
+                } else {
+                    inte = new Intent(MainActivity.this, Profile.class);
+                }
+                inte.putExtra(Profile.EXTRA_PROFILE, username);
+                MainActivity.this.startActivity(inte);
+                dialog.dismiss();
+            } else {
+                inputLayout.setError("Username must be between 3 and 20 characters");
+            }
+        });
+
+        // Clear error when text changes
+        input.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                inputLayout.setError(null);
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        });
     }
 }

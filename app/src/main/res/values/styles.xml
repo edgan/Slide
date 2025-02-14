@@ -184,152 +184,156 @@
 
     <style parent="swipestyle" name="Theme.AMOLED">
         <item name="activity_background">@android:color/black</item>
-        <item name="card_background">@android:color/black</item>
-        <item name="android:colorBackground">@android:color/black</item>
-        <item name="md_background_color">@android:color/black</item>
-        <item name="list_background">@android:color/black</item>
-        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.AMOLED</item>
-        <item name="fontColor">#DEFFFFFF</item> <!-- 87% white -->
-        <item name="tintColor">#8AFFFFFF</item> <!-- 54% white -->
-        <item name="android:windowBackground">@null</item>
         <item name="android:alertDialogStyle">@style/AlertDialog.AppCompat</item>
+        <item name="android:colorBackground">@android:color/black</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.AMOLED</item>
+        <item name="card_background">@android:color/black</item>
+        <item name="fontColor">#DEFFFFFF</item> <!-- 87% white -->
+        <item name="list_background">@android:color/black</item>
+        <item name="md_background_color">@android:color/black</item>
+        <item name="tintColor">#8AFFFFFF</item> <!-- 54% white -->
+        <item name="tp_backgroundColor">?attr/card_background</item>
         <item name="tp_selectionColor">?android:colorAccent</item>
         <item name="tp_textColor">?attr/fontColor</item>
-        <item name="tp_backgroundColor">?attr/card_background</item>
     </style>
 
     <style parent="swipestyle" name="Theme.AMOLED_lighter">
         <item name="activity_background">#121212</item>
-        <item name="card_background">@android:color/black</item>
-        <item name="android:colorBackground">#121212</item>
-        <item name="md_background_color">#121212</item>
-        <item name="list_background">@android:color/black</item>
-        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.AMOLED</item>
-        <item name="fontColor">#DEFFFFFF</item> <!-- 87% white -->
-        <item name="tintColor">#8AFFFFFF</item> <!-- 54% white -->
-        <item name="android:windowBackground">@null</item>
         <item name="android:alertDialogStyle">@style/AlertDialog.AppCompat</item>
+        <item name="android:colorBackground">#121212</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.AMOLED</item>
+        <item name="card_background">@android:color/black</item>
+        <item name="fontColor">#deffffff</item> <!-- 87% white -->
+        <item name="list_background">@android:color/black</item>
+        <item name="md_background_color">#121212</item>
+        <item name="tintColor">#8affffff</item> <!-- 54% white -->
+        <item name="tp_backgroundColor">?attr/card_background</item>
         <item name="tp_selectionColor">?android:colorAccent</item>
         <item name="tp_textColor">?attr/fontColor</item>
-        <item name="tp_backgroundColor">?attr/card_background</item>
     </style>
 
     <style parent="swipestyle" name="Theme.DARK">
         <item name="activity_background">#212121</item>
-        <item name="card_background">#303030</item>
-        <item name="list_background">#212121</item>
-        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.Dark</item>
-        <item name="fontColor">#DEFFFFFF</item> <!-- 87% white -->
-        <item name="tintColor">#8AFFFFFF</item> <!-- 54% white -->
-        <item name="android:windowBackground">@null</item>
         <item name="android:alertDialogStyle">@style/AlertDialog.AppCompat</item>
+        <item name="android:colorBackground">#303030</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.Dark</item>
+        <item name="card_background">#303030</item>
+        <item name="fontColor">#deffffff</item> <!-- 87% white -->
+        <item name="list_background">#212121</item>
+        <item name="md_background_color">#303030</item>
+        <item name="tintColor">#8affffff</item> <!-- 54% white -->
+        <item name="tp_backgroundColor">?attr/card_background</item>
         <item name="tp_selectionColor">?android:colorAccent</item>
         <item name="tp_textColor">?attr/fontColor</item>
-        <item name="tp_backgroundColor">?attr/card_background</item>
     </style>
 
     <style parent="swipestyle" name="Theme.DARK_BLUE">
-        <item name="activity_background">#2F3D44</item>
-        <item name="card_background">#37474F</item>
-        <item name="android:colorBackground">#37474F</item>
-        <item name="md_background_color">#37474F</item>
-        <item name="list_background">#263238</item>
-        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.Dark_Blue</item>
-        <item name="fontColor">#DEFFFFFF</item> <!-- 87% white -->
-        <item name="tintColor">#8AFFFFFF</item> <!-- 54% white -->
-        <item name="android:windowBackground">@null</item>
+        <item name="activity_background">#2f3d44</item>
         <item name="android:alertDialogStyle">@style/AlertDialog.AppCompat</item>
+        <item name="android:colorBackground">#37474f</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.Dark_Blue</item>
+        <item name="card_background">#37474f</item>
+        <item name="fontColor">#deffffff</item> <!-- 87% white -->
+        <item name="list_background">#263238</item>
+        <item name="md_background_color">#37474f</item>
+        <item name="tintColor">#8affffff</item> <!-- 54% white -->
+        <item name="tp_backgroundColor">?attr/card_background</item>
         <item name="tp_selectionColor">?android:colorAccent</item>
         <item name="tp_textColor">?attr/fontColor</item>
-        <item name="tp_backgroundColor">?attr/card_background</item>
     </style>
 
     <style parent="swipestyle" name="Theme.DEEP">
-        <item name="activity_background">#16161C</item>
-        <item name="card_background">#1f1e26</item>
-        <item name="android:colorBackground">#1f1e26</item>
-        <item name="md_background_color">#1f1e26</item>
-        <item name="list_background">#1C1B21</item>
-        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.Deep</item>
-        <item name="fontColor">#DEFFFFFF</item> <!-- 87% white -->
-        <item name="tintColor">#8AFFFFFF</item> <!-- 54% white -->
-        <item name="android:windowBackground">@null</item>
+        <item name="activity_background">#16161c</item>
         <item name="android:alertDialogStyle">@style/AlertDialog.AppCompat</item>
+        <item name="android:colorBackground">#1f1e26</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.Deep</item>
+        <item name="card_background">#1f1e26</item>
+        <item name="fontColor">#deffffff</item> <!-- 87% white -->
+        <item name="list_background">#1c1b21</item>
+        <item name="md_background_color">#1f1e26</item>
+        <item name="tintColor">#8affffff</item> <!-- 54% white -->
+        <item name="tp_backgroundColor">?attr/card_background</item>
         <item name="tp_selectionColor">?android:colorAccent</item>
         <item name="tp_textColor">?attr/fontColor</item>
-        <item name="tp_backgroundColor">?attr/card_background</item>
     </style>
 
     <style parent="swipestyle" name="Theme.PIXEL">
         <item name="activity_background">#3a3a3a</item>
-        <item name="card_background">#2d2d2d</item>
-        <item name="android:colorBackground">#2d2d2d</item>
-        <item name="md_background_color">#2d2d2d</item>
-        <item name="list_background">#3a3a3a</item>
-        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.PIXEL</item>
-        <item name="fontColor">#DEFFFFFF</item> <!-- 87% white -->
-        <item name="tintColor">#8AFFFFFF</item> <!-- 54% white -->
-        <item name="android:windowBackground">@null</item>
         <item name="android:alertDialogStyle">@style/AlertDialog.AppCompat</item>
+        <item name="android:colorBackground">#2d2d2d</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.PIXEL</item>
+        <item name="card_background">#2d2d2d</item>
+        <item name="fontColor">#deffffff</item> <!-- 87% white -->
+        <item name="list_background">#3a3a3a</item>
+        <item name="md_background_color">#2d2d2d</item>
+        <item name="tintColor">#8affffff</item> <!-- 54% white -->
+        <item name="tp_backgroundColor">?attr/card_background</item>
         <item name="tp_selectionColor">?android:colorAccent</item>
         <item name="tp_textColor">?attr/fontColor</item>
-        <item name="tp_backgroundColor">?attr/card_background</item>
     </style>
 
     <style parent="swipestyle" name="Theme.NIGHT_RED">
         <item name="activity_background">#312322</item>
-        <item name="card_background">#402c2c</item>
-        <item name="android:colorBackground">#402c2c</item>
-        <item name="md_background_color">#402c2c</item>
-        <item name="list_background">#261a1a</item>
-        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.Night_Red</item>
-        <item name="fontColor">#defff7ed</item> <!-- 87% white -->
-        <item name="tintColor">#8affebcf</item> <!-- 54% white -->
-        <item name="android:windowBackground">@null</item>
         <item name="android:alertDialogStyle">@style/AlertDialog.AppCompat</item>
+        <item name="android:colorBackground">#402c2c</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.Night_Red</item>
+        <item name="card_background">#402c2c</item>
+        <item name="fontColor">#defff7ed</item> <!-- 87% white -->
+        <item name="list_background">#261a1a</item>
+        <item name="md_background_color">#402c2c</item>
+        <item name="tintColor">#8affebcf</item> <!-- 54% white -->
+        <item name="tp_backgroundColor">?attr/card_background</item>
         <item name="tp_selectionColor">?android:colorAccent</item>
         <item name="tp_textColor">?attr/fontColor</item>
-        <item name="tp_backgroundColor">?attr/card_background</item>
     </style>
 
     <style parent="swipestyle" name="Theme.SEPIA">
+        <item name="actionMenuTextColor">#de3e3d36</item>
         <item name="activity_background">#cac5ad</item>
-        <item name="card_background">#e2dfd7</item>
-        <item name="list_background">#cac5ad</item>
-        <item name="android:colorBackground">#e2dfd7</item>
-        <item name="md_background_color">#e2dfd7</item>
-        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.Sepia</item>
-        <item name="fontColor">#de3e3d36</item> <!-- 87% black -->
-        <item name="tintColor">#8A3e3d36</item> <!-- 54% black -->
-        <item name="android:textColorPrimary">#DE3e3d36</item> <!-- 87% black -->
-        <item name="android:textColorSecondary">#8A3e3d36</item> <!-- 54% black -->
-        <item name="android:textColor">#DE3e3d36</item> <!-- 87% black -->
-        <item name="android:windowBackground">@null</item>
-        <item name="actionMenuTextColor">#DE3e3d36</item>
-        <item name="android:actionMenuTextColor">#DE3e3d36</item>
+        <item name="android:actionMenuTextColor">#de3e3d36</item>
         <item name="android:alertDialogStyle">@style/AlertDialog.AppCompat</item>
+        <item name="android:colorBackground">#e2dfd7</item>
+        <item name="android:textColor">#de3e3d36</item> <!-- 87% black -->
+        <item name="android:textColorPrimary">#de3e3d36</item> <!-- 87% black -->
+        <item name="android:textColorSecondary">#8a3e3d36</item> <!-- 54% black -->
+        <item name="android:windowBackground">@null</item>
+        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.Sepia</item>
+        <item name="card_background">#e2dfd7</item>
+        <item name="fontColor">#de3e3d36</item> <!-- 87% black -->
+        <item name="list_background">#cac5ad</item>
+        <item name="md_background_color">#e2dfd7</item>
+        <item name="tintColor">#8A3e3d36</item> <!-- 54% black -->
+        <item name="tp_backgroundColor">?attr/card_background</item>
         <item name="tp_selectionColor">?android:colorAccent</item>
         <item name="tp_textColor">?attr/fontColor</item>
-        <item name="tp_backgroundColor">?attr/card_background</item>
     </style>
 
     <style parent="swipestylelight" name="Theme.LIGHT">
+        <item name="actionMenuTextColor">#de000000</item>
         <item name="activity_background">#e5e5e5</item>
-        <item name="card_background">@android:color/white</item>
-        <item name="list_background">#e5e5e5</item>
-        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.Light</item>
-        <item name="fontColor">#DE000000</item> <!-- 87% black -->
-        <item name="tintColor">#8A000000</item> <!-- 54% black -->
-        <item name="android:textColorPrimary">#DE000000</item> <!-- 87% black -->
-        <item name="android:textColorSecondary">#8A000000</item> <!-- 54% black -->
-        <item name="android:textColor">#DE000000</item> <!-- 87% black -->
-        <item name="android:windowBackground">@null</item>
-        <item name="actionMenuTextColor">#DE000000</item>
-        <item name="android:actionMenuTextColor">#DE000000</item>
+        <item name="android:actionMenuTextColor">#de000000</item>
+        <item name="android:alertDialogStyle">@style/AlertDialog.AppCompat</item>
         <item name="android:colorBackground">#e5e5e5</item>
+        <item name="android:textColor">#de000000</item> <!-- 87% black -->
+        <item name="android:textColorPrimary">#de000000</item> <!-- 87% black -->
+        <item name="android:textColorSecondary">#8a000000</item> <!-- 54% black -->
+        <item name="android:windowBackground">@null</item>
+        <item name="bs_bottomSheetStyle">@style/BottomSheet.StyleDialog.Light</item>
+        <item name="card_background">@android:color/white</item>
+        <item name="fontColor">#de000000</item> <!-- 87% black -->
+        <item name="list_background">#e5e5e5</item>
+        <item name="md_background_color">#e5e5e5</item>
+        <item name="tintColor">#8a000000</item> <!-- 54% black -->
+        <item name="tp_backgroundColor">?attr/card_background</item>
         <item name="tp_selectionColor">?android:colorAccent</item>
         <item name="tp_textColor">?attr/fontColor</item>
-        <item name="tp_backgroundColor">?attr/card_background</item>
     </style>
 
     <!-- AMOLED Theme Subthemes !-->
@@ -518,73 +522,73 @@
     <!-- Matches parent's android:colorBackground = #212121 -->
     <style parent="Theme.DARK" name="amber_dark">
         <item name="colorAccent">@color/md_amber_A400</item>
-        <item name="colorSurface">#212121</item>
+        <item name="colorSurface">#424242</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="blue_dark">
         <item name="colorAccent">@color/md_blue_A400</item>
-        <item name="colorSurface">#212121</item>
+        <item name="colorSurface">#424242</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="cyan_dark">
         <item name="colorAccent">@color/md_cyan_A400</item>
-        <item name="colorSurface">#212121</item>
+        <item name="colorSurface">#424242</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="deeporange_dark">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
-        <item name="colorSurface">#212121</item>
+        <item name="colorSurface">#424242</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="green_dark">
         <item name="colorAccent">@color/md_green_A400</item>
-        <item name="colorSurface">#212121</item>
+        <item name="colorSurface">#424242</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="indigo_dark">
         <item name="colorAccent">@color/md_indigo_A400</item>
-        <item name="colorSurface">#212121</item>
+        <item name="colorSurface">#424242</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="lightblue_dark">
         <item name="colorAccent">@color/md_light_blue_A400</item>
-        <item name="colorSurface">#212121</item>
+        <item name="colorSurface">#424242</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="lime_dark">
         <item name="colorAccent">@color/md_lime_A400</item>
-        <item name="colorSurface">#212121</item>
+        <item name="colorSurface">#424242</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="pink_dark">
         <item name="colorAccent">@color/md_pink_A200</item>
-        <item name="colorSurface">#212121</item>
+        <item name="colorSurface">#424242</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="teal_dark">
         <item name="colorAccent">@color/md_teal_A700</item>
-        <item name="colorSurface">#212121</item>
+        <item name="colorSurface">#424242</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="white_dark">
         <item name="colorAccent">@color/md_blue_grey_200</item>
-        <item name="colorSurface">#212121</item>
+        <item name="colorSurface">#424242</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.DARK" name="yellow_dark">
         <item name="colorAccent">@color/md_yellow_A400</item>
-        <item name="colorSurface">#212121</item>
+        <item name="colorSurface">#424242</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
@@ -592,7 +596,7 @@
     <!-- Matches parent's android:colorBackground = #402c2c -->
     <style parent="Theme.NIGHT_RED" name="amber_night_red">
         <item name="colorAccent">@color/md_amber_A400</item>
-        <item name="colorSurface">#402c2c</item>
+        <item name="colorSurface">#44302f</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
@@ -604,61 +608,61 @@
 
     <style parent="Theme.NIGHT_RED" name="cyan_night_red">
         <item name="colorAccent">@color/md_cyan_A400</item>
-        <item name="colorSurface">#402c2c</item>
+        <item name="colorSurface">#44302f</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="deeporange_night_red">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
-        <item name="colorSurface">#402c2c</item>
+        <item name="colorSurface">#44302f</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="green_night_red">
         <item name="colorAccent">@color/md_green_A400</item>
-        <item name="colorSurface">#402c2c</item>
+        <item name="colorSurface">#44302f</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="indigo_night_red">
         <item name="colorAccent">@color/md_indigo_A400</item>
-        <item name="colorSurface">#402c2c</item>
+        <item name="colorSurface">#44302f</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="lightblue_night_red">
         <item name="colorAccent">@color/md_light_blue_A400</item>
-        <item name="colorSurface">#402c2c</item>
+        <item name="colorSurface">#44302f</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="lime_night_red">
         <item name="colorAccent">@color/md_lime_A400</item>
-        <item name="colorSurface">#402c2c</item>
+        <item name="colorSurface">#44302f</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="pink_night_red">
         <item name="colorAccent">@color/md_pink_A200</item>
-        <item name="colorSurface">#402c2c</item>
+        <item name="colorSurface">#44302f</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="teal_night_red">
         <item name="colorAccent">@color/md_teal_A700</item>
-        <item name="colorSurface">#402c2c</item>
+        <item name="colorSurface">#44302f</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="white_night_red">
         <item name="colorAccent">@color/md_blue_grey_200</item>
-        <item name="colorSurface">#402c2c</item>
+        <item name="colorSurface">#44302f</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.NIGHT_RED" name="yellow_night_red">
         <item name="colorAccent">@color/md_yellow_A400</item>
-        <item name="colorSurface">#402c2c</item>
+        <item name="colorSurface">#44302f</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
@@ -740,73 +744,73 @@
     <!-- Matches parent's android:colorBackground = #2d2d2d -->
     <style parent="Theme.PIXEL" name="amber_pixel">
         <item name="colorAccent">@color/md_amber_A400</item>
-        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorSurface">#3a3a3a</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="blue_pixel">
         <item name="colorAccent">@color/md_blue_400</item>
-        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorSurface">#3a3a3a</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="cyan_pixel">
         <item name="colorAccent">@color/md_cyan_A400</item>
-        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorSurface">#3a3a3a</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="deeporange_pixel">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
-        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorSurface">#3a3a3a</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="green_pixel">
         <item name="colorAccent">@color/md_green_A400</item>
-        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorSurface">#3a3a3a</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="indigo_pixel">
         <item name="colorAccent">@color/md_indigo_A400</item>
-        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorSurface">#3a3a3a</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="lightblue_pixel">
         <item name="colorAccent">@color/md_light_blue_A400</item>
-        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorSurface">#3a3a3a</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="lime_pixel">
         <item name="colorAccent">@color/md_lime_A400</item>
-        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorSurface">#3a3a3a</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="pink_pixel">
         <item name="colorAccent">@color/md_pink_A200</item>
-        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorSurface">#3a3a3a</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="teal_pixel">
         <item name="colorAccent">@color/md_teal_A700</item>
-        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorSurface">#3a3a3a</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="white_pixel">
         <item name="colorAccent">@color/md_blue_grey_200</item>
-        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorSurface">#3a3a3a</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.PIXEL" name="yellow_pixel">
         <item name="colorAccent">@color/md_yellow_A400</item>
-        <item name="colorSurface">#2d2d2d</item>
+        <item name="colorSurface">#3a3a3a</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
@@ -814,73 +818,73 @@
     <!-- Matches parent's android:colorBackground = #e5e5e5 -->
     <style parent="Theme.LIGHT" name="amber_LIGHT">
         <item name="colorAccent">@color/md_amber_A400</item>
-        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorSurface">#ffffff</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="blue_LIGHT">
         <item name="colorAccent">@color/md_blue_A400</item>
-        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorSurface">#ffffff</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="cyan_LIGHT">
         <item name="colorAccent">@color/md_cyan_A400</item>
-        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorSurface">#ffffff</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="deeporange_LIGHT">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
-        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorSurface">#ffffff</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="green_LIGHT">
         <item name="colorAccent">@color/md_green_A400</item>
-        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorSurface">#ffffff</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="indigo_LIGHT">
         <item name="colorAccent">@color/md_indigo_A400</item>
-        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorSurface">#ffffff</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="lightblue_LIGHT">
         <item name="colorAccent">@color/md_light_blue_A400</item>
-        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorSurface">#ffffff</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="lime_LIGHT">
         <item name="colorAccent">@color/md_lime_A400</item>
-        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorSurface">#ffffff</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="pink_light">
         <item name="colorAccent">@color/md_pink_A200</item>
-        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorSurface">#ffffff</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="teal_light">
         <item name="colorAccent">@color/md_teal_A700</item>
-        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorSurface">#ffffff</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="white_light">
         <item name="colorAccent">@color/md_blue_grey_200</item>
-        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorSurface">#ffffff</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.LIGHT" name="yellow_LIGHT">
         <item name="colorAccent">@color/md_yellow_A400</item>
-        <item name="colorSurface">#e5e5e5</item>
+        <item name="colorSurface">#ffffff</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
@@ -888,73 +892,73 @@
     <!-- Matches parent's android:colorBackground = #e2dfd7 -->
     <style parent="Theme.SEPIA" name="amber_sepia">
         <item name="colorAccent">@color/md_amber_A400</item>
-        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorSurface">#b1ad9b</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="blue_sepia">
         <item name="colorAccent">@color/md_blue_A400</item>
-        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorSurface">#b1ad9b</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="cyan_sepia">
         <item name="colorAccent">@color/md_cyan_A400</item>
-        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorSurface">#b1ad9b</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="deeporange_sepia">
         <item name="colorAccent">@color/md_deep_orange_A400</item>
-        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorSurface">#b1ad9b</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="green_sepia">
         <item name="colorAccent">@color/md_green_A400</item>
-        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorSurface">#b1ad9b</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="indigo_sepia">
         <item name="colorAccent">@color/md_indigo_A400</item>
-        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorSurface">#b1ad9b</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="lightblue_sepia">
         <item name="colorAccent">@color/md_light_blue_A400</item>
-        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorSurface">#b1ad9b</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="lime_sepia">
         <item name="colorAccent">@color/md_lime_A400</item>
-        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorSurface">#b1ad9b</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="pink_sepia">
         <item name="colorAccent">@color/md_pink_A200</item>
-        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorSurface">#b1ad9b</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="teal_sepia">
         <item name="colorAccent">@color/md_teal_A700</item>
-        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorSurface">#b1ad9b</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="white_sepia">
         <item name="colorAccent">@color/md_blue_grey_200</item>
-        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorSurface">#b1ad9b</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 
     <style parent="Theme.SEPIA" name="yellow_sepia">
         <item name="colorAccent">@color/md_yellow_A400</item>
-        <item name="colorSurface">#e2dfd7</item>
+        <item name="colorSurface">#b1ad9b</item>
         <item name="colorOnSurface">?android:colorAccent</item>
     </style>
 

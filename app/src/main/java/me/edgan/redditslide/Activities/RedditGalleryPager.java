@@ -109,7 +109,10 @@ public class RedditGalleryPager extends BaseSaveActivity {
                 return true;
 
             case R.id.external:
-                LinkUtil.openExternally(getIntent().getExtras().getString("url", ""));
+                String url = getIntent().getStringExtra(MediaView.SUBMISSION_URL);
+                if (url != null && !url.isEmpty()) {
+                    LinkUtil.openExternally(url);
+                }
                 return true;
 
             case R.id.comments:
