@@ -4,6 +4,7 @@ import static me.edgan.redditslide.Notifications.ImageDownloadNotificationServic
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +24,7 @@ import androidx.viewpager.widget.ViewPager;
 import me.edgan.redditslide.Adapters.RedditGalleryView;
 import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
+import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
@@ -30,7 +32,9 @@ import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.GifUtils;
 import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.StorageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +52,9 @@ public class RedditGallery extends BaseSaveActivity {
     public String url;
     public String subreddit;
     private String submissionTitle;
-    public RedditGalleryPagerAdapter album;
+    public RedditGalleryPagerAdapter gallery;
+    private static String lastContentUrl; // Track URL for retry after permission
+    private int lastIndex = -1; // Track index for retry after permission
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -96,15 +102,29 @@ public class RedditGallery extends BaseSaveActivity {
                 return true;
 
             case R.id.external:
-                LinkUtil.openExternally(url);
+                String url = getIntent().getStringExtra(MediaView.SUBMISSION_URL);
+                if (url != null && !url.isEmpty()) {
+                    LinkUtil.openExternally(url);
+                }
                 return true;
-
             case R.id.download:
-                // Download all images in the gallery
-                int index = 0;
-                for (final GalleryImage elem : images) {
-                    doImageSave(false, elem.url, index);
-                    index++;
+                if (images != null) {
+                    int index = 0;
+                    for (final GalleryImage elem : images) {
+                        if (elem.isAnimated()) {
+                            // Handle videos/GIFs using GifUtils
+                            GifUtils.cacheSaveGif(
+                                    Uri.parse(elem.url),
+                                    this,
+                                    subreddit != null ? subreddit : "",
+                                    submissionTitle != null ? submissionTitle : "",
+                                    true);
+                        } else {
+                            // Handle static images using existing image download
+                            doImageSave(false, elem.url, index);
+                        }
+                        index++;
+                    }
                 }
                 return true;
         }
@@ -115,7 +135,7 @@ public class RedditGallery extends BaseSaveActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.album_vertical, menu);
+        inflater.inflate(R.menu.gallery_vertical, menu);
 
         adapterPosition = getIntent().getIntExtra(MediaView.ADAPTER_POSITION, -1);
         if (adapterPosition < 0) {
@@ -148,8 +168,12 @@ public class RedditGallery extends BaseSaveActivity {
 
         final ViewPager pager = (ViewPager) findViewById(R.id.images);
 
-        album = new RedditGalleryPagerAdapter(getSupportFragmentManager());
-        pager.setAdapter(album);
+        images =
+                (ArrayList<GalleryImage>)
+                        getIntent().getSerializableExtra(RedditGallery.GALLERY_URLS);
+
+        gallery = new RedditGalleryPagerAdapter(getSupportFragmentManager());
+        pager.setAdapter(gallery);
         pager.setCurrentItem(1);
         if (SettingValues.oldSwipeMode) {
             pager.addOnPageChangeListener(
@@ -185,18 +209,14 @@ public class RedditGallery extends BaseSaveActivity {
 
     @Override
     protected void onStoragePermissionGranted() {
-        // After getting SAF permission, retry the last attempted download if any
-        if (!images.isEmpty()) {
-            int index = 0;
-            for (final GalleryImage elem : images) {
-                doImageSave(false, elem.url, index);
-                index++;
-            }
+        if (lastContentUrl != null) {
+            doImageSave(false, lastContentUrl, adapterPosition);
+            lastContentUrl = null;
         }
     }
 
     public class RedditGalleryPagerAdapter extends FragmentStatePagerAdapter {
-        public AlbumFrag album;
+        public AlbumFrag gallery;
         BlankFragment blankPage;
 
         RedditGalleryPagerAdapter(FragmentManager fm) {
@@ -211,13 +231,13 @@ public class RedditGallery extends BaseSaveActivity {
                     blankPage = new BlankFragment();
                     return blankPage;
                 } else {
-                    album = new AlbumFrag();
-                    return album;
+                    gallery = new AlbumFrag();
+                    return gallery;
                 }
             } else {
-                album = new AlbumFrag();
+                gallery = new AlbumFrag();
 
-                return album;
+                return gallery;
             }
         }
 
@@ -232,13 +252,21 @@ public class RedditGallery extends BaseSaveActivity {
     }
 
     public static class AlbumFrag extends Fragment {
+        private int i = 0;
         View rootView;
         public RecyclerView recyclerView;
 
+        private void setLastContentUrl(final String url) {
+            lastContentUrl = url; // Store for potential retry after permission grant
+        }
+
         @Override
-        public View onCreateView(
-                LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             rootView = inflater.inflate(R.layout.fragment_verticalalbum, container, false);
+
+            GalleryImage current = ((RedditGallery) getActivity()).images.get(i);
+            final String url = current.getImageUrl();
+            this.setLastContentUrl(url);
 
             final PreCachingLayoutManager mLayoutManager =
                     new PreCachingLayoutManager(getActivity());
@@ -283,6 +311,40 @@ public class RedditGallery extends BaseSaveActivity {
             }
 
             return rootView;
+        }
+    }
+
+    public void doImageSave(boolean isGif, String contentUrl, int index) {
+        Uri storageUri = StorageUtil.getStorageUri(this);
+        if (storageUri == null) {
+            lastContentUrl = contentUrl;
+            lastIndex = index;
+            StorageUtil.showDirectoryChooser(this);
+        } else {
+            if (isGif) {
+                // Handle video/gif save
+                GifUtils.cacheSaveGif(
+                        Uri.parse(contentUrl),
+                        this,
+                        subreddit != null ? subreddit : "",
+                        submissionTitle != null ? submissionTitle : "",
+                        true);
+            } else {
+                // Handle image save
+                Intent i = new Intent(this, ImageDownloadNotificationService.class);
+                i.putExtra("actuallyLoaded", contentUrl);
+                i.putExtra("downloadUri", storageUri.toString());
+
+                if (subreddit != null && !subreddit.isEmpty()) {
+                    i.putExtra("subreddit", subreddit);
+                }
+                if (submissionTitle != null) {
+                    i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
+                }
+                i.putExtra("index", index);
+
+                startService(i);
+            }
         }
     }
 }
