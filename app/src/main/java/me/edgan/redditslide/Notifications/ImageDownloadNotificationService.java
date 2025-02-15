@@ -141,127 +141,70 @@ public class ImageDownloadNotificationService extends Service {
                                         .build(),
                                 new SimpleImageLoadingListener() {
                                     @Override
-                                    public void onLoadingComplete(
-                                            String imageUri,
-                                            android.view.View view,
-                                            final Bitmap loadedImage) {
-                                        synchronized (ImageDownloadNotificationService.class) {
-                                            try {
-                                                File cachedFile =
-                                                        ((Reddit) getApplicationContext())
-                                                                .getImageLoader()
-                                                                .getDiskCache()
-                                                                .get(actuallyLoaded);
+                                    public void onLoadingComplete(String imageUri, android.view.View view, final Bitmap loadedImage) {
+                                        try {
+                                            File cachedFile = ((Reddit) getApplicationContext())
+                                                    .getImageLoader()
+                                                    .getDiskCache()
+                                                    .get(actuallyLoaded);
 
-                                                Context activity =
-                                                        ImageDownloadNotificationService.this;
-                                                DocumentFile parentDir =
-                                                        DocumentFile.fromTreeUri(activity, baseUri);
+                                            Context activity = ImageDownloadNotificationService.this;
+                                            DocumentFile parentDir = DocumentFile.fromTreeUri(activity, baseUri);
 
-                                                if (parentDir == null || !parentDir.canWrite()) {
-                                                    onError(new IOException("Invalid directory URI or no write permission."));
-                                                    return;
-                                                }
+                                            if (parentDir == null || !parentDir.canWrite()) {
+                                                onError(new IOException("Invalid directory URI or no write permission."));
+                                                return;
+                                            }
 
-                                                // Create subreddit subfolder if needed
-                                                if (SettingValues.imageSubfolders
-                                                        && !subreddit.isEmpty()) {
-                                                    // Get all existing files/directories
-                                                    DocumentFile[] existingFiles =
-                                                            parentDir.listFiles();
-                                                    DocumentFile subFolder = null;
-
-                                                    // Look for an existing directory (exact match
-                                                    // first)
-                                                    for (DocumentFile file : existingFiles) {
-                                                        if (file.isDirectory()
-                                                                && file.getName() != null
-                                                                && file.getName()
-                                                                        .equals(subreddit)) {
-                                                            subFolder = file;
-                                                            break;
-                                                        }
-                                                    }
-
-                                                    // If not found, try case-insensitive match
+                                            // Create subreddit subfolder if needed
+                                            if (SettingValues.imageSubfolders && !subreddit.isEmpty()) {
+                                                String cleanSubredditName = subreddit.replaceAll("[^a-zA-Z0-9.-]", "_");
+                                                // Synchronize folder lookup/creation to avoid race conditions
+                                                synchronized (DIRECTORY_LOCK) {
+                                                    DocumentFile subFolder = parentDir.findFile(cleanSubredditName);
                                                     if (subFolder == null) {
-                                                        for (DocumentFile file : existingFiles) {
-                                                            if (file.isDirectory()
-                                                                    && file.getName() != null
-                                                                    && file.getName()
-                                                                            .equalsIgnoreCase(
-                                                                                    subreddit)) {
-                                                                subFolder = file;
-                                                                break;
-                                                            }
-                                                        }
+                                                        subFolder = parentDir.createDirectory(cleanSubredditName);
                                                     }
-
-                                                    // Only create if no matching directory was
-                                                    // found
                                                     if (subFolder == null) {
-                                                        subFolder = parentDir.createDirectory(subreddit);
-                                                        if (subFolder == null) {
-                                                            onError(new IOException("Failed to create subfolder."));
-                                                            return;
-                                                        }
+                                                        onError(new IOException("Failed to create subfolder."));
+                                                        return;
                                                     }
-
                                                     parentDir = subFolder;
                                                 }
+                                            }
 
-                                                if (cachedFile != null && cachedFile.exists()) {
-                                                    String fileName = getFileName(actuallyLoaded);
-                                                    String mimeType = getMimeType(fileName);
-                                                    DocumentFile outDocFile =
-                                                            parentDir.createFile(
-                                                                    mimeType, fileName);
+                                            if (cachedFile != null && cachedFile.exists()) {
+                                                String fileName = getFileName(actuallyLoaded);
+                                                String mimeType = getMimeType(fileName);
+                                                DocumentFile outDocFile = parentDir.createFile(mimeType, fileName);
 
-                                                    if (outDocFile != null) {
-                                                        OutputStream out =
-                                                                getContentResolver()
-                                                                        .openOutputStream(
-                                                                                outDocFile
-                                                                                        .getUri());
-                                                        if (out != null) {
-                                                            FileUtil.copyFile(cachedFile, out);
-                                                            out.close();
-                                                            showSuccessNotification(
-                                                                    outDocFile.getUri(),
-                                                                    loadedImage);
-                                                        }
-                                                    }
-                                                } else {
-                                                    String fileName = getFileName(actuallyLoaded);
-                                                    String mimeType = getMimeType(fileName);
-                                                    DocumentFile outDocFile =
-                                                            parentDir.createFile(
-                                                                    mimeType, fileName);
-
-                                                    if (outDocFile != null) {
-                                                        OutputStream out =
-                                                                getContentResolver()
-                                                                        .openOutputStream(
-                                                                                outDocFile
-                                                                                        .getUri());
-                                                        if (out != null) {
-                                                            Bitmap.CompressFormat format =
-                                                                    mimeType.contains("png")
-                                                                            ? Bitmap.CompressFormat
-                                                                                    .PNG
-                                                                            : Bitmap.CompressFormat
-                                                                                    .JPEG;
-                                                            loadedImage.compress(format, 100, out);
-                                                            out.close();
-                                                            showSuccessNotification(
-                                                                    outDocFile.getUri(),
-                                                                    loadedImage);
-                                                        }
+                                                if (outDocFile != null) {
+                                                    OutputStream out = getContentResolver().openOutputStream(outDocFile.getUri());
+                                                    if (out != null) {
+                                                        FileUtil.copyFile(cachedFile, out);
+                                                        out.close();
+                                                        showSuccessNotification(outDocFile.getUri(), loadedImage);
                                                     }
                                                 }
-                                            } catch (IOException e) {
-                                                onError(e);
+                                            } else {
+                                                String fileName = getFileName(actuallyLoaded);
+                                                String mimeType = getMimeType(fileName);
+                                                DocumentFile outDocFile = parentDir.createFile(mimeType, fileName);
+
+                                                if (outDocFile != null) {
+                                                    OutputStream out = getContentResolver().openOutputStream(outDocFile.getUri());
+                                                    if (out != null) {
+                                                        Bitmap.CompressFormat format = mimeType.contains("png")
+                                                                ? Bitmap.CompressFormat.PNG
+                                                                : Bitmap.CompressFormat.JPEG;
+                                                        loadedImage.compress(format, 100, out);
+                                                        out.close();
+                                                        showSuccessNotification(outDocFile.getUri(), loadedImage);
+                                                    }
+                                                }
                                             }
+                                        } catch (IOException e) {
+                                            onError(e);
                                         }
                                     }
                                 },
