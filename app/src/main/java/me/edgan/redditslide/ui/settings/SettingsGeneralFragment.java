@@ -115,7 +115,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
             checkBox.setText(context.getString(R.string.settings_mail_check));
         } else {
             checkBox.setChecked(true);
-            landscape.setValue(Reddit.notificationTime / 15.0f, false);
+            //landscape.setValue(Reddit.notificationTime / 15.0f, false);
             checkBox.setText(
                     context.getString(
                             R.string.settings_notification_newline,
@@ -132,7 +132,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                     context.getString(
                                             R.string.settings_notification,
                                             TimeUtils.getTimeInHoursAndMins(
-                                                    i1 * 15, context.getBaseContext())));
+                                                    i1, context.getBaseContext())));
                         }
                     }
                 });
@@ -150,8 +150,8 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                 Reddit.notifications.cancel();
                             }
                         } else {
-                            Reddit.notificationTime = 60;
-                            landscape.setValue(4, true);
+                            Reddit.notificationTime = 10;
+                            //landscape.setValue(4, true);
                             checkBox.setText(
                                     context.getString(
                                             R.string.settings_notification,
@@ -175,10 +175,10 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
                         if (checkBox.isChecked()) {
-                            Reddit.notificationTime = landscape.getValue() * 15;
+                            Reddit.notificationTime = landscape.getValue();
                             Reddit.colors
                                     .edit()
-                                    .putInt("notificationOverride", landscape.getValue() * 15)
+                                    .putInt("notificationOverride", landscape.getValue())
                                     .apply();
                             if (Reddit.notifications == null) {
                                 Reddit.notifications =
@@ -197,12 +197,12 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                             @Override
                             public void onClick(View d) {
                                 if (checkBox.isChecked()) {
-                                    Reddit.notificationTime = landscape.getValue() * 15;
+                                    Reddit.notificationTime = landscape.getValue();
                                     Reddit.colors
                                             .edit()
                                             .putInt(
                                                     "notificationOverride",
-                                                    landscape.getValue() * 15)
+                                                    landscape.getValue())
                                             .apply();
                                     if (Reddit.notifications == null) {
                                         Reddit.notifications =

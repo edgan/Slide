@@ -516,9 +516,9 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
         }
 
         if (colors.contains("notificationOverride")) {
-            notificationTime = colors.getInt("notificationOverride", 360);
+            notificationTime = colors.getInt("notificationOverride", 100);
         } else {
-            notificationTime = 360;
+            notificationTime = 100;
         }
 
         videoPlugin = isVideoPluginInstalled();
