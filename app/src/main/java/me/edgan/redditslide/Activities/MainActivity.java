@@ -1334,7 +1334,9 @@ public class MainActivity extends BaseActivity
                             new OnSingleClickListener() {
                                 @Override
                                 public void onSingleClick(View view) {
-                                    showUsernameDialog(false);  // false for profile view
+                                    Intent inte = new Intent(MainActivity.this, Profile.class);
+                                    inte.putExtra(Profile.EXTRA_PROFILE, Authentication.name);
+                                    MainActivity.this.startActivity(inte);
                                 }
                             });
             header.findViewById(R.id.saved)
