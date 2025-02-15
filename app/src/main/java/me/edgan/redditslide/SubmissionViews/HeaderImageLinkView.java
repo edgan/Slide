@@ -167,16 +167,15 @@ public class HeaderImageLinkView extends RelativeLayout {
                 handleSpecialSubmissionType(submission, full, forceThumb, R.drawable.nsfw);
             } else if (submission.getDataNode().get("spoiler").asBoolean()) {
                 handleSpecialSubmissionType(submission, full, forceThumb, R.drawable.spoiler);
-            } else if (type == ContentType.Type.GIF) {
-                handleGifType(submission, baseSub, full);
+            } else if (type == ContentType.Type.ALBUM
+                    || type == ContentType.Type.GIF
+                    || type == ContentType.Type.REDDIT
+                    || type == ContentType.Type.TUMBLR) {
+                handleTypes(submission, baseSub, full);
             } else if (type == ContentType.Type.REDDIT_GALLERY) {
                 handleRedditGalleryType(submission, baseSub, full, forceThumb);
             } else if (type == ContentType.Type.VREDDIT_DIRECT || type == ContentType.Type.VREDDIT_REDIRECT) {
                 handleVRedditType(submission, baseSub, full, forceThumb);
-            } else if (type == ContentType.Type.TUMBLR) {
-                handleTumblrType(submission, full);
-            } else if (type == ContentType.Type.REDDIT) {
-                handleRedditType(submission, full);
             } else if (type != ContentType.Type.IMAGE
                             && type != ContentType.Type.SELF
                             && (!thumbnail.isNull()
@@ -521,7 +520,7 @@ public class HeaderImageLinkView extends RelativeLayout {
         this.backdrop = findViewById(R.id.leadimage);
     }
 
-    private void handleGifType(Submission submission, String baseSub, boolean full) {
+    private void handleTypes(Submission submission, String baseSub, boolean full) {
         JsonNode dataNode = submission.getDataNode();
         String url = submission.getUrl();
         String redditPreviewUrl = null;
@@ -580,29 +579,6 @@ public class HeaderImageLinkView extends RelativeLayout {
 
         if (previewUrl != null) {
             handlePreviewImage(previewUrl, submission, baseSub, full, forceThumb);
-        }
-    }
-
-    private void handleTumblrType(Submission submission, boolean full) {
-        JsonNode dataNode = submission.getDataNode();
-        String previewUrl = getPreviewUrl(dataNode);
-
-        if (previewUrl != null) {
-            handleFullPreviewImage(previewUrl, full);
-        }
-    }
-
-    private void handleRedditType(Submission submission, boolean full) {
-        if (submission != null && submission.getUrl() != null) {
-            JsonNode dataNode = submission.getDataNode();
-            String previewUrl = getPreviewUrl(dataNode);
-
-            if (previewUrl != null) {
-                handleFullPreviewImage(previewUrl, full);
-            } else {
-                setVisibility(View.GONE);
-                thumbImage2.setVisibility(View.VISIBLE);
-            }
         }
     }
 
@@ -864,6 +840,7 @@ public class HeaderImageLinkView extends RelativeLayout {
 
     private void displayFullImage(String url, boolean full) {
         loadedUrl = url;
+
         if (!full) {
             ((Reddit) getContext().getApplicationContext())
                     .getImageLoader()
