@@ -164,7 +164,6 @@ public class MediaView extends BaseSaveActivity {
         if (!isGif) b.sheet(3, image, getString(R.string.share_image));
         b.sheet(4, save, "Save " + (isGif ? "MP4" : "image"));
         Drawable folder = getResources().getDrawable(R.drawable.ic_folder);
-        b.sheet(16, folder, getString(R.string.settings_storage_location));
         if (isGif
                 && !contentUrl.contains(".mp4")
                 && !contentUrl.contains("streamable.com")
