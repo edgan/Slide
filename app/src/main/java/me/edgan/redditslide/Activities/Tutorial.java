@@ -282,7 +282,7 @@ public class Tutorial extends AppCompatActivity {
             personalizeBinding.done.setOnClickListener(
                     v1 -> {
                         Reddit.colors.edit().putString("Tutorial", "S").commit();
-                        Reddit.appRestart.edit().putString("startScreen", "a").apply();
+                        Reddit.appRestart.edit().apply();
                         Reddit.forceRestart(getActivity(), false);
                     });
 

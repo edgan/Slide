@@ -170,7 +170,8 @@ public class HeaderImageLinkView extends RelativeLayout {
             } else if (type == ContentType.Type.ALBUM
                     || type == ContentType.Type.GIF
                     || type == ContentType.Type.REDDIT
-                    || type == ContentType.Type.TUMBLR) {
+                    || type == ContentType.Type.TUMBLR
+                    || type == ContentType.Type.XKCD) {
                 handleTypes(submission, baseSub, full);
             } else if (type == ContentType.Type.REDDIT_GALLERY) {
                 handleRedditGalleryType(submission, baseSub, full, forceThumb);
@@ -526,7 +527,7 @@ public class HeaderImageLinkView extends RelativeLayout {
         String redditPreviewUrl = null;
 
         // Check for preview data
-        if (dataNode.has("preview")) {
+        if (dataNode.has("preview") && !dataNode.get("preview").isNull()) {
             JsonNode previewNode = dataNode.get("preview").get("images");
             if (previewNode != null && previewNode.size() > 0) {
                 JsonNode sourceNode = previewNode.get(0).get("source");
@@ -536,28 +537,45 @@ public class HeaderImageLinkView extends RelativeLayout {
             }
         }
 
-        // Use Reddit preview URL if available
-        if (redditPreviewUrl != null) {
+        // Validate and use Reddit preview URL if available
+        boolean hasValidPreview = false;
+        if (redditPreviewUrl != null && !redditPreviewUrl.isEmpty()) {
             url = redditPreviewUrl;
-        } else if (dataNode.has("thumbnail")) {
-            url = dataNode.get("thumbnail").asText();
+            hasValidPreview = true;
+        } else if (dataNode.has("thumbnail") && !dataNode.get("thumbnail").isNull()) {
+            String thumbnail = dataNode.get("thumbnail").asText();
+            // Check if thumbnail is a valid URL and not a placeholder
+            if (!thumbnail.equals("self") && !thumbnail.equals("default") &&
+                !thumbnail.equals("nsfw") &&
+                !thumbnail.isEmpty()) {
+                url = thumbnail;
+                hasValidPreview = true;
+            }
         }
 
-        // Load the URL
-        if (!full && !SettingValues.isPicsEnabled(baseSub)) {
-            thumbImage2.setVisibility(View.VISIBLE);
-            ((Reddit) getContext().getApplicationContext())
-                    .getImageLoader()
-                    .displayImage(url, thumbImage2);
-            setVisibility(View.GONE);
+        // Only show preview if we have a valid image URL
+        if (hasValidPreview) {
+            if (!full && !SettingValues.isPicsEnabled(baseSub)) {
+                thumbImage2.setVisibility(View.VISIBLE);
+                ((Reddit) getContext().getApplicationContext())
+                        .getImageLoader()
+                        .displayImage(url, thumbImage2);
+                setVisibility(View.GONE);
+            } else {
+                backdrop.setVisibility(View.VISIBLE);
+                ((Reddit) getContext().getApplicationContext())
+                        .getImageLoader()
+                        .displayImage(url, backdrop);
+                setVisibility(View.VISIBLE);
+            }
+            if (wrapArea != null) wrapArea.setVisibility(View.GONE);
         } else {
-            backdrop.setVisibility(View.VISIBLE);
-            ((Reddit) getContext().getApplicationContext())
-                    .getImageLoader()
-                    .displayImage(url, backdrop);
-            setVisibility(View.VISIBLE);
+            // No valid preview available
+            setVisibility(View.GONE);
+            if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
+            if (backdrop != null) backdrop.setVisibility(View.GONE);
+            if (wrapArea != null) wrapArea.setVisibility(View.VISIBLE);
         }
-        if (wrapArea != null) wrapArea.setVisibility(View.GONE);
     }
 
     private void handleRedditGalleryType(Submission submission, String baseSub, boolean full, boolean forceThumb) {

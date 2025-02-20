@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.GestureDetector;
@@ -210,6 +211,8 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
 
                                 TextInputLayout inputLayout = new TextInputLayout(getActivity());
                                 EditText editText = new EditText(inputLayout.getContext());
+                                editText.setSingleLine(true);  // Make input single line
+                                editText.setInputType(InputType.TYPE_CLASS_TEXT);
                                 editText.setLayoutParams(new LinearLayout.LayoutParams(
                                     ViewGroup.LayoutParams.MATCH_PARENT,
                                     ViewGroup.LayoutParams.WRAP_CONTENT

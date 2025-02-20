@@ -119,7 +119,6 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
 
     public static void forceRestart(Context context, boolean forceLoadScreen) {
         if (forceLoadScreen) {
-            appRestart.edit().putString("startScreen", "").apply();
             appRestart.edit().putBoolean("isRestarting", true).apply();
         }
         if (appRestart.contains("back")) {
@@ -369,7 +368,6 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
                             } else {
                                 appRestart
                                         .edit()
-                                        .putString("startScreen", "a")
                                         .apply(); // Force reload of data after crash incase state
                                 // was not saved
 
@@ -485,13 +483,9 @@ public class Reddit extends MultiDexApplication implements Application.ActivityL
         doLanguages();
         lastPosition = new ArrayList<>();
 
-        if (!appRestart.contains("startScreen")) {
-            Authentication.isLoggedIn = appRestart.getBoolean("loggedin", false);
-            Authentication.name = appRestart.getString("name", "LOGGEDOUT");
-            active = true;
-        } else {
-            appRestart.edit().remove("startScreen").apply();
-        }
+        Authentication.isLoggedIn = appRestart.getBoolean("loggedin", false);
+        Authentication.name = appRestart.getString("name", "LOGGEDOUT");
+        active = true;
 
         authentication = new Authentication(this);
 

@@ -10,6 +10,7 @@ import me.edgan.redditslide.Activities.MultiredditOverview;
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.PostMatch;
 import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.util.SortingUtil;
 
 import net.dean.jraw.http.NetworkException;
@@ -173,9 +174,8 @@ public class SubredditSearchPosts extends GeneralPosts {
             try {
                 if (reset || paginator == null) {
                     if (multireddit) {
-                        paginator =
-                                new SubmissionSearchPaginatorMultireddit(
-                                        Authentication.reddit, term);
+                        paginator = new SubmissionSearchPaginatorMultireddit(
+                                Authentication.reddit, term);
                         ((SubmissionSearchPaginatorMultireddit) paginator)
                                 .setMultiReddit(MultiredditOverview.searchMulti);
                         ((SubmissionSearchPaginatorMultireddit) paginator)
@@ -183,8 +183,10 @@ public class SubredditSearchPosts extends GeneralPosts {
                                         SubmissionSearchPaginatorMultireddit.SearchSort.valueOf(
                                                 SortingUtil.search.toString()));
                         ((SubmissionSearchPaginatorMultireddit) paginator)
-                                .setSyntax(
-                                        SubmissionSearchPaginatorMultireddit.SearchSyntax.LUCENE);
+                                .setSyntax(SubmissionSearchPaginatorMultireddit.SearchSyntax.LUCENE);
+                        if (!SettingValues.showNSFWContent) {
+                            term = term + " nsfw:no";
+                        }
 
                     } else {
                         paginator = new SubmissionSearchPaginator(Authentication.reddit, term);
@@ -195,6 +197,9 @@ public class SubredditSearchPosts extends GeneralPosts {
                                 .setSearchSorting(SortingUtil.search);
                         ((SubmissionSearchPaginator) paginator)
                                 .setSyntax(SubmissionSearchPaginator.SearchSyntax.LUCENE);
+                        if (!SettingValues.showNSFWContent) {
+                            term = term + " nsfw:no";
+                        }
                     }
                     paginator.setTimePeriod((time));
                 }
@@ -203,7 +208,12 @@ public class SubredditSearchPosts extends GeneralPosts {
                     nomore = true;
                     return newSubmissions;
                 }
-                newSubmissions.addAll(paginator.next());
+
+                for (Submission s : paginator.next()) {
+                    if (!s.isNsfw() || (s.isNsfw() && SettingValues.showNSFWContent)) {
+                        newSubmissions.add(s);
+                    }
+                }
 
                 return newSubmissions;
             } catch (Exception e) {
@@ -214,5 +224,12 @@ public class SubredditSearchPosts extends GeneralPosts {
         }
 
         Exception error;
+    }
+
+    private boolean shouldShowSubmission(Submission submission) {
+        if (!submission.isNsfw()) {
+            return true;
+        }
+        return SettingValues.showNSFWContent;
     }
 }

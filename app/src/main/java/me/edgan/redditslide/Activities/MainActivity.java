@@ -33,6 +33,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -632,6 +633,8 @@ public class MainActivity extends BaseActivity
 
                 EditText input = new EditText(contextThemeWrapper);
                 input.setHint(R.string.search_msg);
+                input.setSingleLine(true);  // Make input single line
+                input.setInputType(InputType.TYPE_CLASS_TEXT);  // Set input type to text
 
                 // Set the underline color to the accent color for the current subreddit
                 final int accentColor = new ColorPreferences(contextThemeWrapper).getColor(currentSubreddit);
