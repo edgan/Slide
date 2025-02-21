@@ -46,6 +46,14 @@ in the notes of your entry for Reddit in your password manager.
 
 ![Client ID](/screenshots/client_id.png)
 
+## Slide tutorial with ability to enter the Client ID
+1. Press GET STARTED
+2. Select your theme colors, if you like
+3. Press DONE
+4. Enter your Client ID
+5. Press OK
+6. Wait for Slide to restart
+
 ## Slide Client ID steps
 1. Go to `Settings` in the side bar
 1. Select [General](/screenshots/settings.png)
