@@ -953,27 +953,31 @@ public class ReorderSubreddits extends BaseActivityAnim {
                             }
                         });
 
-                holder.itemView.setOnClickListener(
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (!isMultiple) {
-                                    new AlertDialog.Builder(ReorderSubreddits.this)
-                                            .setItems(
-                                                    new CharSequence[] {
-                                                        getString(R.string.reorder_move),
-                                                        UserSubscriptions.getPinned()
-                                                                        .contains(origPos)
-                                                                ? "Unpin"
-                                                                : "Pin",
-                                                        getString(R.string.btn_delete)
-                                                    },
-                                                    (dialog, which) -> {
-                                                        if (which == 2) {
-                                                            final AlertDialog.Builder b =
-                                                                    new AlertDialog.Builder(
-                                                                                    ReorderSubreddits
-                                                                                            .this)
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!isMultiple) {
+                            // Get the current position safely before showing dialog
+                            final int currentPos = holder.getBindingAdapterPosition();
+                            if (currentPos == RecyclerView.NO_POSITION || currentPos >= items.size()) {
+                                return;
+                            }
+
+                            new AlertDialog.Builder(ReorderSubreddits.this)
+                                    .setItems(
+                                            new CharSequence[] {
+                                                getString(R.string.reorder_move),
+                                                UserSubscriptions.getPinned().contains(origPos)
+                                                        ? "Unpin"
+                                                        : "Pin",
+                                                getString(R.string.btn_delete)
+                                            },
+                                            (dialog, which) -> {
+                                                if (which == 2) {
+                                                    final AlertDialog.Builder b =
+                                                            new AlertDialog.Builder(
+                                                                            ReorderSubreddits
+                                                                                    .this)
                                                                             .setTitle(
                                                                                     R.string
                                                                                             .reorder_remove_title)
@@ -985,109 +989,89 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                                                                         subs.remove(
                                                                                                 items
                                                                                                         .get(
-                                                                                                                position));
+                                                                                                                currentPos));
                                                                                         adapter
                                                                                                 .notifyItemRemoved(
-                                                                                                        position);
+                                                                                                        currentPos);
                                                                                     })
                                                                             .setNegativeButton(
                                                                                     R.string
                                                                                             .btn_cancel,
                                                                                     null);
-                                                            if (Authentication.isLoggedIn
-                                                                    && Authentication.didOnline
-                                                                    && isSingle(origPos)) {
-                                                                b.setNeutralButton(
-                                                                        R.string
-                                                                                .reorder_remove_unsubscribe,
-                                                                        (dialog12, which12) -> {
-                                                                            final String sub =
-                                                                                    items.get(
-                                                                                            position);
-                                                                            subs.remove(sub);
-                                                                            adapter
-                                                                                    .notifyItemRemoved(
-                                                                                            position);
-                                                                            new UserSubscriptions
-                                                                                            .UnsubscribeTask()
-                                                                                    .execute(sub);
-                                                                            isSubscribed.put(
-                                                                                    sub.toLowerCase(
-                                                                                            Locale
-                                                                                                    .ENGLISH),
-                                                                                    false);
-                                                                        });
-                                                            }
-                                                            b.show();
-                                                        } else if (which == 0) {
-                                                            String s =
-                                                                    items.get(
-                                                                            holder
-                                                                                    .getBindingAdapterPosition());
-                                                            subs.remove(s);
-                                                            subs.add(0, s);
+                                                    if (Authentication.isLoggedIn
+                                                            && Authentication.didOnline
+                                                            && isSingle(origPos)) {
+                                                        b.setNeutralButton(
+                                                                R.string
+                                                                        .reorder_remove_unsubscribe,
+                                                                (dialog12, which12) -> {
+                                                                    final String sub =
+                                                                            items.get(
+                                                                                    currentPos);
+                                                                    subs.remove(sub);
+                                                                    adapter
+                                                                            .notifyItemRemoved(
+                                                                                    currentPos);
+                                                                    new UserSubscriptions
+                                                                                    .UnsubscribeTask()
+                                                                            .execute(sub);
+                                                                    isSubscribed.put(
+                                                                            sub.toLowerCase(
+                                                                                    Locale
+                                                                                            .ENGLISH),
+                                                                            false);
+                                                                });
+                                                    }
+                                                    b.show();
+                                                } else if (which == 0) {
+                                                    String s = items.get(currentPos);
+                                                    subs.remove(s);
+                                                    subs.add(0, s);
+                                                    notifyItemMoved(currentPos, 0);
+                                                    recyclerView.smoothScrollToPosition(0);
+                                                } else if (which == 1) {
+                                                    // Pin/unpin
+                                                    String s = items.get(currentPos);
+                                                    if (!UserSubscriptions.getPinned().contains(s)) {
+                                                        UserSubscriptions.addPinned(s, ReorderSubreddits.this);
+                                                        subs.remove(s);
+                                                        subs.add(0, s);
+                                                        notifyItemMoved(currentPos, 0);
+                                                        recyclerView.smoothScrollToPosition(0);
+                                                    } else {
+                                                        UserSubscriptions.removePinned(s, ReorderSubreddits.this);
+                                                        notifyItemChanged(currentPos);
+                                                    }
+                                                }
+                                            })
+                                    .show();
+                        } else {
+                            if (chosen.contains(origPos)) {
+                                holder.itemView.setBackgroundColor(Color.TRANSPARENT);
 
-                                                            notifyItemMoved(
-                                                                    holder
-                                                                            .getBindingAdapterPosition(),
-                                                                    0);
-                                                            recyclerView.smoothScrollToPosition(0);
-                                                        } else if (which == 1) {
-                                                            String s =
-                                                                    items.get(
-                                                                            holder
-                                                                                    .getBindingAdapterPosition());
-                                                            if (!UserSubscriptions.getPinned()
-                                                                    .contains(s)) {
-                                                                int index = subs.indexOf(s);
-                                                                UserSubscriptions.addPinned(
-                                                                        s, ReorderSubreddits.this);
-                                                                subs.remove(index);
-                                                                subs.add(0, s);
+                                // set the color of the text back to what it should be
+                                int[] textColorAttr = new int[] {R.attr.fontColor};
+                                TypedArray ta = obtainStyledAttributes(textColorAttr);
+                                holder.text.setTextColor(ta.getColor(0, Color.BLACK));
+                                ta.recycle();
 
-                                                                notifyItemMoved(
-                                                                        holder
-                                                                                .getBindingAdapterPosition(),
-                                                                        0);
-                                                                recyclerView.smoothScrollToPosition(
-                                                                        0);
-                                                            } else {
-                                                                UserSubscriptions.removePinned(
-                                                                        s, ReorderSubreddits.this);
-                                                                adapter.notifyItemChanged(
-                                                                        holder
-                                                                                .getBindingAdapterPosition());
-                                                            }
-                                                        }
-                                                    })
-                                            .show();
-                                } else {
-                                    if (chosen.contains(origPos)) {
-                                        holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+                                chosen.remove(origPos);
+                                updateToolbar();
 
-                                        // set the color of the text back to what it should be
-                                        int[] textColorAttr = new int[] {R.attr.fontColor};
-                                        TypedArray ta = obtainStyledAttributes(textColorAttr);
-                                        holder.text.setTextColor(ta.getColor(0, Color.BLACK));
-                                        ta.recycle();
-
-                                        chosen.remove(origPos);
-                                        updateToolbar();
-
-                                        if (chosen.isEmpty()) {
-                                            isMultiple = false;
-                                            doOldToolbar();
-                                        }
-                                    } else {
-                                        chosen.add(origPos);
-                                        holder.itemView.setBackgroundColor(
-                                                Palette.getDarkerColor(Palette.getDefaultAccent()));
-                                        holder.text.setTextColor(Color.WHITE);
-                                        updateToolbar();
-                                    }
+                                if (chosen.isEmpty()) {
+                                    isMultiple = false;
+                                    doOldToolbar();
                                 }
+                            } else {
+                                chosen.add(origPos);
+                                holder.itemView.setBackgroundColor(
+                                        Palette.getDarkerColor(Palette.getDefaultAccent()));
+                                holder.text.setTextColor(Color.WHITE);
+                                updateToolbar();
                             }
-                        });
+                        }
+                    }
+                });
             }
         }
 
