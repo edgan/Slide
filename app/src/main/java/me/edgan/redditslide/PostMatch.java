@@ -138,92 +138,91 @@ public class PostMatch {
             if (ignore18) {
                 contentMatch = false;
             } else {
-            switch (contentType) {
-                case GIF:
-                    if (nsfwGifs) {
-                        contentMatch = true;
-                    }
-                    break;
-                case IMAGE:
-                    if (nsfwImages) {
-                        contentMatch = true;
-                    }
-                    break;
-                case LINK:
-                    if (nsfwLinks) {
-                        contentMatch = true;
-                    }
-                    break;
-                case REDDIT_GALLERY:
-                    if (nsfwGallery) {
-                        contentMatch = true;
-                    }
-                    break;
-                case SELF:
-                    if (nsfwSelftext) {
-                        contentMatch = true;
-                    }
-                    break;
+                switch (contentType) {
+                    case DEVIANTART:
+                    case GIF:
+                        if (nsfwGifs) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case IMGUR:
+                    case XKCD:
+                    case IMAGE:
+                        if (nsfwImages) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case REDDIT:
+                    case EMBEDDED:
+                    case LINK:
+                        if (nsfwLinks) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case NONE:
+                    case SELF:
+                        if (nsfwSelftext) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case REDDIT_GALLERY:
+                        if (nsfwGallery) {
+                            contentMatch = true;
+                        }
+                        break;
+
+                }
             }
-        }
         } else {
-            // Handle regular content types
-            switch (contentType) {
-                case ALBUM:
-                    if (albums) {
-                        contentMatch = true;
-                    }
-                    break;
-                case DEVIANTART:
-                case GIF:
-                    if (gifs) {
-                        contentMatch = true;
-                    }
-                    break;
-                case IMAGE:
-                    if (images) {
-                        contentMatch = true;
-                    }
-                    break;
-                case IMGUR:
-                    if (images) {
-                        contentMatch = true;
-                    }
-                    break;
-                case REDDIT:
-                case EMBEDDED:
-                case LINK:
-                    if (links) {
-                        contentMatch = true;
-                    }
-                    break;
-                case SELF:
-                    if (selftext) {
-                        contentMatch = true;
-                    }
-                    break;
-                case NONE:
-                    if (selftext) {
-                        contentMatch = true;
-                    }
-                    break;
-                case REDDIT_GALLERY:
-                    if (gallery) {
-                        contentMatch = true;
-                    }
-                    break;
-                case XKCD:
-                    if (images) {
-                        contentMatch = true;
-                    }
-                    break;
-                case VREDDIT_REDIRECT:
-                case STREAMABLE:
-                case VIDEO:
-                    if (videos) {
-                        contentMatch = true;
-                    }
-                    break;
+            if (s.isNsfw()) {
+                contentMatch = true;
+            } else {
+                // Handle regular content types
+                switch (contentType) {
+                    case ALBUM:
+                        if (albums) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case DEVIANTART:
+                    case GIF:
+                        if (gifs) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case IMGUR:
+                    case XKCD:
+                    case IMAGE:
+                        if (images) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case REDDIT:
+                    case EMBEDDED:
+                    case LINK:
+                        if (links) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case NONE:
+                    case SELF:
+                        if (selftext) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case REDDIT_GALLERY:
+                        if (gallery) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case VREDDIT_REDIRECT:
+                    case STREAMABLE:
+                    case VIDEO:
+                        if (videos) {
+                            contentMatch = true;
+                        }
+                        break;
+                }
             }
         }
 
