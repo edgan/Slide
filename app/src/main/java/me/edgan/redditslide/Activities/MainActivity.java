@@ -5553,10 +5553,16 @@ public class MainActivity extends BaseActivity
         frameLayout.addView(inputLayout, new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
 
+        int positiveButtonText = R.string.user_btn_goto;
+
+        if (isMultireddit) {
+            positiveButtonText = R.string.user_btn_gotomultis;
+        }
+
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(contextThemeWrapper)
                 .setTitle(R.string.user_enter)
                 .setView(frameLayout)
-                .setPositiveButton(R.string.user_btn_goto, null)
+                .setPositiveButton(positiveButtonText, null)
                 .setNegativeButton(R.string.btn_cancel, null);
 
         AlertDialog dialog = builder.create();

@@ -1034,11 +1034,14 @@ public class GifUtils {
 
         @Override
         protected void onPostExecute(Uri uri) {
-            if (uri == null) {
+            if (uri == null || video == null) {
                 cancel();
                 return;
             }
-            progressBar.setIndeterminate(true);
+
+            if (progressBar != null) {
+                progressBar.setIndeterminate(true);
+            }
 
             if (gifSave != null) {
                 gifSave.setOnClickListener(
@@ -1058,31 +1061,37 @@ public class GifUtils {
                         };
             }
 
-            ExoVideoView.VideoType type =
+            try {
+                ExoVideoView.VideoType type =
                     uri.getHost().equals("v.redd.it")
-                            ? ExoVideoView.VideoType.DASH
-                            : ExoVideoView.VideoType.STANDARD;
-            video.setVideoURI(
-                    uri,
-                    type,
-                    new Player.Listener() {
-                        @Override
-                        public void onPlaybackStateChanged(int playbackState) {
-                            if (playbackState == Player.STATE_READY) {
-                                progressBar.setVisibility(View.GONE);
-                                if (size != null) {
-                                    size.setVisibility(View.GONE);
-                                }
-                            } else if (playbackState == Player.STATE_BUFFERING) {
-                                progressBar.setVisibility(View.VISIBLE);
-                                if (size != null) {
-                                    size.setVisibility(View.VISIBLE);
-                                }
+                        ? ExoVideoView.VideoType.DASH
+                        : ExoVideoView.VideoType.STANDARD;
+
+                video.setVideoURI(uri, type, new Player.Listener() {
+                    @Override
+                    public void onPlaybackStateChanged(int playbackState) {
+                        if (progressBar == null) return;
+
+                        if (playbackState == Player.STATE_READY) {
+                            progressBar.setVisibility(View.GONE);
+                            if (size != null) {
+                                size.setVisibility(View.GONE);
+                            }
+                        } else if (playbackState == Player.STATE_BUFFERING) {
+                            progressBar.setVisibility(View.VISIBLE);
+                            if (size != null) {
+                                size.setVisibility(View.VISIBLE);
                             }
                         }
-                    });
-            if (autostart) {
-                video.play();
+                    }
+                });
+
+                if (autostart) {
+                    video.play();
+                }
+            } catch (Exception e) {
+                LogUtil.e(e, "Error setting video URI");
+                cancel();
             }
         }
 
