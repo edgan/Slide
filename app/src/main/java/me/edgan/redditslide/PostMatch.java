@@ -122,78 +122,109 @@ public class PostMatch {
         boolean gallery = isGallery(baseSubreddit);
         boolean gifs = isGif(baseSubreddit);
         boolean images = isImage(baseSubreddit);
-        boolean nsfw = isNsfw(baseSubreddit);
-        boolean urls = isUrls(baseSubreddit);
+        boolean links = isLinks(baseSubreddit);
+        boolean nsfwGallery = isNsfwGallery(baseSubreddit);
+        boolean nsfwGifs = isNsfwGif(baseSubreddit);
+        boolean nsfwImages = isNsfwImage(baseSubreddit);
+        boolean nsfwLinks = isNsfwLink(baseSubreddit);
+        boolean nsfwSelftext = isNsfwSelftext(baseSubreddit);
         boolean selftext = isSelftext(baseSubreddit);
         boolean videos = isVideo(baseSubreddit);
 
-        if (s.isNsfw()) {
-            if (!SettingValues.showNSFWContent) {
-                contentMatch = true;
-            }
+        ContentType.Type contentType = ContentType.getContentType(s);
+
+        // Handle NSFW content types
+        if (s.isNsfw() && SettingValues.showNSFWContent) {
             if (ignore18) {
                 contentMatch = false;
-            }
-            if (nsfw) {
-                contentMatch = true;
+            } else {
+            switch (contentType) {
+                case GIF:
+                    if (nsfwGifs) {
+                        contentMatch = true;
+                    }
+                    break;
+                case IMAGE:
+                    if (nsfwImages) {
+                        contentMatch = true;
+                    }
+                    break;
+                case LINK:
+                    if (nsfwLinks) {
+                        contentMatch = true;
+                    }
+                    break;
+                case REDDIT_GALLERY:
+                    if (nsfwGallery) {
+                        contentMatch = true;
+                    }
+                    break;
+                case SELF:
+                    if (nsfwSelftext) {
+                        contentMatch = true;
+                    }
+                    break;
             }
         }
-        switch (ContentType.getContentType(s)) {
-            case ALBUM:
-                if (albums) {
-                    contentMatch = true;
-                }
-                break;
-            case DEVIANTART:
-            case GIF:
-                if (gifs) {
-                    contentMatch = true;
-                }
-                break;
-            case IMAGE:
-                if (images) {
-                    contentMatch = true;
-                }
-                break;
-            case IMGUR:
-                if (images) {
-                    contentMatch = true;
-                }
-                break;
-            case REDDIT:
-            case EMBEDDED:
-            case LINK:
-                if (urls) {
-                    contentMatch = true;
-                }
-                break;
-            case SELF:
-                if (selftext) {
-                    contentMatch = true;
-                }
-                break;
-            case NONE:
-                if (selftext) {
-                    contentMatch = true;
-                }
-                break;
-            case REDDIT_GALLERY:
-                if (gallery) {
-                    contentMatch = true;
-                }
-                break;
-            case XKCD:
-                if (images) {
-                    contentMatch = true;
-                }
-                break;
-            case VREDDIT_REDIRECT:
-            case STREAMABLE:
-            case VIDEO:
-                if (videos) {
-                    contentMatch = true;
-                }
-                break;
+        } else {
+            // Handle regular content types
+            switch (contentType) {
+                case ALBUM:
+                    if (albums) {
+                        contentMatch = true;
+                    }
+                    break;
+                case DEVIANTART:
+                case GIF:
+                    if (gifs) {
+                        contentMatch = true;
+                    }
+                    break;
+                case IMAGE:
+                    if (images) {
+                        contentMatch = true;
+                    }
+                    break;
+                case IMGUR:
+                    if (images) {
+                        contentMatch = true;
+                    }
+                    break;
+                case REDDIT:
+                case EMBEDDED:
+                case LINK:
+                    if (links) {
+                        contentMatch = true;
+                    }
+                    break;
+                case SELF:
+                    if (selftext) {
+                        contentMatch = true;
+                    }
+                    break;
+                case NONE:
+                    if (selftext) {
+                        contentMatch = true;
+                    }
+                    break;
+                case REDDIT_GALLERY:
+                    if (gallery) {
+                        contentMatch = true;
+                    }
+                    break;
+                case XKCD:
+                    if (images) {
+                        contentMatch = true;
+                    }
+                    break;
+                case VREDDIT_REDIRECT:
+                case STREAMABLE:
+                case VIDEO:
+                    if (videos) {
+                        contentMatch = true;
+                    }
+                    break;
+            }
         }
 
         if (!flair.isEmpty())
@@ -244,10 +275,16 @@ public class PostMatch {
         e.putBoolean(subreddit + "_galleryFilter", values[1]);
         e.putBoolean(subreddit + "_gifsFilter", values[2]);
         e.putBoolean(subreddit + "_imagesFilter", values[3]);
-        e.putBoolean(subreddit + "_nsfwFilter", values[4]);
+        e.putBoolean(subreddit + "_linksFilter", values[4]);
         e.putBoolean(subreddit + "_selftextFilter", values[5]);
-        e.putBoolean(subreddit + "_urlsFilter", values[6]);
-        e.putBoolean(subreddit + "_videoFilter", values[7]);
+        e.putBoolean(subreddit + "_videoFilter", values[6]);
+        if (values.length > 7 && SettingValues.showNSFWContent) {
+            e.putBoolean(subreddit + "_nsfwGalleryFilter", values[7]);
+            e.putBoolean(subreddit + "_nsfwGifsFilter", values[8]);
+            e.putBoolean(subreddit + "_nsfwImagesFilter", values[9]);
+            e.putBoolean(subreddit + "_nsfwLinkFilter", values[10]);
+            e.putBoolean(subreddit + "_nsfwSelftextFilter", values[11]);
+        }
         e.apply();
     }
 
@@ -267,16 +304,32 @@ public class PostMatch {
         return filters.getBoolean(baseSubreddit + "_imagesFilter", false);
     }
 
-    public static boolean isNsfw(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwFilter", false);
+    public static boolean isLinks(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_linksFilter", false);
+    }
+
+    public static boolean isNsfwGallery(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_nsfwGalleryFilter", false);
+    }
+
+    public static boolean isNsfwGif(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_nsfwGifsFilter", false);
+    }
+
+    public static boolean isNsfwImage(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_nsfwImagesFilter", false);
+    }
+
+    public static boolean isNsfwLink(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_nsfwLinkFilter", false);
+    }
+
+    public static boolean isNsfwSelftext(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_nsfwSelftextFilter", false);
     }
 
     public static boolean isSelftext(String baseSubreddit) {
         return filters.getBoolean(baseSubreddit + "_selftextFilter", false);
-    }
-
-    public static boolean isUrls(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_urlsFilter", false);
     }
 
     public static boolean isVideo(String baseSubreddit) {

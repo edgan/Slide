@@ -3805,16 +3805,49 @@ public class MainActivity extends BaseActivity
     }
 
     public void filterContent(final String subreddit) {
-        final boolean[] chosen = new boolean[]{
-                !PostMatch.isAlbums(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isGallery(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isGif(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isImage(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isNsfw(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isSelftext(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isUrls(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isVideo(subreddit.toLowerCase(Locale.ENGLISH))
-        };
+        ArrayList<Boolean> chosenList = new ArrayList<>();
+        ArrayList<String> labelsList = new ArrayList<>();
+        String sub = subreddit.toLowerCase(Locale.ENGLISH);
+
+        // Add regular content types
+        chosenList.add(!PostMatch.isAlbums(sub));
+        chosenList.add(!PostMatch.isGallery(sub));
+        chosenList.add(!PostMatch.isGif(sub));
+        chosenList.add(!PostMatch.isImage(sub));
+        chosenList.add(!PostMatch.isLinks(sub));
+        chosenList.add(!PostMatch.isSelftext(sub));
+        chosenList.add(!PostMatch.isVideo(sub));
+
+        labelsList.add(getString(R.string.type_albums));
+        labelsList.add(getString(R.string.type_gallery));
+        labelsList.add(getString(R.string.type_gifs));
+        labelsList.add(getString(R.string.images));
+        labelsList.add(getString(R.string.type_links));
+        labelsList.add(getString(R.string.type_selftext));
+        labelsList.add(getString(R.string.type_videos));
+
+        // Add NSFW content types if enabled
+        if (SettingValues.showNSFWContent) {
+            chosenList.add(!PostMatch.isNsfwGallery(sub));
+            chosenList.add(!PostMatch.isNsfwGif(sub));
+            chosenList.add(!PostMatch.isNsfwImage(sub));
+            chosenList.add(!PostMatch.isNsfwLink(sub));
+            chosenList.add(!PostMatch.isNsfwSelftext(sub));
+
+            labelsList.add(getString(R.string.type_nsfw_gallery));
+            labelsList.add(getString(R.string.type_nsfw_gifs));
+            labelsList.add(getString(R.string.type_nsfw_images));
+            labelsList.add(getString(R.string.type_nsfw_links));
+            labelsList.add(getString(R.string.type_nsfw_selftext));
+        }
+
+        // Convert to arrays for the dialog
+        final boolean[] chosen = new boolean[chosenList.size()];
+        final String[] labels = new String[labelsList.size()];
+        for (int i = 0; i < chosenList.size(); i++) {
+            chosen[i] = chosenList.get(i);
+            labels[i] = labelsList.get(i);
+        }
 
         final String currentSubredditName = usedArray.get(Reddit.currentPosition);
 
@@ -3831,22 +3864,7 @@ public class MainActivity extends BaseActivity
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                 .setTitle(filterTitle)
-                .setMultiChoiceItems(
-                        new String[]{
-                                getString(R.string.type_albums),
-                                getString(R.string.type_gallery),
-                                getString(R.string.type_gifs),
-                                getString(R.string.images),
-                                getString(R.string.type_nsfw_content),
-                                getString(R.string.type_selftext),
-                                getString(R.string.type_links),
-                                getString(R.string.type_videos)
-                        },
-                        chosen,
-                        (dialog, which, isChecked) -> chosen[which] = isChecked
-                )
-
-                // Save button: inverts and stores the user's choices
+                .setMultiChoiceItems(labels, chosen, (dialog, which, isChecked) -> chosen[which] = isChecked)
                 .setPositiveButton(R.string.btn_save, (dialog, which) -> {
                     // Invert the chosen values before saving since we flipped the initial logic
                     for (int i = 0; i < chosen.length; i++) {
