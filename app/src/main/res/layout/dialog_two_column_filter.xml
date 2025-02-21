@@ -19,4 +19,4 @@
         android:choiceMode="multipleChoice"
         android:visibility="gone" />
 
-</LinearLayout> 
+</LinearLayout>

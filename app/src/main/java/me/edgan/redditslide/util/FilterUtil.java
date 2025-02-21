@@ -92,7 +92,7 @@ public class FilterUtil {
     public static boolean[] getCombinedChoices(ListView regularListView, ListView nsfwListView,
                                              FilterLists lists) {
         ArrayList<Boolean> allChosen = new ArrayList<>();
-        
+
         // Get regular selections
         for (int i = 0; i < lists.regularList.size(); i++) {
             allChosen.add(!regularListView.isItemChecked(i));
@@ -110,7 +110,7 @@ public class FilterUtil {
         for (int i = 0; i < allChosen.size(); i++) {
             chosen[i] = allChosen.get(i);
         }
-        
+
         return chosen;
     }
-} 
+}
