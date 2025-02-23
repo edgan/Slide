@@ -25,35 +25,43 @@ public class FilterUtil {
         String sub = subreddit.toLowerCase(Locale.ENGLISH);
 
         // Add regular content types
-        lists.regularList.add(!PostMatch.isAlbums(sub));
+        lists.regularList.add(!PostMatch.isAlbum(sub));
         lists.regularList.add(!PostMatch.isGallery(sub));
         lists.regularList.add(!PostMatch.isGif(sub));
         lists.regularList.add(!PostMatch.isImage(sub));
-        lists.regularList.add(!PostMatch.isLinks(sub));
+        lists.regularList.add(!PostMatch.isLink(sub));
         lists.regularList.add(!PostMatch.isSelftext(sub));
+        lists.regularList.add(!PostMatch.isTumblr(sub));
         lists.regularList.add(!PostMatch.isVideo(sub));
 
         lists.regularLabels.add(context.getString(R.string.type_albums));
-        lists.regularLabels.add(context.getString(R.string.type_gallery));
+        lists.regularLabels.add(context.getString(R.string.type_galleries));
         lists.regularLabels.add(context.getString(R.string.type_gifs));
         lists.regularLabels.add(context.getString(R.string.images));
         lists.regularLabels.add(context.getString(R.string.type_links));
-        lists.regularLabels.add(context.getString(R.string.type_selftext));
+        lists.regularLabels.add(context.getString(R.string.type_selftexts));
+        lists.regularLabels.add(context.getString(R.string.type_tumblrs));
         lists.regularLabels.add(context.getString(R.string.type_videos));
 
         // Add NSFW content types if enabled
         if (SettingValues.showNSFWContent) {
+            lists.nsfwList.add(!PostMatch.isNsfwAlbum(sub));
             lists.nsfwList.add(!PostMatch.isNsfwGallery(sub));
             lists.nsfwList.add(!PostMatch.isNsfwGif(sub));
             lists.nsfwList.add(!PostMatch.isNsfwImage(sub));
             lists.nsfwList.add(!PostMatch.isNsfwLink(sub));
             lists.nsfwList.add(!PostMatch.isNsfwSelftext(sub));
+            lists.nsfwList.add(!PostMatch.isNsfwTumblr(sub));
+            lists.nsfwList.add(!PostMatch.isNsfwVideo(sub));
 
-            lists.nsfwLabels.add(context.getString(R.string.type_nsfw_gallery));
+            lists.nsfwLabels.add(context.getString(R.string.type_nsfw_albums));
+            lists.nsfwLabels.add(context.getString(R.string.type_nsfw_galleries));
             lists.nsfwLabels.add(context.getString(R.string.type_nsfw_gifs));
             lists.nsfwLabels.add(context.getString(R.string.type_nsfw_images));
             lists.nsfwLabels.add(context.getString(R.string.type_nsfw_links));
-            lists.nsfwLabels.add(context.getString(R.string.type_nsfw_selftext));
+            lists.nsfwLabels.add(context.getString(R.string.type_nsfw_selftexts));
+            lists.nsfwLabels.add(context.getString(R.string.type_nsfw_tumblrs));
+            lists.nsfwLabels.add(context.getString(R.string.type_nsfw_videos));
         }
 
         return lists;

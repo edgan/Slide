@@ -118,18 +118,21 @@ public class PostMatch {
         }
 
         baseSubreddit = baseSubreddit.toLowerCase(Locale.ENGLISH);
-        boolean albums = isAlbums(baseSubreddit);
-        boolean gallery = isGallery(baseSubreddit);
+        boolean albums = isAlbum(baseSubreddit);
+        boolean galleries = isGallery(baseSubreddit);
         boolean gifs = isGif(baseSubreddit);
         boolean images = isImage(baseSubreddit);
-        boolean links = isLinks(baseSubreddit);
-        boolean nsfwGallery = isNsfwGallery(baseSubreddit);
+        boolean links = isLink(baseSubreddit);
+        boolean selftexts = isSelftext(baseSubreddit);
+        boolean tumblrs = isTumblr(baseSubreddit);
+        boolean videos = isVideo(baseSubreddit);
+        boolean nsfwGalleries = isNsfwGallery(baseSubreddit);
         boolean nsfwGifs = isNsfwGif(baseSubreddit);
         boolean nsfwImages = isNsfwImage(baseSubreddit);
         boolean nsfwLinks = isNsfwLink(baseSubreddit);
-        boolean nsfwSelftext = isNsfwSelftext(baseSubreddit);
-        boolean selftext = isSelftext(baseSubreddit);
-        boolean videos = isVideo(baseSubreddit);
+        boolean nsfwSelftexts = isNsfwSelftext(baseSubreddit);
+        boolean nsfwTumblrs = isNsfwTumblr(baseSubreddit);
+        boolean nsfwVideos = isNsfwVideo(baseSubreddit);
 
         ContentType.Type contentType = ContentType.getContentType(s);
 
@@ -161,16 +164,27 @@ public class PostMatch {
                         break;
                     case NONE:
                     case SELF:
-                        if (nsfwSelftext) {
+                        if (nsfwSelftexts) {
                             contentMatch = true;
                         }
                         break;
                     case REDDIT_GALLERY:
-                        if (nsfwGallery) {
+                        if (nsfwGalleries) {
                             contentMatch = true;
                         }
                         break;
-
+                    case TUMBLR:
+                        if (nsfwTumblrs) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case VREDDIT_REDIRECT:
+                    case STREAMABLE:
+                    case VIDEO:
+                        if (nsfwVideos) {
+                            contentMatch = true;
+                        }
+                        break;
                 }
             }
         } else {
@@ -206,12 +220,17 @@ public class PostMatch {
                         break;
                     case NONE:
                     case SELF:
-                        if (selftext) {
+                        if (selftexts) {
                             contentMatch = true;
                         }
                         break;
                     case REDDIT_GALLERY:
-                        if (gallery) {
+                        if (galleries) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case TUMBLR:
+                        if (tumblrs) {
                             contentMatch = true;
                         }
                         break;
@@ -271,28 +290,32 @@ public class PostMatch {
         subreddit = subreddit.toLowerCase(Locale.ENGLISH);
         SharedPreferences.Editor e = filters.edit();
         e.putBoolean(subreddit + "_albumsFilter", values[0]);
-        e.putBoolean(subreddit + "_galleryFilter", values[1]);
+        e.putBoolean(subreddit + "_galleriesFilter", values[1]);
         e.putBoolean(subreddit + "_gifsFilter", values[2]);
         e.putBoolean(subreddit + "_imagesFilter", values[3]);
         e.putBoolean(subreddit + "_linksFilter", values[4]);
-        e.putBoolean(subreddit + "_selftextFilter", values[5]);
-        e.putBoolean(subreddit + "_videoFilter", values[6]);
-        if (values.length > 7 && SettingValues.showNSFWContent) {
-            e.putBoolean(subreddit + "_nsfwGalleryFilter", values[7]);
-            e.putBoolean(subreddit + "_nsfwGifsFilter", values[8]);
-            e.putBoolean(subreddit + "_nsfwImagesFilter", values[9]);
-            e.putBoolean(subreddit + "_nsfwLinkFilter", values[10]);
-            e.putBoolean(subreddit + "_nsfwSelftextFilter", values[11]);
+        e.putBoolean(subreddit + "_selftextsFilter", values[5]);
+        e.putBoolean(subreddit + "_tumblrsFilter", values[6]);
+        e.putBoolean(subreddit + "_videosFilter", values[7]);
+        if (values.length > 8 && SettingValues.showNSFWContent) {
+            e.putBoolean(subreddit + "_nsfwAlbumsFilter", values[8]);
+            e.putBoolean(subreddit + "_nsfwGalleriesFilter", values[9]);
+            e.putBoolean(subreddit + "_nsfwGifsFilter", values[10]);
+            e.putBoolean(subreddit + "_nsfwImagesFilter", values[11]);
+            e.putBoolean(subreddit + "_nsfwLinksFilter", values[12]);
+            e.putBoolean(subreddit + "_nsfwSelftextsFilter", values[13]);
+            e.putBoolean(subreddit + "_nsfwTumblrsFilter", values[14]);
+            e.putBoolean(subreddit + "_nsfwVideosFilter", values[15]);
         }
         e.apply();
     }
 
-    public static boolean isAlbums(String baseSubreddit) {
+    public static boolean isAlbum(String baseSubreddit) {
         return filters.getBoolean(baseSubreddit + "_albumsFilter", false);
     }
 
     public static boolean isGallery(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_galleryFilter", false);
+        return filters.getBoolean(baseSubreddit + "_galleriesFilter", false);
     }
 
     public static boolean isGif(String baseSubreddit) {
@@ -303,12 +326,28 @@ public class PostMatch {
         return filters.getBoolean(baseSubreddit + "_imagesFilter", false);
     }
 
-    public static boolean isLinks(String baseSubreddit) {
+    public static boolean isLink(String baseSubreddit) {
         return filters.getBoolean(baseSubreddit + "_linksFilter", false);
     }
 
+    public static boolean isSelftext(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_selftextsFilter", false);
+    }
+
+    public static boolean isTumblr(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_tumblrsFilter", false);
+    }
+
+    public static boolean isVideo(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_videosFilter", false);
+    }
+
+    public static boolean isNsfwAlbum(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_nsfwAlbumsFilter", false);
+    }
+
     public static boolean isNsfwGallery(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwGalleryFilter", false);
+        return filters.getBoolean(baseSubreddit + "_nsfwGalleriesFilter", false);
     }
 
     public static boolean isNsfwGif(String baseSubreddit) {
@@ -320,18 +359,18 @@ public class PostMatch {
     }
 
     public static boolean isNsfwLink(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwLinkFilter", false);
+        return filters.getBoolean(baseSubreddit + "_nsfwLinksFilter", false);
     }
 
     public static boolean isNsfwSelftext(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwSelftextFilter", false);
+        return filters.getBoolean(baseSubreddit + "_nsfwSelftextsFilter", false);
     }
 
-    public static boolean isSelftext(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_selftextFilter", false);
+    public static boolean isNsfwTumblr(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_nsfwTumblrsFilter", false);
     }
 
-    public static boolean isVideo(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_videoFilter", false);
+    public static boolean isNsfwVideo(String baseSubreddit) {
+        return filters.getBoolean(baseSubreddit + "_nsfwVideosFilter", false);
     }
 }
