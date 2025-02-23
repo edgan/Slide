@@ -144,6 +144,7 @@ import me.edgan.redditslide.ui.settings.SettingsThemeFragment;
 import me.edgan.redditslide.util.AnimatorUtil;
 import me.edgan.redditslide.util.DrawableUtil;
 import me.edgan.redditslide.util.EditTextValidator;
+import me.edgan.redditslide.util.FilterToggleUtil;
 import me.edgan.redditslide.util.FilterUtil;
 import me.edgan.redditslide.util.ImageUtil;
 import me.edgan.redditslide.util.KeyboardUtil;
@@ -3814,63 +3815,24 @@ public class MainActivity extends BaseActivity
 
         FilterUtil.setupListViews(this, regularListView, nsfwListView, lists);
 
-        // Title of the filter dialog
-        String filterTitle;
-        final String currentSubredditName = usedArray.get(Reddit.currentPosition);
-
-        if (currentSubredditName.contains("/m/")) {
-            filterTitle = getString(R.string.content_to_show, currentSubredditName);
-        } else if (currentSubredditName.equals("frontpage")) {
-            filterTitle = getString(R.string.content_to_show, "frontpage");
-        } else {
-            filterTitle = getString(R.string.content_to_show, "/r/" + currentSubredditName);
-        }
+        final String FILTER_TITLE = getString(R.string.content_to_show,
+                subreddit.equals("frontpage") ? "frontpage" : "/r/" + subreddit);
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
-                .setTitle(filterTitle)
+                .setTitle(FILTER_TITLE)
                 .setView(dialogView)
                 .setPositiveButton(R.string.btn_save, (dialog, which) -> {
-                    boolean[] chosen = FilterUtil.getCombinedChoices(regularListView, nsfwListView, lists);
-                    PostMatch.setChosen(chosen, subreddit);
+                    FilterUtil.saveFilters(regularListView, nsfwListView, lists, subreddit);
                     reloadSubs();
                 })
-                .setNeutralButton(R.string.btn_toggle_all, null)
-                .setNegativeButton(R.string.btn_cancel, null);
+                .setNeutralButton(R.string.btn_toggle, null);
 
-        AlertDialog dialog = builder.create();
-
+        final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dialogInterface -> {
             Button toggleButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
             toggleButton.setOnClickListener(view -> {
-                boolean allChecked = true;
-
-                // Check regular items
-                for (int i = 0; i < lists.regularList.size(); i++) {
-                    if (!regularListView.isItemChecked(i)) {
-                        allChecked = false;
-                        break;
-                    }
-                }
-
-                // Check NSFW items if enabled
-                if (SettingValues.showNSFWContent && allChecked) {
-                    for (int i = 0; i < lists.nsfwList.size(); i++) {
-                        if (!nsfwListView.isItemChecked(i)) {
-                            allChecked = false;
-                            break;
-                        }
-                    }
-                }
-
-                // Toggle all items
-                for (int i = 0; i < lists.regularList.size(); i++) {
-                    regularListView.setItemChecked(i, !allChecked);
-                }
-                if (SettingValues.showNSFWContent) {
-                    for (int i = 0; i < lists.nsfwList.size(); i++) {
-                        nsfwListView.setItemChecked(i, !allChecked);
-                    }
-                }
+                FilterToggleUtil.handleFilterToggle(regularListView, nsfwListView, lists,
+                        SettingValues.showNSFWContent, 0); // The 0 is ignored now
             });
         });
 

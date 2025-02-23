@@ -8,6 +8,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.PostMatch;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.SettingValues;
@@ -97,26 +98,47 @@ public class FilterUtil {
         }
     }
 
-    public static boolean[] getCombinedChoices(ListView regularListView, ListView nsfwListView,
-                                             FilterLists lists) {
-        ArrayList<Boolean> allChosen = new ArrayList<>();
+    public static void saveFilters(ListView regularListView, ListView nsfwListView, FilterLists lists, String subreddit) {
+        int totalLength = 8 + (SettingValues.showNSFWContent ? 8 : 0); // 8 regular types + 8 NSFW types
+        boolean[] chosen = new boolean[totalLength];
 
-        // Get regular selections
-        for (int i = 0; i < lists.regularList.size(); i++) {
-            allChosen.add(!regularListView.isItemChecked(i));
+        // Regular content types in specific order - invert the checked state
+        chosen[0] = !regularListView.isItemChecked(0); // albums
+        chosen[1] = !regularListView.isItemChecked(1); // galleries
+        chosen[2] = !regularListView.isItemChecked(2); // gifs
+        chosen[3] = !regularListView.isItemChecked(3); // images
+        chosen[4] = !regularListView.isItemChecked(4); // links
+        chosen[5] = !regularListView.isItemChecked(5); // selftexts
+        chosen[6] = !regularListView.isItemChecked(6); // tumblrs
+        chosen[7] = !regularListView.isItemChecked(7); // videos
+
+        // NSFW content types in specific order - invert the checked state
+        if (SettingValues.showNSFWContent) {
+            chosen[8] = !nsfwListView.isItemChecked(0);  // nsfwAlbums
+            chosen[9] = !nsfwListView.isItemChecked(1);  // nsfwGalleries
+            chosen[10] = !nsfwListView.isItemChecked(2); // nsfwGifs
+            chosen[11] = !nsfwListView.isItemChecked(3); // nsfwImages
+            chosen[12] = !nsfwListView.isItemChecked(4); // nsfwLinks
+            chosen[13] = !nsfwListView.isItemChecked(5); // nsfwSelftexts
+            chosen[14] = !nsfwListView.isItemChecked(6); // nsfwTumblrs
+            chosen[15] = !nsfwListView.isItemChecked(7); // nsfwVideos
         }
 
-        // Get NSFW selections if enabled
+        PostMatch.setChosen(chosen, subreddit);
+    }
+
+    public static boolean[] getCombinedChoices(ListView regularListView, ListView nsfwListView, FilterLists lists) {
+        int totalLength = lists.regularList.size() + (SettingValues.showNSFWContent ? lists.nsfwList.size() : 0);
+        boolean[] chosen = new boolean[totalLength];
+
+        for (int i = 0; i < lists.regularList.size(); i++) {
+            chosen[i] = regularListView.isItemChecked(i);
+        }
+
         if (SettingValues.showNSFWContent) {
             for (int i = 0; i < lists.nsfwList.size(); i++) {
-                allChosen.add(!nsfwListView.isItemChecked(i));
+                chosen[i + lists.regularList.size()] = nsfwListView.isItemChecked(i);
             }
-        }
-
-        // Convert to array
-        boolean[] chosen = new boolean[allChosen.size()];
-        for (int i = 0; i < allChosen.size(); i++) {
-            chosen[i] = allChosen.get(i);
         }
 
         return chosen;

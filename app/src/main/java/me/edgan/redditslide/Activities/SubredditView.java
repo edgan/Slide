@@ -71,6 +71,7 @@ import me.edgan.redditslide.Views.ToggleSwipeViewPager;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.ui.settings.SettingsSubAdapter;
+import me.edgan.redditslide.util.FilterToggleUtil;
 import me.edgan.redditslide.util.FilterUtil;
 import me.edgan.redditslide.util.LayoutUtils;
 import me.edgan.redditslide.util.LogUtil;
@@ -79,6 +80,7 @@ import me.edgan.redditslide.util.OnSingleClickListener;
 import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.StringUtil;
 import me.edgan.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.util.FilterToggleUtil;
 
 
 import net.dean.jraw.ApiException;
@@ -1165,47 +1167,17 @@ public class SubredditView extends BaseActivity {
                 .setTitle(FILTER_TITLE)
                 .setView(dialogView)
                 .setPositiveButton(R.string.btn_save, (dialog, which) -> {
-                    boolean[] chosen = FilterUtil.getCombinedChoices(regularListView, nsfwListView, lists);
-                    PostMatch.setChosen(chosen, subreddit);
+                    FilterUtil.saveFilters(regularListView, nsfwListView, lists, subreddit);
                     reloadSubs();
                 })
-                .setNeutralButton(R.string.btn_toggle_all, null)
-                .setNegativeButton(R.string.btn_cancel, null);
+                .setNeutralButton(R.string.btn_toggle, null);
 
-        AlertDialog dialog = builder.create();
-
+        final AlertDialog dialog = builder.create();
         dialog.setOnShowListener(dialogInterface -> {
             Button toggleButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
             toggleButton.setOnClickListener(view -> {
-                boolean allChecked = true;
-
-                // Check regular items
-                for (int i = 0; i < lists.regularList.size(); i++) {
-                    if (!regularListView.isItemChecked(i)) {
-                        allChecked = false;
-                        break;
-                    }
-                }
-
-                // Check NSFW items if enabled
-                if (SettingValues.showNSFWContent && allChecked) {
-                    for (int i = 0; i < lists.nsfwList.size(); i++) {
-                        if (!nsfwListView.isItemChecked(i)) {
-                            allChecked = false;
-                            break;
-                        }
-                    }
-                }
-
-                // Toggle all items
-                for (int i = 0; i < lists.regularList.size(); i++) {
-                    regularListView.setItemChecked(i, !allChecked);
-                }
-                if (SettingValues.showNSFWContent) {
-                    for (int i = 0; i < lists.nsfwList.size(); i++) {
-                        nsfwListView.setItemChecked(i, !allChecked);
-                    }
-                }
+                FilterToggleUtil.handleFilterToggle(regularListView, nsfwListView, lists,
+                        SettingValues.showNSFWContent, 0); // The 0 is ignored now
             });
         });
 
