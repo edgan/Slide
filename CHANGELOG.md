@@ -2,6 +2,37 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+7.1.7 / 2025-2-10
+=================
+* Added the Reddit Client ID override to the tutorial
+* Fixed Crash related to reordering subreddits #105
+* Fixed Crash related to multireddit overview #104
+* Fixed Crash related to gif playback with null checks #103
+
+7.1.6 / 2025-2-20
+=================
+* Fixed Multireddit longclick button text #100
+* Fixed NSFW Content Visible Despite Being Turned Off #77
+* Fixed Posts with Reddit links show empty previews #92
+* Fixed Base Theme issue when swapping accounts #99
+* Fixed search boxes to be single input line
+* Removed Select storage location option #90
+* Updated minSdk from 21(Android 5.0) to 29(Android 10)
+
+7.1.5 / 2025-2-15
+=================
+* Fixed It creates a subfolder for each downloaded image/GIF/video #83
+* Fixed Crossposts don't follow "Picture mode" setting in Post layout settings #86
+* Fixed You button in the Navigation bar #87
+* Fixed Crash on "Open Externally" in Vertical Gallery Mode #89
+* Fixed Galleries won't download in vertical scroll mode #88
+* Fix for Open externally for the gallery in the Reddit Gallery Pager
+* Fixed image download notification crash
+* Made the behavior of themes more consistent
+* Fixed Slide crashes when opening a post with a large image preview #79
+* Added notification permission to AndroidManifest.xml #80
+* Fixed Content Settings Cause App Crash & Loading Issues #74
+
 7.1.2 / 2025-2-10
 =================
 * Removing *.redd.it for Open by default
