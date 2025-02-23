@@ -71,6 +71,7 @@ import me.edgan.redditslide.Views.ToggleSwipeViewPager;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.ui.settings.SettingsSubAdapter;
+import me.edgan.redditslide.util.FilterUtil;
 import me.edgan.redditslide.util.LayoutUtils;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.MiscUtil;
@@ -78,6 +79,7 @@ import me.edgan.redditslide.util.OnSingleClickListener;
 import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.StringUtil;
 import me.edgan.redditslide.util.SubmissionParser;
+
 
 import net.dean.jraw.ApiException;
 import net.dean.jraw.http.MultiRedditUpdateRequest;
@@ -957,7 +959,7 @@ public class SubredditView extends BaseActivity {
                                                                                                                                             .string
                                                                                                                                             .snackbar_flair_success,
                                                                                                                                     Snackbar
-                                                                                                                                            .LENGTH_SHORT);
+                                                                                                                                    .LENGTH_SHORT);
                                                                                                         } else {
                                                                                                             s =
                                                                                                                     Snackbar
@@ -967,7 +969,7 @@ public class SubredditView extends BaseActivity {
                                                                                                                                             .string
                                                                                                                                             .snackbar_flair_error,
                                                                                                                                     Snackbar
-                                                                                                                                            .LENGTH_SHORT);
+                                                                                                                                    .LENGTH_SHORT);
                                                                                                         }
                                                                                                         if (s
                                                                                                                 != null) {
@@ -1148,70 +1150,61 @@ public class SubredditView extends BaseActivity {
     }
 
     public void filterContent(final String subreddit) {
-        final boolean[] chosen = new boolean[]{
-                !PostMatch.isAlbums(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isGallery(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isGif(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isImage(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isNsfw(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isSelftext(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isUrls(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isVideo(subreddit.toLowerCase(Locale.ENGLISH))
-        };
+        FilterUtil.FilterLists lists = FilterUtil.setupFilterLists(this, subreddit);
+
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_two_column_filter, null);
+        ListView regularListView = dialogView.findViewById(R.id.regular_content_list);
+        ListView nsfwListView = dialogView.findViewById(R.id.nsfw_content_list);
+
+        FilterUtil.setupListViews(this, regularListView, nsfwListView, lists);
 
         final String FILTER_TITLE = getString(R.string.content_to_show,
                 subreddit.equals("frontpage") ? "frontpage" : "/r/" + subreddit);
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                 .setTitle(FILTER_TITLE)
-                .setMultiChoiceItems(
-                        new String[]{
-                                getString(R.string.type_albums),
-                                getString(R.string.type_gallery),
-                                getString(R.string.type_gifs),
-                                getString(R.string.images),
-                                getString(R.string.type_nsfw_content),
-                                getString(R.string.type_selftext),
-                                getString(R.string.type_links),
-                                getString(R.string.type_videos)
-                        },
-                        chosen,
-                        (dialog, which, isChecked) -> chosen[which] = isChecked
-                )
-                // Positive: Saves changes
+                .setView(dialogView)
                 .setPositiveButton(R.string.btn_save, (dialog, which) -> {
-                    // Invert the chosen values before saving since we flipped the initial logic
-                    for (int i = 0; i < chosen.length; i++) {
-                        chosen[i] = !chosen[i];
-                    }
+                    boolean[] chosen = FilterUtil.getCombinedChoices(regularListView, nsfwListView, lists);
                     PostMatch.setChosen(chosen, subreddit);
                     reloadSubs();
                 })
-                // Neutral: "Toggle All" (we override its click later to avoid auto-dismiss)
                 .setNeutralButton(R.string.btn_toggle_all, null)
                 .setNegativeButton(R.string.btn_cancel, null);
 
         AlertDialog dialog = builder.create();
 
-        // Make the neutral button behave like a "toggle" without dismissing the dialog
         dialog.setOnShowListener(dialogInterface -> {
             Button toggleButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
             toggleButton.setOnClickListener(view -> {
                 boolean allChecked = true;
-                ListView list = dialog.getListView();
 
-                // Check if everything is currently selected
-                for (int i = 0; i < chosen.length; i++) {
-                    if (!chosen[i]) {
+                // Check regular items
+                for (int i = 0; i < lists.regularList.size(); i++) {
+                    if (!regularListView.isItemChecked(i)) {
                         allChecked = false;
                         break;
                     }
                 }
 
-                // Toggle all (choose or un-choose them all)
-                for (int i = 0; i < chosen.length; i++) {
-                    chosen[i] = !allChecked;
-                    list.setItemChecked(i, !allChecked);
+                // Check NSFW items if enabled
+                if (SettingValues.showNSFWContent && allChecked) {
+                    for (int i = 0; i < lists.nsfwList.size(); i++) {
+                        if (!nsfwListView.isItemChecked(i)) {
+                            allChecked = false;
+                            break;
+                        }
+                    }
+                }
+
+                // Toggle all items
+                for (int i = 0; i < lists.regularList.size(); i++) {
+                    regularListView.setItemChecked(i, !allChecked);
+                }
+                if (SettingValues.showNSFWContent) {
+                    for (int i = 0; i < lists.nsfwList.size(); i++) {
+                        nsfwListView.setItemChecked(i, !allChecked);
+                    }
                 }
             });
         });
@@ -1819,37 +1812,37 @@ public class SubredditView extends BaseActivity {
                                                 new ColorPreferences(SubredditView.this).getFontStyle().getBaseId());
                                         new MaterialAlertDialogBuilder(contextThemeWrapper)
                                                 .setTitle(getString(R.string.sub_post_notifs_title,sub))
-                                                .setMessage(R.string.sub_post_notifs_msg)
-                                                .setPositiveButton(
-                                                        R.string.btn_ok,
-                                                        (dialog, which) ->
-                                                                new MaterialAlertDialogBuilder(contextThemeWrapper)
-                                                                        .setTitle(R.string.sub_post_notifs_threshold)
-                                                                        .setSingleChoiceItems(
-                                                                                new String[] {
-                                                                                        "1", "5", "10",
-                                                                                        "20", "40", "50"
-                                                                                },
-                                                                                0,
-                                                                                (dialog12, which12) -> {
-                                                                                    ArrayList<String> subs =
-                                                                                            StringUtil.stringToArray(
-                                                                                                    Reddit.appRestart.getString(
+                                                        .setMessage(R.string.sub_post_notifs_msg)
+                                                        .setPositiveButton(
+                                                                R.string.btn_ok,
+                                                                (dialog, which) ->
+                                                                        new MaterialAlertDialogBuilder(contextThemeWrapper)
+                                                                                .setTitle(R.string.sub_post_notifs_threshold)
+                                                                                .setSingleChoiceItems(
+                                                                                        new String[] {
+                                                                                                "1", "5", "10",
+                                                                                                "20", "40", "50"
+                                                                                        },
+                                                                                        0,
+                                                                                        (dialog12, which12) -> {
+                                                                                            ArrayList<String> subs =
+                                                                                                    StringUtil.stringToArray(
+                                                                                                            Reddit.appRestart.getString(
+                                                                                                                    CheckForMail.SUBS_TO_GET,
+                                                                                                                    ""));
+                                                                                            subs.add(sub + ":" + (
+                                                                                                    new String[] {
+                                                                                                            "1", "5", "10",
+                                                                                                            "20", "40", "50"
+                                                                                                    })[which12]);
+                                                                                            Reddit.appRestart.edit()
+                                                                                                    .putString(
                                                                                                             CheckForMail.SUBS_TO_GET,
-                                                                                                            ""));
-                                                                                    subs.add(sub + ":" + (
-                                                                                            new String[] {
-                                                                                                    "1", "5", "10",
-                                                                                                    "20", "40", "50"
-                                                                                            })[which12]);
-                                                                                    Reddit.appRestart.edit()
-                                                                                            .putString(
-                                                                                                    CheckForMail.SUBS_TO_GET,
-                                                                                                    StringUtil.arrayToString(subs))
-                                                                                            .commit();
-                                                                                })
-                                                                        .setCancelable(false)
-                                                                        .show())
+                                                                                                            StringUtil.arrayToString(subs))
+                                                                                                    .commit();
+                                                                                        })
+                                                                                .setCancelable(false)
+                                                                                .show())
                                                 .setNegativeButton(R.string.btn_cancel, null)
                                                 .setNegativeButton(
                                                         R.string.btn_cancel,

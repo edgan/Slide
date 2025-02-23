@@ -169,6 +169,7 @@ public class HeaderImageLinkView extends RelativeLayout {
                 handleSpecialSubmissionType(submission, full, forceThumb, R.drawable.spoiler);
             } else if (type == ContentType.Type.ALBUM
                     || type == ContentType.Type.GIF
+                    || type == ContentType.Type.LINK
                     || type == ContentType.Type.REDDIT
                     || type == ContentType.Type.TUMBLR
                     || type == ContentType.Type.XKCD) {
@@ -802,8 +803,7 @@ public class HeaderImageLinkView extends RelativeLayout {
             boolean loadLq, String baseSub, boolean news) {
         String url = getSubmissionUrl(submission, loadLq);
         boolean shouldShowThumb = !SettingValues.isPicsEnabled(baseSub) && !full
-                || forceThumb
-                || (news && submission.getScore() < 5000);
+                || forceThumb;
 
         if (shouldShowThumb) {
             displayThumbnail(url, full);

@@ -144,6 +144,7 @@ import me.edgan.redditslide.ui.settings.SettingsThemeFragment;
 import me.edgan.redditslide.util.AnimatorUtil;
 import me.edgan.redditslide.util.DrawableUtil;
 import me.edgan.redditslide.util.EditTextValidator;
+import me.edgan.redditslide.util.FilterUtil;
 import me.edgan.redditslide.util.ImageUtil;
 import me.edgan.redditslide.util.KeyboardUtil;
 import me.edgan.redditslide.util.LayoutUtils;
@@ -3805,21 +3806,17 @@ public class MainActivity extends BaseActivity
     }
 
     public void filterContent(final String subreddit) {
-        final boolean[] chosen = new boolean[]{
-                !PostMatch.isAlbums(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isGallery(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isGif(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isImage(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isNsfw(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isSelftext(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isUrls(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isVideo(subreddit.toLowerCase(Locale.ENGLISH))
-        };
+        FilterUtil.FilterLists lists = FilterUtil.setupFilterLists(this, subreddit);
 
-        final String currentSubredditName = usedArray.get(Reddit.currentPosition);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_two_column_filter, null);
+        ListView regularListView = dialogView.findViewById(R.id.regular_content_list);
+        ListView nsfwListView = dialogView.findViewById(R.id.nsfw_content_list);
+
+        FilterUtil.setupListViews(this, regularListView, nsfwListView, lists);
 
         // Title of the filter dialog
         String filterTitle;
+        final String currentSubredditName = usedArray.get(Reddit.currentPosition);
 
         if (currentSubredditName.contains("/m/")) {
             filterTitle = getString(R.string.content_to_show, currentSubredditName);
@@ -3831,55 +3828,48 @@ public class MainActivity extends BaseActivity
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                 .setTitle(filterTitle)
-                .setMultiChoiceItems(
-                        new String[]{
-                                getString(R.string.type_albums),
-                                getString(R.string.type_gallery),
-                                getString(R.string.type_gifs),
-                                getString(R.string.images),
-                                getString(R.string.type_nsfw_content),
-                                getString(R.string.type_selftext),
-                                getString(R.string.type_links),
-                                getString(R.string.type_videos)
-                        },
-                        chosen,
-                        (dialog, which, isChecked) -> chosen[which] = isChecked
-                )
-
-                // Save button: inverts and stores the user's choices
+                .setView(dialogView)
                 .setPositiveButton(R.string.btn_save, (dialog, which) -> {
-                    // Invert the chosen values before saving since we flipped the initial logic
-                    for (int i = 0; i < chosen.length; i++) {
-                        chosen[i] = !chosen[i];
-                    }
+                    boolean[] chosen = FilterUtil.getCombinedChoices(regularListView, nsfwListView, lists);
                     PostMatch.setChosen(chosen, subreddit);
                     reloadSubs();
                 })
-                // Neutral button: We'll override its click so it does NOT dismiss automatically
                 .setNeutralButton(R.string.btn_toggle_all, null)
                 .setNegativeButton(R.string.btn_cancel, null);
 
-        // Create the dialog from the builder
-        final AlertDialog dialog = builder.create();
+        AlertDialog dialog = builder.create();
 
-        // Override the neutral (toggle) button's click to NOT dismiss the dialog
         dialog.setOnShowListener(dialogInterface -> {
             Button toggleButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
             toggleButton.setOnClickListener(view -> {
-                // Check if all boxes are currently checked
                 boolean allChecked = true;
-                ListView list = dialog.getListView();
-                for (int i = 0; i < chosen.length; i++) {
-                    if (!chosen[i]) {
+
+                // Check regular items
+                for (int i = 0; i < lists.regularList.size(); i++) {
+                    if (!regularListView.isItemChecked(i)) {
                         allChecked = false;
                         break;
                     }
                 }
 
-                // Toggle them all at once
-                for (int i = 0; i < chosen.length; i++) {
-                    chosen[i] = !allChecked;
-                    list.setItemChecked(i, !allChecked);
+                // Check NSFW items if enabled
+                if (SettingValues.showNSFWContent && allChecked) {
+                    for (int i = 0; i < lists.nsfwList.size(); i++) {
+                        if (!nsfwListView.isItemChecked(i)) {
+                            allChecked = false;
+                            break;
+                        }
+                    }
+                }
+
+                // Toggle all items
+                for (int i = 0; i < lists.regularList.size(); i++) {
+                    regularListView.setItemChecked(i, !allChecked);
+                }
+                if (SettingValues.showNSFWContent) {
+                    for (int i = 0; i < lists.nsfwList.size(); i++) {
+                        nsfwListView.setItemChecked(i, !allChecked);
+                    }
                 }
             });
         });

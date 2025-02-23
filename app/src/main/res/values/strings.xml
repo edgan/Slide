@@ -303,9 +303,18 @@
     <string name="type_title_only">Title post</string>
     <string name="type_album">Album</string>
     <string name="type_xkcd">XKCD</string>
-    <string name="type_nsfw_album">NSFW album</string>
+    <string name="type_nsfw_album">NSFW Album</string>
     <string name="type_nsfw_gallery">NSFW Gallery</string>
+    <string name="type_nsfw_albums">NSFW Albums</string>
+    <string name="type_nsfw_galleries">NSFW Galleries</string>
+    <string name="type_nsfw_gifs">NSFW GIFs</string>
+    <string name="type_nsfw_images">NSFW Images</string>
+    <string name="type_nsfw_links">NSFW Links</string>
+    <string name="type_nsfw_selftexts">NSFW Selftexts</string>
+    <string name="type_nsfw_tumblrs">NSFW Videos</string>
+    <string name="type_nsfw_videos">NSFW Videos</string>
     <string name="type_gallery">Gallery</string>
+    <string name="type_galleries">Galleries</string>
     <string name="type_img">Image</string>
     <string name="type_videos">Videos</string>
     <string name="type_nsfw_video">NSFW video</string>
@@ -1112,6 +1121,7 @@
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Continue this thread</string>
     <string name="type_selftext">Selftext</string>
+    <string name="type_selftexts">Selftexts</string>
     <string name="submission_unhide">Unhide post</string>
     <string name="submission_info_unhidden">Submission unhidden</string>
     <string name="msg_sent_success">Message sent</string>
@@ -1183,6 +1193,7 @@
     <string name="enlarge_links">Enlarge links</string>
     <string name="enlarge_links_warning">May cause some lines to be bigger than others, but makes links easier to touch</string>
     <string name="type_tumblr">Tumblr</string>
+    <string name="type_tumblrs">Tumblrs</string>
     <string name="type_nsfw_tumblr">NSFW Tumblr</string>
     <string name="submission_info_contest">This thread is in contest mode. You cannot change sorting.</string>
     <string name="sub_post_notifs_msg">Slide will check for new posts when it checks for mail (mail notifications must be enabled)</string>
