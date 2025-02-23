@@ -1264,4 +1264,5 @@
     <string name="reddit_client_id_override">Reddit Client ID Override</string>
     <string name="click_custom_client_id">Click to set custom client ID</string>
     <string name="client_id_saved">Client ID saved: </string>
+    <string name="enter_client_id">Enter Client ID</string>
 </resources>

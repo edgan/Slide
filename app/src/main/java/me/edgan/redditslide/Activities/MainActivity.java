@@ -4327,21 +4327,26 @@ public class MainActivity extends BaseActivity
                     new TextView.OnEditorActionListener() {
                         @Override
                         public boolean onEditorAction(TextView arg0, int arg1, KeyEvent arg2) {
+                            if (arg2 != null) {
+                                 return true; // consume but do nothing
+                            }
+
+                            String searchText = drawerSearch.getText().toString().toLowerCase(Locale.ENGLISH);
+                            boolean searchSubFound = usedArray.contains(searchText);
+                            int searchSubIndex = usedArray.indexOf(searchText);
+                            int sideArrayAdapterIndex = usedArray.indexOf(sideArrayAdapter.fitems.get(0));
+
                             if (arg1 == EditorInfo.IME_ACTION_SEARCH) {
                                 // If it the input text doesn't match a subreddit from the list
                                 // exactly, openInSubView is true
                                 if (sideArrayAdapter.fitems == null
                                         || sideArrayAdapter.openInSubView
-                                        || !usedArray.contains(
-                                                drawerSearch
-                                                        .getText()
-                                                        .toString()
-                                                        .toLowerCase(Locale.ENGLISH))) {
+                                        || !searchSubFound) {
                                     Intent inte =
                                             new Intent(MainActivity.this, SubredditView.class);
                                     inte.putExtra(
                                             SubredditView.EXTRA_SUBREDDIT,
-                                            drawerSearch.getText().toString());
+                                            searchText);
                                     MainActivity.this.startActivityForResult(inte, 2001);
                                 } else {
                                     if (commentPager
@@ -4351,38 +4356,18 @@ public class MainActivity extends BaseActivity
                                         ((MainPagerAdapterComment) adapter).size =
                                                 (usedArray.size() + 1);
                                         adapter.notifyDataSetChanged();
-                                        if (usedArray.contains(
-                                                drawerSearch
-                                                        .getText()
-                                                        .toString()
-                                                        .toLowerCase(Locale.ENGLISH))) {
-                                            doPageSelectedComments(
-                                                    usedArray.indexOf(
-                                                            drawerSearch
-                                                                    .getText()
-                                                                    .toString()
-                                                                    .toLowerCase(Locale.ENGLISH)));
+                                        if (!searchSubFound) {
+                                            doPageSelectedComments(sideArrayAdapterIndex);
                                         } else {
-                                            doPageSelectedComments(
-                                                    usedArray.indexOf(
-                                                            sideArrayAdapter.fitems.get(0)));
+                                            doPageSelectedComments(searchSubIndex);
                                         }
                                     }
-                                    if (usedArray.contains(
-                                            drawerSearch
-                                                    .getText()
-                                                    .toString()
-                                                    .toLowerCase(Locale.ENGLISH))) {
-                                        pager.setCurrentItem(
-                                                usedArray.indexOf(
-                                                        drawerSearch
-                                                                .getText()
-                                                                .toString()
-                                                                .toLowerCase(Locale.ENGLISH)));
+                                    if (!searchSubFound) {
+                                        pager.setCurrentItem(sideArrayAdapterIndex);
                                     } else {
-                                        pager.setCurrentItem(
-                                                usedArray.indexOf(sideArrayAdapter.fitems.get(0)));
+                                        pager.setCurrentItem(searchSubIndex);
                                     }
+
                                     drawerLayout.closeDrawers();
                                     drawerSearch.setText("");
                                     View view = MainActivity.this.getCurrentFocus();

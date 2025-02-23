@@ -9,6 +9,9 @@ import java.util.Properties;
 /** Created by Deadl on 26/11/2015. */
 public class SecretConstants {
     private static String apiKey;
+    private static String apiImgurKey;
+    private static String googleLongClientID;
+    private static String googleShortClientID;
     private static String redGifClientId;
     private static String redGifClientSecret;
 
@@ -46,22 +49,52 @@ public class SecretConstants {
         return apiKey;
     }
 
-    public static String getImgurApiKey(Context context) {
-        if (apiKey == null) {
+    public static String getGoogleLongClientID(Context context) {
+        if (googleLongClientID == null) {
             InputStream input;
             try {
                 input = context.getAssets().open("secretconstants.properties");
                 Properties properties = new Properties();
                 properties.load(input);
-                apiKey = properties.getProperty("imgur");
+                googleLongClientID = properties.getProperty("googleLongClientID");
             } catch (IOException e) {
                 // file not found
-                apiKey = "3P3GlZj91emshgWU6YuQL98Q9Zihp1c2vCSjsnOQLIchXPzDLh"; // Testing key, will
-                // not work in
-                // production
+                googleLongClientID = "";
             }
         }
-        return apiKey;
+        return googleLongClientID;
+    }
+
+    public static String getGoogleShortClientID(Context context) {
+        if (googleShortClientID == null) {
+            InputStream input;
+            try {
+                input = context.getAssets().open("secretconstants.properties");
+                Properties properties = new Properties();
+                properties.load(input);
+                googleShortClientID = properties.getProperty("googleShortClientID");
+            } catch (IOException e) {
+                // file not found
+                googleShortClientID = "";
+            }
+        }
+        return googleShortClientID;
+    }
+
+    public static String getImgurApiKey(Context context) {
+        if (apiImgurKey == null) {
+            InputStream input;
+            try {
+                input = context.getAssets().open("secretconstants.properties");
+                Properties properties = new Properties();
+                properties.load(input);
+                apiImgurKey = properties.getProperty("imgur");
+            } catch (IOException e) {
+                // file not found
+                apiImgurKey = "3P3GlZj91emshgWU6YuQL98Q9Zihp1c2vCSjsnOQLIchXPzDLh"; // Testing key, will not work in production
+            }
+        }
+        return apiImgurKey;
     }
 
     public static String getRedGifsClientId(Context context) {
