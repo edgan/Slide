@@ -2,7 +2,22 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
-7.1.7 / 2025-2-10
+7.1.8 / 2025-2-24
+=================
+* Made the video background black instead of transparent
+* Changed the default to muted video
+* Improved the mute and unmute icons
+* Added setting in General settings to allow unmuted video by default
+* Fixed gallery preview and thumbnail images
+* Made Go to profile and Go to multis single line
+* Fixed multireddit FAB search #101
+* Another attempt at fixing Title text is sometimes cut off #11
+* Implemented a new content filter toggle button functionality
+* Added NSFW Tumblrs and NSFW Videos to the content filters #76
+* Fixed LINK preview images that were appearing and disappearing
+* Fixed Go to subreddit says subreddit not found for subscribed subreddits #108
+
+7.1.7 / 2025-2-21
 =================
 * Added the Reddit Client ID override to the tutorial
 * Fixed Crash related to reordering subreddits #105
