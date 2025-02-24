@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.core.util.Consumer;
@@ -20,7 +21,9 @@ import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.PostMatch;
 
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -40,6 +43,11 @@ public class SettingsFilter extends BaseActivityAnim {
         setContentView(R.layout.activity_settings_filters);
         setupAppBar(R.id.toolbar, R.string.settings_title_filter, true, true);
 
+        // Initialize memory filters as empty at app start
+        if (SettingValues.subredditFiltersTillRestart) {
+            PostMatch.memorySubredditFilters = new HashSet<>();
+        }
+
         title = (EditText) findViewById(R.id.title);
         text = (EditText) findViewById(R.id.text);
         domain = (EditText) findViewById(R.id.domain);
@@ -53,7 +61,21 @@ public class SettingsFilter extends BaseActivityAnim {
         domain.setOnEditorActionListener(
                 makeOnEditorActionListener(SettingValues.domainFilters::add));
         subreddit.setOnEditorActionListener(
-                makeOnEditorActionListener(SettingValues.subredditFilters::add));
+                (v, actionId, event) -> {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        String text = v.getText().toString().toLowerCase(Locale.ENGLISH).trim();
+                        if (!text.isEmpty()) {
+                            if (SettingValues.subredditFiltersTillRestart) {
+                                PostMatch.memorySubredditFilters.add(text);
+                            } else {
+                                SettingValues.subredditFilters.add(text);
+                            }
+                            v.setText("");
+                            updateFilters();
+                        }
+                    }
+                    return false;
+                });
         user.setOnEditorActionListener(makeOnEditorActionListener(SettingValues.userFilters::add));
 
         flair.setOnEditorActionListener(
@@ -69,6 +91,17 @@ public class SettingsFilter extends BaseActivityAnim {
 
                     return false;
                 });
+
+        // Add switch for subreddit content filters till restart
+        Switch filtersTillRestart = (Switch) findViewById(R.id.subreddit_filters_till_restart);
+        filtersTillRestart.setChecked(SettingValues.subredditFiltersTillRestart);
+        filtersTillRestart.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SettingValues.subredditFiltersTillRestart = isChecked;
+            SettingValues.prefs.edit()
+                .putBoolean(SettingValues.PREF_SUBREDDIT_FILTERS_TILL_RESTART, isChecked)
+                .apply();
+            updateFilters();
+        });
 
         updateFilters();
     }
@@ -131,8 +164,16 @@ public class SettingsFilter extends BaseActivityAnim {
                 R.id.domainlist, SettingValues.domainFilters, SettingValues.domainFilters::remove);
         updateList(
                 R.id.subredditlist,
-                SettingValues.subredditFilters,
-                SettingValues.subredditFilters::remove);
+                SettingValues.subredditFiltersTillRestart ?
+                    PostMatch.memorySubredditFilters : SettingValues.subredditFilters,
+                text -> {
+                    if (SettingValues.subredditFiltersTillRestart) {
+                        PostMatch.memorySubredditFilters.remove(text);
+                    } else {
+                        SettingValues.subredditFilters.remove(text);
+                    }
+                    updateFilters();
+                });
         updateList(R.id.userlist, SettingValues.userFilters, SettingValues.userFilters::remove);
         updateList(R.id.selftextlist, SettingValues.textFilters, SettingValues.textFilters::remove);
         updateList(R.id.titlelist, SettingValues.titleFilters, SettingValues.titleFilters::remove);
@@ -177,10 +218,12 @@ public class SettingsFilter extends BaseActivityAnim {
     public void onPause() {
         super.onPause();
         SharedPreferences.Editor e = SettingValues.prefs.edit();
+
+        // Save all filters normally - these are subreddit name filters, not content filters
+        e.putStringSet(SettingValues.PREF_SUBREDDIT_FILTERS, SettingValues.subredditFilters);
         e.putStringSet(SettingValues.PREF_TITLE_FILTERS, SettingValues.titleFilters);
         e.putStringSet(SettingValues.PREF_DOMAIN_FILTERS, SettingValues.domainFilters);
         e.putStringSet(SettingValues.PREF_TEXT_FILTERS, SettingValues.textFilters);
-        e.putStringSet(SettingValues.PREF_SUBREDDIT_FILTERS, SettingValues.subredditFilters);
         e.putStringSet(SettingValues.PREF_FLAIR_FILTERS, SettingValues.flairFilters);
         e.putStringSet(SettingValues.PREF_USER_FILTERS, SettingValues.userFilters);
         e.apply();

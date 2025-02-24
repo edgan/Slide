@@ -8,9 +8,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
+
+import me.edgan.redditslide.ui.settings.SettingsFilter;
 
 /** Created by carlo_000 on 1/13/2016. */
 public class PostMatch {
+    // Add memory filters here
+    public static Set<String> memorySubredditFilters = new HashSet<>();
+
+    // Memory storage for content filters
+    private static final Map<String, Boolean> memoryContentFilters = new HashMap<>();
+
     /**
      * Checks if a string is totally or partially contained in a set of strings
      *
@@ -106,9 +117,12 @@ public class PostMatch {
         } catch (MalformedURLException ignored) {
         }
 
-        if (!subreddit.equalsIgnoreCase(baseSubreddit)
-                && contains(subreddit, SettingValues.subredditFilters, true)) {
-            return true;
+        if (!subreddit.equalsIgnoreCase(baseSubreddit)) {
+            Set<String> subredditFilters = SettingValues.subredditFiltersTillRestart ?
+                memorySubredditFilters : SettingValues.subredditFilters;
+            if (contains(subreddit, subredditFilters, true)) {
+                return true;
+            }
         }
 
         boolean contentMatch = false;
@@ -288,89 +302,186 @@ public class PostMatch {
 
     public static void setChosen(boolean[] values, String subreddit) {
         subreddit = subreddit.toLowerCase(Locale.ENGLISH);
-        SharedPreferences.Editor e = filters.edit();
-        e.putBoolean(subreddit + "_albumsFilter", values[0]);
-        e.putBoolean(subreddit + "_galleriesFilter", values[1]);
-        e.putBoolean(subreddit + "_gifsFilter", values[2]);
-        e.putBoolean(subreddit + "_imagesFilter", values[3]);
-        e.putBoolean(subreddit + "_linksFilter", values[4]);
-        e.putBoolean(subreddit + "_selftextsFilter", values[5]);
-        e.putBoolean(subreddit + "_tumblrsFilter", values[6]);
-        e.putBoolean(subreddit + "_videosFilter", values[7]);
+
+        // Create a list of filter keys
+        String[] filterKeys = {
+            subreddit + "_albumsFilter",
+            subreddit + "_galleriesFilter",
+            subreddit + "_gifsFilter",
+            subreddit + "_imagesFilter",
+            subreddit + "_linksFilter",
+            subreddit + "_selftextsFilter",
+            subreddit + "_tumblrsFilter",
+            subreddit + "_videosFilter"
+        };
+
+        // Add NSFW filter keys if needed
+        String[] nsfwFilterKeys = null;
         if (values.length > 8 && SettingValues.showNSFWContent) {
-            e.putBoolean(subreddit + "_nsfwAlbumsFilter", values[8]);
-            e.putBoolean(subreddit + "_nsfwGalleriesFilter", values[9]);
-            e.putBoolean(subreddit + "_nsfwGifsFilter", values[10]);
-            e.putBoolean(subreddit + "_nsfwImagesFilter", values[11]);
-            e.putBoolean(subreddit + "_nsfwLinksFilter", values[12]);
-            e.putBoolean(subreddit + "_nsfwSelftextsFilter", values[13]);
-            e.putBoolean(subreddit + "_nsfwTumblrsFilter", values[14]);
-            e.putBoolean(subreddit + "_nsfwVideosFilter", values[15]);
+            nsfwFilterKeys = new String[] {
+                subreddit + "_nsfwAlbumsFilter",
+                subreddit + "_nsfwGalleriesFilter",
+                subreddit + "_nsfwGifsFilter",
+                subreddit + "_nsfwImagesFilter",
+                subreddit + "_nsfwLinksFilter",
+                subreddit + "_nsfwSelftextsFilter",
+                subreddit + "_nsfwTumblrsFilter",
+                subreddit + "_nsfwVideosFilter"
+            };
         }
-        e.apply();
+
+        if (SettingValues.subredditFiltersTillRestart) {
+            // Store in memory
+            for (int i = 0; i < filterKeys.length; i++) {
+                memoryContentFilters.put(filterKeys[i], values[i]);
+            }
+
+            if (nsfwFilterKeys != null) {
+                for (int i = 0; i < nsfwFilterKeys.length; i++) {
+                    memoryContentFilters.put(nsfwFilterKeys[i], values[i + 8]);
+                }
+            }
+        } else {
+            // Store in SharedPreferences
+            SharedPreferences.Editor e = filters.edit();
+            for (int i = 0; i < filterKeys.length; i++) {
+                e.putBoolean(filterKeys[i], values[i]);
+            }
+
+            if (nsfwFilterKeys != null) {
+                for (int i = 0; i < nsfwFilterKeys.length; i++) {
+                    e.putBoolean(nsfwFilterKeys[i], values[i + 8]);
+                }
+            }
+            e.apply();
+        }
     }
 
     public static boolean isAlbum(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_albumsFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_albumsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_albumsFilter", false);
+        }
     }
 
     public static boolean isGallery(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_galleriesFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_galleriesFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_galleriesFilter", false);
+        }
     }
 
     public static boolean isGif(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_gifsFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_gifsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_gifsFilter", false);
+        }
     }
 
     public static boolean isImage(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_imagesFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_imagesFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_imagesFilter", false);
+        }
     }
 
     public static boolean isLink(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_linksFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_linksFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_linksFilter", false);
+        }
     }
 
     public static boolean isSelftext(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_selftextsFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_selftextsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_selftextsFilter", false);
+        }
     }
 
     public static boolean isTumblr(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_tumblrsFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_tumblrsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_tumblrsFilter", false);
+        }
     }
 
     public static boolean isVideo(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_videosFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_videosFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_videosFilter", false);
+        }
     }
 
     public static boolean isNsfwAlbum(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwAlbumsFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwAlbumsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwAlbumsFilter", false);
+        }
     }
 
     public static boolean isNsfwGallery(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwGalleriesFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwGalleriesFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwGalleriesFilter", false);
+        }
     }
 
     public static boolean isNsfwGif(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwGifsFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwGifsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwGifsFilter", false);
+        }
     }
 
     public static boolean isNsfwImage(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwImagesFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwImagesFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwImagesFilter", false);
+        }
     }
 
     public static boolean isNsfwLink(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwLinksFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwLinksFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwLinksFilter", false);
+        }
     }
 
     public static boolean isNsfwSelftext(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwSelftextsFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwSelftextsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwSelftextsFilter", false);
+        }
     }
 
     public static boolean isNsfwTumblr(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwTumblrsFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwTumblrsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwTumblrsFilter", false);
+        }
     }
 
     public static boolean isNsfwVideo(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwVideosFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwVideosFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwVideosFilter", false);
+        }
     }
 }

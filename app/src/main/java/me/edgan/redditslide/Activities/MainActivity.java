@@ -121,7 +121,6 @@ import me.edgan.redditslide.ImageFlairs;
 import me.edgan.redditslide.Notifications.CheckForMail;
 import me.edgan.redditslide.Notifications.NotificationJobScheduler;
 import me.edgan.redditslide.OpenRedditLink;
-import me.edgan.redditslide.PostMatch;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
@@ -159,6 +158,7 @@ import me.edgan.redditslide.util.StringUtil;
 import me.edgan.redditslide.util.SubmissionParser;
 import me.edgan.redditslide.util.TimeUtils;
 import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
+import me.edgan.redditslide.util.FilterContentUtil;
 
 import net.dean.jraw.ApiException;
 import net.dean.jraw.http.MultiRedditUpdateRequest;
@@ -550,7 +550,7 @@ public class MainActivity extends BaseActivity
 
         switch (item.getItemId()) {
             case R.id.filter:
-                filterContent(shouldLoad);
+                FilterContentUtil.showFilterDialog(this, subreddit, this::reloadSubs);
                 return true;
             case R.id.sidebar:
                 if (!subreddit.equals("all")
@@ -3804,39 +3804,6 @@ public class MainActivity extends BaseActivity
                             }
                         },
                         ANIMATION_DURATION + ANIMATE_DURATION_OFFSET);
-    }
-
-    public void filterContent(final String subreddit) {
-        FilterUtil.FilterLists lists = FilterUtil.setupFilterLists(this, subreddit);
-
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_two_column_filter, null);
-        ListView regularListView = dialogView.findViewById(R.id.regular_content_list);
-        ListView nsfwListView = dialogView.findViewById(R.id.nsfw_content_list);
-
-        FilterUtil.setupListViews(this, regularListView, nsfwListView, lists);
-
-        final String FILTER_TITLE = getString(R.string.content_to_show,
-                subreddit.equals("frontpage") ? "frontpage" : "/r/" + subreddit);
-
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
-                .setTitle(FILTER_TITLE)
-                .setView(dialogView)
-                .setPositiveButton(R.string.btn_save, (dialog, which) -> {
-                    FilterUtil.saveFilters(regularListView, nsfwListView, lists, subreddit);
-                    reloadSubs();
-                })
-                .setNeutralButton(R.string.btn_toggle, null);
-
-        final AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(dialogInterface -> {
-            Button toggleButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-            toggleButton.setOnClickListener(view -> {
-                FilterToggleUtil.handleFilterToggle(regularListView, nsfwListView, lists,
-                        SettingValues.showNSFWContent, 0); // The 0 is ignored now
-            });
-        });
-
-        dialog.show();
     }
 
     public int getCurrentPage() {

@@ -143,13 +143,12 @@ public class SettingValues {
     public static final String PREF_ALWAYS_SHOW_FAB = "alwaysShowFAB";
     public static final String PREF_HIGH_COLORSPACE_IMAGES = "highMemoryImages";
     public static final String PREF_ALWAYS_BLACK_STATUSBAR = "alwaysBlackStatusbar";
-
+    public static final String PREF_SUBREDDIT_FILTERS_TILL_RESTART = "subredditFiltersTillRestart";
     public static final String PREF_IMAGE_SAVE_LOCATION = "PREF_IMAGE_SAVE_LOCATION";
-    public static String imageSaveLocation;
-
     public static final String PREF_REDDIT_CLIENT_ID_OVERRIDE = "redditClientOverride";
-    public static String redditClientIdOverride = "";
 
+    public static String imageSaveLocation;
+    public static String redditClientIdOverride = "";
     public static CreateCardView.CardEnum defaultCardView;
     public static Sorting defaultSorting;
     public static Sorting frontpageSorting;
@@ -292,6 +291,7 @@ public class SettingValues {
     public static boolean toolboxModmail;
     public static boolean alwaysShowFAB;
     public static boolean alwaysBlackStatusbar;
+    public static boolean subredditFiltersTillRestart;
 
     public static void setAllValues(SharedPreferences settings) {
         prefs = settings;
@@ -329,7 +329,7 @@ public class SettingValues {
         blurCheck = prefs.getBoolean(PREF_BLUR, false);
         overrideLanguage = prefs.getBoolean(PREF_OVERRIDE_LANGUAGE, false);
         immersiveMode = prefs.getBoolean(PREF_IMMERSIVE_MODE, false);
-	oldSwipeMode = prefs.getBoolean(PREF_OLD_SWIPE_MODE, false);
+	    oldSwipeMode = prefs.getBoolean(PREF_OLD_SWIPE_MODE, false);
         largeDepth = prefs.getBoolean(PREF_LARGE_DEPTH, false);
         readerMode = prefs.getBoolean(PREF_READER_MODE, false);
         imageSubfolders = prefs.getBoolean(PREF_IMAGE_SUBFOLDERS, false);
@@ -492,6 +492,8 @@ public class SettingValues {
         toolboxSticky = prefs.getBoolean(PREF_MOD_TOOLBOX_STICKY, false);
         toolboxLock = prefs.getBoolean(PREF_MOD_TOOLBOX_LOCK, false);
         toolboxModmail = prefs.getBoolean(PREF_MOD_TOOLBOX_MODMAIL, false);
+
+        subredditFiltersTillRestart = prefs.getBoolean(PREF_SUBREDDIT_FILTERS_TILL_RESTART, true);
     }
 
     public static void setPicsEnabled(String sub, boolean checked) {

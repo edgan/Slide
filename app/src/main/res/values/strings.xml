@@ -708,6 +708,7 @@
     <string name="settings_backup_submission_only">submission only</string>
     <string name="settings_backup_comments">\u0020(comments)</string>
     <string name="settings_filter_profile">Profile filters</string>
+    <string name="settings_subreddit_content_filters_till_restart">Subreddit content filters till restart</string>
     <string name="settings_subredditspecific_selftext">Always show selftext previews in this subreddit</string>
     <string name="settings_font_system">System</string>
     <string name="settings_manage_subscriptions">Manage your subscriptions</string>
