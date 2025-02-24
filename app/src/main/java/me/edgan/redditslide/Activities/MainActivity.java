@@ -5457,6 +5457,8 @@ public class MainActivity extends BaseActivity
         final EditText input = new EditText(contextThemeWrapper);
         input.setHint(getString(R.string.user_enter));
         input.setHintTextColor(getResources().getColor(R.color.md_grey_700));
+        input.setSingleLine(true);  // Make input single line
+        input.setInputType(InputType.TYPE_CLASS_TEXT);  // Set input type to text
 
         // Match search box styling
         int underlineColor = new ColorPreferences(contextThemeWrapper).getColor(selectedSub);
