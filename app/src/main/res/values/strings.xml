@@ -1272,4 +1272,7 @@
     <string name="click_custom_client_id">Click to set custom client ID</string>
     <string name="client_id_saved">Client ID saved: </string>
     <string name="enter_client_id">Enter Client ID</string>
+
+    <string name="settings_section_sound">Sound</string>
+    <string name="settings_unmute_default">Unmute videos by default</string>
 </resources>

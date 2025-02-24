@@ -71,7 +71,6 @@
                 android:theme="@style/Ripple.List"
                 android:layout_toLeftOf="@+id/hq"
                 android:padding="15dp"
-                app:srcCompat="@drawable/ic_volume_off"
                 android:tint="#e1e1e1" />
         <ImageView
             android:id="@+id/hq"

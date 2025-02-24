@@ -101,6 +101,7 @@ public class SettingValues {
     public static final String PREF_IGNORE_SUB_SETTINGS = "ignoreSub";
     public static final String PREF_HIGHLIGHT_TIME = "highlightTime";
     public static final String PREF_MUTE = "muted";
+    public static final String PREF_UNMUTE_DEFAULT = "unmuteDefault";
     public static final String PREF_LINK_HANDLING_MODE = "linkHandlingMode";
 
     public static final String PREF_FULL_COMMENT_OVERRIDE = "fullCommentOverride";
@@ -213,6 +214,7 @@ public class SettingValues {
     public static boolean hideCommentAwards;
     public static boolean shareLongLink;
     public static boolean isMuted;
+    public static boolean unmuteDefault;
     public static int subredditSearchMethod;
     public static int backButtonBehavior;
     public static int nightStart;
@@ -333,6 +335,7 @@ public class SettingValues {
         imageSubfolders = prefs.getBoolean(PREF_IMAGE_SUBFOLDERS, false);
         imageDownloadButton = prefs.getBoolean(PREF_IMAGE_DOWNLOAD_BUTTON, true);
         isMuted = prefs.getBoolean(PREF_MUTE, false);
+        unmuteDefault = prefs.getBoolean(PREF_UNMUTE_DEFAULT, false);
 
         commentVolumeNav = prefs.getBoolean(PREF_COMMENT_NAV, false);
         postNav = false;

@@ -1258,6 +1258,22 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                 v -> {
                     showClientIDDialog();
                 });
+
+        {
+            SwitchCompat unmuteDefaultSwitch =
+                    context.findViewById(R.id.settings_general_unmute_default);
+            if (unmuteDefaultSwitch != null) {
+                unmuteDefaultSwitch.setChecked(SettingValues.unmuteDefault);
+                unmuteDefaultSwitch.setOnCheckedChangeListener(
+                        (buttonView, isChecked) -> {
+                            SettingValues.unmuteDefault = isChecked;
+                            SettingValues.prefs
+                                    .edit()
+                                    .putBoolean(SettingValues.PREF_UNMUTE_DEFAULT, isChecked)
+                                    .apply();
+                        });
+            }
+        }
     }
 
     // Add helper method

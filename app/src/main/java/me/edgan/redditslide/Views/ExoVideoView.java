@@ -138,8 +138,9 @@ public class ExoVideoView extends RelativeLayout {
         // Make the video repeat infinitely
         player.setRepeatMode(Player.REPEAT_MODE_ALL);
 
-        // Mute by default
-        player.setVolume(0f);
+        // Mute by default unless setting is enabled
+        player.setVolume(SettingValues.unmuteDefault ? 1f : 0f);
+        SettingValues.isMuted = !SettingValues.unmuteDefault;
 
         // Create audio focus helper
         audioFocusHelper = new AudioFocusHelper(
@@ -347,13 +348,15 @@ public class ExoVideoView extends RelativeLayout {
                         // If an audio track is present/selected, show the mute button
                         if (foundAudio) {
                             mute.setVisibility(VISIBLE);
-                            // Set initial volume state
+                            // Set initial volume state based on settings
                             if (!SettingValues.isMuted) {
                                 player.setVolume(1f);
+                                mute.setImageResource(R.drawable.ic_volume_on);
                                 BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
                                 audioFocusHelper.gainFocus();
                             } else {
                                 player.setVolume(0f);
+                                mute.setImageResource(R.drawable.ic_volume_off);
                                 BlendModeUtil.tintImageViewAsSrcAtop(
                                         mute, getResources().getColor(R.color.md_red_500));
                             }
@@ -368,6 +371,7 @@ public class ExoVideoView extends RelativeLayout {
                                                     .edit()
                                                     .putBoolean(SettingValues.PREF_MUTE, false)
                                                     .apply();
+                                            mute.setImageResource(R.drawable.ic_volume_on);
                                             BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
                                             audioFocusHelper.gainFocus();
                                         } else {
@@ -377,6 +381,7 @@ public class ExoVideoView extends RelativeLayout {
                                                     .edit()
                                                     .putBoolean(SettingValues.PREF_MUTE, true)
                                                     .apply();
+                                            mute.setImageResource(R.drawable.ic_volume_off);
                                             BlendModeUtil.tintImageViewAsSrcAtop(
                                                     mute,
                                                     getResources().getColor(R.color.md_red_500));
