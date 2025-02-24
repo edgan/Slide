@@ -8,7 +8,7 @@ public class FilterToggleUtil {
     public static final int STATE_NONE = 2;
     public static final int STATE_ALL = 3;
 
-    public static int determineCurrentState(ListView regularListView, ListView nsfwListView, 
+    public static int determineCurrentState(ListView regularListView, ListView nsfwListView,
             FilterUtil.FilterLists lists, boolean showNSFW) {
         boolean allRegularChecked = true;
         boolean allNsfwChecked = true;
@@ -48,7 +48,7 @@ public class FilterToggleUtil {
         }
     }
 
-    public static void handleFilterToggle(ListView regularListView, ListView nsfwListView, 
+    public static void handleFilterToggle(ListView regularListView, ListView nsfwListView,
             FilterUtil.FilterLists lists, boolean showNSFW, int toggleState) {
         // Determine current state and calculate next state
         int currentState = determineCurrentState(regularListView, nsfwListView, lists, showNSFW);
@@ -100,4 +100,4 @@ public class FilterToggleUtil {
                 break;
         }
     }
-} 
+}
