@@ -311,7 +311,7 @@
     <string name="type_nsfw_images">NSFW Images</string>
     <string name="type_nsfw_links">NSFW Links</string>
     <string name="type_nsfw_selftexts">NSFW Selftexts</string>
-    <string name="type_nsfw_tumblrs">NSFW Videos</string>
+    <string name="type_nsfw_tumblrs">NSFW Tumblrs</string>
     <string name="type_nsfw_videos">NSFW Videos</string>
     <string name="type_gallery">Gallery</string>
     <string name="type_galleries">Galleries</string>
