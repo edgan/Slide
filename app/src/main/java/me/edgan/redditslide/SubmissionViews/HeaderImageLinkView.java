@@ -24,7 +24,10 @@ import com.cocosw.bottomsheet.BottomSheet;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.ForceTouch.PeekView;
@@ -44,6 +47,7 @@ import me.edgan.redditslide.Views.TransparentTagTextView;
 import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.CompatUtil;
 import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.NetworkUtil;
 
 import net.dean.jraw.models.Submission;
@@ -145,6 +149,8 @@ public class HeaderImageLinkView extends RelativeLayout {
                     && !dataNode.get("sr_detail").get("show_media").asBoolean()) {
                 thumbnailType = Submission.ThumbnailType.NONE;
             }
+
+            LogUtil.v(type.toString());
 
             if (SettingValues.noImages && loadLq) {
                 setVisibility(View.GONE);
@@ -859,15 +865,24 @@ public class HeaderImageLinkView extends RelativeLayout {
     private void displayFullImage(String url, boolean full) {
         loadedUrl = url;
 
+        // Create ImageLoadingListener to handle errors
+        ImageLoadingListener errorListener = new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                HeaderImageLinkView.this.setVisibility(View.GONE);
+            }
+        };
+
         if (!full) {
             ((Reddit) getContext().getApplicationContext())
                     .getImageLoader()
-                    .displayImage(url, backdrop);
+                    .displayImage(url, backdrop, null, errorListener);
         } else {
             ((Reddit) getContext().getApplicationContext())
                     .getImageLoader()
-                    .displayImage(url, backdrop, bigOptions);
+                    .displayImage(url, backdrop, bigOptions, errorListener);
         }
+
         setVisibility(View.VISIBLE);
         if (!full) {
             thumbImage2.setVisibility(View.GONE);
