@@ -44,7 +44,7 @@ public class FilterContentUtil {
         }
 
         final ListsHolder listsHolder = new ListsHolder();
-        listsHolder.lists = FilterUtil.setupFilterLists(activity, subreddit);
+        listsHolder.lists = FilterUtil.setupFilterLists(activity, subreddit, false);
 
         FilterUtil.setupListViews(activity, regularListView, nsfwListView, listsHolder.lists);
 
@@ -94,12 +94,30 @@ public class FilterContentUtil {
 
         // Set up button click listeners
         toggleButton.setOnClickListener(view -> {
-            FilterToggleUtil.handleFilterToggle(regularListView, nsfwListView, listsHolder.lists,
-                    SettingValues.showNSFWContent, 0);
+            if (SettingValues.showNSFWContent) {
+                // Use the existing advanced toggle when NSFW content is enabled
+                FilterToggleUtil.handleFilterToggle(regularListView, nsfwListView, listsHolder.lists,
+                        true, 0);
+            } else {
+                // Simple toggle for just the regular content when NSFW is disabled
+                // Toggle between all selected and none selected for regular items
+                boolean allSelected = true;
+                for (int i = 0; i < listsHolder.lists.regularList.size(); i++) {
+                    if (!regularListView.isItemChecked(i)) {
+                        allSelected = false;
+                        break;
+                    }
+                }
+
+                // If all are selected, unselect all. Otherwise, select all.
+                for (int i = 0; i < listsHolder.lists.regularList.size(); i++) {
+                    regularListView.setItemChecked(i, !allSelected);
+                }
+            }
         });
 
         resetButton.setOnClickListener(view -> {
-            listsHolder.lists = FilterUtil.setupFilterLists(activity, subreddit);
+            listsHolder.lists = FilterUtil.setupFilterLists(activity, subreddit, true);
             FilterUtil.setupListViews(activity, regularListView, nsfwListView, listsHolder.lists);
         });
 

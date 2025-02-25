@@ -21,20 +21,34 @@ public class FilterUtil {
         public final ArrayList<String> nsfwLabels = new ArrayList<>();
     }
 
-    public static FilterLists setupFilterLists(Context context, String subreddit) {
+    public static FilterLists setupFilterLists(Context context, String subreddit, boolean reset) {
         FilterLists lists = new FilterLists();
         String sub = subreddit.toLowerCase(Locale.ENGLISH);
 
         // Add regular content types
-        lists.regularList.add(!PostMatch.isAlbum(sub));
-        lists.regularList.add(!PostMatch.isGallery(sub));
-        lists.regularList.add(!PostMatch.isGif(sub));
-        lists.regularList.add(!PostMatch.isImage(sub));
-        lists.regularList.add(!PostMatch.isLink(sub));
-        lists.regularList.add(!PostMatch.isSelftext(sub));
-        lists.regularList.add(!PostMatch.isTumblr(sub));
-        lists.regularList.add(!PostMatch.isVideo(sub));
+        if (reset) {
+            // When reset is true, set all filters to true (nothing filtered)
+            lists.regularList.add(true);
+            lists.regularList.add(true);
+            lists.regularList.add(true);
+            lists.regularList.add(true);
+            lists.regularList.add(true);
+            lists.regularList.add(true);
+            lists.regularList.add(true);
+            lists.regularList.add(true);
+        } else {
+            // Use saved filter settings
+            lists.regularList.add(!PostMatch.isAlbum(sub));
+            lists.regularList.add(!PostMatch.isGallery(sub));
+            lists.regularList.add(!PostMatch.isGif(sub));
+            lists.regularList.add(!PostMatch.isImage(sub));
+            lists.regularList.add(!PostMatch.isLink(sub));
+            lists.regularList.add(!PostMatch.isSelftext(sub));
+            lists.regularList.add(!PostMatch.isTumblr(sub));
+            lists.regularList.add(!PostMatch.isVideo(sub));
+        }
 
+        // Labels are always the same
         lists.regularLabels.add(context.getString(R.string.type_albums));
         lists.regularLabels.add(context.getString(R.string.type_galleries));
         lists.regularLabels.add(context.getString(R.string.type_gifs));
@@ -46,15 +60,29 @@ public class FilterUtil {
 
         // Add NSFW content types if enabled
         if (SettingValues.showNSFWContent) {
-            lists.nsfwList.add(!PostMatch.isNsfwAlbum(sub));
-            lists.nsfwList.add(!PostMatch.isNsfwGallery(sub));
-            lists.nsfwList.add(!PostMatch.isNsfwGif(sub));
-            lists.nsfwList.add(!PostMatch.isNsfwImage(sub));
-            lists.nsfwList.add(!PostMatch.isNsfwLink(sub));
-            lists.nsfwList.add(!PostMatch.isNsfwSelftext(sub));
-            lists.nsfwList.add(!PostMatch.isNsfwTumblr(sub));
-            lists.nsfwList.add(!PostMatch.isNsfwVideo(sub));
+            if (reset) {
+                // When reset is true, set all NSFW filters to true (nothing filtered)
+                lists.nsfwList.add(true);
+                lists.nsfwList.add(true);
+                lists.nsfwList.add(true);
+                lists.nsfwList.add(true);
+                lists.nsfwList.add(true);
+                lists.nsfwList.add(true);
+                lists.nsfwList.add(true);
+                lists.nsfwList.add(true);
+            } else {
+                // Use saved NSFW filter settings
+                lists.nsfwList.add(!PostMatch.isNsfwAlbum(sub));
+                lists.nsfwList.add(!PostMatch.isNsfwGallery(sub));
+                lists.nsfwList.add(!PostMatch.isNsfwGif(sub));
+                lists.nsfwList.add(!PostMatch.isNsfwImage(sub));
+                lists.nsfwList.add(!PostMatch.isNsfwLink(sub));
+                lists.nsfwList.add(!PostMatch.isNsfwSelftext(sub));
+                lists.nsfwList.add(!PostMatch.isNsfwTumblr(sub));
+                lists.nsfwList.add(!PostMatch.isNsfwVideo(sub));
+            }
 
+            // NSFW labels are always the same
             lists.nsfwLabels.add(context.getString(R.string.type_nsfw_albums));
             lists.nsfwLabels.add(context.getString(R.string.type_nsfw_galleries));
             lists.nsfwLabels.add(context.getString(R.string.type_nsfw_gifs));
