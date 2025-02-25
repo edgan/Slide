@@ -550,7 +550,7 @@ public class MainActivity extends BaseActivity
 
         switch (item.getItemId()) {
             case R.id.filter:
-                FilterContentUtil.showFilterDialog(this, subreddit, this::reloadSubs);
+                FilterContentUtil.showFilterDialog(this, shouldLoad, this::reloadSubs);
                 return true;
             case R.id.sidebar:
                 if (!subreddit.equals("all")
