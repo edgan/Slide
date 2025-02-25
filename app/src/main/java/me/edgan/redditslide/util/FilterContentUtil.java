@@ -66,44 +66,81 @@ public class FilterContentUtil {
 
         final AlertDialog dialog = builder.create();
 
-        // Create a custom button bar
+        // Create button bar at the bottom
         LinearLayout buttonBar = new LinearLayout(activity);
         buttonBar.setOrientation(LinearLayout.HORIZONTAL);
-        buttonBar.setPadding(16, 8, 16, 8);
+        buttonBar.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        // Left side group for toggle and reset
+        LinearLayout leftButtonGroup = new LinearLayout(activity);
+        leftButtonGroup.setLayoutParams(new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f));
+        leftButtonGroup.setOrientation(LinearLayout.HORIZONTAL);
+
+        // Right side group for cancel and save
+        LinearLayout rightButtonGroup = new LinearLayout(activity);
+        rightButtonGroup.setLayoutParams(new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f));
+        rightButtonGroup.setOrientation(LinearLayout.HORIZONTAL);
 
         // Create the toggle button (left)
         Button toggleButton = new Button(activity, null, android.R.attr.buttonBarButtonStyle);
         toggleButton.setText(R.string.btn_toggle);
         LinearLayout.LayoutParams toggleParams = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         toggleButton.setLayoutParams(toggleParams);
 
-        // Create the reset button (center)
+        // Create the reset button
         Button resetButton = new Button(activity, null, android.R.attr.buttonBarButtonStyle);
         resetButton.setText(R.string.btn_reset);
         LinearLayout.LayoutParams resetParams = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         resetButton.setLayoutParams(resetParams);
+
+        // Create spacer view to fill left side when reset button is hidden
+        View spacerView = new View(activity);
+        LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+        spacerView.setLayoutParams(spacerParams);
+
+        // Hide reset button if NSFW content is disabled
+        if (!SettingValues.showNSFWContent) {
+            resetButton.setVisibility(View.GONE);
+        }
 
         // Create the cancel button
         Button cancelButton = new Button(activity, null, android.R.attr.buttonBarButtonStyle);
         cancelButton.setText(R.string.btn_cancel);
         LinearLayout.LayoutParams cancelParams = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         cancelButton.setLayoutParams(cancelParams);
 
-        // Create the save button (right)
+        // Create the save button
         Button saveButton = new Button(activity, null, android.R.attr.buttonBarButtonStyle);
         saveButton.setText(R.string.btn_save);
         LinearLayout.LayoutParams saveParams = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         saveButton.setLayoutParams(saveParams);
 
-        // Add buttons to the button bar
-        buttonBar.addView(toggleButton);
-        buttonBar.addView(resetButton);
-        buttonBar.addView(cancelButton);
-        buttonBar.addView(saveButton);
+        // Create spacer view to match left side spacing
+        View rightSpacerView = new View(activity);
+        LinearLayout.LayoutParams rightSpacerParams = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+        rightSpacerView.setLayoutParams(rightSpacerParams);
+
+        // Add buttons to left group
+        leftButtonGroup.addView(toggleButton);
+        leftButtonGroup.addView(resetButton);
+        leftButtonGroup.addView(spacerView);
+
+        rightButtonGroup.addView(rightSpacerView);
+        rightButtonGroup.addView(cancelButton);
+        rightButtonGroup.addView(saveButton);
+
+        // Add button groups to the button bar
+        buttonBar.addView(leftButtonGroup);
+        buttonBar.addView(rightButtonGroup);
 
         // Add the button bar to the dialog
         customDialogView.addView(buttonBar);
@@ -153,5 +190,11 @@ public class FilterContentUtil {
         dialog.setCanceledOnTouchOutside(false);
 
         dialog.show();
+
+        // Make dialog width match screen width
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+        }
     }
 }
