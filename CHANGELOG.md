@@ -2,6 +2,12 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+7.1.9 / 2025-2-25
+================
+* Subreddit content filters dialog box enhancements
+* Added Subreddit content filters till restart setting in Filters settings #109
+* Made the Subreddit content filters till restart setting the default
+
 7.1.8 / 2025-2-24
 =================
 * Made the video background black instead of transparent
