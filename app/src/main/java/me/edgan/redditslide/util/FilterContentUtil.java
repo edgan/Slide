@@ -48,8 +48,16 @@ public class FilterContentUtil {
 
         FilterUtil.setupListViews(activity, regularListView, nsfwListView, listsHolder.lists);
 
-        final String FILTER_TITLE = activity.getString(R.string.content_to_show,
-                subreddit.equals("frontpage") ? "frontpage" : "/r/" + subreddit);
+        final String displayName;
+        if (subreddit.equals("frontpage")) {
+            displayName = "frontpage";
+        } else if (subreddit.contains("/m/")) {
+            displayName = subreddit.substring(subreddit.indexOf("/m/"));
+        } else {
+            displayName = "/r/" + subreddit;
+        }
+
+        final String FILTER_TITLE = activity.getString(R.string.content_to_show, displayName);
 
         // Create the dialog with no buttons (we'll add our own)
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity)
@@ -77,6 +85,13 @@ public class FilterContentUtil {
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
         resetButton.setLayoutParams(resetParams);
 
+        // Create the cancel button
+        Button cancelButton = new Button(activity, null, android.R.attr.buttonBarButtonStyle);
+        cancelButton.setText(R.string.btn_cancel);
+        LinearLayout.LayoutParams cancelParams = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+        cancelButton.setLayoutParams(cancelParams);
+
         // Create the save button (right)
         Button saveButton = new Button(activity, null, android.R.attr.buttonBarButtonStyle);
         saveButton.setText(R.string.btn_save);
@@ -87,6 +102,7 @@ public class FilterContentUtil {
         // Add buttons to the button bar
         buttonBar.addView(toggleButton);
         buttonBar.addView(resetButton);
+        buttonBar.addView(cancelButton);
         buttonBar.addView(saveButton);
 
         // Add the button bar to the dialog
@@ -128,6 +144,13 @@ public class FilterContentUtil {
             }
             dialog.dismiss();
         });
+
+        cancelButton.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+
+        // Prevent dismissing when clicking outside
+        dialog.setCanceledOnTouchOutside(false);
 
         dialog.show();
     }
