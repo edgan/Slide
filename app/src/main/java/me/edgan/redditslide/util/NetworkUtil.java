@@ -85,13 +85,9 @@ public class NetworkUtil {
             return Status.NONE;
         }
 
-        final WifiManager wifiManager = ContextCompat.getSystemService(context, WifiManager.class);
-        if (wifiManager == null) {
-            return Status.NONE;
-        }
-        // nwCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-        // isWifiEnabled() supports detecting Wi-Fi connections over VPN
-        if (wifiManager.isWifiEnabled()
+        // Don't rely on wifiManager.isWifiEnabled() which may be affected by permissions
+        // Instead rely solely on NetworkCapabilities to determine connection type
+        if (nwCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
                 || nwCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
             if (cm.isActiveNetworkMetered())
                 return Status.MOBILE; // respect metered wifi networks as mobile
@@ -112,7 +108,7 @@ public class NetworkUtil {
      * @return true if the application is connected, false if otherwise.
      */
     public static boolean isConnected(final Context context) {
-        return !Reddit.appRestart.contains("forceoffline") && isConnectedNoOverride(context);
+        return isConnectedNoOverride(context);
     }
 
     public static boolean isConnectedNoOverride(final Context context) {
