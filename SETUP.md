@@ -120,3 +120,6 @@ Once installed you need to enable
 [Developer options](https://developer.android.com/studio/debug/dev-options),
 you can go to them in `Settings`. Within is an option called
 `WebView implementation` where you can pick which `WebView` is active.
+
+## Notifications
+See [NOTIFICATIONS.md](/NOTIFICATIONS.md)
