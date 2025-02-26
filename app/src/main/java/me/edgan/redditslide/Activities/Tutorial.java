@@ -1,24 +1,36 @@
 package me.edgan.redditslide.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputLayout;
 
 import me.edgan.redditslide.Constants;
 import me.edgan.redditslide.Reddit;
@@ -32,6 +44,9 @@ import me.edgan.redditslide.databinding.ChoosethemesmallBinding;
 import me.edgan.redditslide.databinding.FragmentPersonalizeBinding;
 import me.edgan.redditslide.databinding.FragmentWelcomeBinding;
 import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.SecretConstants;
 
 /** Created by ccrama on 3/5/2015. */
 public class Tutorial extends AppCompatActivity {
@@ -279,12 +294,97 @@ public class Tutorial extends AppCompatActivity {
                                 .show();
                     });
 
-            personalizeBinding.done.setOnClickListener(
-                    v1 -> {
-                        Reddit.colors.edit().putString("Tutorial", "S").commit();
-                        Reddit.appRestart.edit().putString("startScreen", "a").apply();
-                        Reddit.forceRestart(getActivity(), false);
-                    });
+            personalizeBinding.done.setOnClickListener(v1 -> {
+                // Show client ID dialog first
+                final Context contextThemeWrapper = new ContextThemeWrapper(getContext(),
+                        new ColorPreferences(getContext()).getFontStyle().getBaseId());
+
+                // Create TextInputLayout for proper error handling
+                TextInputLayout inputLayout = new TextInputLayout(contextThemeWrapper);
+                inputLayout.setErrorIconDrawable(null); // Remove error icon
+                inputLayout.setErrorEnabled(true);
+
+                final EditText input = new EditText(contextThemeWrapper);
+                String savedClientId = SettingValues.prefs.getString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
+                input.setText(savedClientId);
+                input.setHint(R.string.enter_client_id);
+
+                // Add EditText to TextInputLayout
+                inputLayout.addView(input);
+
+                FrameLayout frameLayout = new FrameLayout(contextThemeWrapper);
+                int padding = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
+                frameLayout.setPadding(padding, 0, padding, 0);
+                frameLayout.addView(inputLayout, new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(contextThemeWrapper)
+                        .setTitle(R.string.reddit_client_id_override)
+                        .setView(frameLayout)
+                        .setPositiveButton(R.string.btn_ok, null);
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                // Get the positive button and initially disable it
+                Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                positiveButton.setEnabled(false);
+
+                // Set click listener for positive button
+                positiveButton.setOnClickListener(v -> {
+                    String clientId = input.getText().toString().trim();
+                    String shortClientId = SecretConstants.getGoogleShortClientID(getContext());
+
+                    // If input is 5 chars, validate against shortClientId
+                    if (clientId.length() == 5 && !clientId.equals(shortClientId)) {
+                        inputLayout.setError("Invalid Client ID");
+                        return;  // Don't proceed
+                    }
+
+                    // If we get here, either the input is 22 chars or it matches shortClientId
+                    if (clientId.equals(shortClientId)) {
+                        clientId = SecretConstants.getGoogleLongClientID(getContext());
+                    }
+
+                    // Set the value in memory
+                    SettingValues.redditClientIdOverride = clientId;
+
+                    // Save to preferences
+                    if (clientId.isEmpty()) {
+                        SettingValues.prefs.edit()
+                                .remove(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE)
+                                .commit();
+                    } else {
+                        SettingValues.prefs.edit()
+                                .putString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, clientId)
+                                .commit();
+                    }
+
+                    // Complete tutorial and restart app
+                    Reddit.colors.edit().putString("Tutorial", "S").commit();
+                    Reddit.appRestart.edit().apply();
+                    Reddit.forceRestart(getActivity(), false);
+                    dialog.dismiss();
+                });
+
+                // Add text change listener to enable/disable OK button based on input length
+                input.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        inputLayout.setError(null);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        int length = s.toString().trim().length();
+                        positiveButton.setEnabled(length == 5 || length == 22);
+                    }
+                });
+            });
 
             return personalizeBinding.getRoot();
         }

@@ -813,23 +813,33 @@ public class MultiredditOverview extends BaseActivityAnim {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 940 && adapter != null && adapter.getCurrentFragment() != null) {
-            if (resultCode == RESULT_OK) {
-                LogUtil.v("Doing hide posts");
-                ArrayList<Integer> posts = data.getIntegerArrayListExtra("seen");
-                ((MultiredditView) adapter.getCurrentFragment()).adapter.refreshView(posts);
-                if (data.hasExtra("lastPage")
-                        && data.getIntExtra("lastPage", 0) != 0
-                        && ((MultiredditView) adapter.getCurrentFragment()).rv.getLayoutManager()
-                                instanceof LinearLayoutManager) {
-                    ((LinearLayoutManager)
-                                    ((MultiredditView) adapter.getCurrentFragment())
-                                            .rv.getLayoutManager())
-                            .scrollToPositionWithOffset(
-                                    data.getIntExtra("lastPage", 0) + 1, mToolbar.getHeight());
+
+        // Check if adapter exists and has a current fragment
+        if (requestCode == 940 && adapter != null) {
+            Fragment currentFragment = adapter.getCurrentFragment();
+            if (currentFragment instanceof MultiredditView) {
+                MultiredditView multiredditView = (MultiredditView) currentFragment;
+
+                if (resultCode == RESULT_OK && data != null) {
+                    LogUtil.v("Doing hide posts");
+                    ArrayList<Integer> posts = data.getIntegerArrayListExtra("seen");
+                    if (posts != null && multiredditView.adapter != null) {
+                        multiredditView.adapter.refreshView(posts);
+
+                        // Check for lastPage extra and scroll if needed
+                        if (data.hasExtra("lastPage")
+                                && data.getIntExtra("lastPage", 0) != 0
+                                && multiredditView.rv != null
+                                && multiredditView.rv.getLayoutManager() instanceof LinearLayoutManager) {
+                            ((LinearLayoutManager) multiredditView.rv.getLayoutManager())
+                                .scrollToPositionWithOffset(
+                                    data.getIntExtra("lastPage", 0) + 1,
+                                    mToolbar != null ? mToolbar.getHeight() : 0);
+                        }
+                    }
+                } else if (multiredditView.adapter != null) {
+                    multiredditView.adapter.refreshView();
                 }
-            } else {
-                ((MultiredditView) adapter.getCurrentFragment()).adapter.refreshView();
             }
         }
     }

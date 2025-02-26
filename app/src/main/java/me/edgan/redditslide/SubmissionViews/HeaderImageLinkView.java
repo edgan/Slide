@@ -24,7 +24,10 @@ import com.cocosw.bottomsheet.BottomSheet;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.ForceTouch.PeekView;
@@ -44,6 +47,7 @@ import me.edgan.redditslide.Views.TransparentTagTextView;
 import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.CompatUtil;
 import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.NetworkUtil;
 
 import net.dean.jraw.models.Submission;
@@ -146,6 +150,8 @@ public class HeaderImageLinkView extends RelativeLayout {
                 thumbnailType = Submission.ThumbnailType.NONE;
             }
 
+            LogUtil.v(type.toString());
+
             if (SettingValues.noImages && loadLq) {
                 setVisibility(View.GONE);
                 if (!full && !submission.isSelfPost()) {
@@ -167,16 +173,17 @@ public class HeaderImageLinkView extends RelativeLayout {
                 handleSpecialSubmissionType(submission, full, forceThumb, R.drawable.nsfw);
             } else if (submission.getDataNode().get("spoiler").asBoolean()) {
                 handleSpecialSubmissionType(submission, full, forceThumb, R.drawable.spoiler);
-            } else if (type == ContentType.Type.GIF) {
-                handleGifType(submission, baseSub, full);
+            } else if (type == ContentType.Type.ALBUM
+                    || type == ContentType.Type.GIF
+                    || type == ContentType.Type.LINK
+                    || type == ContentType.Type.REDDIT
+                    || type == ContentType.Type.TUMBLR
+                    || type == ContentType.Type.XKCD) {
+                handleTypes(submission, baseSub, full);
             } else if (type == ContentType.Type.REDDIT_GALLERY) {
                 handleRedditGalleryType(submission, baseSub, full, forceThumb);
             } else if (type == ContentType.Type.VREDDIT_DIRECT || type == ContentType.Type.VREDDIT_REDIRECT) {
                 handleVRedditType(submission, baseSub, full, forceThumb);
-            } else if (type == ContentType.Type.TUMBLR) {
-                handleTumblrType(submission, full);
-            } else if (type == ContentType.Type.REDDIT) {
-                handleRedditType(submission, full);
             } else if (type != ContentType.Type.IMAGE
                             && type != ContentType.Type.SELF
                             && (!thumbnail.isNull()
@@ -521,13 +528,13 @@ public class HeaderImageLinkView extends RelativeLayout {
         this.backdrop = findViewById(R.id.leadimage);
     }
 
-    private void handleGifType(Submission submission, String baseSub, boolean full) {
+    private void handleTypes(Submission submission, String baseSub, boolean full) {
         JsonNode dataNode = submission.getDataNode();
         String url = submission.getUrl();
         String redditPreviewUrl = null;
 
         // Check for preview data
-        if (dataNode.has("preview")) {
+        if (dataNode.has("preview") && !dataNode.get("preview").isNull()) {
             JsonNode previewNode = dataNode.get("preview").get("images");
             if (previewNode != null && previewNode.size() > 0) {
                 JsonNode sourceNode = previewNode.get(0).get("source");
@@ -537,28 +544,45 @@ public class HeaderImageLinkView extends RelativeLayout {
             }
         }
 
-        // Use Reddit preview URL if available
-        if (redditPreviewUrl != null) {
+        // Validate and use Reddit preview URL if available
+        boolean hasValidPreview = false;
+        if (redditPreviewUrl != null && !redditPreviewUrl.isEmpty()) {
             url = redditPreviewUrl;
-        } else if (dataNode.has("thumbnail")) {
-            url = dataNode.get("thumbnail").asText();
+            hasValidPreview = true;
+        } else if (dataNode.has("thumbnail") && !dataNode.get("thumbnail").isNull()) {
+            String thumbnail = dataNode.get("thumbnail").asText();
+            // Check if thumbnail is a valid URL and not a placeholder
+            if (!thumbnail.equals("self") && !thumbnail.equals("default") &&
+                !thumbnail.equals("nsfw") &&
+                !thumbnail.isEmpty()) {
+                url = thumbnail;
+                hasValidPreview = true;
+            }
         }
 
-        // Load the URL
-        if (!full && !SettingValues.isPicsEnabled(baseSub)) {
-            thumbImage2.setVisibility(View.VISIBLE);
-            ((Reddit) getContext().getApplicationContext())
-                    .getImageLoader()
-                    .displayImage(url, thumbImage2);
-            setVisibility(View.GONE);
+        // Only show preview if we have a valid image URL
+        if (hasValidPreview) {
+            if (!full && !SettingValues.isPicsEnabled(baseSub)) {
+                thumbImage2.setVisibility(View.VISIBLE);
+                ((Reddit) getContext().getApplicationContext())
+                        .getImageLoader()
+                        .displayImage(url, thumbImage2);
+                setVisibility(View.GONE);
+            } else {
+                backdrop.setVisibility(View.VISIBLE);
+                ((Reddit) getContext().getApplicationContext())
+                        .getImageLoader()
+                        .displayImage(url, backdrop);
+                setVisibility(View.VISIBLE);
+            }
+            if (wrapArea != null) wrapArea.setVisibility(View.GONE);
         } else {
-            backdrop.setVisibility(View.VISIBLE);
-            ((Reddit) getContext().getApplicationContext())
-                    .getImageLoader()
-                    .displayImage(url, backdrop);
-            setVisibility(View.VISIBLE);
+            // No valid preview available
+            setVisibility(View.GONE);
+            if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
+            if (backdrop != null) backdrop.setVisibility(View.GONE);
+            if (wrapArea != null) wrapArea.setVisibility(View.VISIBLE);
         }
-        if (wrapArea != null) wrapArea.setVisibility(View.GONE);
     }
 
     private void handleRedditGalleryType(Submission submission, String baseSub, boolean full, boolean forceThumb) {
@@ -580,29 +604,6 @@ public class HeaderImageLinkView extends RelativeLayout {
 
         if (previewUrl != null) {
             handlePreviewImage(previewUrl, submission, baseSub, full, forceThumb);
-        }
-    }
-
-    private void handleTumblrType(Submission submission, boolean full) {
-        JsonNode dataNode = submission.getDataNode();
-        String previewUrl = getPreviewUrl(dataNode);
-
-        if (previewUrl != null) {
-            handleFullPreviewImage(previewUrl, full);
-        }
-    }
-
-    private void handleRedditType(Submission submission, boolean full) {
-        if (submission != null && submission.getUrl() != null) {
-            JsonNode dataNode = submission.getDataNode();
-            String previewUrl = getPreviewUrl(dataNode);
-
-            if (previewUrl != null) {
-                handleFullPreviewImage(previewUrl, full);
-            } else {
-                setVisibility(View.GONE);
-                thumbImage2.setVisibility(View.VISIBLE);
-            }
         }
     }
 
@@ -667,6 +668,7 @@ public class HeaderImageLinkView extends RelativeLayout {
     }
 
     private void displayImage(String url, ImageView target, boolean full) {
+        backdrop.setVisibility(View.VISIBLE);
         if (!full) {
             ((Reddit) getContext().getApplicationContext())
                     .getImageLoader()
@@ -808,8 +810,7 @@ public class HeaderImageLinkView extends RelativeLayout {
             boolean loadLq, String baseSub, boolean news) {
         String url = getSubmissionUrl(submission, loadLq);
         boolean shouldShowThumb = !SettingValues.isPicsEnabled(baseSub) && !full
-                || forceThumb
-                || (news && submission.getScore() < 5000);
+                || forceThumb;
 
         if (shouldShowThumb) {
             displayThumbnail(url, full);
@@ -864,15 +865,25 @@ public class HeaderImageLinkView extends RelativeLayout {
 
     private void displayFullImage(String url, boolean full) {
         loadedUrl = url;
+
+        // Create ImageLoadingListener to handle errors
+        ImageLoadingListener errorListener = new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                HeaderImageLinkView.this.setVisibility(View.GONE);
+            }
+        };
+
         if (!full) {
             ((Reddit) getContext().getApplicationContext())
                     .getImageLoader()
-                    .displayImage(url, backdrop);
+                    .displayImage(url, backdrop, null, errorListener);
         } else {
             ((Reddit) getContext().getApplicationContext())
                     .getImageLoader()
-                    .displayImage(url, backdrop, bigOptions);
+                    .displayImage(url, backdrop, bigOptions, errorListener);
         }
+
         setVisibility(View.VISIBLE);
         if (!full) {
             thumbImage2.setVisibility(View.GONE);
@@ -951,40 +962,61 @@ public class HeaderImageLinkView extends RelativeLayout {
     }
 
     private void handleGalleryData(JsonNode dataNode, Submission submission, String baseSub, boolean full, boolean forceThumb) {
-        JsonNode galleryData = dataNode.get("gallery_data");
-        JsonNode mediaMetadata = dataNode.get("media_metadata");
+        try {
+            if (dataNode.has("gallery_data") && dataNode.has("media_metadata")) {
+                JsonNode galleryData = dataNode.get("gallery_data");
+                JsonNode mediaMetadata = dataNode.get("media_metadata");
 
-        if (galleryData.has("items") && galleryData.get("items").size() > 0) {
-            boolean allFailed = true;
-            for (JsonNode item : galleryData.get("items")) {
-                String mediaId = item.get("media_id").asText();
-                if (mediaMetadata != null && mediaMetadata.has(mediaId)) {
-                    JsonNode mediaInfo = mediaMetadata.get(mediaId);
-                    if (!"failed".equals(mediaInfo.get("status").asText())) {
-                        allFailed = false;
-                        if (mediaInfo.has("p") && mediaInfo.get("p").size() > 0) {
-                            String url = mediaInfo.get("p").get(0).get("u").asText()
-                                    .replace("preview", "i")
-                                    .replaceAll("\\?.*", "");
+                if (galleryData.has("items") && !galleryData.get("items").isNull() && galleryData.get("items").size() > 0) {
+                    JsonNode firstItem = galleryData.get("items").get(0);
+                    if (firstItem != null && firstItem.has("media_id")) {
+                        String mediaId = firstItem.get("media_id").asText();
 
-                            handlePreviewImage(url, submission, baseSub, full, forceThumb);
-                            break;  // Only handle the first image
+                        if (mediaMetadata.has(mediaId)) {
+                            JsonNode mediaInfo = mediaMetadata.get(mediaId);
+                            if (mediaInfo != null && mediaInfo.has("s")) {
+                                String url = mediaInfo.get("s").get("u").asText();
+
+                                url = url.replace("&amp;", "&");
+
+                                loadedUrl = url;
+
+                                if (!full && !SettingValues.isPicsEnabled(baseSub) || forceThumb) {
+                                    if (!full) {
+                                        thumbImage2.setVisibility(View.VISIBLE);
+                                    } else {
+                                        wrapArea.setVisibility(View.VISIBLE);
+                                    }
+                                    ((Reddit) getContext().getApplicationContext())
+                                            .getImageLoader()
+                                            .displayImage(url, thumbImage2);
+                                    setVisibility(View.GONE);
+                                } else {
+                                    ((Reddit) getContext().getApplicationContext())
+                                            .getImageLoader()
+                                            .displayImage(url, backdrop);
+                                    backdrop.setVisibility(View.VISIBLE);
+                                    setVisibility(View.VISIBLE);
+                                    if (!full) {
+                                        thumbImage2.setVisibility(View.GONE);
+                                    } else {
+                                        wrapArea.setVisibility(View.GONE);
+                                    }
+                                }
+                                return;
+                            }
                         }
                     }
                 }
             }
-
-            if (allFailed) {
-                // Handle the case where all media failed
-                setVisibility(View.GONE);
-                if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
-                if (wrapArea != null) wrapArea.setVisibility(View.GONE);
-            }
-        } else {
-            // Handle the case where gallery_data is missing or empty
-            setVisibility(View.GONE);
-            if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
-            if (wrapArea != null) wrapArea.setVisibility(View.GONE);
+        } catch (Exception e) {
+            android.util.Log.e("HeaderImageLinkView", "Error handling gallery data", e);
         }
+
+        // Fallback
+        setVisibility(View.GONE);
+        if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
+        if (backdrop != null) backdrop.setVisibility(View.GONE);
+        if (wrapArea != null) wrapArea.setVisibility(View.GONE);
     }
 }

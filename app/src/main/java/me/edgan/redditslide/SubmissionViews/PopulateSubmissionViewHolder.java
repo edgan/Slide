@@ -2368,6 +2368,10 @@ public class PopulateSubmissionViewHolder {
         a.recycle();
 
         holder.title.setText(s);
+
+        // Force this TextView to recalculate itself and request a new layout pass
+        holder.title.requestLayout();
+        holder.title.invalidate();
     }
 
     private void stickySubmission(

@@ -35,6 +35,7 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.Spannable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -123,7 +124,6 @@ import me.edgan.redditslide.ImageFlairs;
 import me.edgan.redditslide.Notifications.CheckForMail;
 import me.edgan.redditslide.Notifications.NotificationJobScheduler;
 import me.edgan.redditslide.OpenRedditLink;
-import me.edgan.redditslide.PostMatch;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
@@ -146,6 +146,8 @@ import me.edgan.redditslide.ui.settings.SettingsThemeFragment;
 import me.edgan.redditslide.util.AnimatorUtil;
 import me.edgan.redditslide.util.DrawableUtil;
 import me.edgan.redditslide.util.EditTextValidator;
+import me.edgan.redditslide.util.FilterToggleUtil;
+import me.edgan.redditslide.util.FilterUtil;
 import me.edgan.redditslide.util.ImageUtil;
 import me.edgan.redditslide.util.KeyboardUtil;
 import me.edgan.redditslide.util.LayoutUtils;
@@ -159,6 +161,7 @@ import me.edgan.redditslide.util.StringUtil;
 import me.edgan.redditslide.util.SubmissionParser;
 import me.edgan.redditslide.util.TimeUtils;
 import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
+import me.edgan.redditslide.util.FilterContentUtil;
 
 import net.dean.jraw.ApiException;
 import net.dean.jraw.http.MultiRedditUpdateRequest;
@@ -551,7 +554,7 @@ public class MainActivity extends BaseActivity
 
         switch (item.getItemId()) {
             case R.id.filter:
-                filterContent(shouldLoad);
+                FilterContentUtil.showFilterDialog(this, shouldLoad, this::reloadSubs);
                 return true;
             case R.id.sidebar:
                 if (!subreddit.equals("all")
@@ -636,6 +639,8 @@ public class MainActivity extends BaseActivity
 
                 EditText input = new EditText(contextThemeWrapper);
                 input.setHint(R.string.search_msg);
+                input.setSingleLine(true);  // Make input single line
+                input.setInputType(InputType.TYPE_CLASS_TEXT);  // Set input type to text
 
                 // Set the underline color to the accent color for the current subreddit
                 final int accentColor = new ColorPreferences(contextThemeWrapper).getColor(currentSubreddit);
@@ -1393,7 +1398,9 @@ public class MainActivity extends BaseActivity
                             new OnSingleClickListener() {
                                 @Override
                                 public void onSingleClick(View view) {
-                                    showUsernameDialog(false);  // false for profile view
+                                    Intent inte = new Intent(MainActivity.this, Profile.class);
+                                    inte.putExtra(Profile.EXTRA_PROFILE, Authentication.name);
+                                    MainActivity.this.startActivity(inte);
                                 }
                             });
             header.findViewById(R.id.saved)
@@ -3858,89 +3865,6 @@ public class MainActivity extends BaseActivity
                         ANIMATION_DURATION + ANIMATE_DURATION_OFFSET);
     }
 
-    public void filterContent(final String subreddit) {
-        final boolean[] chosen = new boolean[]{
-                !PostMatch.isAlbums(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isGallery(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isGif(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isImage(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isNsfw(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isSelftext(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isUrls(subreddit.toLowerCase(Locale.ENGLISH)),
-                !PostMatch.isVideo(subreddit.toLowerCase(Locale.ENGLISH))
-        };
-
-        final String currentSubredditName = usedArray.get(Reddit.currentPosition);
-
-        // Title of the filter dialog
-        String filterTitle;
-
-        if (currentSubredditName.contains("/m/")) {
-            filterTitle = getString(R.string.content_to_show, currentSubredditName);
-        } else if (currentSubredditName.equals("frontpage")) {
-            filterTitle = getString(R.string.content_to_show, "frontpage");
-        } else {
-            filterTitle = getString(R.string.content_to_show, "/r/" + currentSubredditName);
-        }
-
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
-                .setTitle(filterTitle)
-                .setMultiChoiceItems(
-                        new String[]{
-                                getString(R.string.type_albums),
-                                getString(R.string.type_gallery),
-                                getString(R.string.type_gifs),
-                                getString(R.string.images),
-                                getString(R.string.type_nsfw_content),
-                                getString(R.string.type_selftext),
-                                getString(R.string.type_links),
-                                getString(R.string.type_videos)
-                        },
-                        chosen,
-                        (dialog, which, isChecked) -> chosen[which] = isChecked
-                )
-
-                // Save button: inverts and stores the user's choices
-                .setPositiveButton(R.string.btn_save, (dialog, which) -> {
-                    // Invert the chosen values before saving since we flipped the initial logic
-                    for (int i = 0; i < chosen.length; i++) {
-                        chosen[i] = !chosen[i];
-                    }
-                    PostMatch.setChosen(chosen, subreddit);
-                    reloadSubs();
-                })
-                // Neutral button: We'll override its click so it does NOT dismiss automatically
-                .setNeutralButton(R.string.btn_toggle_all, null)
-                .setNegativeButton(R.string.btn_cancel, null);
-
-        // Create the dialog from the builder
-        final AlertDialog dialog = builder.create();
-
-        // Override the neutral (toggle) button's click to NOT dismiss the dialog
-        dialog.setOnShowListener(dialogInterface -> {
-            Button toggleButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-            toggleButton.setOnClickListener(view -> {
-                // Check if all boxes are currently checked
-                boolean allChecked = true;
-                ListView list = dialog.getListView();
-                for (int i = 0; i < chosen.length; i++) {
-                    if (!chosen[i]) {
-                        allChecked = false;
-                        break;
-                    }
-                }
-
-                // Toggle them all at once
-                for (int i = 0; i < chosen.length; i++) {
-                    chosen[i] = !allChecked;
-                    list.setItemChecked(i, !allChecked);
-                }
-            });
-        });
-
-        dialog.show();
-    }
-
     public int getCurrentPage() {
         int position = 0;
         int currentOrientation = getResources().getConfiguration().orientation;
@@ -4391,21 +4315,26 @@ public class MainActivity extends BaseActivity
                     new TextView.OnEditorActionListener() {
                         @Override
                         public boolean onEditorAction(TextView arg0, int arg1, KeyEvent arg2) {
+                            if (arg2 != null) {
+                                 return true; // consume but do nothing
+                            }
+
+                            String searchText = drawerSearch.getText().toString().toLowerCase(Locale.ENGLISH);
+                            boolean searchSubFound = usedArray.contains(searchText);
+                            int searchSubIndex = usedArray.indexOf(searchText);
+                            int sideArrayAdapterIndex = usedArray.indexOf(sideArrayAdapter.fitems.get(0));
+
                             if (arg1 == EditorInfo.IME_ACTION_SEARCH) {
                                 // If it the input text doesn't match a subreddit from the list
                                 // exactly, openInSubView is true
                                 if (sideArrayAdapter.fitems == null
                                         || sideArrayAdapter.openInSubView
-                                        || !usedArray.contains(
-                                                drawerSearch
-                                                        .getText()
-                                                        .toString()
-                                                        .toLowerCase(Locale.ENGLISH))) {
+                                        || !searchSubFound) {
                                     Intent inte =
                                             new Intent(MainActivity.this, SubredditView.class);
                                     inte.putExtra(
                                             SubredditView.EXTRA_SUBREDDIT,
-                                            drawerSearch.getText().toString());
+                                            searchText);
                                     MainActivity.this.startActivityForResult(inte, 2001);
                                 } else {
                                     if (commentPager
@@ -4415,38 +4344,18 @@ public class MainActivity extends BaseActivity
                                         ((MainPagerAdapterComment) adapter).size =
                                                 (usedArray.size() + 1);
                                         adapter.notifyDataSetChanged();
-                                        if (usedArray.contains(
-                                                drawerSearch
-                                                        .getText()
-                                                        .toString()
-                                                        .toLowerCase(Locale.ENGLISH))) {
-                                            doPageSelectedComments(
-                                                    usedArray.indexOf(
-                                                            drawerSearch
-                                                                    .getText()
-                                                                    .toString()
-                                                                    .toLowerCase(Locale.ENGLISH)));
+                                        if (!searchSubFound) {
+                                            doPageSelectedComments(sideArrayAdapterIndex);
                                         } else {
-                                            doPageSelectedComments(
-                                                    usedArray.indexOf(
-                                                            sideArrayAdapter.fitems.get(0)));
+                                            doPageSelectedComments(searchSubIndex);
                                         }
                                     }
-                                    if (usedArray.contains(
-                                            drawerSearch
-                                                    .getText()
-                                                    .toString()
-                                                    .toLowerCase(Locale.ENGLISH))) {
-                                        pager.setCurrentItem(
-                                                usedArray.indexOf(
-                                                        drawerSearch
-                                                                .getText()
-                                                                .toString()
-                                                                .toLowerCase(Locale.ENGLISH)));
+                                    if (!searchSubFound) {
+                                        pager.setCurrentItem(sideArrayAdapterIndex);
                                     } else {
-                                        pager.setCurrentItem(
-                                                usedArray.indexOf(sideArrayAdapter.fitems.get(0)));
+                                        pager.setCurrentItem(searchSubIndex);
                                     }
+
                                     drawerLayout.closeDrawers();
                                     drawerSearch.setText("");
                                     View view = MainActivity.this.getCurrentFocus();
@@ -5574,6 +5483,8 @@ public class MainActivity extends BaseActivity
         final EditText input = new EditText(contextThemeWrapper);
         input.setHint(getString(R.string.user_enter));
         input.setHintTextColor(getResources().getColor(R.color.md_grey_700));
+        input.setSingleLine(true);  // Make input single line
+        input.setInputType(InputType.TYPE_CLASS_TEXT);  // Set input type to text
 
         // Match search box styling
         int underlineColor = new ColorPreferences(contextThemeWrapper).getColor(selectedSub);
@@ -5589,10 +5500,16 @@ public class MainActivity extends BaseActivity
         frameLayout.addView(inputLayout, new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
 
+        int positiveButtonText = R.string.user_btn_goto;
+
+        if (isMultireddit) {
+            positiveButtonText = R.string.user_btn_gotomultis;
+        }
+
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(contextThemeWrapper)
                 .setTitle(R.string.user_enter)
                 .setView(frameLayout)
-                .setPositiveButton(R.string.user_btn_goto, null)
+                .setPositiveButton(positiveButtonText, null)
                 .setNegativeButton(R.string.btn_cancel, null);
 
         AlertDialog dialog = builder.create();

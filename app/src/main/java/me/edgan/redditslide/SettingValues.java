@@ -101,6 +101,7 @@ public class SettingValues {
     public static final String PREF_IGNORE_SUB_SETTINGS = "ignoreSub";
     public static final String PREF_HIGHLIGHT_TIME = "highlightTime";
     public static final String PREF_MUTE = "muted";
+    public static final String PREF_UNMUTE_DEFAULT = "unmuteDefault";
     public static final String PREF_LINK_HANDLING_MODE = "linkHandlingMode";
 
     public static final String PREF_FULL_COMMENT_OVERRIDE = "fullCommentOverride";
@@ -142,13 +143,12 @@ public class SettingValues {
     public static final String PREF_ALWAYS_SHOW_FAB = "alwaysShowFAB";
     public static final String PREF_HIGH_COLORSPACE_IMAGES = "highMemoryImages";
     public static final String PREF_ALWAYS_BLACK_STATUSBAR = "alwaysBlackStatusbar";
-
+    public static final String PREF_SUBREDDIT_FILTERS_TILL_RESTART = "subredditFiltersTillRestart";
     public static final String PREF_IMAGE_SAVE_LOCATION = "PREF_IMAGE_SAVE_LOCATION";
-    public static String imageSaveLocation;
-
     public static final String PREF_REDDIT_CLIENT_ID_OVERRIDE = "redditClientOverride";
-    public static String redditClientIdOverride = "";
 
+    public static String imageSaveLocation;
+    public static String redditClientIdOverride = "";
     public static CreateCardView.CardEnum defaultCardView;
     public static Sorting defaultSorting;
     public static Sorting frontpageSorting;
@@ -213,6 +213,7 @@ public class SettingValues {
     public static boolean hideCommentAwards;
     public static boolean shareLongLink;
     public static boolean isMuted;
+    public static boolean unmuteDefault;
     public static int subredditSearchMethod;
     public static int backButtonBehavior;
     public static int nightStart;
@@ -290,6 +291,7 @@ public class SettingValues {
     public static boolean toolboxModmail;
     public static boolean alwaysShowFAB;
     public static boolean alwaysBlackStatusbar;
+    public static boolean subredditFiltersTillRestart;
 
     public static void setAllValues(SharedPreferences settings) {
         prefs = settings;
@@ -327,12 +329,13 @@ public class SettingValues {
         blurCheck = prefs.getBoolean(PREF_BLUR, false);
         overrideLanguage = prefs.getBoolean(PREF_OVERRIDE_LANGUAGE, false);
         immersiveMode = prefs.getBoolean(PREF_IMMERSIVE_MODE, false);
-	oldSwipeMode = prefs.getBoolean(PREF_OLD_SWIPE_MODE, false);
+	    oldSwipeMode = prefs.getBoolean(PREF_OLD_SWIPE_MODE, false);
         largeDepth = prefs.getBoolean(PREF_LARGE_DEPTH, false);
         readerMode = prefs.getBoolean(PREF_READER_MODE, false);
         imageSubfolders = prefs.getBoolean(PREF_IMAGE_SUBFOLDERS, false);
         imageDownloadButton = prefs.getBoolean(PREF_IMAGE_DOWNLOAD_BUTTON, true);
         isMuted = prefs.getBoolean(PREF_MUTE, false);
+        unmuteDefault = prefs.getBoolean(PREF_UNMUTE_DEFAULT, false);
 
         commentVolumeNav = prefs.getBoolean(PREF_COMMENT_NAV, false);
         postNav = false;
@@ -489,6 +492,8 @@ public class SettingValues {
         toolboxSticky = prefs.getBoolean(PREF_MOD_TOOLBOX_STICKY, false);
         toolboxLock = prefs.getBoolean(PREF_MOD_TOOLBOX_LOCK, false);
         toolboxModmail = prefs.getBoolean(PREF_MOD_TOOLBOX_MODMAIL, false);
+
+        subredditFiltersTillRestart = prefs.getBoolean(PREF_SUBREDDIT_FILTERS_TILL_RESTART, true);
     }
 
     public static void setPicsEnabled(String sub, boolean checked) {

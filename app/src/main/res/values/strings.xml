@@ -303,9 +303,18 @@
     <string name="type_title_only">Title post</string>
     <string name="type_album">Album</string>
     <string name="type_xkcd">XKCD</string>
-    <string name="type_nsfw_album">NSFW album</string>
+    <string name="type_nsfw_album">NSFW Album</string>
     <string name="type_nsfw_gallery">NSFW Gallery</string>
+    <string name="type_nsfw_albums">NSFW Albums</string>
+    <string name="type_nsfw_galleries">NSFW Galleries</string>
+    <string name="type_nsfw_gifs">NSFW GIFs</string>
+    <string name="type_nsfw_images">NSFW Images</string>
+    <string name="type_nsfw_links">NSFW Links</string>
+    <string name="type_nsfw_selftexts">NSFW Selftexts</string>
+    <string name="type_nsfw_tumblrs">NSFW Tumblrs</string>
+    <string name="type_nsfw_videos">NSFW Videos</string>
     <string name="type_gallery">Gallery</string>
+    <string name="type_galleries">Galleries</string>
     <string name="type_img">Image</string>
     <string name="type_videos">Videos</string>
     <string name="type_nsfw_video">NSFW video</string>
@@ -390,7 +399,7 @@
     <string name="btn_add">Add</string>
     <string name="btn_cancel">Cancel</string>
     <string name="btn_close">Close</string>
-    <string name="btn_toggle_all">Toggle all</string>
+    <string name="btn_toggle">Toggle</string>
     <string name="btn_open">Open</string>
     <string name="btn_discard">Discard</string>
     <string name="btn_done">Done</string>
@@ -699,6 +708,7 @@
     <string name="settings_backup_submission_only">submission only</string>
     <string name="settings_backup_comments">\u0020(comments)</string>
     <string name="settings_filter_profile">Profile filters</string>
+    <string name="settings_subreddit_content_filters_till_restart">Subreddit content filters till restart</string>
     <string name="settings_subredditspecific_selftext">Always show selftext previews in this subreddit</string>
     <string name="settings_font_system">System</string>
     <string name="settings_manage_subscriptions">Manage your subscriptions</string>
@@ -1112,6 +1122,7 @@
     <string name="content_deleted">[deleted]</string>
     <string name="thread_continue">Continue this thread</string>
     <string name="type_selftext">Selftext</string>
+    <string name="type_selftexts">Selftexts</string>
     <string name="submission_unhide">Unhide post</string>
     <string name="submission_info_unhidden">Submission unhidden</string>
     <string name="msg_sent_success">Message sent</string>
@@ -1183,6 +1194,7 @@
     <string name="enlarge_links">Enlarge links</string>
     <string name="enlarge_links_warning">May cause some lines to be bigger than others, but makes links easier to touch</string>
     <string name="type_tumblr">Tumblr</string>
+    <string name="type_tumblrs">Tumblrs</string>
     <string name="type_nsfw_tumblr">NSFW Tumblr</string>
     <string name="submission_info_contest">This thread is in contest mode. You cannot change sorting.</string>
     <string name="sub_post_notifs_msg">Slide will check for new posts when it checks for mail (mail notifications must be enabled)</string>
@@ -1266,4 +1278,9 @@
     <string name="notifications_permission_message">Slide needs notification permission to notify you about new messages, posts, and other updates from Reddit. You can manage notification settings later.</string>
     <string name="notification_listener_permission_title">Enable Notification Access</string>
     <string name="notification_listener_permission_message">Slide needs notification access to intercept Reddit notifications and provide a better notification experience. Please enable notification access for Slide in the following screen.</string>
+
+    <string name="enter_client_id">Enter Client ID</string>
+
+    <string name="settings_section_sound">Sound</string>
+    <string name="settings_unmute_default">Unmute videos by default</string>
 </resources>

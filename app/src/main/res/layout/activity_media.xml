@@ -19,6 +19,12 @@
         android:background="#33000000"
         android:id="@+id/gifarea">
 
+        <FrameLayout
+            android:id="@+id/placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/card_background" />
+
         <me.edgan.redditslide.Views.ExoVideoView
             android:id="@+id/gif"
             android:layout_width="match_parent"
@@ -27,11 +33,6 @@
 
         </me.edgan.redditslide.Views.ExoVideoView>
 
-        <FrameLayout
-            android:id="@+id/placeholder"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent" />
         <ProgressBar
             android:id="@+id/gifprogress"
             style="?android:attr/progressBarStyleHorizontal"
@@ -71,7 +72,6 @@
                 android:theme="@style/Ripple.List"
                 android:layout_toLeftOf="@+id/hq"
                 android:padding="15dp"
-                app:srcCompat="@drawable/ic_volume_off"
                 android:tint="#e1e1e1" />
         <ImageView
             android:id="@+id/hq"

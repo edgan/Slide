@@ -23,6 +23,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.mikepenz.itemanimators.AlphaInAnimator;
 import com.mikepenz.itemanimators.SlideUpAlphaAnimator;
 
+import me.edgan.redditslide.Activities.MultiredditOverview;
 import me.edgan.redditslide.Activities.Search;
 import me.edgan.redditslide.Activities.Submit;
 import me.edgan.redditslide.Adapters.MultiredditAdapter;
@@ -129,6 +130,9 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
 
                             @Override
                             public void onClick(View v) {
+                                // Set the searchMulti for multireddit search
+                                MultiredditOverview.searchMulti = posts.multiReddit;
+
                                 MaterialDialog.Builder builder =
                                         new MaterialDialog.Builder(getActivity())
                                                 .title(R.string.search_title)
@@ -145,24 +149,17 @@ public class MultiredditView extends Fragment implements SubmissionDisplay {
                                                             }
                                                         });
 
-                                builder.positiveText(
-                                                getString(
-                                                        R.string.search_subreddit,
-                                                        "/m/" + posts.multiReddit.getDisplayName()))
+                                // Only set search option for multireddit
+                                builder.positiveText(getString(R.string.search_subreddit, "/m/" + posts.multiReddit.getDisplayName()))
                                         .onPositive(
                                                 new MaterialDialog.SingleButtonCallback() {
                                                     @Override
                                                     public void onClick(
                                                             @NonNull MaterialDialog materialDialog,
                                                             @NonNull DialogAction dialogAction) {
-                                                        Intent i =
-                                                                new Intent(
-                                                                        getActivity(),
-                                                                        Search.class);
+                                                        Intent i = new Intent(getActivity(), Search.class);
                                                         i.putExtra(Search.EXTRA_TERM, term);
-                                                        i.putExtra(
-                                                                Search.EXTRA_MULTIREDDIT,
-                                                                posts.multiReddit.getDisplayName());
+                                                        i.putExtra(Search.EXTRA_MULTIREDDIT, posts.multiReddit.getDisplayName());
                                                         startActivity(i);
                                                     }
                                                 });

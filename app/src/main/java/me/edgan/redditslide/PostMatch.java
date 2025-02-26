@@ -8,9 +8,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
+
+import me.edgan.redditslide.ui.settings.SettingsFilter;
 
 /** Created by carlo_000 on 1/13/2016. */
 public class PostMatch {
+    // Add memory filters here
+    public static Set<String> memorySubredditFilters = new HashSet<>();
+
+    // Memory storage for content filters
+    private static final Map<String, Boolean> memoryContentFilters = new HashMap<>();
+
     /**
      * Checks if a string is totally or partially contained in a set of strings
      *
@@ -106,9 +117,12 @@ public class PostMatch {
         } catch (MalformedURLException ignored) {
         }
 
-        if (!subreddit.equalsIgnoreCase(baseSubreddit)
-                && contains(subreddit, SettingValues.subredditFilters, true)) {
-            return true;
+        if (!subreddit.equalsIgnoreCase(baseSubreddit)) {
+            Set<String> subredditFilters = SettingValues.subredditFiltersTillRestart ?
+                memorySubredditFilters : SettingValues.subredditFilters;
+            if (contains(subreddit, subredditFilters, true)) {
+                return true;
+            }
         }
 
         boolean contentMatch = false;
@@ -118,82 +132,131 @@ public class PostMatch {
         }
 
         baseSubreddit = baseSubreddit.toLowerCase(Locale.ENGLISH);
-        boolean albums = isAlbums(baseSubreddit);
-        boolean gallery = isGallery(baseSubreddit);
+        boolean albums = isAlbum(baseSubreddit);
+        boolean galleries = isGallery(baseSubreddit);
         boolean gifs = isGif(baseSubreddit);
         boolean images = isImage(baseSubreddit);
-        boolean nsfw = isNsfw(baseSubreddit);
-        boolean urls = isUrls(baseSubreddit);
-        boolean selftext = isSelftext(baseSubreddit);
+        boolean links = isLink(baseSubreddit);
+        boolean selftexts = isSelftext(baseSubreddit);
+        boolean tumblrs = isTumblr(baseSubreddit);
         boolean videos = isVideo(baseSubreddit);
+        boolean nsfwGalleries = isNsfwGallery(baseSubreddit);
+        boolean nsfwGifs = isNsfwGif(baseSubreddit);
+        boolean nsfwImages = isNsfwImage(baseSubreddit);
+        boolean nsfwLinks = isNsfwLink(baseSubreddit);
+        boolean nsfwSelftexts = isNsfwSelftext(baseSubreddit);
+        boolean nsfwTumblrs = isNsfwTumblr(baseSubreddit);
+        boolean nsfwVideos = isNsfwVideo(baseSubreddit);
 
-        if (s.isNsfw()) {
-            if (!SettingValues.showNSFWContent) {
-                contentMatch = true;
-            }
+        ContentType.Type contentType = ContentType.getContentType(s);
+
+        // Handle NSFW content types
+        if (s.isNsfw() && SettingValues.showNSFWContent) {
             if (ignore18) {
                 contentMatch = false;
+            } else {
+                switch (contentType) {
+                    case DEVIANTART:
+                    case GIF:
+                        if (nsfwGifs) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case IMGUR:
+                    case XKCD:
+                    case IMAGE:
+                        if (nsfwImages) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case REDDIT:
+                    case EMBEDDED:
+                    case LINK:
+                        if (nsfwLinks) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case NONE:
+                    case SELF:
+                        if (nsfwSelftexts) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case REDDIT_GALLERY:
+                        if (nsfwGalleries) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case TUMBLR:
+                        if (nsfwTumblrs) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case VREDDIT_REDIRECT:
+                    case STREAMABLE:
+                    case VIDEO:
+                        if (nsfwVideos) {
+                            contentMatch = true;
+                        }
+                        break;
+                }
             }
-            if (nsfw) {
+        } else {
+            if (s.isNsfw()) {
                 contentMatch = true;
+            } else {
+                // Handle regular content types
+                switch (contentType) {
+                    case ALBUM:
+                        if (albums) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case DEVIANTART:
+                    case GIF:
+                        if (gifs) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case IMGUR:
+                    case XKCD:
+                    case IMAGE:
+                        if (images) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case REDDIT:
+                    case EMBEDDED:
+                    case LINK:
+                        if (links) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case NONE:
+                    case SELF:
+                        if (selftexts) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case REDDIT_GALLERY:
+                        if (galleries) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case TUMBLR:
+                        if (tumblrs) {
+                            contentMatch = true;
+                        }
+                        break;
+                    case VREDDIT_REDIRECT:
+                    case STREAMABLE:
+                    case VIDEO:
+                        if (videos) {
+                            contentMatch = true;
+                        }
+                        break;
+                }
             }
-        }
-        switch (ContentType.getContentType(s)) {
-            case ALBUM:
-                if (albums) {
-                    contentMatch = true;
-                }
-                break;
-            case DEVIANTART:
-            case GIF:
-                if (gifs) {
-                    contentMatch = true;
-                }
-                break;
-            case IMAGE:
-                if (images) {
-                    contentMatch = true;
-                }
-                break;
-            case IMGUR:
-                if (images) {
-                    contentMatch = true;
-                }
-                break;
-            case REDDIT:
-            case EMBEDDED:
-            case LINK:
-                if (urls) {
-                    contentMatch = true;
-                }
-                break;
-            case SELF:
-                if (selftext) {
-                    contentMatch = true;
-                }
-                break;
-            case NONE:
-                if (selftext) {
-                    contentMatch = true;
-                }
-                break;
-            case REDDIT_GALLERY:
-                if (gallery) {
-                    contentMatch = true;
-                }
-                break;
-            case XKCD:
-                if (images) {
-                    contentMatch = true;
-                }
-                break;
-            case VREDDIT_REDIRECT:
-            case STREAMABLE:
-            case VIDEO:
-                if (videos) {
-                    contentMatch = true;
-                }
-                break;
         }
 
         if (!flair.isEmpty())
@@ -239,47 +302,186 @@ public class PostMatch {
 
     public static void setChosen(boolean[] values, String subreddit) {
         subreddit = subreddit.toLowerCase(Locale.ENGLISH);
-        SharedPreferences.Editor e = filters.edit();
-        e.putBoolean(subreddit + "_albumsFilter", values[0]);
-        e.putBoolean(subreddit + "_galleryFilter", values[1]);
-        e.putBoolean(subreddit + "_gifsFilter", values[2]);
-        e.putBoolean(subreddit + "_imagesFilter", values[3]);
-        e.putBoolean(subreddit + "_nsfwFilter", values[4]);
-        e.putBoolean(subreddit + "_selftextFilter", values[5]);
-        e.putBoolean(subreddit + "_urlsFilter", values[6]);
-        e.putBoolean(subreddit + "_videoFilter", values[7]);
-        e.apply();
+
+        // Create a list of filter keys
+        String[] filterKeys = {
+            subreddit + "_albumsFilter",
+            subreddit + "_galleriesFilter",
+            subreddit + "_gifsFilter",
+            subreddit + "_imagesFilter",
+            subreddit + "_linksFilter",
+            subreddit + "_selftextsFilter",
+            subreddit + "_tumblrsFilter",
+            subreddit + "_videosFilter"
+        };
+
+        // Add NSFW filter keys if needed
+        String[] nsfwFilterKeys = null;
+        if (values.length > 8 && SettingValues.showNSFWContent) {
+            nsfwFilterKeys = new String[] {
+                subreddit + "_nsfwAlbumsFilter",
+                subreddit + "_nsfwGalleriesFilter",
+                subreddit + "_nsfwGifsFilter",
+                subreddit + "_nsfwImagesFilter",
+                subreddit + "_nsfwLinksFilter",
+                subreddit + "_nsfwSelftextsFilter",
+                subreddit + "_nsfwTumblrsFilter",
+                subreddit + "_nsfwVideosFilter"
+            };
+        }
+
+        if (SettingValues.subredditFiltersTillRestart) {
+            // Store in memory
+            for (int i = 0; i < filterKeys.length; i++) {
+                memoryContentFilters.put(filterKeys[i], values[i]);
+            }
+
+            if (nsfwFilterKeys != null) {
+                for (int i = 0; i < nsfwFilterKeys.length; i++) {
+                    memoryContentFilters.put(nsfwFilterKeys[i], values[i + 8]);
+                }
+            }
+        } else {
+            // Store in SharedPreferences
+            SharedPreferences.Editor e = filters.edit();
+            for (int i = 0; i < filterKeys.length; i++) {
+                e.putBoolean(filterKeys[i], values[i]);
+            }
+
+            if (nsfwFilterKeys != null) {
+                for (int i = 0; i < nsfwFilterKeys.length; i++) {
+                    e.putBoolean(nsfwFilterKeys[i], values[i + 8]);
+                }
+            }
+            e.apply();
+        }
     }
 
-    public static boolean isAlbums(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_albumsFilter", false);
+    public static boolean isAlbum(String baseSubreddit) {
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_albumsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_albumsFilter", false);
+        }
     }
 
     public static boolean isGallery(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_galleryFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_galleriesFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_galleriesFilter", false);
+        }
     }
 
     public static boolean isGif(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_gifsFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_gifsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_gifsFilter", false);
+        }
     }
 
     public static boolean isImage(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_imagesFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_imagesFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_imagesFilter", false);
+        }
     }
 
-    public static boolean isNsfw(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_nsfwFilter", false);
+    public static boolean isLink(String baseSubreddit) {
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_linksFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_linksFilter", false);
+        }
     }
 
     public static boolean isSelftext(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_selftextFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_selftextsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_selftextsFilter", false);
+        }
     }
 
-    public static boolean isUrls(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_urlsFilter", false);
+    public static boolean isTumblr(String baseSubreddit) {
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_tumblrsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_tumblrsFilter", false);
+        }
     }
 
     public static boolean isVideo(String baseSubreddit) {
-        return filters.getBoolean(baseSubreddit + "_videoFilter", false);
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_videosFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_videosFilter", false);
+        }
+    }
+
+    public static boolean isNsfwAlbum(String baseSubreddit) {
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwAlbumsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwAlbumsFilter", false);
+        }
+    }
+
+    public static boolean isNsfwGallery(String baseSubreddit) {
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwGalleriesFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwGalleriesFilter", false);
+        }
+    }
+
+    public static boolean isNsfwGif(String baseSubreddit) {
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwGifsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwGifsFilter", false);
+        }
+    }
+
+    public static boolean isNsfwImage(String baseSubreddit) {
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwImagesFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwImagesFilter", false);
+        }
+    }
+
+    public static boolean isNsfwLink(String baseSubreddit) {
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwLinksFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwLinksFilter", false);
+        }
+    }
+
+    public static boolean isNsfwSelftext(String baseSubreddit) {
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwSelftextsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwSelftextsFilter", false);
+        }
+    }
+
+    public static boolean isNsfwTumblr(String baseSubreddit) {
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwTumblrsFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwTumblrsFilter", false);
+        }
+    }
+
+    public static boolean isNsfwVideo(String baseSubreddit) {
+        if (SettingValues.subredditFiltersTillRestart) {
+            return memoryContentFilters.getOrDefault(baseSubreddit + "_nsfwVideosFilter", false);
+        } else {
+            return filters.getBoolean(baseSubreddit + "_nsfwVideosFilter", false);
+        }
     }
 }
