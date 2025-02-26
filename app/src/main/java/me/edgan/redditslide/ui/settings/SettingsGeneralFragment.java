@@ -26,6 +26,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +43,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.jakewharton.processphoenix.ProcessPhoenix;
-import com.rey.material.widget.Slider;
 
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.CaseInsensitiveArrayList;
@@ -91,7 +91,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
     }
 
     public static void setupNotificationSettings(View dialoglayout, final Activity context) {
-        final Slider landscape = dialoglayout.findViewById(R.id.landscape);
+        final SeekBar landscape = dialoglayout.findViewById(R.id.landscape);
         final CheckBox checkBox = dialoglayout.findViewById(R.id.load);
         final CheckBox sound = dialoglayout.findViewById(R.id.sound);
         final TextView notifCurrentView =
@@ -110,30 +110,48 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                     }
                 });
 
+        // Set initial slider position based on stored notification time
+        if (Reddit.notificationTime > 0) {
+            // Convert from notification time (10-120) to slider progress (0-11)
+            int progress = (Reddit.notificationTime - 10) / 10;
+            landscape.setProgress(progress);
+        } else {
+            landscape.setProgress(0);
+        }
+
         if (Reddit.notificationTime == -1) {
             checkBox.setChecked(false);
             checkBox.setText(context.getString(R.string.settings_mail_check));
         } else {
             checkBox.setChecked(true);
-            //landscape.setValue(Reddit.notificationTime / 15.0f, false);
             checkBox.setText(
                     context.getString(
                             R.string.settings_notification_newline,
                             TimeUtils.getTimeInHoursAndMins(
                                     Reddit.notificationTime, context.getBaseContext())));
         }
-        landscape.setOnPositionChangeListener(
-                new Slider.OnPositionChangeListener() {
+        landscape.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
                     @Override
-                    public void onPositionChanged(
-                            Slider slider, boolean b, float v, float v1, int i, int i1) {
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                         if (checkBox.isChecked()) {
+                            int value = progress * 10 + 10; // Convert 0-11 to 10-120
                             checkBox.setText(
                                     context.getString(
                                             R.string.settings_notification,
                                             TimeUtils.getTimeInHoursAndMins(
-                                                    i1, context.getBaseContext())));
+                                                    value, context.getBaseContext())));
                         }
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        // Not needed
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        // Not needed
                     }
                 });
 
@@ -145,13 +163,12 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                             Reddit.notificationTime = -1;
                             Reddit.colors.edit().putInt("notificationOverride", -1).apply();
                             checkBox.setText(context.getString(R.string.settings_mail_check));
-                            landscape.setValue(0, true);
+                            landscape.setProgress(0);
                             if (Reddit.notifications != null) {
                                 Reddit.notifications.cancel();
                             }
                         } else {
                             Reddit.notificationTime = 10;
-                            //landscape.setValue(4, true);
                             checkBox.setText(
                                     context.getString(
                                             R.string.settings_notification,
@@ -163,22 +180,21 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                 });
 
         dialoglayout.findViewById(R.id.title).setBackgroundColor(Palette.getDefaultColor());
-        // todo final Slider portrait = (Slider) dialoglayout.findViewById(R.id.portrait);
-
-        // todo  portrait.setBackgroundColor(Palette.getDefaultColor());
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context).setView(dialoglayout);
         final Dialog dialog = builder.create();
+        dialog.setCancelable(false);
         dialog.show();
         dialog.setOnDismissListener(
                 new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
                         if (checkBox.isChecked()) {
-                            Reddit.notificationTime = landscape.getValue();
+                            int value = landscape.getProgress() * 10 + 10; // Convert 0-11 to 10-120
+                            Reddit.notificationTime = value;
                             Reddit.colors
                                     .edit()
-                                    .putInt("notificationOverride", landscape.getValue())
+                                    .putInt("notificationOverride", value)
                                     .apply();
                             if (Reddit.notifications == null) {
                                 Reddit.notifications =
@@ -197,12 +213,13 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                             @Override
                             public void onClick(View d) {
                                 if (checkBox.isChecked()) {
-                                    Reddit.notificationTime = landscape.getValue();
+                                    int value = landscape.getProgress() * 10 + 10; // Convert 0-11 to 10-120
+                                    Reddit.notificationTime = value;
                                     Reddit.colors
                                             .edit()
                                             .putInt(
                                                     "notificationOverride",
-                                                    landscape.getValue())
+                                                    value)
                                             .apply();
                                     if (Reddit.notifications == null) {
                                         Reddit.notifications =
@@ -210,7 +227,6 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                                         context.getApplication());
                                     }
                                     Reddit.notifications.cancel();
-                                    Reddit.notifications.start();
                                     dialog.dismiss();
                                     if (context instanceof SettingsGeneral) {
                                         notifCurrentView.setText(
@@ -1487,7 +1503,8 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                 .setTitle(R.string.sub_post_notifs_title_settings)
                 .setPositiveButton(
                         context.getString(R.string.btn_add).toUpperCase(),
-                        (dialog, which) -> showThresholdDialog(toCheck, false))
+                        (dialog, which) -> showThresholdDialog(toCheck, false)
+                )
                 .setNegativeButton(
                         R.string.sub_post_notifs_settings_search,
                         (dialog, which) ->

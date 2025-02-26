@@ -72,17 +72,15 @@
                             android:textSize="14sp"
                             android:textStyle="bold"/>
 
-                    <com.rey.material.widget.Slider
+                    <SeekBar
                         android:id="@+id/landscape"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:padding="8dp"
-                        app:sl_maxValue="96"
-                        app:sl_minValue="1"
-                        app:sl_alwaysFillThumb="true"
-                        app:sl_secondaryColor="?attr/tintColor"
-                        app:sl_stepValue="15"/>
+                        android:progress="0"
+                        android:max="11"
+                        android:progressTint="?attr/colorAccent"
+                        android:thumbTint="?attr/colorAccent"/>
 
                     <TextView
                         android:layout_width="match_parent"
