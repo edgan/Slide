@@ -164,16 +164,8 @@ public class SettingsFilter extends BaseActivityAnim {
                 R.id.domainlist, SettingValues.domainFilters, SettingValues.domainFilters::remove);
         updateList(
                 R.id.subredditlist,
-                SettingValues.subredditFiltersTillRestart ?
-                    PostMatch.memorySubredditFilters : SettingValues.subredditFilters,
-                text -> {
-                    if (SettingValues.subredditFiltersTillRestart) {
-                        PostMatch.memorySubredditFilters.remove(text);
-                    } else {
-                        SettingValues.subredditFilters.remove(text);
-                    }
-                    updateFilters();
-                });
+                SettingValues.subredditFilters,
+                SettingValues.subredditFilters::remove);
         updateList(R.id.userlist, SettingValues.userFilters, SettingValues.userFilters::remove);
         updateList(R.id.selftextlist, SettingValues.textFilters, SettingValues.textFilters::remove);
         updateList(R.id.titlelist, SettingValues.titleFilters, SettingValues.titleFilters::remove);
