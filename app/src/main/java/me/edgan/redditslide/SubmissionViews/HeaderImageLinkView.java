@@ -668,6 +668,7 @@ public class HeaderImageLinkView extends RelativeLayout {
     }
 
     private void displayImage(String url, ImageView target, boolean full) {
+        backdrop.setVisibility(View.VISIBLE);
         if (!full) {
             ((Reddit) getContext().getApplicationContext())
                     .getImageLoader()
