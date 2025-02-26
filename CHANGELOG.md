@@ -2,6 +2,12 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+7.2.0 / 2025-2-26
+=================
+* Fixed both regular notifications and piggyback notifications #80
+* Fixed subreddit filters
+* Fixed previews for Image and Reddit Video content types
+
 7.1.9 / 2025-2-25
 ================
 * Subreddit content filters dialog box enhancements
