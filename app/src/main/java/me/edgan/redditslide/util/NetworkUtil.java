@@ -29,10 +29,21 @@ public class NetworkUtil {
      * @return A non-null value defined in {@link Status}.
      */
     private static Status getConnectivityStatus(final Context context) {
+        // Check if in forced offline mode
+        if (Reddit.appRestart != null && Reddit.appRestart.getBoolean("forceoffline", false)) {
+            return Status.NONE;
+        }
+
+        // For normal operation, always return WIFI status unless in forced offline mode
+        return Status.WIFI;
+
+        // Original implementation - commented out but kept for reference
+        /*
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return getConnectivityStatusPre23(context);
         }
         return getConnectivityStatusNew(context);
+        */
     }
 
     /** For devices running pre-Marshmallow. */
@@ -108,7 +119,12 @@ public class NetworkUtil {
      * @return true if the application is connected, false if otherwise.
      */
     public static boolean isConnected(final Context context) {
-        return isConnectedNoOverride(context);
+        // Check if in forced offline mode
+        if (Reddit.appRestart != null && Reddit.appRestart.getBoolean("forceoffline", false)) {
+            return false;
+        }
+        // Always return true unless in offline mode
+        return true;
     }
 
     public static boolean isConnectedNoOverride(final Context context) {
@@ -122,7 +138,12 @@ public class NetworkUtil {
      * @return true if the application is connected, false if otherwise.
      */
     public static boolean isConnectedWifi(Context context) {
-        return getConnectivityStatus(context) == Status.WIFI;
+        // Check if in forced offline mode
+        if (Reddit.appRestart != null && Reddit.appRestart.getBoolean("forceoffline", false)) {
+            return false;
+        }
+        // Always return true for WiFi unless in offline mode
+        return true;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
