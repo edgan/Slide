@@ -41,34 +41,25 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
                 };
     }
 
+    private static final float SCALE_FACTOR = 0.5f;
+    private static final int EMOTE_SPACING = 30; // extra horizontal spacing in pixels
+
     @Override
-    public void draw(
-            Canvas canvas,
-            CharSequence text,
-            int start,
-            int end,
-            float x,
-            int top,
-            int y,
-            int bottom,
-            Paint paint) {
-        if (!isAnimationEnabled) {
-            drawable.seekToFirstFrame(); // Ensure we're on first frame when not animating
-        }
+    public void draw(Canvas canvas, CharSequence text, int start, int end,
+                     float x, int top, int y, int bottom, Paint paint) {
+
         Drawable drawable = getDrawable();
-        if (drawable == null) {
-            Log.e("EmoteDebug", "Drawable is null in span draw");
-            return;
-        }
+        Rect bounds = drawable.getBounds();
 
-        Paint.FontMetricsInt fm = paint.getFontMetricsInt();
-        int drawableHeight = drawable.getBounds().height();
+        int intrinsicWidth = bounds.width();
+        int intrinsicHeight = bounds.height();
 
-        // Calculate the space needed above the baseline
-        int transY = y - drawableHeight + (fm.descent - fm.ascent) / 4;
+        int transY = y - intrinsicHeight + 18;
 
         canvas.save();
-        canvas.translate(x, transY);
+        canvas.scale(SCALE_FACTOR, SCALE_FACTOR);
+        canvas.translate(x / SCALE_FACTOR, transY / SCALE_FACTOR);
+
         drawable.draw(canvas);
         canvas.restore();
     }
@@ -80,40 +71,27 @@ public class AnimatedImageSpan extends DynamicDrawableSpan {
     }
 
     @Override
-    public int getSize(
-            Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
+    public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         Drawable d = getDrawable();
         Rect rect = d.getBounds();
+        int scaledHeight = (int) (rect.height() * SCALE_FACTOR);
+        int scaledWidth  = (int) (rect.width()  * SCALE_FACTOR);
 
         if (fm != null) {
-            Paint.FontMetricsInt originalFm = new Paint.FontMetricsInt();
-            paint.getFontMetricsInt(originalFm);
+            // Ensure the line is tall enough for the image.
+            int fontHeight = fm.descent - fm.ascent;
 
-            int drawableHeight = rect.height();
-            // We want the drawable to extend both above and below the text
-            // First, get the normal text height
-            int textHeight = originalFm.descent - originalFm.ascent;
-
-            // If drawable is taller than text, we need to expand the line height
-            if (drawableHeight > textHeight) {
-                int heightDiff = drawableHeight - textHeight;
-                // Distribute the extra height equally above and below
-                int extraSpace = drawableHeight;
-
-                fm.top = originalFm.top - extraSpace;
-                fm.ascent = originalFm.ascent - extraSpace;
-                fm.descent = originalFm.descent + extraSpace;
-                fm.bottom = originalFm.bottom + extraSpace;
-            } else {
-                // If drawable is shorter, preserve text metrics
-                fm.top = originalFm.top;
-                fm.ascent = originalFm.ascent;
-                fm.descent = originalFm.descent;
-                fm.bottom = originalFm.bottom;
+            // If the image is taller than the font height, push the ascent up:
+            if (scaledHeight > fontHeight) {
+                // Increase descent so the line can fit the image
+                fm.descent += (scaledHeight - fontHeight);
             }
+            // (You could also shift fm.ascent upward, but the simplest is to push descent down.)
+            fm.bottom = fm.descent;
         }
 
-        return rect.right;
+        // Reserve enough horizontal space for the image plus spacing
+        return scaledWidth + EMOTE_SPACING;
     }
 
     public void start() {
