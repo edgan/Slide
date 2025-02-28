@@ -2,6 +2,13 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+7.2.1 / 2025-2-28
+=================
+* Fixed multiple free_emote_pack/snoomoji emoticons in the same comment
+* Removed the Notifications dialog in MainActivity.java
+* Disabled auto-offline
+* Fixed the size of the Subreddit content filters dialog
+
 7.2.0 / 2025-2-26
 =================
 * Fixed both regular notifications and piggyback notifications #80
