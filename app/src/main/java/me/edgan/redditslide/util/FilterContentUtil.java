@@ -101,7 +101,7 @@ public class FilterContentUtil {
         // Create spacer view to fill left side when reset button is hidden
         View spacerView = new View(activity);
         LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+                0, 0, 1.0f); // Set height to zero to prevent taking vertical space
         spacerView.setLayoutParams(spacerParams);
 
         // Hide reset button if NSFW content is disabled
@@ -126,7 +126,7 @@ public class FilterContentUtil {
         // Create spacer view to match left side spacing
         View rightSpacerView = new View(activity);
         LinearLayout.LayoutParams rightSpacerParams = new LinearLayout.LayoutParams(
-                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+                0, 0, 1.0f); // Set height to zero to prevent taking vertical space
         rightSpacerView.setLayoutParams(rightSpacerParams);
 
         // Add buttons to left group
@@ -137,6 +137,10 @@ public class FilterContentUtil {
         rightButtonGroup.addView(rightSpacerView);
         rightButtonGroup.addView(cancelButton);
         rightButtonGroup.addView(saveButton);
+
+        // Set gravity on button groups to properly align buttons
+        leftButtonGroup.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
+        rightButtonGroup.setGravity(android.view.Gravity.END | android.view.Gravity.CENTER_VERTICAL);
 
         // Add button groups to the button bar
         buttonBar.addView(leftButtonGroup);
