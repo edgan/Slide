@@ -34,6 +34,7 @@ import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.SubmissionViews.PopulateBase;
+import me.edgan.redditslide.ContentType;
 
 import net.dean.jraw.models.Submission;
 
@@ -111,7 +112,11 @@ public class LinkUtil {
             @NonNull Activity contextActivity,
             @Nullable Integer adapterPosition,
             @Nullable Submission submission) {
+        // Check if it's a video content type first
+        ContentType.Type contentType = ContentType.getContentType(url);
+
         if (!(contextActivity instanceof ReaderMode)
+                && contentType != ContentType.Type.VIDEO  // Skip reader mode for videos
                 && ((SettingValues.readerMode && !SettingValues.readerNight)
                         || SettingValues.readerMode
                                 && SettingValues.readerNight
