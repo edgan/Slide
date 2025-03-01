@@ -25,9 +25,24 @@ public class SortingUtil {
     public static final Map<String, TimePeriod> times = new HashMap<>();
     public static SubmissionSearchPaginator.SearchSort search =
             SubmissionSearchPaginator.SearchSort.RELEVANCE;
-    public static Sorting defaultSorting;
+            public static Sorting allSorting;
+            public static Sorting defaultSorting;
     public static Sorting frontpageSorting;
     public static TimePeriod timePeriod;
+
+    static {
+        // Initialize allSorting from saved preference or default to HOT
+        String allSort = Reddit.appRestart.getString("defaultSortingAll", "");
+        if (allSort.isEmpty()) {
+            allSorting = Sorting.HOT;
+        } else {
+            try {
+                allSorting = Sorting.valueOf(allSort);
+            } catch (Exception e) {
+                allSorting = Sorting.HOT;
+            }
+        }
+    }
 
     public static Integer getSortingId(Sorting sort) {
         switch (sort) {
@@ -78,7 +93,9 @@ public class SortingUtil {
     public static Integer getSortingId(String subreddit) {
         subreddit = subreddit.toLowerCase(Locale.ENGLISH);
         Sorting sort;
-        if (subreddit.equals("frontpage")) {
+        if (subreddit.equals("all")) {
+            sort = allSorting;
+        } else if (subreddit.equals("frontpage")) {
             sort = frontpageSorting;
         } else {
             sort = sorting.containsKey(subreddit) ? sorting.get(subreddit) : defaultSorting;
@@ -221,7 +238,11 @@ public class SortingUtil {
 
     public static Sorting getSorting(String subreddit, Sorting defaultSort) {
         subreddit = subreddit.toLowerCase(Locale.ENGLISH);
-        if (sorting.containsKey(subreddit)) {
+        if (subreddit.equals("frontpage")) {
+            return frontpageSorting;
+        } else if (subreddit.equals("all")) {
+            return allSorting;
+        } else if (sorting.containsKey(subreddit)) {
             return sorting.get(subreddit);
         } else {
             return defaultSort;

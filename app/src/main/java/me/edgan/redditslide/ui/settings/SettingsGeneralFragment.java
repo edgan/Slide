@@ -1343,6 +1343,79 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                         });
             }
         }
+
+        {
+            if (context.findViewById(R.id.settings_general_sorting_all) != null) {
+                context.findViewById(R.id.settings_general_sorting_all)
+                        .setOnClickListener(
+                                v -> {
+                                    final DialogInterface.OnClickListener l2 =
+                                            (dialogInterface, i) -> {
+                                                Sorting allSorting = SortingUtil.allSorting;
+
+                                                switch (i) {
+                                                    case 0:
+                                                        allSorting = Sorting.HOT;
+                                                        break;
+                                                    case 1:
+                                                        allSorting = Sorting.NEW;
+                                                        break;
+                                                    case 2:
+                                                        allSorting = Sorting.RISING;
+                                                        break;
+                                                    case 3:
+                                                        allSorting = Sorting.TOP;
+                                                        askTimePeriod();
+                                                        return;
+                                                    case 4:
+                                                        allSorting = Sorting.CONTROVERSIAL;
+                                                        askTimePeriod();
+                                                        return;
+                                                }
+
+                                                SortingUtil.allSorting = allSorting;
+                                                //Reddit.sorting = allSorting.name();
+                                                //SortingUtil.timePeriod = SortingUtil.timePeriod.name();
+                                                SettingValues.prefs
+                                                        .edit()
+                                                        .putString("defaultSortingAll", allSorting.name())
+                                                        .apply();
+
+                                                final TextView sortingCurrentAllView =
+                                                        context.findViewById(R.id.settings_general_sorting_current_all);
+                                                if (sortingCurrentAllView != null) {
+                                                    sortingCurrentAllView.setText(
+                                                            SortingUtil.getSortingStrings()[
+                                                                    SortingUtil.getSortingId(allSorting)]);
+                                                }
+                                            };
+
+                                    // Remove the "Best" sorting option since it's only for frontpage
+                                    int skip = 5; // Skip the "Best" option at index 5
+
+                                    List<String> sortingStrings =
+                                            new ArrayList<>(Arrays.asList(SortingUtil.getSortingStrings()));
+                                    sortingStrings.remove(skip);
+
+                                    new AlertDialog.Builder(SettingsGeneralFragment.this.context)
+                                            .setTitle(R.string.sorting_choose)
+                                            .setSingleChoiceItems(
+                                                    sortingStrings.toArray(new String[0]),
+                                                    SortingUtil.getSortingId(SortingUtil.allSorting),
+                                                    l2)
+                                    .setNegativeButton(R.string.btn_cancel, null)
+                                    .show();
+                                });
+
+                final TextView sortingCurrentAllView =
+                        context.findViewById(R.id.settings_general_sorting_current_all);
+                if (sortingCurrentAllView != null) {
+                    sortingCurrentAllView.setText(
+                            SortingUtil.getSortingStrings()[
+                                    SortingUtil.getSortingId(SortingUtil.allSorting)]);
+                }
+            }
+        }
     }
 
     // Add helper method
