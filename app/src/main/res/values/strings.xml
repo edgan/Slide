@@ -1283,4 +1283,7 @@
 
     <string name="settings_section_sound">Sound</string>
     <string name="settings_unmute_default">Unmute videos by default</string>
+
+    <string name="settings_subreddit_filter_prefix_matching">Enable subreddit filter prefix matching</string>
+    <string name="settings_subreddit_filter_prefix_matching_description">The prefix is the whole subreddit name, and a minimum of six characters. Examples: The subreddit social will allow block socialanxiety. The subreddit pokemongo will block pokemongoraids.</string>
 </resources>

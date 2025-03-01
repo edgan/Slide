@@ -117,9 +117,18 @@ public class PostMatch {
         } catch (MalformedURLException ignored) {
         }
 
-        if (!subreddit.equalsIgnoreCase(baseSubreddit)
-                && contains(subreddit, SettingValues.subredditFilters, true)) {
-            return true;
+        if (!subreddit.equalsIgnoreCase(baseSubreddit)) {
+            if (SettingValues.subredditFilterPrefixMatching && subreddit.length() >= 6) {
+                String lowerSubreddit = subreddit.toLowerCase();
+                if (SettingValues.subredditFilters.stream()
+                        .anyMatch(filter -> filter.contains(lowerSubreddit))) {
+                    return true;
+                }
+            } else {
+                if (contains(subreddit, SettingValues.subredditFilters, true)) {
+                    return true;
+                }
+            }
         }
 
         boolean contentMatch = false;

@@ -144,6 +144,7 @@ public class SettingValues {
     public static final String PREF_HIGH_COLORSPACE_IMAGES = "highMemoryImages";
     public static final String PREF_ALWAYS_BLACK_STATUSBAR = "alwaysBlackStatusbar";
     public static final String PREF_SUBREDDIT_FILTERS_TILL_RESTART = "subredditFiltersTillRestart";
+    public static final String PREF_SUBREDDIT_FILTER_PREFIX_MATCHING = "subredditFilterPrefixMatching";
     public static final String PREF_IMAGE_SAVE_LOCATION = "PREF_IMAGE_SAVE_LOCATION";
     public static final String PREF_REDDIT_CLIENT_ID_OVERRIDE = "redditClientOverride";
 
@@ -292,6 +293,7 @@ public class SettingValues {
     public static boolean alwaysShowFAB;
     public static boolean alwaysBlackStatusbar;
     public static boolean subredditFiltersTillRestart;
+    public static boolean subredditFilterPrefixMatching;
 
     public static void setAllValues(SharedPreferences settings) {
         prefs = settings;
@@ -494,6 +496,7 @@ public class SettingValues {
         toolboxModmail = prefs.getBoolean(PREF_MOD_TOOLBOX_MODMAIL, false);
 
         subredditFiltersTillRestart = prefs.getBoolean(PREF_SUBREDDIT_FILTERS_TILL_RESTART, true);
+        subredditFilterPrefixMatching = prefs.getBoolean(PREF_SUBREDDIT_FILTER_PREFIX_MATCHING, false);
     }
 
     public static void setPicsEnabled(String sub, boolean checked) {

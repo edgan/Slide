@@ -89,6 +89,16 @@ public class SettingsFilter extends BaseActivityAnim {
             updateFilters();
         });
 
+        // Add switch for subreddit filter prefix matching
+        Switch filterPrefixMatching = (Switch) findViewById(R.id.subreddit_filter_prefix_matching);
+        filterPrefixMatching.setChecked(SettingValues.subredditFilterPrefixMatching);
+        filterPrefixMatching.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SettingValues.subredditFilterPrefixMatching = isChecked;
+            SettingValues.prefs.edit()
+                .putBoolean(SettingValues.PREF_SUBREDDIT_FILTER_PREFIX_MATCHING, isChecked)
+                .apply();
+        });
+
         updateFilters();
     }
 
