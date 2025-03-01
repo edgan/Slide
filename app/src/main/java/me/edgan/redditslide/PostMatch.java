@@ -117,12 +117,9 @@ public class PostMatch {
         } catch (MalformedURLException ignored) {
         }
 
-        if (!subreddit.equalsIgnoreCase(baseSubreddit)) {
-            Set<String> subredditFilters = SettingValues.subredditFiltersTillRestart ?
-                memorySubredditFilters : SettingValues.subredditFilters;
-            if (contains(subreddit, subredditFilters, true)) {
-                return true;
-            }
+        if (!subreddit.equalsIgnoreCase(baseSubreddit)
+                && contains(subreddit, SettingValues.subredditFilters, true)) {
+            return true;
         }
 
         boolean contentMatch = false;

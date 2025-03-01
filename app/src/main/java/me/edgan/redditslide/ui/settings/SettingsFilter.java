@@ -61,21 +61,7 @@ public class SettingsFilter extends BaseActivityAnim {
         domain.setOnEditorActionListener(
                 makeOnEditorActionListener(SettingValues.domainFilters::add));
         subreddit.setOnEditorActionListener(
-                (v, actionId, event) -> {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        String text = v.getText().toString().toLowerCase(Locale.ENGLISH).trim();
-                        if (!text.isEmpty()) {
-                            if (SettingValues.subredditFiltersTillRestart) {
-                                PostMatch.memorySubredditFilters.add(text);
-                            } else {
-                                SettingValues.subredditFilters.add(text);
-                            }
-                            v.setText("");
-                            updateFilters();
-                        }
-                    }
-                    return false;
-                });
+                makeOnEditorActionListener(SettingValues.subredditFilters::add));
         user.setOnEditorActionListener(makeOnEditorActionListener(SettingValues.userFilters::add));
 
         flair.setOnEditorActionListener(
