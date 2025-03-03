@@ -37,4 +37,4 @@ public class SettingsGeneralActivity extends AppCompatActivity {
             }
         }
     }
-}
+} 
