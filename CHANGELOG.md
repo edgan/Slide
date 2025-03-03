@@ -2,6 +2,10 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+7.2.2 / 2025-3-2
+================
+* Two more fixes for subreddit filters
+
 7.2.1 / 2025-2-28
 =================
 * Fixed multiple free_emote_pack/snoomoji emoticons in the same comment
