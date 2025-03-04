@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
@@ -59,6 +61,17 @@ public class ExoVideoView extends RelativeLayout {
     private boolean hqAttached = false;
     private AudioFocusHelper audioFocusHelper;
     private Handler handler = new Handler(Looper.getMainLooper());
+    
+    private ScaleGestureDetector scaleGestureDetector;
+    private float scaleFactor = 1.0f;
+    private AspectRatioFrameLayout videoFrame;
+    
+    // Variables for panning
+    private float lastTouchX;
+    private float lastTouchY;
+    private float positionX = 0f;
+    private float positionY = 0f;
+    private boolean isDragging = false;
 
     public ExoVideoView(final Context context) {
         this(context, null, true);
@@ -111,10 +124,14 @@ public class ExoVideoView extends RelativeLayout {
 
         // Create an AspectRatioFrameLayout to size the video correctly
         AspectRatioFrameLayout frame = new AspectRatioFrameLayout(context);
+        this.videoFrame = frame;
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         params.addRule(CENTER_IN_PARENT, TRUE);
         frame.setLayoutParams(params);
         frame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+        
+        // Initialize scale gesture detector
+        scaleGestureDetector = new ScaleGestureDetector(context, new VideoScaleListener());
 
         if (SettingValues.oldSwipeMode) {
             TextureView textureView = new TextureView(context);
@@ -546,6 +563,157 @@ public class ExoVideoView extends RelativeLayout {
             public void onAnimationRepeat(Animation animation) {
                 // Purposefully left blank
             }
+        }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // Handle scale gestures
+        scaleGestureDetector.onTouchEvent(event);
+        
+        // Only handle panning when zoomed in
+        if (scaleFactor > 1.0f) {
+            final int action = event.getActionMasked();
+            
+            switch (action) {
+                case MotionEvent.ACTION_DOWN: {
+                    // Start tracking touch position for potential dragging
+                    lastTouchX = event.getX();
+                    lastTouchY = event.getY();
+                    isDragging = false;
+                    break;
+                }
+                
+                case MotionEvent.ACTION_MOVE: {
+                    // Only process if not in a scaling operation
+                    if (!scaleGestureDetector.isInProgress()) {
+                        // Calculate distance moved
+                        float dx = event.getX() - lastTouchX;
+                        float dy = event.getY() - lastTouchY;
+                        
+                        // If movement is significant enough, consider it a drag
+                        if (!isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+                            isDragging = true;
+                        }
+                        
+                        if (isDragging) {
+                            // Update position with constraints to keep video partially visible
+                            positionX += dx;
+                            positionY += dy;
+                            
+                            // Calculate maximum allowed movement based on scale
+                            float maxDeltaX = (videoFrame.getWidth() * (scaleFactor - 1)) / 2;
+                            float maxDeltaY = (videoFrame.getHeight() * (scaleFactor - 1)) / 2;
+                            
+                            // Constrain movement
+                            positionX = Math.max(-maxDeltaX, Math.min(maxDeltaX, positionX));
+                            positionY = Math.max(-maxDeltaY, Math.min(maxDeltaY, positionY));
+                            
+                            // Apply translation
+                            videoFrame.setTranslationX(positionX);
+                            videoFrame.setTranslationY(positionY);
+                        }
+                        
+                        // Update last position
+                        lastTouchX = event.getX();
+                        lastTouchY = event.getY();
+                    }
+                    break;
+                }
+                
+                case MotionEvent.ACTION_UP: {
+                    // Handle click if it wasn't a drag
+                    if (!isDragging) {
+                        return super.onTouchEvent(event);
+                    }
+                    isDragging = false;
+                    break;
+                }
+                
+                case MotionEvent.ACTION_CANCEL: {
+                    isDragging = false;
+                    break;
+                }
+            }
+            
+            // If we're handling a drag, intercept the event
+            if (isDragging) {
+                return true;
+            }
+        }
+        
+        // Continue with normal touch handling if not scaling or panning
+        if (!scaleGestureDetector.isInProgress() && !isDragging) {
+            return super.onTouchEvent(event);
+        }
+        return true;
+    }
+    
+    /**
+     * Scale gesture listener to handle pinch-to-zoom events
+     */
+    private class VideoScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            scaleFactor *= detector.getScaleFactor();
+            
+            // Limit the scale factor to reasonable bounds
+            scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 3.0f));
+            
+            // Apply the scale to the video frame
+            if (videoFrame != null) {
+                videoFrame.setScaleX(scaleFactor);
+                videoFrame.setScaleY(scaleFactor);
+            }
+            return true;
+        }
+        
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            // Change resize mode when scaling begins to allow proper zooming
+            if (videoFrame != null) {
+                videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
+            }
+            return true;
+        }
+        
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            // If scale is back to normal (or very close), reset to FIT mode and reset position
+            if (scaleFactor <= 1.05f) {
+                scaleFactor = 1.0f;
+                resetPosition();
+                if (videoFrame != null) {
+                    videoFrame.setScaleX(1.0f);
+                    videoFrame.setScaleY(1.0f);
+                    videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Resets any applied zoom to default scale and position
+     */
+    public void resetZoom() {
+        scaleFactor = 1.0f;
+        resetPosition();
+        if (videoFrame != null) {
+            videoFrame.setScaleX(1.0f);
+            videoFrame.setScaleY(1.0f);
+            videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+        }
+    }
+    
+    /**
+     * Resets the panning position to center
+     */
+    private void resetPosition() {
+        positionX = 0f;
+        positionY = 0f;
+        if (videoFrame != null) {
+            videoFrame.setTranslationX(0f);
+            videoFrame.setTranslationY(0f);
         }
     }
 }
