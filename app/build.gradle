@@ -222,7 +222,8 @@ dependencies {
 
     // Image loading, caching, and displaying
     //  NOTE: Replace with Glide/Picasso
-    implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    // com.nostra13.universalimageloader:universal-image-loader
+    implementation 'com.github.edgan:Android-Universal-Image-Loader:644f0269eb@aar'
 
     // Custom image view for photo galleries and large images
     implementation 'com.github.davemorrissey:subsampling-scale-image-view:173e421fdb'
