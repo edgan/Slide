@@ -23,6 +23,7 @@ import android.widget.RelativeLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
@@ -56,6 +57,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.dean.jraw.models.Submission;
 
 /** Created by ccrama on 3/5/2015. */
 public class PeekMediaView extends RelativeLayout {
@@ -662,5 +665,36 @@ public class PeekMediaView extends RelativeLayout {
         this.videoView = findViewById(R.id.gif);
         this.website = findViewById(R.id.website);
         this.progress = findViewById(R.id.progress);
+    }
+
+    public void setUrlWithSubmission(String url, Submission submission) {
+        contentType = ContentType.getContentType(url);
+
+        // For i.redd.it GIFs, get the MP4 URL from preview data
+        if (contentType == ContentType.Type.GIF && url.contains("i.redd.it")) {
+            JsonNode dataNode = submission.getDataNode();
+            if (dataNode.has("preview") &&
+                dataNode.get("preview").has("images") &&
+                dataNode.get("preview").get("images").size() > 0) {
+
+                JsonNode variants = dataNode.get("preview")
+                    .get("images")
+                    .get(0)
+                    .get("variants");
+
+                if (variants.has("mp4")) {
+                    String mp4Url = variants.get("mp4")
+                        .get("source")
+                        .get("url")
+                        .asText()
+                        .replace("&amp;", "&");
+
+                    url = mp4Url;
+                    contentType = ContentType.Type.GIF;
+                }
+            }
+        }
+
+        setUrl(url);
     }
 }

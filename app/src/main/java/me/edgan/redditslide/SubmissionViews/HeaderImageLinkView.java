@@ -260,7 +260,7 @@ public class HeaderImageLinkView extends RelativeLayout {
         return (width * ratio);
     }
 
-    public void onLinkLongClick(final String url, MotionEvent event) {
+    public void onLinkLongClick(final String url, MotionEvent event, final Submission submission) {
         popped = false;
 
         if (url == null || SettingValues.noPreviewImageLongClick) {
@@ -294,17 +294,16 @@ public class HeaderImageLinkView extends RelativeLayout {
         if (activity != null && !activity.isFinishing()) {
             if (SettingValues.peek) {
                 Peek.into(
-                                R.layout.peek_view_submission,
-                                new SimpleOnPeek() {
-                                    @Override
-                                    public void onInflated(
-                                            final PeekView peekView, final View rootView) {
-                                        // do stuff
-                                        TextView text = rootView.findViewById(R.id.title);
-                                        text.setText(url);
-                                        text.setTextColor(Color.WHITE);
-                                        ((PeekMediaView) rootView.findViewById(R.id.peek))
-                                                .setUrl(url);
+                        R.layout.peek_view_submission,
+                        new SimpleOnPeek() {
+                            @Override
+                            public void onInflated(final PeekView peekView, final View rootView) {
+                                TextView text = rootView.findViewById(R.id.title);
+                                text.setText(url);
+                                text.setTextColor(Color.WHITE);
+
+                                ((PeekMediaView) rootView.findViewById(R.id.peek))
+                                        .setUrlWithSubmission(url, submission);
 
                                         peekView.addButton(
                                                 (R.id.share),
@@ -468,7 +467,7 @@ public class HeaderImageLinkView extends RelativeLayout {
                                 ((View) getParent()).findViewById(R.id.body).setAlpha(0.54f);
                             }
                         }
-                        onLinkLongClick(submission.getUrl(), event);
+                        onLinkLongClick(submission.getUrl(), event, submission);
                     }
                 };
     }
