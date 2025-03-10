@@ -4030,39 +4030,65 @@ public class MainActivity extends BaseActivity
     public static String randomoverride;
 
     public void reloadSubs() {
-        int current = pager.getCurrentItem();
-        if (commentPager && current == currentComment) {
-            current = current - 1;
-        }
-        if (current < 0) {
-            current = 0;
-        }
-        reloadItemNumber = current;
-        if (adapter instanceof MainPagerAdapterComment) {
-            pager.setAdapter(null);
-            adapter = new MainPagerAdapterComment(getSupportFragmentManager());
-        } else {
-            adapter = new MainPagerAdapter(getSupportFragmentManager());
-        }
-        pager.setAdapter(adapter);
+        try {
+            int current = pager.getCurrentItem();
+            if (commentPager && current == currentComment) {
+                current = current - 1;
+            }
+            if (current < 0) {
+                current = 0;
+            }
+            reloadItemNumber = current;
+            if (adapter instanceof MainPagerAdapterComment) {
+                pager.setAdapter(null);
+                adapter = new MainPagerAdapterComment(getSupportFragmentManager());
+            } else {
+                adapter = new MainPagerAdapter(getSupportFragmentManager());
+            }
+            pager.setAdapter(adapter);
 
-        reloadItemNumber = -2;
-        shouldLoad = usedArray.get(current);
-        pager.setCurrentItem(current);
-        if (mTabLayout != null) {
-            mTabLayout.setupWithViewPager(pager);
-            LayoutUtils.scrollToTabAfterLayout(mTabLayout, current);
-        }
+            reloadItemNumber = -2;
+            shouldLoad = usedArray.get(current);
+            pager.setCurrentItem(current);
+            if (mTabLayout != null) {
+                mTabLayout.setupWithViewPager(pager);
+                LayoutUtils.scrollToTabAfterLayout(mTabLayout, current);
+            }
 
-        if (SettingValues.single) {
-            getSupportActionBar().setTitle(shouldLoad);
-        }
+            if (SettingValues.single) {
+                getSupportActionBar().setTitle(shouldLoad);
+            }
 
-        setToolbarClick();
+            setToolbarClick();
 
-        if (SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR
-                || SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_BOTH) {
-            setupSubredditSearchToolbar();
+            if (SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR
+                    || SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_BOTH) {
+                setupSubredditSearchToolbar();
+            }
+
+            // When setting tab text, add null check and try-catch
+            if (adapter != null && mTabLayout != null) {
+                mTabLayout.setSelectedTabIndicatorColor(
+                        new ColorPreferences(MainActivity.this).getColor(usedArray.get(current)));
+                mTabLayout.setTabMode(usedArray.size() <= 3 ? TabLayout.MODE_FIXED : TabLayout.MODE_SCROLLABLE);
+
+                // Add safety checks when setting tab text
+                for (int i = 0; i < mTabLayout.getTabCount(); i++) {
+                    TabLayout.Tab tab = mTabLayout.getTabAt(i);
+                    if (tab != null) {
+                        try {
+                            tab.setText(adapter.getPageTitle(i));
+                        } catch (Exception e) {
+                            // If text transformation fails, try setting without transformation
+                            TextView view = new TextView(this);
+                            view.setText(adapter.getPageTitle(i));
+                            tab.setCustomView(view);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.v(LogUtil.getTag(), "Error in reloadSubs");
         }
     }
 
