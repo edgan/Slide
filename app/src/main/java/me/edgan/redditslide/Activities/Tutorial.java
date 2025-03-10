@@ -295,6 +295,17 @@ public class Tutorial extends AppCompatActivity {
                     });
 
             personalizeBinding.done.setOnClickListener(v1 -> {
+                // Add a black overlay view
+                View overlayView = new View(getActivity());
+                overlayView.setBackgroundColor(Color.BLACK);
+                overlayView.setAlpha(1.0f); // Fully opaque black
+
+                // Add overlay to root window
+                ViewGroup rootView = (ViewGroup) getActivity().getWindow().getDecorView().getRootView();
+                rootView.addView(overlayView, new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+
                 // Show client ID dialog first
                 final Context contextThemeWrapper = new ContextThemeWrapper(getContext(),
                         new ColorPreferences(getContext()).getFontStyle().getBaseId());
@@ -325,6 +336,12 @@ public class Tutorial extends AppCompatActivity {
                         .setPositiveButton(R.string.btn_ok, null);
 
                 AlertDialog dialog = builder.create();
+
+                dialog.setOnDismissListener(dialogInterface -> {
+                    // Remove the overlay when dialog is dismissed
+                    rootView.removeView(overlayView);
+                });
+
                 dialog.show();
 
                 // Get the positive button and initially disable it
