@@ -106,7 +106,7 @@ public class PeekMediaView extends RelativeLayout {
         }
     }
 
-    public void setUrl(String url) {
+    public void setUrlOrSubmission(String url, Submission submission) {
         contentType = ContentType.getContentType(url);
         switch (contentType) {
             case ALBUM:
@@ -122,11 +122,14 @@ public class PeekMediaView extends RelativeLayout {
             case LINK:
             case VIDEO:
             case SELF:
-            case REDDIT_GALLERY:
             case SPOILER:
             case NONE:
                 doLoadLink(url);
                 progress.setIndeterminate(false);
+                break;
+            case REDDIT_GALLERY:
+                doLoadRedditGallery(submission);
+                progress.setIndeterminate(true);
                 break;
             case REDDIT:
                 progress.setIndeterminate(true);
@@ -695,6 +698,47 @@ public class PeekMediaView extends RelativeLayout {
             }
         }
 
-        setUrl(url);
+        setUrlOrSubmission(url, submission);
+    }
+
+    private void doLoadRedditGallery(Submission submission) {
+        try {
+            JsonNode dataNode = submission.getDataNode();
+
+            // Handle crosspost if needed
+            if (dataNode.has("crosspost_parent_list") && dataNode.get("crosspost_parent_list").size() > 0) {
+                dataNode = dataNode.get("crosspost_parent_list").get(0);
+            }
+
+            if (dataNode.has("gallery_data") && dataNode.has("media_metadata")) {
+                JsonNode galleryData = dataNode.get("gallery_data");
+                JsonNode mediaMetadata = dataNode.get("media_metadata");
+
+                if (galleryData.has("items") && !galleryData.get("items").isNull()
+                        && galleryData.get("items").size() > 0) {
+
+                    JsonNode firstItem = galleryData.get("items").get(0);
+                    if (firstItem != null && firstItem.has("media_id")) {
+                        String mediaId = firstItem.get("media_id").asText();
+
+                        if (mediaMetadata.has(mediaId)) {
+                            JsonNode mediaInfo = mediaMetadata.get(mediaId);
+                            if (mediaInfo != null && mediaInfo.has("s")) {
+                                String url = mediaInfo.get("s").get("u").asText();
+                                url = url.replace("&amp;", "&");
+
+                                // Display the first image from the gallery
+                                displayImage(url);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LogUtil.e("Error loading Reddit gallery preview: " + e.getMessage());
+        }
+        // Fallback if gallery loading fails
+        setVisibility(View.GONE);
     }
 }

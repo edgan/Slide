@@ -1042,126 +1042,45 @@ private void loadGiphyEmote(EmoteSpanRequest request, TextView textView, int pos
         }
 
         if (activity != null && !activity.isFinishing()) {
-            if (SettingValues.peek) {
-                Peek.into(
-                                R.layout.peek_view,
-                                new SimpleOnPeek() {
-                                    @Override
-                                    public void onInflated(
-                                            final PeekView peekView, final View rootView) {
-                                        // do stuff
-                                        TextView text = rootView.findViewById(R.id.title);
-                                        text.setText(url);
-                                        text.setTextColor(Color.WHITE);
-                                        ((PeekMediaView) rootView.findViewById(R.id.peek))
-                                                .setUrl(url);
+            BottomSheet.Builder b = new BottomSheet.Builder(activity).title(url).grid();
+            int[] attrs = new int[] {R.attr.tintColor};
+            TypedArray ta = getContext().obtainStyledAttributes(attrs);
 
-                                        peekView.addButton(
-                                                (R.id.copy),
-                                                new OnButtonUp() {
-                                                    @Override
-                                                    public void onButtonUp() {
-                                                        ClipboardUtil.copyToClipboard(
-                                                                rootView.getContext(), "Link", url);
-                                                        Toast.makeText(
-                                                                        rootView.getContext(),
-                                                                        R.string
-                                                                                .submission_link_copied,
-                                                                        Toast.LENGTH_SHORT)
-                                                                .show();
-                                                    }
-                                                });
+            int color = ta.getColor(0, Color.WHITE);
+            Drawable open = getResources().getDrawable(R.drawable.ic_open_in_new);
+            Drawable share = getResources().getDrawable(R.drawable.ic_share);
+            Drawable copy = getResources().getDrawable(R.drawable.ic_content_copy);
+            final List<Drawable> drawableSet = Arrays.asList(open, share, copy);
+            BlendModeUtil.tintDrawablesAsSrcAtop(drawableSet, color);
 
-                                        peekView.setOnRemoveListener(
-                                                new OnRemove() {
-                                                    @Override
-                                                    public void onRemove() {
-                                                        ((PeekMediaView)
-                                                                        rootView.findViewById(
-                                                                                R.id.peek))
-                                                                .doClose();
-                                                    }
-                                                });
+            ta.recycle();
 
-                                        peekView.addButton(
-                                                (R.id.share),
-                                                new OnButtonUp() {
-                                                    @Override
-                                                    public void onButtonUp() {
-                                                        Reddit.defaultShareText(
-                                                                "", url, rootView.getContext());
-                                                    }
-                                                });
-
-                                        peekView.addButton(
-                                                (R.id.pop),
-                                                new OnButtonUp() {
-                                                    @Override
-                                                    public void onButtonUp() {
-                                                        Reddit.defaultShareText(
-                                                                "", url, rootView.getContext());
-                                                    }
-                                                });
-
-                                        peekView.addButton(
-                                                (R.id.external),
-                                                new OnButtonUp() {
-                                                    @Override
-                                                    public void onButtonUp() {
-                                                        LinkUtil.openExternally(url);
-                                                    }
-                                                });
-                                        peekView.setOnPop(
-                                                new OnPop() {
-                                                    @Override
-                                                    public void onPop() {
-                                                        onLinkClick(url, 0, "", null);
-                                                    }
-                                                });
+            b.sheet(R.id.open_link, open, getResources().getString(R.string.open_externally));
+            b.sheet(R.id.share_link, share, getResources().getString(R.string.share_link));
+            b.sheet(
+                    R.id.copy_link,
+                    copy,
+                    getResources().getString(R.string.submission_link_copy));
+            final Activity finalActivity = activity;
+            b.listener(
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which) {
+                                        case R.id.open_link:
+                                            LinkUtil.openExternally(url);
+                                            break;
+                                        case R.id.share_link:
+                                            Reddit.defaultShareText("", url, finalActivity);
+                                            break;
+                                        case R.id.copy_link:
+                                            LinkUtil.copyUrl(url, finalActivity);
+                                            break;
                                     }
-                                })
-                        .with(new PeekViewOptions().setFullScreenPeek(true))
-                        .show((PeekViewActivity) activity, event);
-            } else {
-                BottomSheet.Builder b = new BottomSheet.Builder(activity).title(url).grid();
-                int[] attrs = new int[] {R.attr.tintColor};
-                TypedArray ta = getContext().obtainStyledAttributes(attrs);
-
-                int color = ta.getColor(0, Color.WHITE);
-                Drawable open = getResources().getDrawable(R.drawable.ic_open_in_new);
-                Drawable share = getResources().getDrawable(R.drawable.ic_share);
-                Drawable copy = getResources().getDrawable(R.drawable.ic_content_copy);
-                final List<Drawable> drawableSet = Arrays.asList(open, share, copy);
-                BlendModeUtil.tintDrawablesAsSrcAtop(drawableSet, color);
-
-                ta.recycle();
-
-                b.sheet(R.id.open_link, open, getResources().getString(R.string.open_externally));
-                b.sheet(R.id.share_link, share, getResources().getString(R.string.share_link));
-                b.sheet(
-                        R.id.copy_link,
-                        copy,
-                        getResources().getString(R.string.submission_link_copy));
-                final Activity finalActivity = activity;
-                b.listener(
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        switch (which) {
-                                            case R.id.open_link:
-                                                LinkUtil.openExternally(url);
-                                                break;
-                                            case R.id.share_link:
-                                                Reddit.defaultShareText("", url, finalActivity);
-                                                break;
-                                            case R.id.copy_link:
-                                                LinkUtil.copyUrl(url, finalActivity);
-                                                break;
-                                        }
-                                    }
-                                })
-                        .show();
-            }
+                                }
+                            })
+                    .show();
+//            }
         }
     }
 
