@@ -143,7 +143,16 @@ public class MultiredditOverview extends BaseActivityAnim {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        List<Submission> posts = ((MultiredditView) adapter.getCurrentFragment()).posts.posts;
+        MultiredditView currentFragment = null;
+        List<Submission> posts = null;
+
+        // Safely get current fragment and its posts
+        if (adapter != null && adapter.getCurrentFragment() instanceof MultiredditView) {
+            currentFragment = (MultiredditView) adapter.getCurrentFragment();
+            if (currentFragment != null && currentFragment.posts != null) {
+                posts = currentFragment.posts.posts;
+            }
+        }
 
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -254,25 +263,23 @@ public class MultiredditOverview extends BaseActivityAnim {
                 ((DrawerLayout) findViewById(R.id.drawer_layout)).openDrawer(Gravity.RIGHT);
                 return true;
             case R.id.gallery:
-                if (posts != null && !posts.isEmpty()) {
+                if (currentFragment != null && posts != null && !posts.isEmpty()) {
                     Intent i2 = new Intent(this, Gallery.class);
                     i2.putExtra(Gallery.EXTRA_PROFILE, profile);
                     i2.putExtra(
                             Gallery.EXTRA_MULTIREDDIT,
-                            ((MultiredditView) adapter.getCurrentFragment())
-                                    .posts.multiReddit.getDisplayName());
+                            currentFragment.posts.multiReddit.getDisplayName());
                     startActivity(i2);
                 }
                 return true;
             case R.id.action_shadowbox:
-                if (posts != null && !posts.isEmpty()) {
+                if (currentFragment != null && posts != null && !posts.isEmpty()) {
                     Intent i = new Intent(this, Shadowbox.class);
                     i.putExtra(Shadowbox.EXTRA_PAGE, getCurrentPage());
                     i.putExtra(Shadowbox.EXTRA_PROFILE, profile);
                     i.putExtra(
                             Shadowbox.EXTRA_MULTIREDDIT,
-                            ((MultiredditView) adapter.getCurrentFragment())
-                                    .posts.multiReddit.getDisplayName());
+                            currentFragment.posts.multiReddit.getDisplayName());
                     startActivity(i);
                 }
                 return true;
