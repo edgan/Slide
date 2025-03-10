@@ -21,18 +21,40 @@
         android:id="@+id/welcome_appIcon"
         android:src="@drawable/ic_launcher"
         android:layout_height="140dp" />
-    <TextView
+    
+    <!-- Bottom container for buttons -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:text="@string/welcome_start"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textAllCaps="true"
-        android:layout_alignParentBottom="true"
         android:layout_height="wrap_content"
-        android:id="@+id/welcome_getStarted"
-        android:padding="16dp"
-        android:gravity="right|center_vertical"
-        android:layout_centerHorizontal="true"
-        />
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/backup_btn_restore_file"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textAllCaps="true"
+            android:id="@+id/welcome_restore"
+            android:gravity="left|center_vertical" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome_start"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textAllCaps="true"
+            android:id="@+id/welcome_getStarted"
+            android:gravity="right|center_vertical" />
+    </LinearLayout>
 </RelativeLayout>

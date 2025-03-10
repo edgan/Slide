@@ -43,6 +43,7 @@ import me.edgan.redditslide.databinding.ChoosemainBinding;
 import me.edgan.redditslide.databinding.ChoosethemesmallBinding;
 import me.edgan.redditslide.databinding.FragmentPersonalizeBinding;
 import me.edgan.redditslide.databinding.FragmentWelcomeBinding;
+import me.edgan.redditslide.ui.settings.SettingsBackup;
 import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.SettingValues;
@@ -108,6 +109,14 @@ public class Tutorial extends AppCompatActivity {
             welcomeBinding = FragmentWelcomeBinding.inflate(inflater, container, false);
             welcomeBinding.welcomeGetStarted.setOnClickListener(
                     v1 -> ((Tutorial) getActivity()).binding.tutorialViewPager.setCurrentItem(1));
+            
+            // Add click listener for restore button
+            welcomeBinding.welcomeRestore.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), SettingsBackup.class);
+                startActivity(intent);
+                getActivity().finish();
+            });
+            
             return welcomeBinding.getRoot();
         }
 
@@ -336,12 +345,6 @@ public class Tutorial extends AppCompatActivity {
                         .setPositiveButton(R.string.btn_ok, null);
 
                 AlertDialog dialog = builder.create();
-
-                dialog.setOnDismissListener(dialogInterface -> {
-                    // Remove the overlay when dialog is dismissed
-                    rootView.removeView(overlayView);
-                });
-
                 dialog.show();
 
                 // Get the positive button and initially disable it
