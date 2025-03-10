@@ -360,6 +360,7 @@ public class Tutorial extends AppCompatActivity {
                 String savedClientId = SettingValues.prefs.getString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
                 input.setText(savedClientId);
                 input.setHint(R.string.enter_client_id);
+                input.setSingleLine(true);  // Make input single line
 
                 // Add EditText to TextInputLayout
                 inputLayout.addView(input);
@@ -367,7 +368,8 @@ public class Tutorial extends AppCompatActivity {
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(contextThemeWrapper)
                         .setTitle(R.string.reddit_client_id_override)
                         .setView(dialogContainer)
-                        .setPositiveButton(R.string.btn_ok, null);
+                        .setPositiveButton(R.string.btn_ok, null)
+                        .setCancelable(false);  // This prevents dismissing when clicking outside
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
