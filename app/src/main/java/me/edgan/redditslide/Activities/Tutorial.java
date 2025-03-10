@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,6 +20,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
@@ -324,6 +328,34 @@ public class Tutorial extends AppCompatActivity {
                 inputLayout.setErrorIconDrawable(null); // Remove error icon
                 inputLayout.setErrorEnabled(true);
 
+                // Calculate padding in dp
+                int paddingDp = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 
+                    16, 
+                    getResources().getDisplayMetrics()
+                );
+
+                // Create a vertical LinearLayout to hold both the link and input
+                LinearLayout dialogContainer = new LinearLayout(contextThemeWrapper);
+                dialogContainer.setOrientation(LinearLayout.VERTICAL);
+                dialogContainer.setPadding(paddingDp, paddingDp, paddingDp, 0);
+
+                // Add the link TextView
+                TextView linkText = new TextView(contextThemeWrapper);
+                linkText.setText("Client ID creation instructions");
+                linkText.setTextColor(new ColorPreferences(getContext()).getColor(""));
+                linkText.setPadding(0, 0, 0, paddingDp);
+                linkText.setPaintFlags(linkText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                linkText.setOnClickListener(v -> {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, 
+                        Uri.parse("https://github.com/edgan/Slide/blob/master/SETUP.md#reddit-client-id-creation-steps"));
+                    startActivity(browserIntent);
+                });
+
+                // Add views to container
+                dialogContainer.addView(linkText);
+                dialogContainer.addView(inputLayout);
+
                 final EditText input = new EditText(contextThemeWrapper);
                 String savedClientId = SettingValues.prefs.getString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
                 input.setText(savedClientId);
@@ -332,16 +364,9 @@ public class Tutorial extends AppCompatActivity {
                 // Add EditText to TextInputLayout
                 inputLayout.addView(input);
 
-                FrameLayout frameLayout = new FrameLayout(contextThemeWrapper);
-                int padding = (int) TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
-                frameLayout.setPadding(padding, 0, padding, 0);
-                frameLayout.addView(inputLayout, new FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(contextThemeWrapper)
                         .setTitle(R.string.reddit_client_id_override)
-                        .setView(frameLayout)
+                        .setView(dialogContainer)
                         .setPositiveButton(R.string.btn_ok, null);
 
                 AlertDialog dialog = builder.create();
