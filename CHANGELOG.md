@@ -2,6 +2,16 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+7.2.3 / 2025-3-9
+================
+* Added a restore form file button to the Tutorial #132
+* Added link to the Client ID instructions #106
+* Added a background the the client id dialog in the tutorial #106
+* Fixed Peek content on Reddit galleries opens Reddit website #123
+* Removed peeking in comments
+* Fixed Reddit GIF loading with peek #124
+* Fixed missing video audio when saving files #122
+
 7.2.2 / 2025-3-2
 ================
 * Two more fixes for subreddit filters
