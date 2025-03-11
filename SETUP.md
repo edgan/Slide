@@ -34,8 +34,10 @@ in the notes of your entry for Reddit in your password manager.
 
 ![Client ID](/screenshots/client_id.png)
 
-**Note, this is just an example Client ID. It was created and deleted. Keep
-yours private.**
+> [!NOTE]
+>
+> This is just an example Client ID. It was created and deleted. Keep
+> yours private.
 
 ### Adding a Reddit Client ID to Slide
 The method of adding a Client ID to Slide depends on whether this is the
