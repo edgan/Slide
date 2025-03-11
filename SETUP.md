@@ -1,5 +1,5 @@
 # Setup
-## Pro version
+## Pro features
 The original dead [project](https://github.com/Haptic-Apps/Slide) had Pro
 features. Those required a paid unlock app the
 [Google Play Store](https://play.google.com/store/games). But that app is no
