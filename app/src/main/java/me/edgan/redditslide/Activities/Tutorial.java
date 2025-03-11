@@ -383,8 +383,8 @@ public class Tutorial extends AppCompatActivity {
                     String clientId = input.getText().toString().trim();
                     String shortClientId = SecretConstants.getGoogleShortClientID(getContext());
 
-                    // If input is 5 chars, validate against shortClientId
-                    if (clientId.length() == 5 && !clientId.equals(shortClientId)) {
+                    // If input is 8 chars, validate against shortClientId
+                    if (clientId.length() == 8 && !clientId.equals(shortClientId)) {
                         inputLayout.setError("Invalid Client ID");
                         return;  // Don't proceed
                     }
