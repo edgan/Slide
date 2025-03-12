@@ -603,7 +603,8 @@
     <string name="settings_delete_sub_settings">Do you really want to delete settings for %1$s?</string>
     <string name="settings_layout_default">Post layout</string>
     <string name="settings_link_album">Internal album view</string>
-    <string name="settings_link_peek">Peek content (experimental)</string>
+    <string name="settings_link_peek">Peek content</string>
+    <string name="settings_link_peek_description">Disables No longclicks on preview image</string>
     <string name="settings_link_gif">Internal GIF view</string>
     <string name="settings_link_hqgif">High quality Gfycat videos</string>
     <string name="settings_link_handling">Link handling</string>
@@ -1240,7 +1241,7 @@
     <string name="comment_emote_animation">Comment emote animation</string>
     <string name="description_comment_emote_animation">Toggles if non-giphy emotes in comments are animated or not</string>
     <string name="no_preview_image_longclick">No longclicks on preview images of any content type</string>
-    <string name="description_no_preview_image_longclick">Toggles if longclicks work on preview images of any content type. It blocks the peek content feature.</string>
+    <string name="description_no_preview_image_longclick">Toggles if longclicks work on preview images of any content type. It disables the peek content feature.</string>
     <string name="editor_btn_select_flair">Select flair</string>
     <string name="submit_selected_flair">Selected flair: %s</string>
     <string name="save_location_error">Failed to set save location. Please try again.</string>

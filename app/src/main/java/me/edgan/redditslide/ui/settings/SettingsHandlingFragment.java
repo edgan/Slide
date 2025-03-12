@@ -213,6 +213,13 @@ public class SettingsHandlingFragment implements CompoundButton.OnCheckedChangeL
                 break;
             case R.id.settings_handling_peek:
                 SettingValues.peek = isChecked;
+                if (isChecked) {
+                    SettingValues.noPreviewImageLongClick = false;
+                    SettingValues.prefs
+                            .edit()
+                            .putBoolean(SettingValues.PREF_NO_PREVIEW_IMAGE_LONGCLICK, false)
+                            .apply();
+                }
                 editSharedBooleanPreference(SettingValues.PREF_PEEK, isChecked);
                 break;
         }

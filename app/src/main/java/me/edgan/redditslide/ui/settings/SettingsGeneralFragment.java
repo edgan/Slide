@@ -411,7 +411,14 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                         (buttonView, isChecked) -> {
                             SettingsThemeFragment.changed = true;
                             SettingValues.noPreviewImageLongClick = isChecked;
-
+                            // When enabling this setting, disable peek
+                            if (isChecked) {
+                                SettingValues.peek = false;
+                                SettingValues.prefs
+                                        .edit()
+                                        .putBoolean(SettingValues.PREF_PEEK, false)
+                                        .apply();
+                            }
                             SettingValues.prefs
                                     .edit()
                                     .putBoolean(
