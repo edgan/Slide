@@ -12,19 +12,23 @@ import static me.edgan.redditslide.Constants.getClientId;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -73,10 +77,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
-import android.view.ContextThemeWrapper;
-import android.widget.EditText;
-import android.content.ActivityNotFoundException;
 
 /** Created by ccrama on 3/5/2015. */
 public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
@@ -1669,12 +1669,37 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
         int paddingPx = (int)(paddingDp * density);
         input.setPadding(paddingPx, input.getPaddingTop(), input.getPaddingRight(), input.getPaddingBottom());
 
+        // Create container for dialog content
+        LinearLayout dialogContainer = new LinearLayout(contextThemeWrapper);
+        dialogContainer.setOrientation(LinearLayout.VERTICAL);
+
+        // Add top padding view
+        View paddingView = new View(contextThemeWrapper);
+        paddingView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, paddingPx));
+        dialogContainer.addView(paddingView);
+
+        // Add instructions link
+        TextView linkText = new TextView(contextThemeWrapper);
+        linkText.setText("Client ID creation instructions");
+        linkText.setTextColor(new ColorPreferences(contextThemeWrapper).getColor(""));
+        linkText.setPaintFlags(linkText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        linkText.setPadding(paddingPx, 0, 0, paddingPx);
+        linkText.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://github.com/edgan/Slide/blob/master/SETUP.md#reddit-client-id"));
+            context.startActivity(browserIntent);
+        });
+
+        dialogContainer.addView(linkText);
+        dialogContainer.addView(input);
+
         final TextView currentClientIdView = context.findViewById(R.id.settings_general_client_id_current);
         final TextView activeClientIdView = context.findViewById(R.id.settings_general_client_id_active_value);
 
         new MaterialAlertDialogBuilder(contextThemeWrapper)
                 .setTitle(R.string.reddit_client_id_override)
-                .setView(input)
+                .setView(dialogContainer)
                 .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
                     String clientId = input.getText().toString().trim();
 
