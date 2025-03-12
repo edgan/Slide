@@ -348,7 +348,7 @@ public class Tutorial extends AppCompatActivity {
                 linkText.setPaintFlags(linkText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                 linkText.setOnClickListener(v -> {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, 
-                        Uri.parse("https://github.com/edgan/Slide/blob/master/SETUP.md#reddit-client-id-creation-steps"));
+                        Uri.parse("https://github.com/edgan/Slide/blob/master/SETUP.md#reddit-client-id"));
                     startActivity(browserIntent);
                 });
 
