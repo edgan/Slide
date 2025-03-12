@@ -147,7 +147,7 @@
     <string name="profile_btn_untag">Remove tag</string>
     <string name="profile_info">Profile information</string>
     <string name="profile_block_user">Block user</string>
-
+    <string name="profile_unblock_user">Unblock user</string>
 
     <!-- Comment text options -->
     <string name="comment_gild">Award comment</string>
@@ -262,7 +262,7 @@
     <string name="err_comment_post_reason">Reason: %1$s</string>
     <string name="err_comment_post_message">\n\nYour message has been saved as a draft. Please try again later.</string>
     <string name="err_connection_failed_msg">The connection to Reddit failed. Please check your internet connection and try again, or enter offline mode.</string>
-    <string name="err_block_user">Error blocking user</string>
+    <string name="err_block_user">Error blocking user. Did you recently unblock this user?</string>
 
     <!-- Gif -->
     <string name="gif_err_title">GIF not found</string>
@@ -1216,6 +1216,8 @@
     <string name="setting_notification_piggybacking_desc">Check for mail only when the official Reddit app gets a push notification</string>
     <string name="install_notif_piggyback">Install the official Reddit app to enable Notification Piggybacking</string>
     <string name="success_block_user">User blocked successfully</string>
+    <string name="err_unblock_user">Error unblocking user</string>
+    <string name="success_unblock_user">User unblocked successfully</string>
     <string name="settings_highlight_time_desc">Requires \'Show comment count since last visit\' to be enabled in Settings &gt; Post Layout</string>
     <string name="settings_colored_time">Colored time bubble for new comments</string>
     <string name="theme_deep">Deep</string>

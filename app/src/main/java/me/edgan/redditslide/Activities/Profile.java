@@ -60,14 +60,25 @@ import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.TimeUtils;
 
 import net.dean.jraw.fluent.FluentRedditClient;
+import net.dean.jraw.http.RestResponse;
 import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.models.Account;
 import net.dean.jraw.models.Trophy;
 import net.dean.jraw.paginators.Sorting;
 import net.dean.jraw.paginators.TimePeriod;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import uz.shift.colorpicker.LineColorPicker;
 import uz.shift.colorpicker.OnColorChangedListener;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -319,6 +330,116 @@ public class Profile extends BaseActivityAnim {
         public CharSequence getPageTitle(int position) {
             return usedArray[position];
         }
+    }
+
+    /**
+     * Checks if the user (with username stored in 'name') is blocked.
+     * This method calls Authentication.reddit.getUser(name) to get fresh data,
+     * converts the returned Account to JSON (assuming its toString() returns JSON)
+     * and then reads the "is_blocked" boolean.
+     */
+    private void checkBlockStatusAndToggle() {
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                try {
+                    RestResponse response = Authentication.reddit.execute(
+                        Authentication.reddit.request()
+                            .get()
+                            .path("/prefs/blocked")
+                            .build()
+                    );
+                    String rawResponse = response.getRaw();
+                    JSONObject json = new JSONObject(rawResponse);
+                    JSONObject dataObj = json.getJSONObject("data");
+                    JSONArray children = dataObj.getJSONArray("children");
+                    // Iterate over the blocked users list.
+                    for (int i = 0; i < children.length(); i++) {
+                        JSONObject userObj = children.getJSONObject(i);
+                        String blockedUser = userObj.getString("name");
+                        // If the target username is found, then the user is blocked.
+                        if (blockedUser.equalsIgnoreCase(name)) {
+                            return true;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                // Return false if not found or an error occurred.
+                return false;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean isBlocked) {
+                // If the user is already blocked, call unblockUser, otherwise block the user.
+                if (isBlocked) {
+                    unblockUser();
+                } else {
+                    blockUser();
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void blockUser() {
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                Map<String, String> map = new HashMap<>();
+                map.put("account_id", "t2_" + account.getId());
+                try {
+                    Authentication.reddit.execute(
+                        Authentication.reddit.request()
+                            .post(map)
+                            .path("/api/block_user")
+                            .build());
+                } catch (Exception ex) {
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean blocked) {
+                if (!blocked) {
+                    Toast.makeText(getBaseContext(), getString(R.string.err_block_user), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getBaseContext(), getString(R.string.success_block_user), Toast.LENGTH_LONG).show();
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void unblockUser() {
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                Map<String, String> map = new HashMap<>();
+                map.put("id", "t2_" + account.getId());
+                map.put("container", "t2_" + Authentication.reddit.getUser(Authentication.me.getFullName()).getId());
+                map.put("type", "enemy"); // required parameter for unblocking
+                try {
+                    Authentication.reddit.execute(
+                        Authentication.reddit.request()
+                            .post(map)
+                            .path("/api/unfriend")
+                            .build());
+                } catch (Exception ex) {
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean unblocked) {
+                if (!unblocked) {
+                    Toast.makeText(getBaseContext(), getString(R.string.err_unblock_user), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getBaseContext(), getString(R.string.success_unblock_user), Toast.LENGTH_LONG).show();
+                    // Optionally update the UI to revert to a “Block” button appearance
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void openPopup() {
@@ -801,48 +922,7 @@ public class Profile extends BaseActivityAnim {
                                         new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                new AsyncTask<Void, Void, Boolean>() {
-                                                    @Override
-                                                    protected Boolean doInBackground(
-                                                            Void... params) {
-                                                        Map<String, String> map = new HashMap();
-                                                        map.put(
-                                                                "account_id",
-                                                                "t2_" + account.getId());
-                                                        try {
-                                                            Authentication.reddit.execute(
-                                                                    Authentication.reddit
-                                                                            .request()
-                                                                            .post(map)
-                                                                            .path("/api/block_user")
-                                                                            .build());
-                                                        } catch (Exception ex) {
-                                                            return false;
-                                                        }
-                                                        return true;
-                                                    }
-
-                                                    @Override
-                                                    public void onPostExecute(Boolean blocked) {
-                                                        if (!blocked) {
-                                                            Toast.makeText(
-                                                                            getBaseContext(),
-                                                                            getString(
-                                                                                    R.string
-                                                                                            .err_block_user),
-                                                                            Toast.LENGTH_LONG)
-                                                                    .show();
-                                                        } else {
-                                                            Toast.makeText(
-                                                                            getBaseContext(),
-                                                                            getString(
-                                                                                    R.string
-                                                                                            .success_block_user),
-                                                                            Toast.LENGTH_LONG)
-                                                                    .show();
-                                                        }
-                                                    }
-                                                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                                checkBlockStatusAndToggle();
                                             }
                                         });
                     } else {
