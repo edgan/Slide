@@ -59,6 +59,8 @@ public class SettingsCommentsFragment {
                 context.findViewById(R.id.settings_comments_collapseChildComments);
         final SwitchCompat commentsCollapseDeletedCommentsSwitch =
                 context.findViewById(R.id.settings_comments_collapseDeletedComments);
+        final SwitchCompat commentsCollapseStickyCommentSwitch =
+                context.findViewById(R.id.settings_comments_collapseStickyComment);
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // * Display */
@@ -217,6 +219,14 @@ public class SettingsCommentsFragment {
                     SettingValues.collapseDeletedComments = isChecked;
                     editSharedBooleanPreference(
                             SettingValues.PREF_COLLAPSE_DELETED_COMMENTS, isChecked);
+                });
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        commentsCollapseStickyCommentSwitch.setChecked(SettingValues.collapseStickyComment);
+        commentsCollapseStickyCommentSwitch.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> {
+                    SettingValues.collapseStickyComment = isChecked;
+                    editSharedBooleanPreference(
+                            SettingValues.PREF_COLLAPSE_STICKY_COMMENT, isChecked);
                 });
     }
 
