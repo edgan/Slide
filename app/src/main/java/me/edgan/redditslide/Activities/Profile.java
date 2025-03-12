@@ -338,7 +338,7 @@ public class Profile extends BaseActivityAnim {
      * converts the returned Account to JSON (assuming its toString() returns JSON)
      * and then reads the "is_blocked" boolean.
      */
-    private void checkBlockStatusAndToggle() {
+    private void checkBlockStatusAndToggle(final TextView blockButton) {
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -373,15 +373,53 @@ public class Profile extends BaseActivityAnim {
             protected void onPostExecute(Boolean isBlocked) {
                 // If the user is already blocked, call unblockUser, otherwise block the user.
                 if (isBlocked) {
-                    unblockUser();
+                    unblockUser(blockButton);
                 } else {
-                    blockUser();
+                    blockUser(blockButton);
                 }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void blockUser() {
+    private void updateBlockButtonState(final TextView blockButton) {
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                try {
+                    RestResponse response = Authentication.reddit.execute(
+                        Authentication.reddit.request()
+                            .get()
+                            .path("/prefs/blocked")
+                            .build()
+                    );
+                    String rawResponse = response.getRaw();
+                    JSONObject json = new JSONObject(rawResponse);
+                    JSONObject dataObj = json.getJSONObject("data");
+                    JSONArray children = dataObj.getJSONArray("children");
+                    for (int i = 0; i < children.length(); i++) {
+                        JSONObject userObj = children.getJSONObject(i);
+                        String blockedUser = userObj.getString("name");
+                        if (blockedUser.equalsIgnoreCase(name)) {
+                            return true;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+            @Override
+            protected void onPostExecute(Boolean isBlocked) {
+                if (isBlocked) {
+                    blockButton.setText(getString(R.string.profile_unblock_user));
+                } else {
+                    blockButton.setText(getString(R.string.profile_block_user));
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void blockUser(final TextView blockButton) {
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -405,12 +443,13 @@ public class Profile extends BaseActivityAnim {
                     Toast.makeText(getBaseContext(), getString(R.string.err_block_user), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getBaseContext(), getString(R.string.success_block_user), Toast.LENGTH_LONG).show();
+                    blockButton.setText(getString(R.string.profile_unblock_user));
                 }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void unblockUser() {
+    private void unblockUser(final TextView blockButton) {
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
@@ -436,7 +475,7 @@ public class Profile extends BaseActivityAnim {
                     Toast.makeText(getBaseContext(), getString(R.string.err_unblock_user), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getBaseContext(), getString(R.string.success_unblock_user), Toast.LENGTH_LONG).show();
-                    // Optionally update the UI to revert to a “Block” button appearance
+                    blockButton.setText(getString(R.string.profile_block_user));
                 }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -916,13 +955,15 @@ public class Profile extends BaseActivityAnim {
                                             }
                                         });
 
+                        final TextView blockButton = (TextView) dialoglayout.findViewById(R.id.block);
+                        updateBlockButtonState(blockButton);
                         dialoglayout
                                 .findViewById(R.id.block_body)
                                 .setOnClickListener(
                                         new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                checkBlockStatusAndToggle();
+                                                checkBlockStatusAndToggle(blockButton);
                                             }
                                         });
                     } else {
