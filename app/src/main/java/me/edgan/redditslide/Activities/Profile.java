@@ -127,7 +127,7 @@ public class Profile extends BaseActivityAnim {
         setupUserAppBar(R.id.toolbar, name, true, name);
         mToolbar.setPopupTheme(new ColorPreferences(this).getFontStyle().getBaseId());
 
-        profSort = Sorting.HOT;
+        profSort = Sorting.NEW;
         profTime = TimePeriod.ALL;
 
         findViewById(R.id.header).setBackgroundColor(Palette.getColorUser(name));
