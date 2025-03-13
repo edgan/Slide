@@ -1,6 +1,6 @@
 ---
-description: Don't break escape characters in strings.xml 
-globs: strings.xml
+description: Don't break escape characters in xml files
+globs: *.xml
 alwaysApply: true
 ---
 
