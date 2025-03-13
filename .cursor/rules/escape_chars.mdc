@@ -1,0 +1,7 @@
+---
+description: Don't break escape characters in strings.xml 
+globs: strings.xml
+alwaysApply: true
+---
+
+Leave lines with escaped characters alone unless you need to modify that exact line. If lines with escaped characters do need to be modified, escape them in the same style.

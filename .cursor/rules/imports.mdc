@@ -1,0 +1,7 @@
+---
+description: Include new imports
+globs: *.java
+alwaysApply: true
+---
+
+Be sure to include new imports when making changes.
