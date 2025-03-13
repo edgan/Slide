@@ -483,7 +483,7 @@ public class Profile extends BaseActivityAnim {
 
     public void openPopup() {
         PopupMenu popup = new PopupMenu(Profile.this, findViewById(R.id.anchor), Gravity.RIGHT);
-        final Spannable[] base = SortingUtil.getSortingSpannables(profSort);
+        final Spannable[] base = SortingUtil.getProfileSortingSpannables(profSort);
         for (Spannable s : base) {
             MenuItem m = popup.getMenu().add(s);
         }
@@ -506,13 +506,10 @@ public class Profile extends BaseActivityAnim {
                                 profSort = (Sorting.NEW);
                                 break;
                             case 2:
-                                profSort = (Sorting.RISING);
-                                break;
-                            case 3:
                                 profSort = (Sorting.TOP);
                                 openPopupTime();
                                 return true;
-                            case 4:
+                            case 3:
                                 profSort = (Sorting.CONTROVERSIAL);
                                 openPopupTime();
                                 return true;
