@@ -1020,6 +1020,9 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
                                         LinkUtil.openExternally(adapter.submission.getUrl());
                                     }
                                     break;
+                                case REDDIT_GALLERY:
+                                    LinkUtil.openExternally(adapter.submission.getUrl());
+                                    break;
                                 case REDDIT:
                                     PopulateSubmissionViewHolder.openRedditContent(
                                             adapter.submission.getUrl(), getActivity());
