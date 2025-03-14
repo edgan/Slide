@@ -788,31 +788,34 @@ public class AlbumPager extends BaseSaveActivity {
         image.setMinimumTileDpi(240);
         ImageView fakeImage = new ImageView(f.getActivity());
         final TextView size = rootView.findViewById(R.id.size);
-        fakeImage.setLayoutParams(
-                new LinearLayout.LayoutParams(image.getWidth(), image.getHeight()));
+        fakeImage.setLayoutParams(new LinearLayout.LayoutParams(image.getWidth(), image.getHeight()));
         fakeImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        DisplayImageOptions options =
-                new DisplayImageOptions.Builder()
-                        .resetViewBeforeLoading(true)
-                        .cacheOnDisk(true)
-                        .imageScaleType(single ? ImageScaleType.NONE : ImageScaleType.NONE_SAFE)
-                        .cacheInMemory(true)
-                        .considerExifParams(true)
-                        .build();
+
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .resetViewBeforeLoading(true)
+                .cacheOnDisk(true)
+                .imageScaleType(single ? ImageScaleType.NONE : ImageScaleType.NONE_SAFE)
+                .cacheInMemory(true)
+                .considerExifParams(true)
+                .build();
 
         ((Reddit) f.getActivity().getApplication())
                 .getImageLoader()
-                .loadImage(
-                        url,
-                        options,
-                        new SimpleImageLoadingListener() {
-                            @Override
-                            public void onLoadingComplete(
-                                    String imageUri, View view, Bitmap loadedImage) {
-                                size.setVisibility(View.GONE);
-                                image.setImage(ImageSource.bitmap(loadedImage));
-                                rootView.findViewById(R.id.progress).setVisibility(View.GONE);
-                            }
-                        });
+                .loadImage(url, options, new SimpleImageLoadingListener() {
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        // Added null‐check to avoid the "Bitmap must not be null" crash
+                        if (loadedImage == null) {
+                            // Graceful fallback, e.g. hide progress or show a placeholder
+                            size.setVisibility(View.GONE);
+                            rootView.findViewById(R.id.progress).setVisibility(View.GONE);
+                            return;
+                        }
+
+                        size.setVisibility(View.GONE);
+                        image.setImage(ImageSource.bitmap(loadedImage));
+                        rootView.findViewById(R.id.progress).setVisibility(View.GONE);
+                    }
+                });
     }
 }
