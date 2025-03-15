@@ -2,6 +2,17 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+7.2.4 / 2025-3-15
+=================
+* Fixed "Open content" option doesn’t support Reddit Galleries #115
+* Fixed Sorting in User Profiles #139
+* Always fully collapse the sticky comment
+* Added link to the Client ID instructions the dialog in General settings
+* Allow user to unblock another user #126
+* Made Peek content and No longclicks on preview images toggle each other
+* Fixed an ANR when reloading subs #134
+* Fixed crashes in MultiredditOverview.java #133 #141
+
 7.2.3 / 2025-3-9
 ================
 * Added a restore form file button to the Tutorial #132
