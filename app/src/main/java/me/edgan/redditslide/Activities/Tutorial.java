@@ -428,7 +428,7 @@ public class Tutorial extends AppCompatActivity {
                     @Override
                     public void afterTextChanged(Editable s) {
                         int length = s.toString().trim().length();
-                        positiveButton.setEnabled(length == 5 || length == 22);
+                        positiveButton.setEnabled(length == 8 || length == 22);
                     }
                 });
             });
