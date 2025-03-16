@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import me.edgan.redditslide.Activities.GalleryParent;
 import me.edgan.redditslide.Adapters.RedditGalleryView;
 import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
@@ -45,7 +46,7 @@ import java.util.List;
  * Activity for displaying Reddit gallery content in a vertical scrolling view. Supports downloading
  * images using the Storage Access Framework.
  */
-public class RedditGallery extends BaseSaveActivity {
+public class RedditGallery extends BaseSaveActivity implements GalleryParent {
 
     public static final String SUBREDDIT = "subreddit";
     public static final String GALLERY_URLS = "galleryurls";
@@ -146,48 +147,45 @@ public class RedditGallery extends BaseSaveActivity {
         return true;
     }
 
-// Add this to RedditGallery.java, just before the onCreate method or inside it
-// This ensures all gallery images are properly loaded from the JSON data
-
-@Override
-public void onCreate(Bundle savedInstanceState) {
-    overrideSwipeFromAnywhere();
-    super.onCreate(savedInstanceState);
-    getTheme()
-            .applyStyle(
-                    new ColorPreferences(this)
-                            .getDarkThemeSubreddit(ColorPreferences.FONT_STYLE),
-                    true);
-    setContentView(R.layout.album);
-    // Keep the screen on
-    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    if (getIntent().hasExtra(SUBREDDIT)) {
-        this.subreddit = getIntent().getExtras().getString(SUBREDDIT);
-    }
-    if (getIntent().hasExtra(EXTRA_SUBMISSION_TITLE)) {
-        this.submissionTitle = getIntent().getExtras().getString(EXTRA_SUBMISSION_TITLE);
-    }
-
-    // Extract and verify the gallery URLs
-    images = (ArrayList<GalleryImage>) getIntent().getSerializableExtra(RedditGallery.GALLERY_URLS);
-
-    // Debug: Check images array for content
-    if (images != null) {
-        LogUtil.v("Gallery Images count: " + images.size());
-        for (int i = 0; i < images.size(); i++) {
-            LogUtil.v("Image " + i + ": " + images.get(i).url + " (animated: " + images.get(i).isAnimated() + ")");
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        overrideSwipeFromAnywhere();
+        super.onCreate(savedInstanceState);
+        getTheme()
+                .applyStyle(
+                        new ColorPreferences(this)
+                                .getDarkThemeSubreddit(ColorPreferences.FONT_STYLE),
+                        true);
+        setContentView(R.layout.album);
+        // Keep the screen on
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        if (getIntent().hasExtra(SUBREDDIT)) {
+            this.subreddit = getIntent().getExtras().getString(SUBREDDIT);
         }
-    } else {
-        LogUtil.e("Gallery Images is null!");
+        if (getIntent().hasExtra(EXTRA_SUBMISSION_TITLE)) {
+            this.submissionTitle = getIntent().getExtras().getString(EXTRA_SUBMISSION_TITLE);
+        }
+
+        // Extract and verify the gallery URLs
+        images = (ArrayList<GalleryImage>) getIntent().getSerializableExtra(RedditGallery.GALLERY_URLS);
+
+        // Debug: Check images array for content
+        if (images != null) {
+            LogUtil.v("Gallery Images count: " + images.size());
+            for (int i = 0; i < images.size(); i++) {
+                LogUtil.v("Image " + i + ": " + images.get(i).url + " (animated: " + images.get(i).isAnimated() + ")");
+            }
+        } else {
+            LogUtil.e("Gallery Images is null!");
+        }
+
+        final ViewPager pager = (ViewPager) findViewById(R.id.images);
+        gallery = new RedditGalleryPagerAdapter(getSupportFragmentManager());
+        pager.setAdapter(gallery);
+        pager.setCurrentItem(1);
+
+        // Rest of the code remains the same...
     }
-
-    final ViewPager pager = (ViewPager) findViewById(R.id.images);
-    gallery = new RedditGalleryPagerAdapter(getSupportFragmentManager());
-    pager.setAdapter(gallery);
-    pager.setCurrentItem(1);
-
-    // Rest of the code remains the same...
-}
 
     private void configureViewPager(final ViewPager pager) {
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {});
@@ -237,70 +235,70 @@ public void onCreate(Bundle savedInstanceState) {
         }
     }
 
-public static class AlbumFrag extends Fragment {
-    private int i = 0;
-    View rootView;
-    public RecyclerView recyclerView;
-    private void setLastContentUrl(final String url) {
-        lastContentUrl = url; // Store for potential retry after permission grant
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_verticalalbum, container, false);
-        GalleryImage current = ((RedditGallery) getActivity()).images.get(i);
-        final String url = current.getImageUrl();
-        this.setLastContentUrl(url);
-
-        final PreCachingLayoutManager mLayoutManager =
-                new PreCachingLayoutManager(getActivity());
-        recyclerView = rootView.findViewById(R.id.images);
-        recyclerView.setLayoutManager(mLayoutManager);
-        final RedditGallery galleryActivity = (RedditGallery) getActivity();
-        if (galleryActivity != null) {
-            galleryActivity.images =
-                    (ArrayList<GalleryImage>)
-                            getActivity()
-                                    .getIntent()
-                                    .getSerializableExtra(RedditGallery.GALLERY_URLS);
-            galleryActivity.mToolbar = rootView.findViewById(R.id.toolbar);
-            galleryActivity.mToolbar.setTitle(R.string.type_gallery);
-            ToolbarColorizeHelper.colorizeToolbar(
-                    galleryActivity.mToolbar, Color.WHITE, getActivity());
-            galleryActivity.setSupportActionBar(galleryActivity.mToolbar);
-            galleryActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            galleryActivity.mToolbar.setPopupTheme(
-                    new ColorPreferences(getActivity())
-                            .getDarkThemeSubreddit(ColorPreferences.FONT_STYLE));
-            rootView.post(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            rootView.findViewById(R.id.progress).setVisibility(View.GONE);
-
-                            // Fix animated content URLs by replacing animated GIFs with their original URL
-                            for (int i = 0; i < galleryActivity.images.size(); i++) {
-                                GalleryImage img = galleryActivity.images.get(i);
-                                if (img.isAnimated()) {
-                                    String gifUrl = img.url;
-                                    galleryActivity.images.get(i).url = gifUrl;
-                                }
-                            }
-
-                            RedditGalleryView adapter =
-                                    new RedditGalleryView(
-                                            galleryActivity,
-                                            galleryActivity.images,
-                                            rootView.findViewById(R.id.toolbar).getHeight(),
-                                            galleryActivity.subreddit,
-                                            galleryActivity.submissionTitle);
-                            recyclerView.setAdapter(adapter);
-                        }
-                    });
+    public static class AlbumFrag extends Fragment {
+        private int i = 0;
+        View rootView;
+        public RecyclerView recyclerView;
+        private void setLastContentUrl(final String url) {
+            lastContentUrl = url; // Store for potential retry after permission grant
         }
-        return rootView;
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            rootView = inflater.inflate(R.layout.fragment_verticalalbum, container, false);
+            GalleryImage current = ((RedditGallery) getActivity()).images.get(i);
+            final String url = current.getImageUrl();
+            this.setLastContentUrl(url);
+
+            final PreCachingLayoutManager mLayoutManager =
+                    new PreCachingLayoutManager(getActivity());
+            recyclerView = rootView.findViewById(R.id.images);
+            recyclerView.setLayoutManager(mLayoutManager);
+            final RedditGallery galleryActivity = (RedditGallery) getActivity();
+            if (galleryActivity != null) {
+                galleryActivity.images =
+                        (ArrayList<GalleryImage>)
+                                getActivity()
+                                        .getIntent()
+                                        .getSerializableExtra(RedditGallery.GALLERY_URLS);
+                galleryActivity.mToolbar = rootView.findViewById(R.id.toolbar);
+                galleryActivity.mToolbar.setTitle(R.string.type_gallery);
+                ToolbarColorizeHelper.colorizeToolbar(
+                        galleryActivity.mToolbar, Color.WHITE, getActivity());
+                galleryActivity.setSupportActionBar(galleryActivity.mToolbar);
+                galleryActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                galleryActivity.mToolbar.setPopupTheme(
+                        new ColorPreferences(getActivity())
+                                .getDarkThemeSubreddit(ColorPreferences.FONT_STYLE));
+                rootView.post(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                rootView.findViewById(R.id.progress).setVisibility(View.GONE);
+
+                                // Fix animated content URLs by replacing animated GIFs with their original URL
+                                for (int i = 0; i < galleryActivity.images.size(); i++) {
+                                    GalleryImage img = galleryActivity.images.get(i);
+                                    if (img.isAnimated()) {
+                                        String gifUrl = img.url;
+                                        galleryActivity.images.get(i).url = gifUrl;
+                                    }
+                                }
+
+                                RedditGalleryView adapter =
+                                        new RedditGalleryView(
+                                                galleryActivity,
+                                                galleryActivity.images,
+                                                rootView.findViewById(R.id.toolbar).getHeight(),
+                                                galleryActivity.subreddit,
+                                                galleryActivity.submissionTitle);
+                                recyclerView.setAdapter(adapter);
+                            }
+                        });
+            }
+            return rootView;
+        }
     }
-}
 
     public void doImageSave(boolean isGif, String contentUrl, int index) {
         Uri storageUri = StorageUtil.getStorageUri(this);
@@ -390,10 +388,16 @@ public static class AlbumFrag extends Fragment {
         builder.show();
     }
 
+    // Modify the Gif class to use the interface
     public static class Gif extends Fragment {
         private int position = 0;
         private View gifView;
         private ProgressBar loader;
+
+        // Override this in subclasses to provide appropriate parent
+        protected GalleryParent getGalleryParent() {
+            return (RedditGallery) getActivity();
+        }
 
         @Override
         public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -431,52 +435,73 @@ public static class AlbumFrag extends Fragment {
             final me.edgan.redditslide.Views.ExoVideoView exoVideoView = (me.edgan.redditslide.Views.ExoVideoView) gifView;
             exoVideoView.clearFocus();
 
-            // Get the “parent” activity’s images list
-            RedditGallery activity = (RedditGallery) getActivity();
-            if (activity != null && activity.images != null && position < activity.images.size()) {
-                final GalleryImage current = activity.images.get(position);
-                final String url = current.getImageUrl();
+            // Get the gallery parent interface for data
+            GalleryParent galleryParent = getGalleryParent();
 
-                // Use GifUtils to handle MP4 or GIF
-                new me.edgan.redditslide.util.GifUtils.AsyncLoadGif(
-                        getActivity(),
-                        exoVideoView,
-                        loader,
-                        null,
-                        null,
-                        false,
-                        true,
-                        rootView.findViewById(R.id.size),
-                        activity.subreddit,
-                        activity.submissionTitle
-                ).execute(url);
+            if (galleryParent != null) {
+                List<GalleryImage> images = galleryParent.getGalleryImages();
 
-                // The “more” (overflow) button
-                rootView.findViewById(R.id.more).setOnClickListener(
-                        v -> {
-                            // isGif = true for any “animated” content, including MP4
-                            if (activity != null) {
-                                activity.showBottomSheetImage(url, /* isGif= */ true, position);
-                            }
-                        }
-                );
+                if (images != null && position < images.size()) {
+                    final GalleryImage current = images.get(position);
+                    final String url = current.getImageUrl();
 
-                // The “save” button
-                rootView.findViewById(R.id.save).setOnClickListener(
-                        v -> {
-                            if (url != null && activity != null) {
-                                activity.doImageSave(/* isGif= */ true, url, position);
-                            }
-                        }
-                );
+                    // Use GifUtils to handle MP4 or GIF
+                    new me.edgan.redditslide.util.GifUtils.AsyncLoadGif(
+                            getActivity(),
+                            exoVideoView,
+                            loader,
+                            null,
+                            null,
+                            false,
+                            true,
+                            rootView.findViewById(R.id.size),
+                            galleryParent.getGallerySubreddit(),
+                            galleryParent.getGallerySubmissionTitle()
+                    ).execute(url);
 
-                // Hide the save button if user preference is off
-                if (!me.edgan.redditslide.SettingValues.imageDownloadButton) {
-                    rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
+                    // The "more" (overflow) button
+                    rootView.findViewById(R.id.more).setOnClickListener(
+                            v -> galleryParent.showGalleryBottomSheet(url, true, position)
+                    );
+
+                    // The "save" button
+                    rootView.findViewById(R.id.save).setOnClickListener(
+                            v -> galleryParent.saveGalleryMedia(true, url, position)
+                    );
+
+                    // Hide the save button if user preference is off
+                    if (!me.edgan.redditslide.SettingValues.imageDownloadButton) {
+                        rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
+                    }
                 }
             }
 
             return rootView;
         }
+    }
+
+    @Override
+    public List<GalleryImage> getGalleryImages() {
+        return images;
+    }
+
+    @Override
+    public String getGallerySubreddit() {
+        return subreddit;
+    }
+
+    @Override
+    public String getGallerySubmissionTitle() {
+        return submissionTitle;
+    }
+
+    @Override
+    public void showGalleryBottomSheet(String url, boolean isGif, int position) {
+        showBottomSheetImage(url, isGif, position);
+    }
+
+    @Override
+    public void saveGalleryMedia(boolean isGif, String url, int position) {
+        doImageSave(isGif, url, position);
     }
 }
