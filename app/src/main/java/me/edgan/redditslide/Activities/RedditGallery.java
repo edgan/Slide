@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -282,22 +283,7 @@ public static class AlbumFrag extends Fragment {
                                 GalleryImage img = galleryActivity.images.get(i);
                                 if (img.isAnimated()) {
                                     String gifUrl = img.url;
-                                    LogUtil.v("Processing animated URL: " + gifUrl);
-
-                                    // Get the original Reddit GIF URL from the media_metadata
-                                    if (gifUrl.contains("preview.redd.it") && gifUrl.contains(".gif")) {
-                                        // Extract the media ID from the URL
-                                        String[] parts = gifUrl.split("/");
-                                        String mediaId = parts[parts.length - 1].split("\\.")[0];
-                                        LogUtil.v("Extracted media ID: " + mediaId);
-
-                                        // Try to use the original Reddit GIF URL instead
-                                        String originalGifUrl = "https://i.redd.it/" + mediaId + ".gif";
-                                        LogUtil.v("Using original GIF URL: " + originalGifUrl);
-
-                                        // Update the URL in the image object
-                                        galleryActivity.images.get(i).url = originalGifUrl;
-                                    }
+                                    galleryActivity.images.get(i).url = gifUrl;
                                 }
                             }
 
@@ -347,6 +333,150 @@ public static class AlbumFrag extends Fragment {
 
                 startService(i);
             }
+        }
+    }
+
+    public void showBottomSheetImage(final String contentUrl, final boolean isGif, final int index) {
+        // Remember this URL in case we need to request storage permission
+        lastContentUrl = contentUrl;
+
+        // Use the same tinted drawables approach
+        int[] attrs = new int[] { R.attr.tintColor };
+        android.content.res.TypedArray ta = obtainStyledAttributes(attrs);
+        int color = ta.getColor(0, android.graphics.Color.WHITE);
+        ta.recycle();
+
+        android.graphics.drawable.Drawable external = getResources().getDrawable(R.drawable.ic_open_in_browser);
+        android.graphics.drawable.Drawable share = getResources().getDrawable(R.drawable.ic_share);
+        android.graphics.drawable.Drawable image = getResources().getDrawable(R.drawable.ic_image);
+        android.graphics.drawable.Drawable save = getResources().getDrawable(R.drawable.ic_download);
+
+        // Tint them
+        me.edgan.redditslide.util.BlendModeUtil.tintDrawablesAsSrcAtop(
+                java.util.Arrays.asList(external, share, image, save), color);
+
+        // Build the bottom sheet
+        com.cocosw.bottomsheet.BottomSheet.Builder builder = new com.cocosw.bottomsheet.BottomSheet.Builder(this)
+                .title(contentUrl);
+
+        builder.sheet(2, external, getString(R.string.open_externally));
+        builder.sheet(5, share, getString(R.string.submission_link_share));
+        if (!isGif) {
+            builder.sheet(3, image, getString(R.string.share_image));
+        }
+        builder.sheet(4, save, getString(R.string.submission_save_image));
+
+        builder.listener((dialog, which) -> {
+            switch (which) {
+                case 2:
+                    // "Open externally"
+                    me.edgan.redditslide.util.LinkUtil.openExternally(contentUrl);
+                    break;
+                case 3:
+                    // "Share image"
+                    me.edgan.redditslide.util.ShareUtil.shareImage(contentUrl, RedditGallery.this);
+                    break;
+                case 5:
+                    // "Share link"
+                    me.edgan.redditslide.Reddit.defaultShareText("", contentUrl, RedditGallery.this);
+                    break;
+                case 4:
+                    // "Save" - same approach as in doImageSave
+                    doImageSave(isGif, contentUrl, index);
+                    break;
+            }
+        });
+
+        builder.show();
+    }
+
+    public static class Gif extends Fragment {
+        private int position = 0;
+        private View gifView;
+        private ProgressBar loader;
+
+        @Override
+        public void setUserVisibleHint(boolean isVisibleToUser) {
+            super.setUserVisibleHint(isVisibleToUser);
+            // If the Fragment is visible or hidden, play or pause the video
+            if (this.isVisible() && gifView instanceof me.edgan.redditslide.Views.ExoVideoView) {
+                me.edgan.redditslide.Views.ExoVideoView exoVideo = (me.edgan.redditslide.Views.ExoVideoView) gifView;
+                if (!isVisibleToUser) {
+                    exoVideo.pause();
+                    gifView.setVisibility(View.GONE);
+                } else {
+                    exoVideo.play();
+                    gifView.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                position = bundle.getInt("page", 0);
+            }
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.submission_gifcard_album, container, false);
+
+            loader = rootView.findViewById(R.id.gifprogress);
+            gifView = rootView.findViewById(R.id.gif);
+            gifView.setVisibility(View.VISIBLE);
+
+            final me.edgan.redditslide.Views.ExoVideoView exoVideoView = (me.edgan.redditslide.Views.ExoVideoView) gifView;
+            exoVideoView.clearFocus();
+
+            // Get the “parent” activity’s images list
+            RedditGallery activity = (RedditGallery) getActivity();
+            if (activity != null && activity.images != null && position < activity.images.size()) {
+                final GalleryImage current = activity.images.get(position);
+                final String url = current.getImageUrl();
+
+                // Use GifUtils to handle MP4 or GIF
+                new me.edgan.redditslide.util.GifUtils.AsyncLoadGif(
+                        getActivity(),
+                        exoVideoView,
+                        loader,
+                        null,
+                        null,
+                        false,
+                        true,
+                        rootView.findViewById(R.id.size),
+                        activity.subreddit,
+                        activity.submissionTitle
+                ).execute(url);
+
+                // The “more” (overflow) button
+                rootView.findViewById(R.id.more).setOnClickListener(
+                        v -> {
+                            // isGif = true for any “animated” content, including MP4
+                            if (activity != null) {
+                                activity.showBottomSheetImage(url, /* isGif= */ true, position);
+                            }
+                        }
+                );
+
+                // The “save” button
+                rootView.findViewById(R.id.save).setOnClickListener(
+                        v -> {
+                            if (url != null && activity != null) {
+                                activity.doImageSave(/* isGif= */ true, url, position);
+                            }
+                        }
+                );
+
+                // Hide the save button if user preference is off
+                if (!me.edgan.redditslide.SettingValues.imageDownloadButton) {
+                    rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
+                }
+            }
+
+            return rootView;
         }
     }
 }
