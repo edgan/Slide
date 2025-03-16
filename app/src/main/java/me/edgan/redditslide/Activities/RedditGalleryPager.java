@@ -191,6 +191,11 @@ public class RedditGalleryPager extends BaseSaveActivity {
                 new Runnable() {
                     @Override
                     public void run() {
+                        if (images == null || images.isEmpty()) {
+                            // Don't attempt to load any positions if there are no images
+                            return;
+                        }
+
                         // If there is more than one position, load both position 0 and 1.
                         if (adapter.getCount() > 1) {
                             adapter.instantiateItem(p, 0);
