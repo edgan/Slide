@@ -16,9 +16,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener;
 
 import com.devspark.robototextview.RobotoTypefaces;
 
@@ -53,6 +55,8 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
     public int height;
     public String subreddit;
     private final String submissionTitle;
+
+    private RecyclerView recyclerView;
 
     public RedditGalleryView(
             final Activity context,
@@ -152,6 +156,20 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView = recyclerView;
+
+        // Add scroll listener to manage view transitions
+        recyclerView.addOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
+    }
+
+    @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder2, int position) {
         if (holder2 instanceof SpacerViewHolder) {
             // Adjust spacer height to match the toolbar height or user-specified padding
@@ -168,10 +186,16 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
         final int actualIndex = paddingBottom ? position : position - 1;
         final GalleryImage image = images.get(actualIndex);
 
+        // Add a solid background to prevent bleed-through
+        holder2.itemView.setBackgroundColor(android.graphics.Color.BLACK);
+
         // 1) Animated items
         if (holder2 instanceof AnimatedViewHolder) {
             AnimatedViewHolder holder = (AnimatedViewHolder) holder2;
             final String url = image.url;
+
+            // Ensure view is fully opaque to prevent bleed-through
+            holder.rootView.setAlpha(1.0f);
 
             // Use GifUtils to load MP4 or GIF with ExoPlayer
             new GifUtils.AsyncLoadGif(
@@ -192,7 +216,7 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            // If we’re in the vertical gallery, call showBottomSheetImage on the activity
+                            // If we're in the vertical gallery, call showBottomSheetImage on the activity
                             if (main instanceof RedditGallery) {
                                 ((RedditGallery) main).showBottomSheetImage(url, /* isGif= */true, actualIndex);
                             }
@@ -212,7 +236,7 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
             );
 
-            // Hide the “save” button if user preference is off
+            // Hide the "save" button if user preference is off
             if (!SettingValues.imageDownloadButton) {
                 holder.saveButton.setVisibility(View.INVISIBLE);
             }
@@ -241,6 +265,9 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
         // 2) Static images
         } else if (holder2 instanceof AlbumViewHolder) {
             final AlbumViewHolder holder = (AlbumViewHolder) holder2;
+
+            // Ensure view is fully opaque
+            holder.itemView.setAlpha(1.0f);
 
             // Load static image
             ((Reddit) main.getApplicationContext()).getImageLoader()
@@ -357,9 +384,12 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
             super(itemView);
             this.rootView = itemView;
             this.loader = itemView.findViewById(R.id.gifprogress);
-            this.exoVideoView = itemView.findViewById(R.id.gif);  // Now typed as ExoVideoView
+            this.exoVideoView = itemView.findViewById(R.id.gif);
             this.moreButton = itemView.findViewById(R.id.more);
             this.saveButton = itemView.findViewById(R.id.save);
+
+            // Add solid background to prevent transparency issues
+            itemView.setBackgroundColor(android.graphics.Color.BLACK);
         }
     }
 }
