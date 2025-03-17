@@ -3,7 +3,6 @@ package me.edgan.redditslide;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -12,7 +11,6 @@ import androidx.core.content.ContextCompat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import me.edgan.redditslide.util.GifUtils;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.PhotoLoader;
 

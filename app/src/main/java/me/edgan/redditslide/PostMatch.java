@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 
-import me.edgan.redditslide.ui.settings.SettingsFilter;
 
 /** Created by carlo_000 on 1/13/2016. */
 public class PostMatch {

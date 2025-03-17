@@ -24,7 +24,6 @@ import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import android.os.SystemClock;
-import okhttp3.FormBody;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.android.exoplayer2.Player;
@@ -45,7 +44,6 @@ import me.edgan.redditslide.Activities.MediaView;
 import me.edgan.redditslide.Activities.Website;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
-import me.edgan.redditslide.SecretConstants;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.ExoVideoView;
 
@@ -53,24 +51,15 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import org.mp4parser.Container;
-import org.mp4parser.muxer.Movie;
-import org.mp4parser.muxer.Track;
-import org.mp4parser.muxer.builder.DefaultMp4Builder;
-import org.mp4parser.muxer.container.mp4.MovieCreator;
-import org.mp4parser.muxer.tracks.ClippedTrack;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
-import java.nio.channels.WritableByteChannel;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -79,7 +68,6 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.media.MediaCodec;
-import android.media.MediaCodec.BufferInfo;
 
 import java.io.FileInputStream;
 import org.apache.commons.io.IOUtils;

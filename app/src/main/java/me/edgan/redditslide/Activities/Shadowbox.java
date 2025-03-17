@@ -28,7 +28,6 @@ import me.edgan.redditslide.SettingValues;
 
 import net.dean.jraw.models.Submission;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /** Created by ccrama on 9/17/2015. */
