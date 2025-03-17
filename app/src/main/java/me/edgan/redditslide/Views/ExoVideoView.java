@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.TextureView;
-import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -28,7 +27,6 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Tracks;
-import com.google.android.exoplayer2.Tracks.Group;
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -191,7 +189,7 @@ public class ExoVideoView extends RelativeLayout {
 
         if (!SettingValues.oldSwipeMode) {
             playerUI.hide();
-	}
+    }
 
         addView(playerUI);
 

@@ -1,13 +1,9 @@
 package me.edgan.redditslide.Activities;
 
-import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import android.util.Log;
 import android.widget.Toast;
 
 import me.edgan.redditslide.R;
@@ -37,4 +33,4 @@ public class SettingsGeneralActivity extends AppCompatActivity {
             }
         }
     }
-} 
+}

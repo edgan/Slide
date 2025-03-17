@@ -8,7 +8,6 @@ import me.edgan.redditslide.Activities.Profile;
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.HasSeen;
 import me.edgan.redditslide.PostMatch;
-import me.edgan.redditslide.util.SortingUtil;
 
 import net.dean.jraw.models.Contribution;
 import net.dean.jraw.models.Submission;

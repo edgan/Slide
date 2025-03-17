@@ -28,7 +28,6 @@ import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;

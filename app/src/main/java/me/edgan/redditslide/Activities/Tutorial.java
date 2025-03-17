@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +18,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.util.TypedValue;
@@ -113,14 +111,14 @@ public class Tutorial extends AppCompatActivity {
             welcomeBinding = FragmentWelcomeBinding.inflate(inflater, container, false);
             welcomeBinding.welcomeGetStarted.setOnClickListener(
                     v1 -> ((Tutorial) getActivity()).binding.tutorialViewPager.setCurrentItem(1));
-            
+
             // Add click listener for restore button
             welcomeBinding.welcomeRestore.setOnClickListener(v -> {
                 Intent intent = new Intent(getActivity(), SettingsBackup.class);
                 startActivity(intent);
                 getActivity().finish();
             });
-            
+
             return welcomeBinding.getRoot();
         }
 
@@ -330,8 +328,8 @@ public class Tutorial extends AppCompatActivity {
 
                 // Calculate padding in dp
                 int paddingDp = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 
-                    16, 
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    16,
                     getResources().getDisplayMetrics()
                 );
 
@@ -347,7 +345,7 @@ public class Tutorial extends AppCompatActivity {
                 linkText.setPadding(0, 0, 0, paddingDp);
                 linkText.setPaintFlags(linkText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                 linkText.setOnClickListener(v -> {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, 
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse("https://github.com/edgan/Slide/blob/master/SETUP.md#reddit-client-id"));
                     startActivity(browserIntent);
                 });

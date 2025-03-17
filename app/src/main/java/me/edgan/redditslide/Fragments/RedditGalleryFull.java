@@ -1,6 +1,5 @@
 package me.edgan.redditslide.Fragments;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;

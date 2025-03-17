@@ -21,16 +21,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.PopupMenu;
@@ -70,8 +67,6 @@ import me.edgan.redditslide.Views.ToggleSwipeViewPager;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.ui.settings.SettingsSubAdapter;
-import me.edgan.redditslide.util.FilterToggleUtil;
-import me.edgan.redditslide.util.FilterUtil;
 import me.edgan.redditslide.util.LayoutUtils;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.MiscUtil;
@@ -79,7 +74,6 @@ import me.edgan.redditslide.util.OnSingleClickListener;
 import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.StringUtil;
 import me.edgan.redditslide.util.SubmissionParser;
-import me.edgan.redditslide.util.FilterToggleUtil;
 import me.edgan.redditslide.util.FilterContentUtil;
 
 import net.dean.jraw.ApiException;
@@ -2024,7 +2018,7 @@ public class SubredditView extends BaseActivity {
 
             if (SettingValues.oldSwipeMode) {
                 currentItem = 1;
-	    }
+            }
 
             if (pager.getAdapter() != null) {
                 pager.getAdapter().notifyDataSetChanged();

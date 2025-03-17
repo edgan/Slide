@@ -8,7 +8,6 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.PostMatch;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.SettingValues;

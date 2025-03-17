@@ -333,7 +333,7 @@ public class SettingValues {
         blurCheck = prefs.getBoolean(PREF_BLUR, false);
         overrideLanguage = prefs.getBoolean(PREF_OVERRIDE_LANGUAGE, false);
         immersiveMode = prefs.getBoolean(PREF_IMMERSIVE_MODE, false);
-	    oldSwipeMode = prefs.getBoolean(PREF_OLD_SWIPE_MODE, false);
+        oldSwipeMode = prefs.getBoolean(PREF_OLD_SWIPE_MODE, false);
         largeDepth = prefs.getBoolean(PREF_LARGE_DEPTH, false);
         readerMode = prefs.getBoolean(PREF_READER_MODE, false);
         imageSubfolders = prefs.getBoolean(PREF_IMAGE_SUBFOLDERS, false);
