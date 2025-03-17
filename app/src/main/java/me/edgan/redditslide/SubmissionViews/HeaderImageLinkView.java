@@ -592,9 +592,13 @@ public class HeaderImageLinkView extends RelativeLayout {
             dataNode = dataNode.get("crosspost_parent_list").get(0);
         }
 
-        if (dataNode.has("gallery_data")) {
+        // Check if gallery_data exists AND contains items before proceeding
+        if (dataNode.has("gallery_data") &&
+            dataNode.get("gallery_data").has("items") &&
+            dataNode.get("gallery_data").get("items").size() > 0) {
             handleGalleryData(dataNode, submission, baseSub, full, forceThumb);
         } else {
+            // Hide all preview elements when there are no gallery items
             setVisibility(View.GONE);
             if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
             if (wrapArea != null) wrapArea.setVisibility(View.GONE);
