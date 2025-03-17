@@ -961,61 +961,40 @@ public class HeaderImageLinkView extends RelativeLayout {
     }
 
     private void handleGalleryData(JsonNode dataNode, Submission submission, String baseSub, boolean full, boolean forceThumb) {
-        try {
-            if (dataNode.has("gallery_data") && dataNode.has("media_metadata")) {
-                JsonNode galleryData = dataNode.get("gallery_data");
-                JsonNode mediaMetadata = dataNode.get("media_metadata");
+        JsonNode galleryData = dataNode.get("gallery_data");
+        JsonNode mediaMetadata = dataNode.get("media_metadata");
 
-                if (galleryData.has("items") && !galleryData.get("items").isNull() && galleryData.get("items").size() > 0) {
-                    JsonNode firstItem = galleryData.get("items").get(0);
-                    if (firstItem != null && firstItem.has("media_id")) {
-                        String mediaId = firstItem.get("media_id").asText();
+        if (galleryData.has("items") && galleryData.get("items").size() > 0) {
+            boolean allFailed = true;
+            for (JsonNode item : galleryData.get("items")) {
+                String mediaId = item.get("media_id").asText();
+                if (mediaMetadata != null && mediaMetadata.has(mediaId)) {
+                    JsonNode mediaInfo = mediaMetadata.get(mediaId);
+                    if (!"failed".equals(mediaInfo.get("status").asText())) {
+                        allFailed = false;
+                        if (mediaInfo.has("p") && mediaInfo.get("p").size() > 0) {
+                            String url = mediaInfo.get("p").get(0).get("u").asText()
+                                    .replace("preview", "i")
+                                    .replaceAll("\\?.*", "");
 
-                        if (mediaMetadata.has(mediaId)) {
-                            JsonNode mediaInfo = mediaMetadata.get(mediaId);
-                            if (mediaInfo != null && mediaInfo.has("s")) {
-                                String url = mediaInfo.get("s").get("u").asText();
-
-                                url = url.replace("&amp;", "&");
-
-                                loadedUrl = url;
-
-                                if (!full && !SettingValues.isPicsEnabled(baseSub) || forceThumb) {
-                                    if (!full) {
-                                        thumbImage2.setVisibility(View.VISIBLE);
-                                    } else {
-                                        wrapArea.setVisibility(View.VISIBLE);
-                                    }
-                                    ((Reddit) getContext().getApplicationContext())
-                                            .getImageLoader()
-                                            .displayImage(url, thumbImage2);
-                                    setVisibility(View.GONE);
-                                } else {
-                                    ((Reddit) getContext().getApplicationContext())
-                                            .getImageLoader()
-                                            .displayImage(url, backdrop);
-                                    backdrop.setVisibility(View.VISIBLE);
-                                    setVisibility(View.VISIBLE);
-                                    if (!full) {
-                                        thumbImage2.setVisibility(View.GONE);
-                                    } else {
-                                        wrapArea.setVisibility(View.GONE);
-                                    }
-                                }
-                                return;
-                            }
+                            handlePreviewImage(url, submission, baseSub, full, forceThumb);
+                            break;  // Only handle the first image
                         }
                     }
                 }
             }
-        } catch (Exception e) {
-            android.util.Log.e("HeaderImageLinkView", "Error handling gallery data", e);
-        }
 
-        // Fallback
-        setVisibility(View.GONE);
-        if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
-        if (backdrop != null) backdrop.setVisibility(View.GONE);
-        if (wrapArea != null) wrapArea.setVisibility(View.GONE);
+            if (allFailed) {
+                // Handle the case where all media failed
+                setVisibility(View.GONE);
+                if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
+                if (wrapArea != null) wrapArea.setVisibility(View.GONE);
+            }
+        } else {
+            // Handle the case where gallery_data is missing or empty
+            setVisibility(View.GONE);
+            if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
+            if (wrapArea != null) wrapArea.setVisibility(View.GONE);
+        }
     }
 }
