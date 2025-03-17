@@ -257,6 +257,11 @@ public class AlbumPager extends BaseSaveActivity {
                                     new Runnable() {
                                         @Override
                                         public void run() {
+                                            if (images == null || images.isEmpty()) {
+                                                // Don't attempt to load any positions if there are no images
+                                            return;
+                                            }
+
                                             // Only try to load positions that exist
                                             if (adapter.getCount() > 0) {
                                                 adapter.instantiateItem(p, 0);
@@ -267,6 +272,7 @@ public class AlbumPager extends BaseSaveActivity {
                                             }
                                         }
                                     });
+
                             findViewById(R.id.grid)
                                     .setOnClickListener(
                                             new View.OnClickListener() {
