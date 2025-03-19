@@ -51,9 +51,6 @@ import me.edgan.redditslide.util.NetworkUtil;
  * ExoVideoView that uses a TextureView (with a cached SurfaceTexture) so that when recycled
  * (e.g., when scrolling in the gallery) the video decoder’s surface is reused and the video does
  * not go blank.
- *
- * This version includes extra debug logging and modifications to the view lifecycle to help
- * diagnose issues with surface reattachment and player initialization.
  */
 public class ExoVideoView extends RelativeLayout {
     private static final String TAG = "ExoVideoView";
@@ -156,6 +153,28 @@ public class ExoVideoView extends RelativeLayout {
         frameParams.addRule(CENTER_IN_PARENT, TRUE);
         frame.setLayoutParams(frameParams);
         frame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+
+        // Add listener to handle video size changes
+        player.addListener(new Player.Listener() {
+            @Override
+            public void onVideoSizeChanged(@NonNull VideoSize videoSize) {
+                Log.d(TAG, "onVideoSizeChanged: width=" + videoSize.width + ", height=" + videoSize.height + ", unappliedRotationDegrees=" + videoSize.unappliedRotationDegrees);
+                if (videoSize.width > 0 && videoSize.height > 0) {
+                    // Calculate the correct aspect ratio
+                    float aspectRatio = (float) videoSize.width / videoSize.height;
+
+                    // Apply any needed rotation
+                    if (videoSize.unappliedRotationDegrees == 90 ||
+                        videoSize.unappliedRotationDegrees == 270) {
+                        aspectRatio = 1.0f / aspectRatio;
+                    }
+
+                    // Set the aspect ratio
+                    Log.d(TAG, "Setting aspect ratio to: " + aspectRatio);
+                    frame.setAspectRatio(aspectRatio);
+                }
+            }
+        });
 
         // --- Use a TextureView with a cached SurfaceTexture ---
         videoTextureView = new TextureView(context);
