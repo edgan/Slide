@@ -1,5 +1,5 @@
 ---
-description: Include new strings 
+description: Include new strings
 globs: *
 alwaysApply: true
 ---

@@ -1,5 +1,5 @@
 ---
-description: Absolute minimal code change 
+description: Absolute minimal code change
 globs: *
 alwaysApply: true
 ---

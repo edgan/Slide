@@ -1,5 +1,5 @@
 ---
-description: A rule to not break Guest mode by removing certain lines in MainActivity.java 
+description: A rule to not break Guest mode by removing certain lines in MainActivity.java
 globs: MainActivity.java
 alwaysApply: true
 ---

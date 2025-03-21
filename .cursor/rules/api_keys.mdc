@@ -1,5 +1,5 @@
 ---
-description: How to integrate api keys 
+description: How to integrate api keys
 globs: *
 alwaysApply: true
 ---
