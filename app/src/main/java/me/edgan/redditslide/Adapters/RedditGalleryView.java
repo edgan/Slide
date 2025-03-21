@@ -141,13 +141,11 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
             // Spacer row for top or bottom
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.spacer, parent, false);
             return new SpacerViewHolder(v);
-
         } else if (viewType == VIEW_TYPE_ANIMATED) {
             // *** HERE is where we load the layout with ExoVideoView, e.g. submission_gifcard_album ***
             View v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.submission_gifcard_album, parent, false);
             return new AnimatedViewHolder(v);
-
         } else { // VIEW_TYPE_IMAGE
             View v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.album_image, parent, false);
@@ -235,6 +233,9 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
                         }
                     }
             );
+
+            holder.saveButton.setVisibility(View.GONE);
+            holder.moreButton.setVisibility(View.GONE);
 
             // Hide the "save" button if user preference is off
             if (!SettingValues.imageDownloadButton) {
