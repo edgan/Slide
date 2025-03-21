@@ -165,8 +165,10 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         String text = wrapAlternateSpoilers(saveEmotesFromDestruction(baseText.toString().trim()));
         SpannableStringBuilder builder = (SpannableStringBuilder) CompatUtil.fromHtml(text);
 
-        // Add Reddit preview image processing
-        processRedditPreviewImages(builder);
+        if (!SettingValues.typeInText) {
+            // Add Reddit preview image processing
+            processRedditPreviewImages(builder);
+        }
 
         // replace the <blockquote> blue line with something more colorful
         replaceQuoteSpans(builder);
