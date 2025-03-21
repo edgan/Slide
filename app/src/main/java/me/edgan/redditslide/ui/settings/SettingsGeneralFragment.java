@@ -560,64 +560,47 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                             }
                         });
 
+                // Add long click listener to unset the storage location
+                setSaveLocationLayout.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        // Clear the storage location
+                        StorageUtil.clearStorageUri(context);
+
+                        // Update the display text
+                        if (locationView != null) {
+                            locationView.post(() -> {
+                                locationView.setText(R.string.settings_storage_location_unset);
+                                locationView.invalidate();
+                            });
+                        }
+
+                        // Show confirmation toast
+                        Toast.makeText(
+                                context,
+                                "Storage location has been unset",
+                                Toast.LENGTH_SHORT).show();
+
+                        return true; // Return true to indicate the long click was handled
+                    }
+                });
+
                 // Switch change listener
                 showDownloadBtnSwitch.setOnCheckedChangeListener(
                         (buttonView, isChecked) -> {
-                            if (isChecked) {
-                                if (context instanceof StorageUtil.DirectoryChooserHost) {
-                                    // Set the switch back to its previous state until selection is
-                                    // made
-                                    showDownloadBtnSwitch.setChecked(false);
+                            // Simply update the preference without asking for a directory
+                            SettingValues.imageDownloadButton = isChecked;
+                            SettingValues.prefs
+                                    .edit()
+                                    .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, isChecked)
+                                    .apply();
 
-                                    StorageUtil.showDirectoryChooser(
-                                            context,
-                                            uri -> {
-                                                if (uri != null) {
-                                                    // Save the URI and enable setting
-                                                    StorageUtil.saveStorageUri(context, uri);
-                                                    SettingValues.imageDownloadButton = true;
-                                                    SettingValues.prefs
-                                                            .edit()
-                                                            .putBoolean(
-                                                                    SettingValues
-                                                                            .PREF_IMAGE_DOWNLOAD_BUTTON,
-                                                                    true)
-                                                            .apply();
-
-                                                    // Update UI
-                                                    showDownloadBtnSwitch.setChecked(true);
-                                                    String path =
-                                                            StorageUtil.getDisplayPath(
-                                                                    context, uri);
-                                                    if (locationView != null) {
-                                                        locationView.setText(path);
-                                                    }
-                                                } else {
-                                                    showDownloadBtnSwitch.setChecked(false);
-                                                    SettingValues.imageDownloadButton = false;
-                                                    SettingValues.prefs
-                                                            .edit()
-                                                            .putBoolean(
-                                                                    SettingValues
-                                                                            .PREF_IMAGE_DOWNLOAD_BUTTON,
-                                                                    false)
-                                                            .apply();
-                                                }
-                                            });
-                                } else {
-                                    showDownloadBtnSwitch.setChecked(false);
-                                    Toast.makeText(
-                                                    context,
-                                                    "Unable to select directory in this context",
-                                                    Toast.LENGTH_SHORT)
-                                            .show();
-                                }
-                            } else {
-                                SettingValues.imageDownloadButton = false;
-                                SettingValues.prefs
-                                        .edit()
-                                        .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, false)
-                                        .apply();
+                            // Optional: Show a toast if enabled but no path is set
+                            if (isChecked && !hasValidPath) {
+                                Toast.makeText(
+                                        context,
+                                        "Download button enabled. Set a storage location to use it.",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         });
             }
@@ -649,7 +632,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
             setSaveLocationLayout.setOnClickListener(
                     v -> {
                         Uri storageUri = StorageUtil.getStorageUri(context);
-                        if (storageUri == null) {
+                        if (storageUri == null || !StorageUtil.hasStorageAccess(context)) {
                             StorageUtil.showDirectoryChooser(context);
                         } else {
                             // Show current location - cast context to Context

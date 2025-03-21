@@ -102,7 +102,7 @@ public class Album extends BaseSaveActivity {
         if (!isGif) {
             // StorageUtil checks for a saved directory URI and valid permissions
             Uri storageUri = StorageUtil.getStorageUri(this);
-            if (storageUri == null) {
+            if (storageUri == null || !StorageUtil.hasStorageAccess(this)) {
                 // Launch the system directory picker
                 StorageUtil.showDirectoryChooser(this);
             } else {

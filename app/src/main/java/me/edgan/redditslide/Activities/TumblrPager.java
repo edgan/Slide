@@ -507,7 +507,7 @@ public class TumblrPager extends BaseSaveActivity {
         if (!isGif) {
             // Use StorageUtil to check for storage access
             Uri storageUri = StorageUtil.getStorageUri(this);
-            if (storageUri == null) {
+            if (storageUri == null || !StorageUtil.hasStorageAccess(this)) {
                 // Save details for retry after permission
                 lastContentUrl = contentUrl;
                 lastIndex = index;

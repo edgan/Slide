@@ -1,5 +1,5 @@
 ---
-description: Trailing whitespace cleanup 
+description: Trailing whitespace cleanup
 globs: *
 alwaysApply: true
 ---

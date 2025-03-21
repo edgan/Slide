@@ -270,7 +270,7 @@ public class Tumblr extends BaseSaveActivity {
     public void doImageSave(boolean isGif, String contentUrl) {
         if (!isGif) {
             Uri storageUri = StorageUtil.getStorageUri(this);
-            if (storageUri == null) {
+            if (storageUri == null || !StorageUtil.hasStorageAccess(this)) {
                 StorageUtil.showDirectoryChooser(this);
             } else {
                 Intent i = new Intent(this, ImageDownloadNotificationService.class);

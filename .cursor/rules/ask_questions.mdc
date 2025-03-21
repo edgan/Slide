@@ -1,5 +1,5 @@
 ---
-description: Ask questions 
+description: Ask questions
 globs: *
 alwaysApply: true
 ---
