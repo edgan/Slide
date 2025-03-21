@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AlertDialog;
@@ -29,12 +30,17 @@ import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.util.GifUtils;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.SubmissionParser;
 
 import java.util.List;
 
 public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int VIEW_TYPE_IMAGE = 1;
+    private static final int VIEW_TYPE_SPACER = 6;
+    private static final int VIEW_TYPE_ANIMATED = 2;
+
     private final List<Image> users;
 
     private final Activity main;
@@ -118,11 +124,15 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == 1) {
+        if (viewType == VIEW_TYPE_IMAGE) {
             View v =
-                    LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.album_image, parent, false);
+                    LayoutInflater.from(parent.getContext()).inflate(R.layout.album_image, parent, false);
             return new AlbumViewHolder(v);
+        } else if (viewType == VIEW_TYPE_ANIMATED) {
+            // *** HERE is where we load the layout with ExoVideoView, e.g. submission_gifcard_album ***
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.submission_gifcard_album, parent, false);
+            return new AnimatedViewHolder(v);
         } else {
             View v =
                     LayoutInflater.from(parent.getContext())
@@ -138,11 +148,16 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        int SPACER = 6;
         if (!paddingBottom && position == 0) {
-            return SPACER;
+            return VIEW_TYPE_SPACER;
         } else if (paddingBottom && position == getItemCount() - 1) {
-            return SPACER;
+            return VIEW_TYPE_SPACER;
+        }
+        // Real index in images list
+        int actualIndex = paddingBottom ? position : position - 1;
+        Image image = users.get(actualIndex);
+        if (image.isAnimated()) {
+            return VIEW_TYPE_ANIMATED; // MP4 or GIF
         } else {
             return 1;
         }
@@ -246,28 +261,58 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         }
                     };
 
-            if (user.isAnimated()) {
-                holder.body.setVisibility(View.VISIBLE);
-                holder.body.setSingleLine(false);
-                holder.body.setTextHtml(
-                        holder.text.getText()
-                                + main.getString(R.string.submission_tap_gif)
-                                        .toUpperCase()); // got rid of the \n thing, because it
-                // didnt parse and it was already a new
-                // line so...
-                holder.body.setOnClickListener(onGifImageClickListener);
-            }
-
             holder.itemView.setOnClickListener(onGifImageClickListener);
         } else if (holder2 instanceof SpacerViewHolder) {
             holder2.itemView
                     .findViewById(R.id.height)
-                    .setLayoutParams(
-                            new LinearLayout.LayoutParams(
-                                    holder2.itemView.getWidth(),
-                                    paddingBottom
-                                            ? height
-                                            : main.findViewById(R.id.toolbar).getHeight()));
+                    .setLayoutParams(new LinearLayout.LayoutParams(holder2.itemView.getWidth(), paddingBottom ? height : main.findViewById(R.id.toolbar).getHeight()));
+        } else if (holder2 instanceof AnimatedViewHolder) {
+            AnimatedViewHolder holder = (AnimatedViewHolder) holder2;
+            final int position = paddingBottom ? i : i - 1;
+            final Image user = users.get(position);
+            final String url = user.getImageUrl();
+
+            // Ensure view is fully opaque to prevent bleed-through
+            holder.rootView.setAlpha(1.0f);
+
+            holder.saveButton.setVisibility(View.GONE);
+            holder.moreButton.setVisibility(View.GONE);
+
+            // Use GifUtils to load MP4 or GIF with ExoPlayer
+            new GifUtils.AsyncLoadGif(
+                    main,
+                    holder.exoVideoView,
+                    holder.loader,
+                    null,
+                    null,
+                    false,
+                    true,
+                    holder.rootView.findViewById(R.id.size),
+                    subreddit,
+                    submissionTitle
+            ).execute(url);
+
+
+            // If user taps the main video area -> open MediaView or open externally, up to you
+            holder.exoVideoView.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (SettingValues.image) {
+                                Intent intent = new Intent(main, MediaView.class);
+                                intent.putExtra(MediaView.EXTRA_URL, url);
+                                intent.putExtra(MediaView.SUBREDDIT, subreddit);
+                                if (submissionTitle != null) {
+                                    intent.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
+                                }
+                                intent.putExtra("index", position);
+                                main.startActivity(intent);
+                            } else {
+                                LinkUtil.openExternally(url);
+                            }
+                        }
+                    }
+            );
         }
     }
 
@@ -292,6 +337,29 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             text = itemView.findViewById(R.id.imagetitle);
             body = itemView.findViewById(R.id.imageCaption);
             image = itemView.findViewById(R.id.image);
+        }
+    }
+
+    /**
+     * ViewHolder for animated items (MP4/GIF)
+     */
+    public static class AnimatedViewHolder extends RecyclerView.ViewHolder {
+        final View rootView;
+        final ProgressBar loader;
+        final me.edgan.redditslide.Views.ExoVideoView exoVideoView;
+        final View moreButton;
+        final View saveButton;
+
+        public AnimatedViewHolder(View itemView) {
+            super(itemView);
+            this.rootView = itemView;
+            this.loader = itemView.findViewById(R.id.gifprogress);
+            this.exoVideoView = itemView.findViewById(R.id.gif);
+            this.moreButton = itemView.findViewById(R.id.more);
+            this.saveButton = itemView.findViewById(R.id.save);
+
+            // Add solid background to prevent transparency issues
+            itemView.setBackgroundColor(android.graphics.Color.BLACK);
         }
     }
 }
