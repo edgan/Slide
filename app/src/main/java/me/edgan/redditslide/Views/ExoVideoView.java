@@ -473,13 +473,16 @@ public class ExoVideoView extends RelativeLayout {
                                 .setContentType(AudioAttributesCompat.CONTENT_TYPE_MOVIE)
                                 .setUsage(AudioAttributesCompat.USAGE_MEDIA)
                                 .build();
-                request =
-                        new AudioFocusRequestCompat.Builder(
-                                        AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT)
-                                .setAudioAttributes(audioAttributes)
-                                .setOnAudioFocusChangeListener(this)
-                                .setWillPauseWhenDucked(true)
-                                .build();
+
+                AudioFocusRequestCompat.Builder builder = new AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT)
+                        .setAudioAttributes(audioAttributes)
+                        .setOnAudioFocusChangeListener(this);
+
+                if (SettingValues.pauseOnAudioFocus) {
+                    builder.setWillPauseWhenDucked(true);
+                }
+
+                request = builder.build();
             }
         }
 

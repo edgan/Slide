@@ -250,6 +250,26 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                 }
                             }
                         });
+
+        // Add Pause on Audio Focus switch
+        SwitchCompat pauseOnAudioFocusSwitch = dialoglayout.findViewById(R.id.pause_on_audio_focus);
+        pauseOnAudioFocusSwitch.setChecked(SettingValues.pauseOnAudioFocus);
+        pauseOnAudioFocusSwitch.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        SettingValues.pauseOnAudioFocus = isChecked;
+                        SettingValues.prefs
+                                .edit()
+                                .putBoolean(SettingValues.PREF_PAUSE_ON_AUDIO_FOCUS, isChecked)
+                                .apply();
+                    }
+                });
+
+        // Add a description for the setting
+        TextView pauseOnAudioFocusDesc = dialoglayout.findViewById(R.id.pause_on_audio_focus_text);
+        pauseOnAudioFocusDesc.setText(
+                "Pause video when audio is ducked (when other apps play sounds)");
     }
 
     public static void doNotifText(final Activity context) {
