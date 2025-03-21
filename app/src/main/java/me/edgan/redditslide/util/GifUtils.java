@@ -74,6 +74,8 @@ import org.apache.commons.io.IOUtils;
 
 /** GIF handling utilities */
 public class GifUtils {
+    private static final String TAG = "GifUtils";
+
     /**
      * Create a notification that opens a newly-saved GIF
      *
@@ -233,7 +235,9 @@ public class GifUtils {
 
         Uri storageUri = StorageUtil.getStorageUri(activity);
         if (storageUri == null || !StorageUtil.hasStorageAccess(activity)) {
+            Log.e(TAG, "No valid storage URI found.");
             showFirstDialog(activity);
+            return;
         } else {
             new AsyncTask<Void, Integer, DocumentFile>() {
                 NotificationManager notifMgr =

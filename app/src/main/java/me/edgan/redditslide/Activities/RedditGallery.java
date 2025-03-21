@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,7 +34,9 @@ import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.StorageUtil;
@@ -57,6 +60,8 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
     public RedditGalleryPagerAdapter gallery;
     private static String lastContentUrl; // Track URL for retry after permission
     private int lastIndex = -1; // Track index for retry after permission
+
+    private static final String TAG = "RedditGallery";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -300,37 +305,15 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
     }
 
     public void doImageSave(boolean isGif, String contentUrl, int index) {
-        Uri storageUri = StorageUtil.getStorageUri(this);
-        if (storageUri == null || !StorageUtil.hasStorageAccess(this)) {
-            lastContentUrl = contentUrl;
-            lastIndex = index;
-            StorageUtil.showDirectoryChooser(this);
-        } else {
-            if (isGif) {
-                // Handle video/gif save
-                GifUtils.cacheSaveGif(
-                        Uri.parse(contentUrl),
-                        this,
-                        subreddit != null ? subreddit : "",
-                        submissionTitle != null ? submissionTitle : "",
-                        true);
-            } else {
-                // Handle image save
-                Intent i = new Intent(this, ImageDownloadNotificationService.class);
-                i.putExtra("actuallyLoaded", contentUrl);
-                i.putExtra("downloadUri", storageUri.toString());
-
-                if (subreddit != null && !subreddit.isEmpty()) {
-                    i.putExtra("subreddit", subreddit);
-                }
-                if (submissionTitle != null) {
-                    i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
-                }
-                i.putExtra("index", index);
-
-                startService(i);
-            }
-        }
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                this::showFirstDialog
+        );
     }
 
     public void showBottomSheetImage(final String contentUrl, final boolean isGif, final int index) {
@@ -502,5 +485,9 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
     @Override
     public void saveGalleryMedia(boolean isGif, String url, int position) {
         doImageSave(isGif, url, position);
+    }
+
+    private void showFirstDialog() {
+        runOnUiThread(() -> DialogUtil.showFirstDialog(RedditGallery.this));
     }
 }

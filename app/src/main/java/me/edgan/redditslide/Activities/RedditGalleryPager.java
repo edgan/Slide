@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,6 +43,7 @@ import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.NetworkUtil;
@@ -66,6 +68,8 @@ public class RedditGalleryPager extends BaseSaveActivity implements GalleryParen
     private BottomSheet.Builder bottomSheetBuilder;
     private String lastContentUrl; // Track URL for retry after permission
     private int lastIndex = -1; // Track index for retry after permission
+
+    private static final String TAG = "RedditGalleryPager";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -424,38 +428,99 @@ public class RedditGalleryPager extends BaseSaveActivity implements GalleryParen
         }
     }
 
-    public void doImageSave(boolean isGif, String contentUrl, int index) {
-        Uri storageUri = StorageUtil.getStorageUri(this);
-        if (storageUri == null || !StorageUtil.hasStorageAccess(this)) {
-            lastContentUrl = contentUrl;
-            lastIndex = index;
-            StorageUtil.showDirectoryChooser(this);
-        } else {
-            if (isGif) {
-                // Handle video/gif save
-                GifUtils.cacheSaveGif(
-                        Uri.parse(contentUrl),
-                        this,
-                        subreddit != null ? subreddit : "",
-                        submissionTitle != null ? submissionTitle : "",
-                        true);
-            } else {
-                // Handle image save
-                Intent i = new Intent(this, ImageDownloadNotificationService.class);
-                i.putExtra("actuallyLoaded", contentUrl);
-                i.putExtra("downloadUri", storageUri.toString());
+    public static class Gif extends Fragment {
+        private int i = 0;
+        private View gif;
+        ViewGroup rootView;
+        ProgressBar loader;
 
-                if (subreddit != null && !subreddit.isEmpty()) {
-                    i.putExtra("subreddit", subreddit);
+        @Override
+        public void setUserVisibleHint(boolean isVisibleToUser) {
+            super.setUserVisibleHint(isVisibleToUser);
+            if (this.isVisible()) {
+                if (!isVisibleToUser) {
+                    ((ExoVideoView) gif).pause();
+                    gif.setVisibility(View.GONE);
                 }
-                if (submissionTitle != null) {
-                    i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
+                if (isVisibleToUser) {
+                    ((ExoVideoView) gif).play();
+                    gif.setVisibility(View.VISIBLE);
                 }
-                i.putExtra("index", index);
-
-                startService(i);
             }
         }
+
+        @Override
+        public View onCreateView(
+                LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            rootView =
+                    (ViewGroup)
+                            inflater.inflate(R.layout.submission_gifcard_album, container, false);
+            loader = rootView.findViewById(R.id.gifprogress);
+            gif = rootView.findViewById(R.id.gif);
+
+            gif.setVisibility(View.VISIBLE);
+            final ExoVideoView v = (ExoVideoView) gif;
+            v.clearFocus();
+
+            GalleryImage current = ((RedditGalleryPager) getActivity()).images.get(i);
+            final String url = current.getImageUrl();
+
+            LogUtil.i(url);
+
+            new GifUtils.AsyncLoadGif(
+                            getActivity(),
+                            rootView.findViewById(R.id.gif),
+                            loader,
+                            null,
+                            null,
+                            false,
+                            true,
+                            rootView.findViewById(R.id.size),
+                            ((RedditGalleryPager) getActivity()).subreddit,
+                            getActivity().getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE))
+                    .execute(url);
+
+            rootView.findViewById(R.id.more)
+                    .setOnClickListener(
+                            v1 ->
+                                    ((RedditGalleryPager) getActivity()).showBottomSheetImage(url, true, i));
+
+            rootView.findViewById(R.id.save)
+                    .setOnClickListener(
+                            v1 -> {
+                                if (url != null && getActivity() != null) {
+                                    ((RedditGalleryPager) getActivity()).doImageSave(true, url, i);
+                                } else if (url == null) {
+                                    LogUtil.i("URL is null");
+                                } else if (getActivity() == null) {
+                                    LogUtil.i("getActivity is null");
+                                }
+                            });
+
+            if (!SettingValues.imageDownloadButton) {
+                rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
+            }
+            return rootView;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            Bundle bundle = this.getArguments();
+            i = bundle.getInt("page", 0);
+        }
+    }
+
+    public void doImageSave(boolean isGif, String contentUrl, int index) {
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                this::showFirstDialog
+        );
     }
 
     public static class ImageFullNoSubmission extends Fragment {

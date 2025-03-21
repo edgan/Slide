@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,6 +34,9 @@ import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.DialogUtil;
+import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.StorageUtil;
 
@@ -51,6 +55,8 @@ public class Tumblr extends BaseSaveActivity {
     public static final String SUBREDDIT = "subreddit";
     private int adapterPosition;
     public String subreddit;
+
+    private static final String TAG = "Tumblr";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -89,8 +95,10 @@ public class Tumblr extends BaseSaveActivity {
             LinkUtil.openExternally(url);
         }
         if (id == R.id.download) {
+            int index = 0;
             for (final Photo elem : images) {
-                doImageSave(false, elem.getOriginalSize().getUrl());
+                doImageSave(false, elem.getOriginalSize().getUrl(), index);
+                index++;
             }
         }
 
@@ -267,23 +275,19 @@ public class Tumblr extends BaseSaveActivity {
         }
     }
 
-    public void doImageSave(boolean isGif, String contentUrl) {
-        if (!isGif) {
-            Uri storageUri = StorageUtil.getStorageUri(this);
-            if (storageUri == null || !StorageUtil.hasStorageAccess(this)) {
-                StorageUtil.showDirectoryChooser(this);
-            } else {
-                Intent i = new Intent(this, ImageDownloadNotificationService.class);
-                i.putExtra("actuallyLoaded", contentUrl);
-                i.putExtra("downloadUri", storageUri.toString());
+    public void doImageSave(boolean isGif, String contentUrl, int index) {
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                this::showFirstDialog
+        );
+    }
 
-                if (subreddit != null && !subreddit.isEmpty()) {
-                    i.putExtra("subreddit", subreddit);
-                }
-                startService(i);
-            }
-        } else {
-            MediaView.doOnClick.run();
-        }
+    private void showFirstDialog() {
+        runOnUiThread(() -> DialogUtil.showFirstDialog(Tumblr.this));
     }
 }
