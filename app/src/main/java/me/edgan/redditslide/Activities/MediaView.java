@@ -246,7 +246,7 @@ public class MediaView extends BaseSaveActivity {
     public void doImageSave(String actuallyLoaded) {
         if (!isGif) {
             Uri storageUri = StorageUtil.getStorageUri(this);
-            if (storageUri == null) {
+            if (storageUri == null || !StorageUtil.hasStorageAccess(this)) {
                 Log.e(TAG, "No valid storage URI found.");
                 showFirstDialog();
                 return;
@@ -275,7 +275,7 @@ public class MediaView extends BaseSaveActivity {
     public void saveFile(final String baseUrl) {
         Uri storageUri = StorageUtil.getStorageUri(this);
 
-        if (storageUri == null) {
+        if (storageUri == null || !StorageUtil.hasStorageAccess(this)) {
             Log.e(TAG, "No storage URI available");
             DialogUtil.showErrorDialog(this);
             return;

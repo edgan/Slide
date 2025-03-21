@@ -315,7 +315,7 @@ public class RedditGallery extends BaseSaveActivity {
 
     public void doImageSave(boolean isGif, String contentUrl, int index) {
         Uri storageUri = StorageUtil.getStorageUri(this);
-        if (storageUri == null) {
+        if (storageUri == null || !StorageUtil.hasStorageAccess(this)) {
             lastContentUrl = contentUrl;
             lastIndex = index;
             StorageUtil.showDirectoryChooser(this);

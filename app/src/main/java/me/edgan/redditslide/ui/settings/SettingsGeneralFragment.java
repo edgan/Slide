@@ -632,7 +632,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
             setSaveLocationLayout.setOnClickListener(
                     v -> {
                         Uri storageUri = StorageUtil.getStorageUri(context);
-                        if (storageUri == null) {
+                        if (storageUri == null || !StorageUtil.hasStorageAccess(context)) {
                             StorageUtil.showDirectoryChooser(context);
                         } else {
                             // Show current location - cast context to Context

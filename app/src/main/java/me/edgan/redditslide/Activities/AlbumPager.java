@@ -552,7 +552,7 @@ public class AlbumPager extends BaseSaveActivity {
             } else {
                 // We have storage access - get the saved URI
                 Uri storageUri = StorageUtil.getStorageUri(this);
-                if (storageUri == null) {
+                if (storageUri == null || !StorageUtil.hasStorageAccess(this)) {
                     Log.e("AlbumPager", "Unexpected null URI despite valid access.");
                     Toast.makeText(this, R.string.error_no_storage_access, Toast.LENGTH_SHORT)
                             .show();
