@@ -1051,7 +1051,7 @@
 
     <!-- Saving location setting -->
     <string name="set_save_location">Set media save location</string>
-    <string name="set_save_location_msg">Slide\'s media save location has not been set. Would you like to set this now?</string>
+    <string name="set_save_location_msg">Slide\'s media save location has not been set.</string>
 
     <!-- Report flow -->
     <string name="btn_report">Report</string>
