@@ -63,8 +63,10 @@ import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.FontPreferences;
 import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.FileUtil;
 import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.ShareUtil;
@@ -97,6 +99,8 @@ public class TumblrPager extends BaseSaveActivity {
 
     public List<Photo> images;
     public String subreddit;
+
+    private static final String TAG = "TumblrPager";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -504,31 +508,15 @@ public class TumblrPager extends BaseSaveActivity {
     }
 
     public void doImageSave(boolean isGif, String contentUrl, int index) {
-        if (!isGif) {
-            // Use StorageUtil to check for storage access
-            Uri storageUri = StorageUtil.getStorageUri(this);
-            if (storageUri == null || !StorageUtil.hasStorageAccess(this)) {
-                // Save details for retry after permission
-                lastContentUrl = contentUrl;
-                lastIndex = index;
-                // Launch system directory picker
-                StorageUtil.showDirectoryChooser(this);
-            } else {
-                // Start download service with SAF URI
-                Intent i = new Intent(this, ImageDownloadNotificationService.class);
-                i.putExtra("actuallyLoaded", contentUrl);
-                i.putExtra("downloadUri", storageUri.toString());
-
-                // Pass along metadata
-                if (subreddit != null && !subreddit.isEmpty()) {
-                    i.putExtra("subreddit", subreddit);
-                }
-                i.putExtra("index", index);
-                startService(i);
-            }
-        } else {
-            MediaView.doOnClick.run();
-        }
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                this::showFirstDialog
+        );
     }
 
     @Override
@@ -746,5 +734,9 @@ public class TumblrPager extends BaseSaveActivity {
                                         .setProgress(Math.round(100.0f * current / total));
                             }
                         });
+    }
+
+    private void showFirstDialog() {
+        runOnUiThread(() -> DialogUtil.showFirstDialog(TumblrPager.this));
     }
 }
