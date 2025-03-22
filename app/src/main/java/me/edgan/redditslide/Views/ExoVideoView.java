@@ -306,13 +306,13 @@ public class ExoVideoView extends RelativeLayout {
 
     /** Pauses video playback. */
     public void pause() {
-        Log.d(TAG, "pause() called");
-        player.pause();
+        if (player != null) {
+            player.pause();
+        }
     }
 
     /** Stops video playback and releases the player. */
     public void stop() {
-        Log.d(TAG, "stop() called");
         if (player != null) {
             player.stop();
             player.release();
