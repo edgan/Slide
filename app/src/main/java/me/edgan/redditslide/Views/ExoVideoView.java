@@ -49,7 +49,7 @@ import me.edgan.redditslide.util.NetworkUtil;
 
 /**
  * ExoVideoView that uses a TextureView (with a cached SurfaceTexture) so that when recycled
- * (e.g., when scrolling in the gallery) the video decoder’s surface is reused and the video does
+ * (e.g., when scrolling in the gallery) the video decoder's surface is reused and the video does
  * not go blank.
  */
 public class ExoVideoView extends RelativeLayout {
@@ -108,6 +108,9 @@ public class ExoVideoView extends RelativeLayout {
     @Override
     protected void onDetachedFromWindow() {
         Log.d(TAG, "onDetachedFromWindow() called");
+        // Pause playback when view is detached
+        pause();
+
         // For debugging, we are temporarily NOT releasing the player here to test if that prevents the blank video.
         // Uncomment the following lines if you later decide to release the player on detach.
         // Log.d(TAG, "Releasing player in onDetachedFromWindow");
@@ -540,6 +543,22 @@ public class ExoVideoView extends RelativeLayout {
             public void onAnimationRepeat(Animation animation) {
                 // Purposefully left blank
             }
+        }
+    }
+
+    /**
+     * Reset the player to prevent flickering when recycled
+     */
+    public void resetPlayer() {
+        Log.d(TAG, "resetPlayer() called");
+        // First pause any ongoing playback
+        pause();
+
+        // Clear any existing frame
+        if (videoTextureView != null) {
+            videoTextureView.setAlpha(0f);  // Hide temporarily to prevent flicker
+            // After a small delay, make visible again
+            handler.postDelayed(() -> videoTextureView.setAlpha(1f), 50);
         }
     }
 }

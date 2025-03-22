@@ -443,9 +443,16 @@ public class AlbumPager extends BaseSaveActivity {
 
             gif = rootView.findViewById(R.id.gif);
 
+            // Set root view to fully opaque to prevent transparency issues
+            rootView.setAlpha(1.0f);
+            rootView.setBackgroundColor(Color.BLACK);
+
             gif.setVisibility(View.VISIBLE);
             final ExoVideoView v = (ExoVideoView) gif;
             v.clearFocus();
+
+            // Reset player state to prevent flickering
+            v.resetPlayer();
 
             final String url = ((AlbumPager) getActivity()).images.get(i).getImageUrl();
 
@@ -494,6 +501,25 @@ public class AlbumPager extends BaseSaveActivity {
             super.onCreate(savedInstanceState);
             Bundle bundle = this.getArguments();
             i = bundle.getInt("page", 0);
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            // Ensure video is paused when fragment is paused
+            if (gif != null && gif instanceof ExoVideoView) {
+                ((ExoVideoView) gif).pause();
+            }
+        }
+
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+            // Ensure proper cleanup
+            if (gif != null && gif instanceof ExoVideoView) {
+                ExoVideoView videoView = (ExoVideoView) gif;
+                videoView.pause();
+            }
         }
     }
 

@@ -5,6 +5,7 @@ import static me.edgan.redditslide.Notifications.ImageDownloadNotificationServic
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.Views.ExoVideoView;
 import me.edgan.redditslide.Visuals.FontPreferences;
 import me.edgan.redditslide.util.GifUtils;
 import me.edgan.redditslide.util.LinkUtil;
@@ -80,39 +82,14 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                     final Dialog d = builder.create();
                                     gridview.setOnItemClickListener(
                                             new AdapterView.OnItemClickListener() {
-                                                public void onItemClick(
-                                                        AdapterView<?> parent,
-                                                        View v,
-                                                        int position,
-                                                        long id) {
+                                                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                                                     if (context instanceof Album) {
-                                                        ((LinearLayoutManager)
-                                                                        ((Album) context)
-                                                                                .album.album
-                                                                                        .recyclerView
-                                                                                        .getLayoutManager())
-                                                                .scrollToPositionWithOffset(
-                                                                        position + 1,
-                                                                        context.findViewById(
-                                                                                        R.id
-                                                                                                .toolbar)
-                                                                                .getHeight());
+                                                        ((LinearLayoutManager) ((Album) context).album.album.recyclerView.getLayoutManager())
+                                                                .scrollToPositionWithOffset(position + 1, context.findViewById(R.id.toolbar).getHeight());
 
                                                     } else {
-                                                        ((LinearLayoutManager)
-                                                                        ((RecyclerView)
-                                                                                        context
-                                                                                                .findViewById(
-                                                                                                        R
-                                                                                                                .id
-                                                                                                                .images))
-                                                                                .getLayoutManager())
-                                                                .scrollToPositionWithOffset(
-                                                                        position + 1,
-                                                                        context.findViewById(
-                                                                                        R.id
-                                                                                                .toolbar)
-                                                                                .getHeight());
+                                                        ((LinearLayoutManager) ((RecyclerView) context.findViewById(R.id.images)).getLayoutManager())
+                                                                .scrollToPositionWithOffset(position + 1, context.findViewById(R.id.toolbar).getHeight());
                                                     }
                                                     d.dismiss();
                                                 }
@@ -125,18 +102,15 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_IMAGE) {
-            View v =
-                    LayoutInflater.from(parent.getContext()).inflate(R.layout.album_image, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.album_image, parent, false);
             return new AlbumViewHolder(v);
         } else if (viewType == VIEW_TYPE_ANIMATED) {
             // *** HERE is where we load the layout with ExoVideoView, e.g. submission_gifcard_album ***
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.submission_gifcard_album, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.submission_gifcard_album, parent, false);
             return new AnimatedViewHolder(v);
         } else {
             View v =
-                    LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.spacer, parent, false);
+                    LayoutInflater.from(parent.getContext()).inflate(R.layout.spacer, parent, false);
             return new SpacerViewHolder(v);
         }
     }
@@ -171,20 +145,15 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             AlbumViewHolder holder = (AlbumViewHolder) holder2;
 
             final Image user = users.get(position);
-            ((Reddit) main.getApplicationContext())
-                    .getImageLoader()
-                    .displayImage(user.getImageUrl(), holder.image, ImageGridAdapter.options);
+            ((Reddit) main.getApplicationContext()).getImageLoader().displayImage(user.getImageUrl(), holder.image, ImageGridAdapter.options);
             holder.body.setVisibility(View.VISIBLE);
             holder.text.setVisibility(View.VISIBLE);
             View imageView = holder.image;
             if (imageView.getWidth() == 0) {
                 holder.image.setLayoutParams(
-                        new LinearLayout.LayoutParams(
-                                RelativeLayout.LayoutParams.MATCH_PARENT,
-                                RelativeLayout.LayoutParams.WRAP_CONTENT));
+                        new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
             } else {
-                holder.image.setLayoutParams(
-                        new LinearLayout.LayoutParams(
+                holder.image.setLayoutParams(new LinearLayout.LayoutParams(
                                 RelativeLayout.LayoutParams.MATCH_PARENT,
                                 (int)
                                         getHeightFromAspectRatio(
@@ -193,10 +162,7 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                                 imageView.getWidth())));
             }
             {
-                int type =
-                        new FontPreferences(holder.body.getContext())
-                                .getFontTypeComment()
-                                .getTypeface();
+                int type = new FontPreferences(holder.body.getContext()).getFontTypeComment().getTypeface();
                 Typeface typeface;
                 if (type >= 0) {
                     typeface = RobotoTypefaces.obtainTypeface(holder.body.getContext(), type);
@@ -206,10 +172,7 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 holder.body.setTypeface(typeface);
             }
             {
-                int type =
-                        new FontPreferences(holder.body.getContext())
-                                .getFontTypeTitle()
-                                .getTypeface();
+                int type = new FontPreferences(holder.body.getContext()).getFontTypeTitle().getTypeface();
                 Typeface typeface;
                 if (type >= 0) {
                     typeface = RobotoTypefaces.obtainTypeface(holder.body.getContext(), type);
@@ -272,8 +235,9 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             final Image user = users.get(position);
             final String url = user.getImageUrl();
 
-            // Ensure view is fully opaque to prevent bleed-through
+            // Reset view state to prevent flickering
             holder.rootView.setAlpha(1.0f);
+            holder.exoVideoView.setVisibility(View.VISIBLE);
 
             holder.saveButton.setVisibility(View.GONE);
             holder.moreButton.setVisibility(View.GONE);
@@ -291,7 +255,6 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     subreddit,
                     submissionTitle
             ).execute(url);
-
 
             // If user taps the main video area -> open MediaView or open externally, up to you
             holder.exoVideoView.setOnClickListener(
@@ -346,7 +309,7 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static class AnimatedViewHolder extends RecyclerView.ViewHolder {
         final View rootView;
         final ProgressBar loader;
-        final me.edgan.redditslide.Views.ExoVideoView exoVideoView;
+        final ExoVideoView exoVideoView;
         final View moreButton;
         final View saveButton;
 
