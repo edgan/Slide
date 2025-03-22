@@ -594,6 +594,10 @@ public class HeaderImageLinkView extends RelativeLayout {
 
         if (dataNode.has("gallery_data")) {
             handleGalleryData(dataNode, submission, baseSub, full, forceThumb);
+        } else {
+            setVisibility(View.GONE);
+            if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
+            if (wrapArea != null) wrapArea.setVisibility(View.GONE);
         }
     }
 
