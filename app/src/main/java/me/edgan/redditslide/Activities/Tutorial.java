@@ -1,13 +1,17 @@
 package me.edgan.redditslide.Activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Pair;
@@ -26,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -35,7 +40,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
 import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SecretConstants;
+import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.FontPreferences;
 import me.edgan.redditslide.Visuals.Palette;
@@ -47,9 +55,7 @@ import me.edgan.redditslide.databinding.FragmentPersonalizeBinding;
 import me.edgan.redditslide.databinding.FragmentWelcomeBinding;
 import me.edgan.redditslide.ui.settings.SettingsBackup;
 import me.edgan.redditslide.util.BlendModeUtil;
-import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
-import me.edgan.redditslide.SecretConstants;
+import me.edgan.redditslide.util.LogUtil;
 
 /** Created by ccrama on 3/5/2015. */
 public class Tutorial extends AppCompatActivity {
@@ -60,6 +66,8 @@ public class Tutorial extends AppCompatActivity {
     private static final int NUM_PAGES = 2;
     private int back;
     private ActivityTutorialBinding binding;
+
+    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +93,27 @@ public class Tutorial extends AppCompatActivity {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Palette.getDarkerColor(Color.parseColor("#FF5252")));
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            LogUtil.v("Checking notification permission on Android 13+");
+            int permissionState = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.POST_NOTIFICATIONS);
+            LogUtil.v("Permission state: " + (permissionState == PackageManager.PERMISSION_GRANTED ? "GRANTED" : "DENIED"));
+
+            if (permissionState != PackageManager.PERMISSION_GRANTED) {
+                LogUtil.v("Permission not granted, checking if we should show rationale");
+
+                // Post the permission request to the main handler
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    LogUtil.v("No rationale needed, requesting permission directly");
+                    ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        NOTIFICATION_PERMISSION_REQUEST_CODE
+                    );
+                }, 500); // Half second delay
+            }
         }
     }
 

@@ -268,6 +268,21 @@ public class Login extends BaseActivityAnim {
                 // Handle me gracefully
                 Log.e(LogUtil.getTag(), "OAuth failed");
                 Log.e(LogUtil.getTag(), e.getMessage());
+            } catch (RuntimeException e) {
+                // Catch runtime exceptions, which include Protocol exceptions from OkHttp
+                if (e.getCause() instanceof java.net.ProtocolException &&
+                    e.getCause().getMessage().contains("Too many follow-up requests")) {
+                    // This is the specific redirect loop issue
+                    Log.e(LogUtil.getTag(), "OAuth redirect loop detected: " + e.getCause().getMessage());
+                } else {
+                    // Other runtime exceptions
+                    Log.e(LogUtil.getTag(), "OAuth runtime error: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } catch (Exception e) {
+                // Catch any other unexpected exceptions
+                Log.e(LogUtil.getTag(), "Unexpected error during OAuth: " + e.getMessage());
+                e.printStackTrace();
             }
             return null;
         }

@@ -2,6 +2,16 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+7.2.5 / 2025-3-21
+=================
+* Fixed Slide doesn't request notification permission on first launch #146
+* Disabling converting preview links into images when Show content type text beside links is enabled #159
+* Fixed all storage location checks to also check for storage access
+* Added longclick option to unset storage location
+* Implemented same crash fix from #147 for Imgur and Tumblr
+* Fixed Crash in crosspost when media list is empty #147
+* Reverted change to preview images which fixes many cases
+
 7.2.4 / 2025-3-15
 =================
 * Fixed "Open content" option doesn’t support Reddit Galleries #115
