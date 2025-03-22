@@ -93,6 +93,7 @@ public class SettingValues {
     public static final String PREF_LQ_HIGH = "lqHigh";
     public static final String PREF_LQ_VIDEOS = "lqVideos";
     public static final String PREF_SOUND_NOTIFS = "soundNotifs";
+    public static final String PREF_PAUSE_ON_AUDIO_FOCUS = "pauseOnAudioFocus";
     public static final String PREF_COOKIES = "storeCookies";
     public static final String PREF_NIGHT_START = "nightStart";
     public static final String PREF_NIGHT_END = "nightEnd";
@@ -275,6 +276,7 @@ public class SettingValues {
     public static int nightTheme;
     public static boolean typeInText;
     public static boolean notifSound;
+    public static boolean pauseOnAudioFocus;
     public static boolean cookies;
     public static boolean colorIcon;
     public static boolean peek;
@@ -434,6 +436,7 @@ public class SettingValues {
         synccitName = prefs.getString(SYNCCIT_NAME, "");
         synccitAuth = prefs.getString(SYNCCIT_AUTH, "");
         notifSound = prefs.getBoolean(PREF_SOUND_NOTIFS, false);
+        pauseOnAudioFocus = prefs.getBoolean(PREF_PAUSE_ON_AUDIO_FOCUS, false);
         cookies = prefs.getBoolean(PREF_COOKIES, true);
         linkHandlingMode =
                 prefs.getInt(
