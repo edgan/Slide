@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -258,25 +259,26 @@ public class AlbumPager extends BaseSaveActivity {
 
                             p.setCurrentItem(startPage);
 
-                            p.post(
-                                    new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (images == null || images.isEmpty()) {
-                                                // Don't attempt to load any positions if there are no images
-                                            return;
-                                            }
+                            // Reset the currently playing position
+                            Gif.currentlyPlayingPosition = -1;
 
-                                            // Only try to load positions that exist
-                                            if (adapter.getCount() > 0) {
-                                                adapter.instantiateItem(p, 0);
-                                                // Only try to load position 1 if it exists
-                                                if (adapter.getCount() > 1) {
-                                                    adapter.instantiateItem(p, 1);
-                                                }
-                                            }
+                            // Initialize the correct position after a delay
+                            new Handler().postDelayed(() -> {
+                                if (!isFinishing()) {
+                                    int position = p.getCurrentItem();
+                                    int adjustedPosition = position;
+                                    if (SettingValues.oldSwipeMode && position > 0) {
+                                        adjustedPosition = position - 1;
+                                    }
+
+                                    if (images != null && !images.isEmpty() && adjustedPosition >= 0 && adjustedPosition < images.size()) {
+                                        if (images.get(adjustedPosition).isAnimated()) {
+                                            LogUtil.v("Setting initial playing position to " + adjustedPosition);
+                                            Gif.currentlyPlayingPosition = adjustedPosition;
                                         }
-                                    });
+                                    }
+                                }
+                            }, 100);
 
                             findViewById(R.id.grid)
                                     .setOnClickListener(
@@ -341,6 +343,22 @@ public class AlbumPager extends BaseSaveActivity {
                                                                     (position + 1)
                                                                             + "/"
                                                                             + images.size());
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onPageSelected(int position) {
+                                            // When a page is selected, explicitly tell all Gif fragments to check their visibility
+                                            if (adapter != null && adapter.getCount() > 0) {
+                                                int adjustedPosition = position;
+                                                if (SettingValues.oldSwipeMode && position > 0) {
+                                                    adjustedPosition = position - 1;
+                                                }
+
+                                                // Update the currently playing position in the Gif class
+                                                if (images.get(adjustedPosition).isAnimated()) {
+                                                    Gif.currentlyPlayingPosition = adjustedPosition;
                                                 }
                                             }
                                         }
@@ -415,20 +433,31 @@ public class AlbumPager extends BaseSaveActivity {
         ViewGroup rootView;
         ProgressBar loader;
 
+        // Static tracking of which fragment is currently playing
+        private static int currentlyPlayingPosition = -1;
+
         @Override
         public void setUserVisibleHint(boolean isVisibleToUser) {
             super.setUserVisibleHint(isVisibleToUser);
-            if (this.isVisible()) {
-                if (!isVisibleToUser) // If we are becoming invisible, then...
-                {
-                    ((ExoVideoView) gif).pause();
-                    gif.setVisibility(View.GONE);
-                }
 
-                if (isVisibleToUser) // If we are becoming visible, then...
-                {
+            // If fragment is becoming visible
+            if (isVisibleToUser) {
+                // Record this position as the currently playing fragment
+                currentlyPlayingPosition = i;
+                LogUtil.v("Gif fragment " + i + " becoming visible, setting as current");
+
+                // Only start playback if view is created
+                if (gif != null && gif instanceof ExoVideoView) {
+                    LogUtil.v("Playing gif at position " + i);
                     ((ExoVideoView) gif).play();
                     gif.setVisibility(View.VISIBLE);
+                }
+            } else {
+                // If this fragment is becoming invisible and it's the one that was playing
+                if (currentlyPlayingPosition == i && gif != null && gif instanceof ExoVideoView) {
+                    LogUtil.v("Pausing gif at position " + i);
+                    ((ExoVideoView) gif).pause();
+                    gif.setVisibility(View.GONE);
                 }
             }
         }
@@ -448,6 +477,7 @@ public class AlbumPager extends BaseSaveActivity {
             rootView.setBackgroundColor(Color.BLACK);
 
             gif.setVisibility(View.VISIBLE);
+
             final ExoVideoView v = (ExoVideoView) gif;
             v.clearFocus();
 
@@ -456,6 +486,8 @@ public class AlbumPager extends BaseSaveActivity {
 
             final String url = ((AlbumPager) getActivity()).images.get(i).getImageUrl();
 
+            // Important: Always start with autostart=false
+            // We'll control playback manually after load
             new GifUtils.AsyncLoadGif(
                             getActivity(),
                             rootView.findViewById(R.id.gif),
@@ -463,11 +495,47 @@ public class AlbumPager extends BaseSaveActivity {
                             null,
                             null,
                             false,
-                            true,
+                            false, // NEVER autostart
                             rootView.findViewById(R.id.size),
                             ((AlbumPager) getActivity()).subreddit,
                             getActivity().getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE))
                     .execute(url);
+
+            // Add a delayed check to control playback once the UI is fully set up
+            // This helps overcome timing issues with fragment visibility
+            new Handler().postDelayed(() -> {
+                if (getActivity() != null && !getActivity().isFinishing() && gif != null) {
+                    // Initialize the current playing position if it's not set yet
+                    if (currentlyPlayingPosition == -1 && getActivity() instanceof AlbumPager) {
+                        ViewPager pager = getActivity().findViewById(R.id.images_horizontal);
+                        if (pager != null) {
+                            int currentItem = pager.getCurrentItem();
+                            int adjustedPosition = currentItem;
+                            if (SettingValues.oldSwipeMode && currentItem > 0) {
+                                adjustedPosition = currentItem - 1;
+                            }
+
+                            // This is needed to handle the initial case
+                            if (i == adjustedPosition) {
+                                LogUtil.v("Initial load: setting position " + i + " as current");
+                                currentlyPlayingPosition = i;
+                            }
+                        }
+                    }
+
+                    // Check if this is the current playing position
+                    if (getUserVisibleHint() && (currentlyPlayingPosition == i || currentlyPlayingPosition == -1)) {
+                        LogUtil.v("Playing gif at position " + i + " after delay");
+                        ((ExoVideoView) gif).play();
+                        // Ensure we update the playing position
+                        currentlyPlayingPosition = i;
+                    } else {
+                        LogUtil.v("Not playing gif at position " + i + " after delay");
+                        ((ExoVideoView) gif).pause();
+                    }
+                }
+            }, 500);  // Increased delay to give more time for ViewPager to settle
+
             rootView.findViewById(R.id.more)
                     .setOnClickListener(
                             new View.OnClickListener() {
@@ -504,9 +572,19 @@ public class AlbumPager extends BaseSaveActivity {
         }
 
         @Override
+        public void onResume() {
+            super.onResume();
+            // When fragment resumes, check if it should be playing
+            if (getUserVisibleHint() && currentlyPlayingPosition == i &&
+                gif != null && gif instanceof ExoVideoView) {
+                ((ExoVideoView) gif).play();
+            }
+        }
+
+        @Override
         public void onPause() {
             super.onPause();
-            // Ensure video is paused when fragment is paused
+            // Always pause when the fragment is paused
             if (gif != null && gif instanceof ExoVideoView) {
                 ((ExoVideoView) gif).pause();
             }
@@ -515,10 +593,9 @@ public class AlbumPager extends BaseSaveActivity {
         @Override
         public void onDestroyView() {
             super.onDestroyView();
-            // Ensure proper cleanup
+            // Clean up
             if (gif != null && gif instanceof ExoVideoView) {
-                ExoVideoView videoView = (ExoVideoView) gif;
-                videoView.pause();
+                ((ExoVideoView) gif).pause();
             }
         }
     }
