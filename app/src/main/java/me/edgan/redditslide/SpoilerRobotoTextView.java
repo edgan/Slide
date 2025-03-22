@@ -165,11 +165,6 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         String text = wrapAlternateSpoilers(saveEmotesFromDestruction(baseText.toString().trim()));
         SpannableStringBuilder builder = (SpannableStringBuilder) CompatUtil.fromHtml(text);
 
-        if (!SettingValues.typeInText) {
-            // Add Reddit preview image processing
-            processRedditPreviewImages(builder);
-        }
-
         // replace the <blockquote> blue line with something more colorful
         replaceQuoteSpans(builder);
 
@@ -189,6 +184,9 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
         if (text.contains("[[h[")) {
             setHighlight(builder, subreddit);
         }
+
+        processRedditPreviewImages(builder);
+
         if (subreddit != null && !subreddit.isEmpty()) {
             setMovementMethod(new TextViewLinkHandler(this, subreddit, builder));
             setFocusable(false);
