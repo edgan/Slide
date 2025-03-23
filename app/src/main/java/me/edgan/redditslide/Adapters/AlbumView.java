@@ -241,6 +241,8 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             holder.saveButton.setVisibility(View.GONE);
             holder.moreButton.setVisibility(View.GONE);
+            holder.muteButton.setVisibility(View.GONE);
+            holder.hqButton.setVisibility(View.GONE);
 
             // Use GifUtils to load MP4 or GIF with ExoPlayer
             new GifUtils.AsyncLoadGif(
@@ -312,6 +314,8 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final ExoVideoView exoVideoView;
         final View moreButton;
         final View saveButton;
+        final View muteButton;
+        final View hqButton;
 
         public AnimatedViewHolder(View itemView) {
             super(itemView);
@@ -320,6 +324,8 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.exoVideoView = itemView.findViewById(R.id.gif);
             this.moreButton = itemView.findViewById(R.id.more);
             this.saveButton = itemView.findViewById(R.id.save);
+            this.muteButton = itemView.findViewById(R.id.mute);
+            this.hqButton = itemView.findViewById(R.id.hq);
 
             // Add solid background to prevent transparency issues
             itemView.setBackgroundColor(android.graphics.Color.BLACK);

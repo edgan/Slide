@@ -610,8 +610,8 @@ public class HeaderImageLinkView extends RelativeLayout {
         String previewUrl = getPreviewUrl(dataNode);
 
         if (dataNode.has("preview") &&
-            dataNode.get("preview").has("items") &&
-            dataNode.get("preview").get("items").size() > 0) {
+            dataNode.get("preview").has("images") &&
+            dataNode.get("preview").get("images").size() > 0) {
                 handlePreviewImage(previewUrl, submission, baseSub, full, forceThumb);
         } else {
             // No valid preview available
