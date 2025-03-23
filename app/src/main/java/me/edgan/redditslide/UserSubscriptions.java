@@ -399,17 +399,16 @@ public class UserSubscriptions {
             for (MultiReddit multiReddit : multireddits) {
                 if (MainActivity.multiNameToSubsMap.containsKey(
                         ReorderSubreddits.MULTI_REDDIT + multiReddit.getDisplayName())) {
-                    StringBuilder concatenatedSubs = new StringBuilder();
-                    for (MultiSubreddit subreddit : multiReddit.getSubreddits()) {
-                        concatenatedSubs.append(subreddit.getDisplayName());
-                        concatenatedSubs.append("+");
-                    }
+                    // Use the full path that the Reddit API expects for a multi-reddit
+                    // The correct format is "api/user/USERNAME/m/MULTINAME"
+                    String multiPath = "api/user/" + Authentication.name + "/m/" + multiReddit.getDisplayName();
+
                     MainActivity.multiNameToSubsMap.put(
                             ReorderSubreddits.MULTI_REDDIT + multiReddit.getDisplayName(),
-                            concatenatedSubs.toString());
+                            multiPath);
                     UserSubscriptions.setSubNameToProperties(
                             ReorderSubreddits.MULTI_REDDIT + multiReddit.getDisplayName(),
-                            concatenatedSubs.toString());
+                            multiPath);
                 }
             }
         } catch (ApiException | NetworkException e) {
