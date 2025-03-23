@@ -52,6 +52,27 @@
                 android:layout_alignParentLeft="true"
                 android:textSize="12sp"
                 android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/hq"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:theme="@style/Ripple.List"
+            android:padding="15dp"
+            android:layout_toLeftOf="@+id/mute"
+            app:srcCompat="@drawable/ic_high_quality"
+            android:tint="#e1e1e1" />
+
+        <ImageView
+            android:id="@+id/mute"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:theme="@style/Ripple.List"
+            android:padding="15dp"
+            android:layout_toLeftOf="@+id/save"
+            app:srcCompat="@drawable/ic_volume_off"
+            android:tint="#e1e1e1" />
+
         <ImageView
             android:id="@+id/save"
             android:layout_width="56dp"
@@ -78,6 +99,3 @@
     </RelativeLayout>
 
 </RelativeLayout>
-
-
-

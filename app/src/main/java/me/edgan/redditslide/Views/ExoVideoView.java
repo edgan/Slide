@@ -111,10 +111,6 @@ public class ExoVideoView extends RelativeLayout {
         // Pause playback when view is detached
         pause();
 
-        // For debugging, we are temporarily NOT releasing the player here to test if that prevents the blank video.
-        // Uncomment the following lines if you later decide to release the player on detach.
-        // Log.d(TAG, "Releasing player in onDetachedFromWindow");
-        // stop();
         super.onDetachedFromWindow();
     }
 

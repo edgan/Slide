@@ -484,6 +484,17 @@ public class AlbumPager extends BaseSaveActivity {
             // Reset player state to prevent flickering
             v.resetPlayer();
 
+            // Attach mute button and HQ button if they exist in the layout
+            ImageView muteButton = rootView.findViewById(R.id.mute);
+            if (muteButton != null) {
+                v.attachMuteButton(muteButton);
+            }
+
+            ImageView hqButton = rootView.findViewById(R.id.hq);
+            if (hqButton != null) {
+                v.attachHqButton(hqButton);
+            }
+
             final String url = ((AlbumPager) getActivity()).images.get(i).getImageUrl();
 
             // Important: Always start with autostart=false
