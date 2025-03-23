@@ -609,8 +609,16 @@ public class HeaderImageLinkView extends RelativeLayout {
         JsonNode dataNode = submission.getDataNode();
         String previewUrl = getPreviewUrl(dataNode);
 
-        if (previewUrl != null) {
-            handlePreviewImage(previewUrl, submission, baseSub, full, forceThumb);
+        if (dataNode.has("preview") &&
+            dataNode.get("preview").has("items") &&
+            dataNode.get("preview").get("items").size() > 0) {
+                handlePreviewImage(previewUrl, submission, baseSub, full, forceThumb);
+        } else {
+            // No valid preview available
+            setVisibility(View.GONE);
+            if (thumbImage2 != null) thumbImage2.setVisibility(View.GONE);
+            if (backdrop != null) backdrop.setVisibility(View.GONE);
+            if (wrapArea != null) wrapArea.setVisibility(View.VISIBLE);
         }
     }
 
