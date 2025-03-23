@@ -250,7 +250,7 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     null,
                     null,
                     false,
-                    true,
+                    false,
                     holder.rootView.findViewById(R.id.size),
                     subreddit,
                     submissionTitle
