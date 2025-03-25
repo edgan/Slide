@@ -514,6 +514,18 @@ public class RedditGalleryPager extends BaseSaveActivity implements GalleryParen
         }
     }
 
+    public void doImageSave(boolean isGif, String contentUrl, int index) {
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                this::showFirstDialog
+        );
+    }
+
     private void showFirstDialog() {
         runOnUiThread(() -> DialogUtil.showFirstDialog(RedditGalleryPager.this));
     }
