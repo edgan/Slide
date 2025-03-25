@@ -123,9 +123,11 @@ public class AlbumPager extends BaseSaveActivity {
             startActivity(i);
             finish();
         }
+
         if (id == R.id.grid) {
             mToolbar.findViewById(R.id.grid).callOnClick();
         }
+
         if (id == R.id.external) {
             LinkUtil.openExternally(getIntent().getExtras().getString("url", ""));
         }
@@ -480,6 +482,12 @@ public class AlbumPager extends BaseSaveActivity {
 
             final ExoVideoView v = (ExoVideoView) gif;
             v.clearFocus();
+
+            // Find and hide the play button in the layout
+            ImageView playButton = rootView.findViewById(R.id.playbutton);
+            if (playButton != null) {
+                playButton.setVisibility(View.GONE);
+            }
 
             // Attach mute button and HQ button if they exist in the layout
             ImageView muteButton = rootView.findViewById(R.id.mute);

@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
@@ -30,6 +31,7 @@ import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Views.ExoVideoView;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
@@ -414,7 +416,15 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
             gifView = rootView.findViewById(R.id.gif);
             gifView.setVisibility(View.VISIBLE);
 
-            final me.edgan.redditslide.Views.ExoVideoView exoVideoView = (me.edgan.redditslide.Views.ExoVideoView) gifView;
+            final ExoVideoView exoVideoView = (ExoVideoView) gifView;
+
+            gifView.clearFocus();
+
+            // Find and hide the play button in the layout
+            ImageView playButton = rootView.findViewById(R.id.playbutton);
+            if (playButton != null) {
+                playButton.setVisibility(View.GONE);
+            }
 
             // Get the gallery parent interface for data
             GalleryParent galleryParent = getGalleryParent();
