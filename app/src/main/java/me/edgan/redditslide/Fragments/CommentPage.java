@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -38,6 +39,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -48,9 +50,12 @@ import me.edgan.redditslide.Activities.AlbumPager;
 import me.edgan.redditslide.Activities.CommentSearch;
 import me.edgan.redditslide.Activities.CommentsScreen;
 import me.edgan.redditslide.Activities.FullscreenVideo;
+import me.edgan.redditslide.Activities.GalleryImage;
 import me.edgan.redditslide.Activities.MainActivity;
 import me.edgan.redditslide.Activities.MediaView;
 import me.edgan.redditslide.Activities.Profile;
+import me.edgan.redditslide.Activities.RedditGallery;
+import me.edgan.redditslide.Activities.RedditGalleryPager;
 import me.edgan.redditslide.Activities.Related;
 import me.edgan.redditslide.Activities.SendMessage;
 import me.edgan.redditslide.Activities.ShadowboxComments;
@@ -1017,6 +1022,64 @@ public class CommentPage extends Fragment implements Toolbar.OnMenuItemClickList
                                             getActivity().startActivity(i);
                                         }
                                     } else {
+                                        LinkUtil.openExternally(adapter.submission.getUrl());
+                                    }
+                                    break;
+                                case REDDIT_GALLERY:
+                                    // Instead of opening externally, parse the gallery and open RedditGallery or RedditGalleryPager in-app
+                                    if (!adapter.submission.getDataNode().has("gallery_data")
+                                            || !adapter.submission.getDataNode().has("media_metadata")) {
+                                        Log.d("RedditSlide", "No gallery data found");
+                                        // Fallback if Reddit’s JSON is missing the expected gallery fields
+                                        LinkUtil.openExternally(adapter.submission.getUrl());
+                                        break;
+                                    }
+
+                                    try {
+                                        ArrayList<GalleryImage> images = new ArrayList<>();
+                                        JsonNode galleryItems = adapter.submission.getDataNode().get("gallery_data").get("items");
+                                        JsonNode mediaMetadata = adapter.submission.getDataNode().get("media_metadata");
+
+                                        // Build up our list of GalleryImage objects
+                                        for (JsonNode galleryItem : galleryItems) {
+                                            String mediaId = galleryItem.get("media_id").asText();
+                                            JsonNode metaNode = mediaMetadata.get(mediaId);
+                                            if (metaNode != null) {
+                                                images.add(new GalleryImage(metaNode));
+                                            }
+                                        }
+
+                                        // If we didn’t get any images, fallback to opening in a browser
+                                        if (images.isEmpty()) {
+                                            LinkUtil.openExternally(adapter.submission.getUrl());
+                                            break;
+                                        }
+
+                                        // Decide whether to launch the Pager (horizontal swipe) or vertical Gallery
+                                        if (SettingValues.albumSwipe) {
+                                            // Open horizontal ViewPager
+                                            Intent i = new Intent(getActivity(), RedditGalleryPager.class);
+                                            i.putExtra(RedditGalleryPager.SUBREDDIT, subreddit);
+                                            i.putExtra(MediaView.SUBMISSION_URL, adapter.submission.getUrl());
+                                            i.putExtra(EXTRA_SUBMISSION_TITLE, adapter.submission.getTitle());
+                                            // Pass the list of GalleryImage via a Serializable extra
+                                            i.putExtra(RedditGallery.GALLERY_URLS, images);
+                                            startActivity(i);
+                                            getActivity().overridePendingTransition(R.anim.slideright, R.anim.fade_out);
+                                        } else {
+                                            // Open the vertical Gallery
+                                            Intent i = new Intent(getActivity(), RedditGallery.class);
+                                            i.putExtra(RedditGallery.SUBREDDIT, subreddit);
+                                            i.putExtra(MediaView.SUBMISSION_URL, adapter.submission.getUrl());
+                                            i.putExtra(EXTRA_SUBMISSION_TITLE, adapter.submission.getTitle());
+                                            // Pass the list of GalleryImage via a Serializable extra
+                                            i.putExtra(RedditGallery.GALLERY_URLS, images);
+                                            startActivity(i);
+                                            getActivity().overridePendingTransition(R.anim.slideright, R.anim.fade_out);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        // If parsing fails, gracefully open externally as a fallback
                                         LinkUtil.openExternally(adapter.submission.getUrl());
                                     }
                                     break;

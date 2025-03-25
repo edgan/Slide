@@ -2,6 +2,37 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+7.2.5 / 2025-3-21
+=================
+* Fixed Slide doesn't request notification permission on first launch #146
+* Disabling converting preview links into images when Show content type text beside links is enabled #159
+* Fixed all storage location checks to also check for storage access
+* Added longclick option to unset storage location
+* Implemented same crash fix from #147 for Imgur and Tumblr
+* Fixed Crash in crosspost when media list is empty #147
+* Reverted change to preview images which fixes many cases
+
+7.2.4 / 2025-3-15
+=================
+* Fixed "Open content" option doesn’t support Reddit Galleries #115
+* Fixed Sorting in User Profiles #139
+* Always fully collapse the sticky comment
+* Added link to the Client ID instructions the dialog in General settings
+* Allow user to unblock another user #126
+* Made Peek content and No longclicks on preview images toggle each other
+* Fixed an ANR when reloading subs #134
+* Fixed crashes in MultiredditOverview.java #133 #141
+
+7.2.3 / 2025-3-9
+================
+* Added a restore form file button to the Tutorial #132
+* Added link to the Client ID instructions #106
+* Added a background the the client id dialog in the tutorial #106
+* Fixed Peek content on Reddit galleries opens Reddit website #123
+* Removed peeking in comments
+* Fixed Reddit GIF loading with peek #124
+* Fixed missing video audio when saving files #122
+
 7.2.2 / 2025-3-2
 ================
 * Two more fixes for subreddit filters

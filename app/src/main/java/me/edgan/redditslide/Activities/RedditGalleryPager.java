@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,6 +42,7 @@ import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.NetworkUtil;
@@ -65,6 +67,8 @@ public class RedditGalleryPager extends BaseSaveActivity {
     private BottomSheet.Builder bottomSheetBuilder;
     private String lastContentUrl; // Track URL for retry after permission
     private int lastIndex = -1; // Track index for retry after permission
+
+    private static final String TAG = "RedditGalleryPager";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -191,6 +195,11 @@ public class RedditGalleryPager extends BaseSaveActivity {
                 new Runnable() {
                     @Override
                     public void run() {
+                        if (images == null || images.isEmpty()) {
+                            // Don't attempt to load any positions if there are no images
+                            return;
+                        }
+
                         // If there is more than one position, load both position 0 and 1.
                         if (adapter.getCount() > 1) {
                             adapter.instantiateItem(p, 0);
@@ -473,8 +482,7 @@ public class RedditGalleryPager extends BaseSaveActivity {
             rootView.findViewById(R.id.more)
                     .setOnClickListener(
                             v1 ->
-                                    ((RedditGalleryPager) getActivity())
-                                            .showBottomSheetImage(url, true, i));
+                                    ((RedditGalleryPager) getActivity()).showBottomSheetImage(url, true, i));
 
             rootView.findViewById(R.id.save)
                     .setOnClickListener(
@@ -503,37 +511,15 @@ public class RedditGalleryPager extends BaseSaveActivity {
     }
 
     public void doImageSave(boolean isGif, String contentUrl, int index) {
-        Uri storageUri = StorageUtil.getStorageUri(this);
-        if (storageUri == null) {
-            lastContentUrl = contentUrl;
-            lastIndex = index;
-            StorageUtil.showDirectoryChooser(this);
-        } else {
-            if (isGif) {
-                // Handle video/gif save
-                GifUtils.cacheSaveGif(
-                        Uri.parse(contentUrl),
-                        this,
-                        subreddit != null ? subreddit : "",
-                        submissionTitle != null ? submissionTitle : "",
-                        true);
-            } else {
-                // Handle image save
-                Intent i = new Intent(this, ImageDownloadNotificationService.class);
-                i.putExtra("actuallyLoaded", contentUrl);
-                i.putExtra("downloadUri", storageUri.toString());
-
-                if (subreddit != null && !subreddit.isEmpty()) {
-                    i.putExtra("subreddit", subreddit);
-                }
-                if (submissionTitle != null) {
-                    i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
-                }
-                i.putExtra("index", index);
-
-                startService(i);
-            }
-        }
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                this::showFirstDialog
+        );
     }
 
     public static class ImageFullNoSubmission extends Fragment {

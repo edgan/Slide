@@ -1,0 +1,7 @@
+---
+description: Include new strings
+globs: *
+alwaysApply: true
+---
+
+Be sure to include new strings for strings.xml in the changes.

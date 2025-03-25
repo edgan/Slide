@@ -58,6 +58,7 @@ import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.FileUtil;
 import me.edgan.redditslide.util.GifUtils;
 import me.edgan.redditslide.util.HttpUtil;
+import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.NetworkUtil;
@@ -228,7 +229,7 @@ public class MediaView extends BaseSaveActivity {
                                 {
                                     String urlToSave =
                                             actuallyLoaded != null ? actuallyLoaded : contentUrl;
-                                    doImageSave(urlToSave);
+                                    doImageSave(isGif, urlToSave, index);
                                     break;
                                 }
                             case (16):
@@ -243,39 +244,22 @@ public class MediaView extends BaseSaveActivity {
         b.show();
     }
 
-    public void doImageSave(String actuallyLoaded) {
-        if (!isGif) {
-            Uri storageUri = StorageUtil.getStorageUri(this);
-            if (storageUri == null) {
-                Log.e(TAG, "No valid storage URI found.");
-                showFirstDialog();
-                return;
-            }
-
-            Intent i = new Intent(this, ImageDownloadNotificationService.class);
-            i.putExtra("actuallyLoaded", contentUrl);
-            i.putExtra("downloadUri", storageUri.toString());
-            if (subreddit != null && !subreddit.isEmpty()) i.putExtra("subreddit", subreddit);
-            if (submissionTitle != null) i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
-            i.putExtra("index", index);
-
-            ComponentName component = startService(i);
-            if (component == null) {
-                Log.e(TAG, "Failed to start ImageDownloadNotificationService.");
-                DialogUtil.showErrorDialog(this);
-            } else {
-                Toast.makeText(this, getString(R.string.mediaview_downloading), Toast.LENGTH_SHORT)
-                        .show();
-            }
-        } else {
-            doOnClick.run();
-        }
+    public void doImageSave(boolean isGif, String contentUrl, int index) {
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                this::showFirstDialog
+        );
     }
 
     public void saveFile(final String baseUrl) {
         Uri storageUri = StorageUtil.getStorageUri(this);
 
-        if (storageUri == null) {
+        if (storageUri == null || !StorageUtil.hasStorageAccess(this)) {
             Log.e(TAG, "No storage URI available");
             DialogUtil.showErrorDialog(this);
             return;
@@ -576,7 +560,7 @@ public class MediaView extends BaseSaveActivity {
                             public void onClick(View v) {
                                 String urlToSave =
                                         actuallyLoaded != null ? actuallyLoaded : contentUrl;
-                                doImageSave(urlToSave);
+                                doImageSave(isGif, urlToSave, index);
                             }
                         });
         if (!SettingValues.imageDownloadButton) {

@@ -12,7 +12,6 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.SurfaceView;
 import android.view.TextureView;
-import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -61,11 +60,11 @@ public class ExoVideoView extends RelativeLayout {
     private boolean hqAttached = false;
     private AudioFocusHelper audioFocusHelper;
     private Handler handler = new Handler(Looper.getMainLooper());
-    
+
     private ScaleGestureDetector scaleGestureDetector;
     private float scaleFactor = 1.0f;
     private AspectRatioFrameLayout videoFrame;
-    
+
     // Variables for panning
     private float lastTouchX;
     private float lastTouchY;
@@ -129,7 +128,7 @@ public class ExoVideoView extends RelativeLayout {
         params.addRule(CENTER_IN_PARENT, TRUE);
         frame.setLayoutParams(params);
         frame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-        
+
         // Initialize scale gesture detector
         scaleGestureDetector = new ScaleGestureDetector(context, new VideoScaleListener());
 
@@ -208,7 +207,7 @@ public class ExoVideoView extends RelativeLayout {
 
         if (!SettingValues.oldSwipeMode) {
             playerUI.hide();
-	}
+    }
 
         addView(playerUI);
 
@@ -492,13 +491,16 @@ public class ExoVideoView extends RelativeLayout {
                                 .setContentType(AudioAttributesCompat.CONTENT_TYPE_MOVIE)
                                 .setUsage(AudioAttributesCompat.USAGE_MEDIA)
                                 .build();
-                request =
-                        new AudioFocusRequestCompat.Builder(
-                                        AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT)
-                                .setAudioAttributes(audioAttributes)
-                                .setOnAudioFocusChangeListener(this)
-                                .setWillPauseWhenDucked(true)
-                                .build();
+
+                AudioFocusRequestCompat.Builder builder = new AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT)
+                        .setAudioAttributes(audioAttributes)
+                        .setOnAudioFocusChangeListener(this);
+
+                if (SettingValues.pauseOnAudioFocus) {
+                    builder.setWillPauseWhenDucked(true);
+                }
+
+                request = builder.build();
             }
         }
 
@@ -570,11 +572,11 @@ public class ExoVideoView extends RelativeLayout {
     public boolean onTouchEvent(MotionEvent event) {
         // Handle scale gestures
         scaleGestureDetector.onTouchEvent(event);
-        
+
         // Only handle panning when zoomed in
         if (scaleFactor > 1.0f) {
             final int action = event.getActionMasked();
-            
+
             switch (action) {
                 case MotionEvent.ACTION_DOWN: {
                     // Start tracking touch position for potential dragging
@@ -583,44 +585,44 @@ public class ExoVideoView extends RelativeLayout {
                     isDragging = false;
                     break;
                 }
-                
+
                 case MotionEvent.ACTION_MOVE: {
                     // Only process if not in a scaling operation
                     if (!scaleGestureDetector.isInProgress()) {
                         // Calculate distance moved
                         float dx = event.getX() - lastTouchX;
                         float dy = event.getY() - lastTouchY;
-                        
+
                         // If movement is significant enough, consider it a drag
                         if (!isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
                             isDragging = true;
                         }
-                        
+
                         if (isDragging) {
                             // Update position with constraints to keep video partially visible
                             positionX += dx;
                             positionY += dy;
-                            
+
                             // Calculate maximum allowed movement based on scale
                             float maxDeltaX = (videoFrame.getWidth() * (scaleFactor - 1)) / 2;
                             float maxDeltaY = (videoFrame.getHeight() * (scaleFactor - 1)) / 2;
-                            
+
                             // Constrain movement
                             positionX = Math.max(-maxDeltaX, Math.min(maxDeltaX, positionX));
                             positionY = Math.max(-maxDeltaY, Math.min(maxDeltaY, positionY));
-                            
+
                             // Apply translation
                             videoFrame.setTranslationX(positionX);
                             videoFrame.setTranslationY(positionY);
                         }
-                        
+
                         // Update last position
                         lastTouchX = event.getX();
                         lastTouchY = event.getY();
                     }
                     break;
                 }
-                
+
                 case MotionEvent.ACTION_UP: {
                     // Handle click if it wasn't a drag
                     if (!isDragging) {
@@ -629,26 +631,26 @@ public class ExoVideoView extends RelativeLayout {
                     isDragging = false;
                     break;
                 }
-                
+
                 case MotionEvent.ACTION_CANCEL: {
                     isDragging = false;
                     break;
                 }
             }
-            
+
             // If we're handling a drag, intercept the event
             if (isDragging) {
                 return true;
             }
         }
-        
+
         // Continue with normal touch handling if not scaling or panning
         if (!scaleGestureDetector.isInProgress() && !isDragging) {
             return super.onTouchEvent(event);
         }
         return true;
     }
-    
+
     /**
      * Scale gesture listener to handle pinch-to-zoom events
      */
@@ -656,10 +658,10 @@ public class ExoVideoView extends RelativeLayout {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             scaleFactor *= detector.getScaleFactor();
-            
+
             // Limit the scale factor to reasonable bounds
             scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 3.0f));
-            
+
             // Apply the scale to the video frame
             if (videoFrame != null) {
                 videoFrame.setScaleX(scaleFactor);
@@ -667,7 +669,7 @@ public class ExoVideoView extends RelativeLayout {
             }
             return true;
         }
-        
+
         @Override
         public boolean onScaleBegin(ScaleGestureDetector detector) {
             // Change resize mode when scaling begins to allow proper zooming
@@ -676,7 +678,7 @@ public class ExoVideoView extends RelativeLayout {
             }
             return true;
         }
-        
+
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
             // If scale is back to normal (or very close), reset to FIT mode and reset position
@@ -691,7 +693,7 @@ public class ExoVideoView extends RelativeLayout {
             }
         }
     }
-    
+
     /**
      * Resets any applied zoom to default scale and position
      */
@@ -704,7 +706,7 @@ public class ExoVideoView extends RelativeLayout {
             videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
         }
     }
-    
+
     /**
      * Resets the panning position to center
      */

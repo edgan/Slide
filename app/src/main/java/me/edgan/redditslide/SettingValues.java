@@ -67,6 +67,7 @@ public class SettingValues {
     public static final String PREF_COLLAPSE_COMMENTS = "collapseCOmments";
     public static final String PREF_COLLAPSE_COMMENTS_DEFAULT = "collapseCommentsDefault";
     public static final String PREF_COLLAPSE_DELETED_COMMENTS = "collapseDeletedComments";
+    public static final String PREF_COLLAPSE_STICKY_COMMENT = "collapseStickyComment";
     public static final String PREF_RIGHT_HANDED_COMMENT_MENU = "rightHandedCommentMenu";
     public static final String PREF_DUAL_PORTRAIT = "dualPortrait";
     public static final String PREF_SINGLE_COLUMN_MULTI = "singleColumnMultiWindow";
@@ -92,6 +93,7 @@ public class SettingValues {
     public static final String PREF_LQ_HIGH = "lqHigh";
     public static final String PREF_LQ_VIDEOS = "lqVideos";
     public static final String PREF_SOUND_NOTIFS = "soundNotifs";
+    public static final String PREF_PAUSE_ON_AUDIO_FOCUS = "pauseOnAudioFocus";
     public static final String PREF_COOKIES = "storeCookies";
     public static final String PREF_NIGHT_START = "nightStart";
     public static final String PREF_NIGHT_END = "nightEnd";
@@ -208,6 +210,7 @@ public class SettingValues {
     public static boolean collapseComments;
     public static boolean collapseCommentsDefault;
     public static boolean collapseDeletedComments;
+    public static boolean collapseStickyComment;
     public static boolean rightHandedCommentMenu;
     public static boolean abbreviateScores;
     public static boolean hidePostAwards;
@@ -273,6 +276,7 @@ public class SettingValues {
     public static int nightTheme;
     public static boolean typeInText;
     public static boolean notifSound;
+    public static boolean pauseOnAudioFocus;
     public static boolean cookies;
     public static boolean colorIcon;
     public static boolean peek;
@@ -331,7 +335,7 @@ public class SettingValues {
         blurCheck = prefs.getBoolean(PREF_BLUR, false);
         overrideLanguage = prefs.getBoolean(PREF_OVERRIDE_LANGUAGE, false);
         immersiveMode = prefs.getBoolean(PREF_IMMERSIVE_MODE, false);
-	    oldSwipeMode = prefs.getBoolean(PREF_OLD_SWIPE_MODE, false);
+        oldSwipeMode = prefs.getBoolean(PREF_OLD_SWIPE_MODE, false);
         largeDepth = prefs.getBoolean(PREF_LARGE_DEPTH, false);
         readerMode = prefs.getBoolean(PREF_READER_MODE, false);
         imageSubfolders = prefs.getBoolean(PREF_IMAGE_SUBFOLDERS, false);
@@ -385,6 +389,7 @@ public class SettingValues {
         collapseComments = prefs.getBoolean(PREF_COLLAPSE_COMMENTS, false);
         collapseCommentsDefault = prefs.getBoolean(PREF_COLLAPSE_COMMENTS_DEFAULT, false);
         collapseDeletedComments = prefs.getBoolean(PREF_COLLAPSE_DELETED_COMMENTS, false);
+        collapseStickyComment = prefs.getBoolean(PREF_COLLAPSE_STICKY_COMMENT, false);
         rightHandedCommentMenu = prefs.getBoolean(PREF_RIGHT_HANDED_COMMENT_MENU, false);
         commentAutoHide = prefs.getBoolean(PREF_AUTOHIDE_COMMENTS, false);
         showCollapseExpand = prefs.getBoolean(PREF_SHOW_COLLAPSE_EXPAND, false);
@@ -431,6 +436,7 @@ public class SettingValues {
         synccitName = prefs.getString(SYNCCIT_NAME, "");
         synccitAuth = prefs.getString(SYNCCIT_AUTH, "");
         notifSound = prefs.getBoolean(PREF_SOUND_NOTIFS, false);
+        pauseOnAudioFocus = prefs.getBoolean(PREF_PAUSE_ON_AUDIO_FOCUS, false);
         cookies = prefs.getBoolean(PREF_COOKIES, true);
         linkHandlingMode =
                 prefs.getInt(

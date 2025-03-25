@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,13 +27,14 @@ import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.StorageUtil;
 
@@ -55,6 +57,8 @@ public class RedditGallery extends BaseSaveActivity {
     public RedditGalleryPagerAdapter gallery;
     private static String lastContentUrl; // Track URL for retry after permission
     private int lastIndex = -1; // Track index for retry after permission
+
+    private static final String TAG = "RedditGallery";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -315,36 +319,18 @@ public class RedditGallery extends BaseSaveActivity {
     }
 
     public void doImageSave(boolean isGif, String contentUrl, int index) {
-        Uri storageUri = StorageUtil.getStorageUri(this);
-        if (storageUri == null) {
-            lastContentUrl = contentUrl;
-            lastIndex = index;
-            StorageUtil.showDirectoryChooser(this);
-        } else {
-            if (isGif) {
-                // Handle video/gif save
-                GifUtils.cacheSaveGif(
-                        Uri.parse(contentUrl),
-                        this,
-                        subreddit != null ? subreddit : "",
-                        submissionTitle != null ? submissionTitle : "",
-                        true);
-            } else {
-                // Handle image save
-                Intent i = new Intent(this, ImageDownloadNotificationService.class);
-                i.putExtra("actuallyLoaded", contentUrl);
-                i.putExtra("downloadUri", storageUri.toString());
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                this::showFirstDialog
+        );
+    }
 
-                if (subreddit != null && !subreddit.isEmpty()) {
-                    i.putExtra("subreddit", subreddit);
-                }
-                if (submissionTitle != null) {
-                    i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
-                }
-                i.putExtra("index", index);
-
-                startService(i);
-            }
-        }
+    private void showFirstDialog() {
+        runOnUiThread(() -> DialogUtil.showFirstDialog(RedditGallery.this));
     }
 }

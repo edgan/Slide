@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,6 +37,9 @@ import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.DialogUtil;
+import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.StorageUtil;
 
@@ -53,6 +57,8 @@ public class Album extends BaseSaveActivity {
     public static final String SUBREDDIT = "subreddit";
     private List<Image> images;
     private int adapterPosition;
+
+    private static final String TAG = "Album";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -90,39 +96,26 @@ public class Album extends BaseSaveActivity {
             LinkUtil.openExternally(url);
         }
         if (id == R.id.download) {
+            int index = 0;
             for (final Image elem : images) {
-                doImageSave(false, elem.getImageUrl());
+                doImageSave(false, elem.getImageUrl(), index);
+                index++;
             }
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void doImageSave(boolean isGif, String contentUrl) {
-        if (!isGif) {
-            // StorageUtil checks for a saved directory URI and valid permissions
-            Uri storageUri = StorageUtil.getStorageUri(this);
-            if (storageUri == null) {
-                // Launch the system directory picker
-                StorageUtil.showDirectoryChooser(this);
-            } else {
-                // We have storage access - start the download service
-                Intent i = new Intent(this, ImageDownloadNotificationService.class);
-                i.putExtra("actuallyLoaded", contentUrl);
-                i.putExtra("downloadUri", storageUri.toString());
-
-                // Pass along the metadata
-                if (subreddit != null && !subreddit.isEmpty()) {
-                    i.putExtra("subreddit", subreddit);
-                }
-                if (submissionTitle != null) {
-                    i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
-                }
-                startService(i);
-            }
-        } else {
-            MediaView.doOnClick.run();
-        }
+    public void doImageSave(boolean isGif, String contentUrl, int index) {
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                this::showFirstDialog
+        );
     }
 
     public String url;
@@ -327,5 +320,9 @@ public class Album extends BaseSaveActivity {
                 }
             }
         }
+    }
+
+    private void showFirstDialog() {
+        runOnUiThread(() -> DialogUtil.showFirstDialog(Album.this));
     }
 }

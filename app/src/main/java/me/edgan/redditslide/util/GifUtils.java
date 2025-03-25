@@ -24,7 +24,6 @@ import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import android.os.SystemClock;
-import okhttp3.FormBody;
 import java.util.concurrent.atomic.AtomicReference;
 
 import androidx.media3.common.MimeTypes;
@@ -46,7 +45,6 @@ import me.edgan.redditslide.Activities.MediaView;
 import me.edgan.redditslide.Activities.Website;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
-import me.edgan.redditslide.SecretConstants;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.ExoVideoView;
 
@@ -54,30 +52,31 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import org.mp4parser.Container;
-import org.mp4parser.muxer.Movie;
-import org.mp4parser.muxer.Track;
-import org.mp4parser.muxer.builder.DefaultMp4Builder;
-import org.mp4parser.muxer.container.mp4.MovieCreator;
-import org.mp4parser.muxer.tracks.ClippedTrack;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
-import java.nio.channels.WritableByteChannel;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import android.media.MediaExtractor;
+import android.media.MediaFormat;
+import android.media.MediaMuxer;
+import android.media.MediaCodec;
+
+import java.io.FileInputStream;
+import org.apache.commons.io.IOUtils;
+
 /** GIF handling utilities */
 public class GifUtils {
+    private static final String TAG = "GifUtils";
+
     /**
      * Create a notification that opens a newly-saved GIF
      *
@@ -237,7 +236,9 @@ public class GifUtils {
 
         Uri storageUri = StorageUtil.getStorageUri(activity);
         if (storageUri == null || !StorageUtil.hasStorageAccess(activity)) {
+            Log.e(TAG, "No valid storage URI found.");
             showFirstDialog(activity);
+            return;
         } else {
             new AsyncTask<Void, Integer, DocumentFile>() {
                 NotificationManager notifMgr =
@@ -311,6 +312,13 @@ public class GifUtils {
                                 return null;
                             }
 
+                            // Open output stream first to ensure we have write access
+                            out = activity.getContentResolver().openOutputStream(outDocFile.getUri());
+                            if (out == null) {
+                                saveError = new Exception("Could not open output stream");
+                                return null;
+                            }
+
                             String urlStr = uri.toString();
                             if (urlStr.contains("v.redd.it") && urlStr.contains("DASHPlaylist.mpd")) {
                                 // Handle DASH video
@@ -327,14 +335,17 @@ public class GifUtils {
                                 DashManifest dashManifest = new DashManifestParser().parse(Uri.parse(urlStr), dashManifestStream);
                                 dashManifestStream.close();
 
-                                // Find highest quality video URL
+                                // Find highest quality video URL and audio URL
                                 String videoUrl = null;
+                                String audioUrl = null;
                                 int maxBitrate = 0;
+
                                 for (int i = 0; i < dashManifest.getPeriodCount(); i++) {
                                     for (AdaptationSet as : dashManifest.getPeriod(i).adaptationSets) {
                                         for (Representation r : as.representations) {
-                                            if (!MimeTypes.isAudio(r.format.sampleMimeType)
-                                                    && r.format.bitrate > maxBitrate) {
+                                            if (MimeTypes.isAudio(r.format.sampleMimeType)) {
+                                                audioUrl = r.baseUrls.get(0).url.toString();
+                                            } else if (r.format.bitrate > maxBitrate) {
                                                 maxBitrate = r.format.bitrate;
                                                 videoUrl = r.baseUrls.get(0).url.toString();
                                             }
@@ -347,16 +358,72 @@ public class GifUtils {
                                     return null;
                                 }
 
-                                // Download the actual video file
+                                // Create temporary files for video and audio
+                                File videoFile = new File(activity.getCacheDir(), "temp_video.mp4");
+                                File audioFile = audioUrl != null ? new File(activity.getCacheDir(), "temp_audio.mp4") : null;
+                                File outputFile = new File(activity.getCacheDir(), "temp_output.mp4");
+
+                                // Download video
                                 Request videoRequest = new Request.Builder().url(videoUrl).build();
                                 Response videoResponse = Reddit.client.newCall(videoRequest).execute();
-
                                 if (!videoResponse.isSuccessful()) {
                                     saveError = new Exception("Failed to download video: " + videoResponse);
                                     return null;
                                 }
+                                FileOutputStream videoOut = new FileOutputStream(videoFile);
+                                IOUtils.copy(videoResponse.body().byteStream(), videoOut);
+                                videoOut.close();
 
-                                in = videoResponse.body().byteStream();
+                                // Download audio if available
+                                if (audioUrl != null) {
+                                    Request audioRequest = new Request.Builder().url(audioUrl).build();
+                                    Response audioResponse = Reddit.client.newCall(audioRequest).execute();
+                                    if (!audioResponse.isSuccessful()) {
+                                        saveError = new Exception("Failed to download audio: " + audioResponse);
+                                        return null;
+                                    }
+                                    FileOutputStream audioOut = new FileOutputStream(audioFile);
+                                    IOUtils.copy(audioResponse.body().byteStream(), audioOut);
+                                    audioOut.close();
+                                }
+
+                                // Mux video and audio if needed
+                                boolean muxSuccess;
+                                if (audioFile != null) {
+                                    muxSuccess = mux(videoFile.getAbsolutePath(), audioFile.getAbsolutePath(), outputFile.getAbsolutePath());
+                                } else {
+                                    // Just copy video file if no audio
+                                    try (FileInputStream fis = new FileInputStream(videoFile);
+                                         FileOutputStream fos = new FileOutputStream(outputFile)) {
+                                        byte[] buffer = new byte[8192];
+                                        int bytesRead;
+                                        while ((bytesRead = fis.read(buffer)) != -1) {
+                                            fos.write(buffer, 0, bytesRead);
+                                        }
+                                    }
+                                    muxSuccess = true;
+                                }
+
+                                if (!muxSuccess) {
+                                    saveError = new Exception("Failed to mux video and audio");
+                                    return null;
+                                }
+
+                                // Copy final file to destination using streams
+                                try (FileInputStream fis = new FileInputStream(outputFile)) {
+                                    byte[] buffer = new byte[8192];
+                                    int bytesRead;
+                                    while ((bytesRead = fis.read(buffer)) != -1) {
+                                        out.write(buffer, 0, bytesRead);
+                                    }
+                                    out.flush();
+                                }
+
+                                // Cleanup temp files
+                                videoFile.delete();
+                                if (audioFile != null) audioFile.delete();
+                                outputFile.delete();
+
                             } else {
                                 // Handle non-DASH video as before
                                 Request videoRequest = new Request.Builder().url(urlStr).build();
@@ -367,42 +434,32 @@ public class GifUtils {
                                     return null;
                                 }
 
+                                // Copy response to output using streams
                                 in = videoResponse.body().byteStream();
-                            }
-
-                            out =
-                                    activity.getContentResolver()
-                                            .openOutputStream(outDocFile.getUri());
-
-                            byte[] buffer = new byte[8192];
-                            long total = 0;
-                            int read;
-                            while ((read = in.read(buffer)) != -1) {
-                                out.write(buffer, 0, read);
-                                total += read;
-                            }
-
-                            if (total == 0) {
-                                saveError = new Exception("Downloaded file is empty");
-                                return null;
+                                byte[] buffer = new byte[8192];
+                                int bytesRead;
+                                while ((bytesRead = in.read(buffer)) != -1) {
+                                    out.write(buffer, 0, bytesRead);
+                                }
+                                out.flush();
                             }
 
                             return outDocFile;
                         }
                     } catch (Exception e) {
-                        Log.e("GifUtils", "Error saving video", e);
+                        LogUtil.e(e, "Error saving video");
                         saveError = e;
                         return null;
                     } finally {
                         try {
                             if (in != null) in.close();
                         } catch (IOException e) {
-                            Log.e("GifUtils", "Error closing input stream", e);
+                            LogUtil.e(e, "Error closing input stream");
                         }
                         try {
                             if (out != null) out.close();
                         } catch (IOException e) {
-                            Log.e("GifUtils", "Error closing output stream", e);
+                            LogUtil.e(e, "Error closing output stream");
                         }
                     }
                 }
@@ -1239,110 +1296,111 @@ public class GifUtils {
     }
 
     /**
-     * Mux a video and audio file (e.g. from DASH) together into a single video
+     * Mux a video and audio file (e.g. from DASH) together into a single video using MediaMuxer
      *
-     * @param videoFile Video file
-     * @param audioFile Audio file
-     * @param outputFile File to output muxed video to
+     * @param videoFile Video file path
+     * @param audioFile Audio file path
+     * @param outputFile Output file path
      * @return Whether the muxing completed successfully
      */
     private static boolean mux(String videoFile, String audioFile, String outputFile) {
-        Movie rawVideo;
+        MediaMuxer muxer = null;
+        MediaExtractor videoExtractor = null;
+        MediaExtractor audioExtractor = null;
+
         try {
-            rawVideo = MovieCreator.build(videoFile);
-        } catch (RuntimeException | IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+            // Create muxer
+            muxer = new MediaMuxer(outputFile, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
 
-        Movie audio;
-        try {
-            audio = MovieCreator.build(audioFile);
-        } catch (IOException | NullPointerException e) {
-            e.printStackTrace();
-            return false;
-        }
+            // Set up video extractor
+            videoExtractor = new MediaExtractor();
+            videoExtractor.setDataSource(videoFile);
 
-        Track audioTrack = audio.getTracks().get(0);
-        Track videoTrack = rawVideo.getTracks().get(0);
-        Movie video = new Movie();
+            // Set up audio extractor
+            audioExtractor = new MediaExtractor();
+            audioExtractor.setDataSource(audioFile);
 
-        ClippedTrack croppedTrackAudio =
-                new ClippedTrack(audioTrack, 0, audioTrack.getSamples().size());
-        video.addTrack(croppedTrackAudio);
-        ClippedTrack croppedTrackVideo =
-                new ClippedTrack(videoTrack, 0, videoTrack.getSamples().size());
-        video.addTrack(croppedTrackVideo);
+            // Add tracks and get track IDs
+            int videoTrackIndex = -1;
+            int audioTrackIndex = -1;
 
-        Container out = new DefaultMp4Builder().build(video);
-
-        FileOutputStream fos;
-        try {
-            fos = new FileOutputStream(outputFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
-        BufferedWritableFileByteChannel byteBufferByteChannel =
-                new BufferedWritableFileByteChannel(fos);
-        try {
-            out.writeContainer(byteBufferByteChannel);
-            byteBufferByteChannel.close();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    private static class BufferedWritableFileByteChannel implements WritableByteChannel {
-        private static final int BUFFER_CAPACITY = 1000000;
-
-        private boolean isOpen = true;
-        private final OutputStream outputStream;
-        private final ByteBuffer byteBuffer;
-        private final byte[] rawBuffer = new byte[BUFFER_CAPACITY];
-
-        private BufferedWritableFileByteChannel(OutputStream outputStream) {
-            this.outputStream = outputStream;
-            this.byteBuffer = ByteBuffer.wrap(rawBuffer);
-        }
-
-        @Override
-        public int write(ByteBuffer inputBuffer) {
-            int inputBytes = inputBuffer.remaining();
-
-            if (inputBytes > byteBuffer.remaining()) {
-                dumpToFile();
-                byteBuffer.clear();
-
-                if (inputBytes > byteBuffer.remaining()) {
-                    throw new BufferOverflowException();
+            // Add video track
+            for (int i = 0; i < videoExtractor.getTrackCount(); i++) {
+                MediaFormat format = videoExtractor.getTrackFormat(i);
+                String mime = format.getString(MediaFormat.KEY_MIME);
+                if (mime.startsWith("video/")) {
+                    videoExtractor.selectTrack(i);
+                    videoTrackIndex = muxer.addTrack(format);
+                    break;
                 }
             }
 
-            byteBuffer.put(inputBuffer);
+            // Add audio track
+            for (int i = 0; i < audioExtractor.getTrackCount(); i++) {
+                MediaFormat format = audioExtractor.getTrackFormat(i);
+                String mime = format.getString(MediaFormat.KEY_MIME);
+                if (mime.startsWith("audio/")) {
+                    audioExtractor.selectTrack(i);
+                    audioTrackIndex = muxer.addTrack(format);
+                    break;
+                }
+            }
 
-            return inputBytes;
-        }
+            // Start muxing
+            muxer.start();
 
-        @Override
-        public boolean isOpen() {
-            return isOpen;
-        }
+            // Write samples
+            ByteBuffer buffer = ByteBuffer.allocate(1024 * 1024); // 1MB buffer
+            MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
 
-        @Override
-        public void close() {
-            dumpToFile();
-            isOpen = false;
-        }
+            // Write video samples
+            while (true) {
+                int sampleSize = videoExtractor.readSampleData(buffer, 0);
+                if (sampleSize < 0) break;
 
-        private void dumpToFile() {
-            try {
-                outputStream.write(rawBuffer, 0, byteBuffer.position());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                bufferInfo.offset = 0;
+                bufferInfo.size = sampleSize;
+                bufferInfo.presentationTimeUs = videoExtractor.getSampleTime();
+                bufferInfo.flags = videoExtractor.getSampleFlags();
+
+                muxer.writeSampleData(videoTrackIndex, buffer, bufferInfo);
+                videoExtractor.advance();
+            }
+
+            // Write audio samples
+            while (true) {
+                int sampleSize = audioExtractor.readSampleData(buffer, 0);
+                if (sampleSize < 0) break;
+
+                bufferInfo.offset = 0;
+                bufferInfo.size = sampleSize;
+                bufferInfo.presentationTimeUs = audioExtractor.getSampleTime();
+                bufferInfo.flags = audioExtractor.getSampleFlags();
+
+                muxer.writeSampleData(audioTrackIndex, buffer, bufferInfo);
+                audioExtractor.advance();
+            }
+
+            return true;
+
+        } catch (Exception e) {
+            LogUtil.e(e, "Error muxing video");
+            return false;
+        } finally {
+            // Clean up resources
+            if (muxer != null) {
+                try {
+                    muxer.stop();
+                    muxer.release();
+                } catch (Exception e) {
+                    LogUtil.e(e, "Error releasing muxer");
+                }
+            }
+            if (videoExtractor != null) {
+                videoExtractor.release();
+            }
+            if (audioExtractor != null) {
+                audioExtractor.release();
             }
         }
     }

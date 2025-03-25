@@ -146,8 +146,8 @@
     <string name="profile_btn_tag">Set tag</string>
     <string name="profile_btn_untag">Remove tag</string>
     <string name="profile_info">Profile information</string>
-    <string name="profile_block_user">Block user</string>
-
+    <string name="profile_block_user">Block user\'s messages, posts, and profile</string>
+    <string name="profile_unblock_user">Unblock user\'s messages, posts, and profile</string>
 
     <!-- Comment text options -->
     <string name="comment_gild">Award comment</string>
@@ -262,7 +262,7 @@
     <string name="err_comment_post_reason">Reason: %1$s</string>
     <string name="err_comment_post_message">\n\nYour message has been saved as a draft. Please try again later.</string>
     <string name="err_connection_failed_msg">The connection to Reddit failed. Please check your internet connection and try again, or enter offline mode.</string>
-    <string name="err_block_user">Error blocking user</string>
+    <string name="err_block_user">Error blocking user. Did you recently unblock this user?</string>
 
     <!-- Gif -->
     <string name="gif_err_title">GIF not found</string>
@@ -603,7 +603,8 @@
     <string name="settings_delete_sub_settings">Do you really want to delete settings for %1$s?</string>
     <string name="settings_layout_default">Post layout</string>
     <string name="settings_link_album">Internal album view</string>
-    <string name="settings_link_peek">Peek content (experimental)</string>
+    <string name="settings_link_peek">Peek content</string>
+    <string name="settings_link_peek_description">Disables No longclicks on preview image</string>
     <string name="settings_link_gif">Internal GIF view</string>
     <string name="settings_link_hqgif">High quality Gfycat videos</string>
     <string name="settings_link_handling">Link handling</string>
@@ -702,6 +703,7 @@
     <string name="settings_data_enable">Enable Data Saving settings</string>
     <string name="settings_data_video_quality">Prefer low-quality videos when Data Saving enabled</string>
     <string name="settings_comments_collapse_deleted">Collapse deleted comments by default</string>
+    <string name="settings_comments_collapse_sticky">Always fully collapse the sticky comment</string>
     <string name="settings_backup_occurs">Backup will occur at %1$s</string>
     <string name="settings_backup_none">No subreddits will back up</string>
     <string name="settings_backup_will_backup">\u0020will back up</string>
@@ -1049,7 +1051,7 @@
 
     <!-- Saving location setting -->
     <string name="set_save_location">Set media save location</string>
-    <string name="set_save_location_msg">Slide\'s media save location has not been set. Would you like to set this now?</string>
+    <string name="set_save_location_msg">Slide\'s media save location has not been set.</string>
 
     <!-- Report flow -->
     <string name="btn_report">Report</string>
@@ -1215,6 +1217,8 @@
     <string name="setting_notification_piggybacking_desc">Check for mail only when the official Reddit app gets a push notification</string>
     <string name="install_notif_piggyback">Install the official Reddit app to enable Notification Piggybacking</string>
     <string name="success_block_user">User blocked successfully</string>
+    <string name="err_unblock_user">Error unblocking user</string>
+    <string name="success_unblock_user">User unblocked successfully</string>
     <string name="settings_highlight_time_desc">Requires \'Show comment count since last visit\' to be enabled in Settings &gt; Post Layout</string>
     <string name="settings_colored_time">Colored time bubble for new comments</string>
     <string name="theme_deep">Deep</string>
@@ -1240,7 +1244,7 @@
     <string name="comment_emote_animation">Comment emote animation</string>
     <string name="description_comment_emote_animation">Toggles if non-giphy emotes in comments are animated or not</string>
     <string name="no_preview_image_longclick">No longclicks on preview images of any content type</string>
-    <string name="description_no_preview_image_longclick">Toggles if longclicks work on preview images of any content type. It blocks the peek content feature.</string>
+    <string name="description_no_preview_image_longclick">Toggles if longclicks work on preview images of any content type. It disables the peek content feature.</string>
     <string name="editor_btn_select_flair">Select flair</string>
     <string name="submit_selected_flair">Selected flair: %s</string>
     <string name="save_location_error">Failed to set save location. Please try again.</string>
@@ -1286,4 +1290,8 @@
 
     <string name="settings_subreddit_filter_prefix_matching">Enable subreddit filter prefix matching</string>
     <string name="settings_subreddit_filter_prefix_matching_description">The prefix is the whole subreddit name, and a minimum of six characters. Examples: The subreddit social will allow block socialanxiety. The subreddit pokemongo will block pokemongoraids.</string>
+
+    <!-- Pause on audio focus ducking setting -->
+    <string name="settings_pause_on_duck_title">Pause video instead of ducking</string>
+    <string name="settings_pause_on_duck_desc">Pause videos when other apps play audio. Ducking is when the the audio volume is lowered instead of the video being paused.</string>
 </resources>

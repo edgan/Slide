@@ -17,13 +17,40 @@ public class GalleryImage implements Serializable {
     public MediaMetadata metadata;
 
     public GalleryImage(JsonNode data) {
-        if (data.has("u")) {
-            url = StringEscapeUtils.unescapeHtml4(data.get("u").asText());
-        } else if (data.has("mp4")) {
-            url = StringEscapeUtils.unescapeHtml4(data.get("mp4").asText());
+        if (data.has("media_id")) {
+            mediaId = data.get("media_id").asText();
         }
-        width = data.get("x").asInt();
-        height = data.get("y").asInt();
+
+        // Parse the s node that contains the actual image URLs
+        if (data.has("s")) {
+            JsonNode s = data.get("s");
+            if (s.has("u")) {
+                url = StringEscapeUtils.unescapeHtml4(s.get("u").asText());
+            } else if (s.has("gif")) {
+                url = StringEscapeUtils.unescapeHtml4(s.get("gif").asText());
+            } else if (s.has("mp4")) {
+                url = StringEscapeUtils.unescapeHtml4(s.get("mp4").asText());
+            }
+
+            // Get dimensions from the s node
+            if (s.has("x") && s.has("y")) {
+                width = s.get("x").asInt();
+                height = s.get("y").asInt();
+            }
+        } else {
+            // Fallback to old parsing logic
+            if (data.has("u")) {
+                url = StringEscapeUtils.unescapeHtml4(data.get("u").asText());
+            } else if (data.has("mp4")) {
+                url = StringEscapeUtils.unescapeHtml4(data.get("mp4").asText());
+            }
+
+            // Safely handle x/y
+            if (data.has("x") && data.has("y")) {
+                width = data.get("x").asInt();
+                height = data.get("y").asInt();
+            }
+        }
 
         // Add metadata population
         metadata = new MediaMetadata();
@@ -42,6 +69,9 @@ public class GalleryImage implements Serializable {
             if (s.has("gif")) {
                 metadata.source.gif = StringEscapeUtils.unescapeHtml4(s.get("gif").asText());
             }
+            if (s.has("u")) {
+                metadata.source.u = StringEscapeUtils.unescapeHtml4(s.get("u").asText());
+            }
             if (s.has("y")) {
                 metadata.source.y = s.get("y").asInt();
             }
@@ -52,6 +82,11 @@ public class GalleryImage implements Serializable {
 
         // Set animated based on type
         metadata.animated = "AnimatedImage".equals(metadata.e);
+
+        // Final URL check
+        if (url == null || url.isEmpty()) {
+            android.util.Log.e("GalleryImage", "Failed to extract URL from gallery JSON: " + data.toString());
+        }
     }
 
     public boolean isAnimated() {

@@ -1,14 +1,19 @@
 package me.edgan.redditslide.Activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,13 +22,15 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -33,7 +40,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
 import me.edgan.redditslide.Constants;
+import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SecretConstants;
+import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.FontPreferences;
 import me.edgan.redditslide.Visuals.Palette;
@@ -43,10 +53,9 @@ import me.edgan.redditslide.databinding.ChoosemainBinding;
 import me.edgan.redditslide.databinding.ChoosethemesmallBinding;
 import me.edgan.redditslide.databinding.FragmentPersonalizeBinding;
 import me.edgan.redditslide.databinding.FragmentWelcomeBinding;
+import me.edgan.redditslide.ui.settings.SettingsBackup;
 import me.edgan.redditslide.util.BlendModeUtil;
-import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
-import me.edgan.redditslide.SecretConstants;
+import me.edgan.redditslide.util.LogUtil;
 
 /** Created by ccrama on 3/5/2015. */
 public class Tutorial extends AppCompatActivity {
@@ -57,6 +66,8 @@ public class Tutorial extends AppCompatActivity {
     private static final int NUM_PAGES = 2;
     private int back;
     private ActivityTutorialBinding binding;
+
+    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +94,27 @@ public class Tutorial extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Palette.getDarkerColor(Color.parseColor("#FF5252")));
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            LogUtil.v("Checking notification permission on Android 13+");
+            int permissionState = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.POST_NOTIFICATIONS);
+            LogUtil.v("Permission state: " + (permissionState == PackageManager.PERMISSION_GRANTED ? "GRANTED" : "DENIED"));
+
+            if (permissionState != PackageManager.PERMISSION_GRANTED) {
+                LogUtil.v("Permission not granted, checking if we should show rationale");
+
+                // Post the permission request to the main handler
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    LogUtil.v("No rationale needed, requesting permission directly");
+                    ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        NOTIFICATION_PERMISSION_REQUEST_CODE
+                    );
+                }, 500); // Half second delay
+            }
+        }
     }
 
     @Override
@@ -108,6 +140,14 @@ public class Tutorial extends AppCompatActivity {
             welcomeBinding = FragmentWelcomeBinding.inflate(inflater, container, false);
             welcomeBinding.welcomeGetStarted.setOnClickListener(
                     v1 -> ((Tutorial) getActivity()).binding.tutorialViewPager.setCurrentItem(1));
+
+            // Add click listener for restore button
+            welcomeBinding.welcomeRestore.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), SettingsBackup.class);
+                startActivity(intent);
+                getActivity().finish();
+            });
+
             return welcomeBinding.getRoot();
         }
 
@@ -295,6 +335,17 @@ public class Tutorial extends AppCompatActivity {
                     });
 
             personalizeBinding.done.setOnClickListener(v1 -> {
+                // Add a black overlay view
+                View overlayView = new View(getActivity());
+                overlayView.setBackgroundColor(Color.BLACK);
+                overlayView.setAlpha(1.0f); // Fully opaque black
+
+                // Add overlay to root window
+                ViewGroup rootView = (ViewGroup) getActivity().getWindow().getDecorView().getRootView();
+                rootView.addView(overlayView, new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+
                 // Show client ID dialog first
                 final Context contextThemeWrapper = new ContextThemeWrapper(getContext(),
                         new ColorPreferences(getContext()).getFontStyle().getBaseId());
@@ -304,25 +355,48 @@ public class Tutorial extends AppCompatActivity {
                 inputLayout.setErrorIconDrawable(null); // Remove error icon
                 inputLayout.setErrorEnabled(true);
 
+                // Calculate padding in dp
+                int paddingDp = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    16,
+                    getResources().getDisplayMetrics()
+                );
+
+                // Create a vertical LinearLayout to hold both the link and input
+                LinearLayout dialogContainer = new LinearLayout(contextThemeWrapper);
+                dialogContainer.setOrientation(LinearLayout.VERTICAL);
+                dialogContainer.setPadding(paddingDp, paddingDp, paddingDp, 0);
+
+                // Add the link TextView
+                TextView linkText = new TextView(contextThemeWrapper);
+                linkText.setText("Client ID creation instructions");
+                linkText.setTextColor(new ColorPreferences(getContext()).getColor(""));
+                linkText.setPadding(0, 0, 0, paddingDp);
+                linkText.setPaintFlags(linkText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+                linkText.setOnClickListener(v -> {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/edgan/Slide/blob/master/SETUP.md#reddit-client-id"));
+                    startActivity(browserIntent);
+                });
+
+                // Add views to container
+                dialogContainer.addView(linkText);
+                dialogContainer.addView(inputLayout);
+
                 final EditText input = new EditText(contextThemeWrapper);
                 String savedClientId = SettingValues.prefs.getString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
                 input.setText(savedClientId);
                 input.setHint(R.string.enter_client_id);
+                input.setSingleLine(true);  // Make input single line
 
                 // Add EditText to TextInputLayout
                 inputLayout.addView(input);
 
-                FrameLayout frameLayout = new FrameLayout(contextThemeWrapper);
-                int padding = (int) TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
-                frameLayout.setPadding(padding, 0, padding, 0);
-                frameLayout.addView(inputLayout, new FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(contextThemeWrapper)
                         .setTitle(R.string.reddit_client_id_override)
-                        .setView(frameLayout)
-                        .setPositiveButton(R.string.btn_ok, null);
+                        .setView(dialogContainer)
+                        .setPositiveButton(R.string.btn_ok, null)
+                        .setCancelable(false);  // This prevents dismissing when clicking outside
 
                 AlertDialog dialog = builder.create();
                 dialog.show();
@@ -336,8 +410,8 @@ public class Tutorial extends AppCompatActivity {
                     String clientId = input.getText().toString().trim();
                     String shortClientId = SecretConstants.getGoogleShortClientID(getContext());
 
-                    // If input is 5 chars, validate against shortClientId
-                    if (clientId.length() == 5 && !clientId.equals(shortClientId)) {
+                    // If input is 8 chars, validate against shortClientId
+                    if (clientId.length() == 8 && !clientId.equals(shortClientId)) {
                         inputLayout.setError("Invalid Client ID");
                         return;  // Don't proceed
                     }
@@ -381,7 +455,7 @@ public class Tutorial extends AppCompatActivity {
                     @Override
                     public void afterTextChanged(Editable s) {
                         int length = s.toString().trim().length();
-                        positiveButton.setEnabled(length == 5 || length == 22);
+                        positiveButton.setEnabled(length == 8 || length == 22);
                     }
                 });
             });

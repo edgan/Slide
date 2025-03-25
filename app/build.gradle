@@ -5,6 +5,7 @@ plugins {
     id 'com.gladed.androidgitversion' version '0.4.14'
     id 'com.github.ben-manes.versions' version '0.42.0'
     id 'com.github.breadmoirai.github-release' version '2.5.2'
+    id 'com.diffplug.spotless' version '7.0.2'
 }
 
 android {
@@ -38,7 +39,7 @@ android {
         applicationId "me.edgan.redditslide"
         minSdk 29
         targetSdk 34
-        versionCode 722
+        versionCode 725
         versionName androidGitVersion.name()
 
         multiDexEnabled true
@@ -76,22 +77,23 @@ android {
     }
 
 
-buildTypes {
-    release {
-        if (keystorePropertiesFile.exists()) {
-            signingConfig signingConfigs.withGPlay
-        } else {
-            println("Warning: keystore.properties file not found. Skipping signing configuration for release.")
+    buildTypes {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.withGPlay
+            } else {
+                println("Warning: keystore.properties file not found. Skipping signing configuration for release.")
+            }
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "app_name", "Slide"
         }
-        minifyEnabled false
-        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        resValue "string", "app_name", "Slide"
+        debug {
+            applicationIdSuffix ".debug"
+            resValue "string", "app_name", "Slide Debug"
+        }
     }
-    debug {
-        applicationIdSuffix ".debug"
-        resValue "string", "app_name", "Slide Debug"
-    }
-}
+
     packagingOptions {
         exclude 'META-INF/*'
     }
@@ -172,7 +174,7 @@ dependencies {
 /** Custom **/
     // Draggable sliding up panel
     implementation 'com.github.edgan:AndroidSlidingUpPanel:8413b22a2a'
-    implementation 'com.github.edgan:JRAW:b592539706'
+    implementation 'com.github.edgan:JRAW:bacd6f5764'
     implementation 'io.github.ParkSangGwon:tedimagepicker:1.6.1'
     def commonmarkVersion = '0ebc0749c7'
     implementation "com.github.Haptic-Apps.commonmark-java:commonmark:$commonmarkVersion"
@@ -223,7 +225,8 @@ dependencies {
 
     // Image loading, caching, and displaying
     //  NOTE: Replace with Glide/Picasso
-    implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    // com.nostra13.universalimageloader:universal-image-loader
+    implementation 'com.github.edgan:Android-Universal-Image-Loader:644f0269eb@aar'
 
     // Custom image view for photo galleries and large images
     implementation 'com.github.davemorrissey:subsampling-scale-image-view:173e421fdb'
@@ -304,4 +307,23 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.hamcrest:hamcrest:2.2'
     testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
+}
+
+spotless {
+    java {
+        target '**/*.java'
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        leadingTabsToSpaces(4)
+    }
+    format 'misc', {
+        target '**/*.gradle', '**/*.md', '**/.gitignore'
+        leadingTabsToSpaces(4)
+        trimTrailingWhitespace()
+    }
+    format 'xml', {
+        target '**/*.xml'
+        leadingTabsToSpaces(4)
+        trimTrailingWhitespace()
+    }
 }

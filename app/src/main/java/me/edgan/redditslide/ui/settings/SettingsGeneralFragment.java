@@ -12,19 +12,23 @@ import static me.edgan.redditslide.Constants.getClientId;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -36,13 +40,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
-import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.CaseInsensitiveArrayList;
@@ -73,10 +75,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
-import android.view.ContextThemeWrapper;
-import android.widget.EditText;
-import android.content.ActivityNotFoundException;
 
 /** Created by ccrama on 3/5/2015. */
 public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
@@ -252,6 +250,26 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                                 }
                             }
                         });
+
+        // Add Pause on Audio Focus switch
+        SwitchCompat pauseOnAudioFocusSwitch = dialoglayout.findViewById(R.id.pause_on_audio_focus);
+        pauseOnAudioFocusSwitch.setChecked(SettingValues.pauseOnAudioFocus);
+        pauseOnAudioFocusSwitch.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        SettingValues.pauseOnAudioFocus = isChecked;
+                        SettingValues.prefs
+                                .edit()
+                                .putBoolean(SettingValues.PREF_PAUSE_ON_AUDIO_FOCUS, isChecked)
+                                .apply();
+                    }
+                });
+
+        // Add a description for the setting
+        TextView pauseOnAudioFocusDesc = dialoglayout.findViewById(R.id.pause_on_audio_focus_text);
+        pauseOnAudioFocusDesc.setText(
+                "Pause video when audio is ducked (when other apps play sounds)");
     }
 
     public static void doNotifText(final Activity context) {
@@ -411,7 +429,14 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                         (buttonView, isChecked) -> {
                             SettingsThemeFragment.changed = true;
                             SettingValues.noPreviewImageLongClick = isChecked;
-
+                            // When enabling this setting, disable peek
+                            if (isChecked) {
+                                SettingValues.peek = false;
+                                SettingValues.prefs
+                                        .edit()
+                                        .putBoolean(SettingValues.PREF_PEEK, false)
+                                        .apply();
+                            }
                             SettingValues.prefs
                                     .edit()
                                     .putBoolean(
@@ -555,64 +580,47 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                             }
                         });
 
+                // Add long click listener to unset the storage location
+                setSaveLocationLayout.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        // Clear the storage location
+                        StorageUtil.clearStorageUri(context);
+
+                        // Update the display text
+                        if (locationView != null) {
+                            locationView.post(() -> {
+                                locationView.setText(R.string.settings_storage_location_unset);
+                                locationView.invalidate();
+                            });
+                        }
+
+                        // Show confirmation toast
+                        Toast.makeText(
+                                context,
+                                "Storage location has been unset",
+                                Toast.LENGTH_SHORT).show();
+
+                        return true; // Return true to indicate the long click was handled
+                    }
+                });
+
                 // Switch change listener
                 showDownloadBtnSwitch.setOnCheckedChangeListener(
                         (buttonView, isChecked) -> {
-                            if (isChecked) {
-                                if (context instanceof StorageUtil.DirectoryChooserHost) {
-                                    // Set the switch back to its previous state until selection is
-                                    // made
-                                    showDownloadBtnSwitch.setChecked(false);
+                            // Simply update the preference without asking for a directory
+                            SettingValues.imageDownloadButton = isChecked;
+                            SettingValues.prefs
+                                    .edit()
+                                    .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, isChecked)
+                                    .apply();
 
-                                    StorageUtil.showDirectoryChooser(
-                                            context,
-                                            uri -> {
-                                                if (uri != null) {
-                                                    // Save the URI and enable setting
-                                                    StorageUtil.saveStorageUri(context, uri);
-                                                    SettingValues.imageDownloadButton = true;
-                                                    SettingValues.prefs
-                                                            .edit()
-                                                            .putBoolean(
-                                                                    SettingValues
-                                                                            .PREF_IMAGE_DOWNLOAD_BUTTON,
-                                                                    true)
-                                                            .apply();
-
-                                                    // Update UI
-                                                    showDownloadBtnSwitch.setChecked(true);
-                                                    String path =
-                                                            StorageUtil.getDisplayPath(
-                                                                    context, uri);
-                                                    if (locationView != null) {
-                                                        locationView.setText(path);
-                                                    }
-                                                } else {
-                                                    showDownloadBtnSwitch.setChecked(false);
-                                                    SettingValues.imageDownloadButton = false;
-                                                    SettingValues.prefs
-                                                            .edit()
-                                                            .putBoolean(
-                                                                    SettingValues
-                                                                            .PREF_IMAGE_DOWNLOAD_BUTTON,
-                                                                    false)
-                                                            .apply();
-                                                }
-                                            });
-                                } else {
-                                    showDownloadBtnSwitch.setChecked(false);
-                                    Toast.makeText(
-                                                    context,
-                                                    "Unable to select directory in this context",
-                                                    Toast.LENGTH_SHORT)
-                                            .show();
-                                }
-                            } else {
-                                SettingValues.imageDownloadButton = false;
-                                SettingValues.prefs
-                                        .edit()
-                                        .putBoolean(SettingValues.PREF_IMAGE_DOWNLOAD_BUTTON, false)
-                                        .apply();
+                            // Optional: Show a toast if enabled but no path is set
+                            if (isChecked && !hasValidPath) {
+                                Toast.makeText(
+                                        context,
+                                        "Download button enabled. Set a storage location to use it.",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         });
             }
@@ -644,7 +652,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
             setSaveLocationLayout.setOnClickListener(
                     v -> {
                         Uri storageUri = StorageUtil.getStorageUri(context);
-                        if (storageUri == null) {
+                        if (storageUri == null || !StorageUtil.hasStorageAccess(context)) {
                             StorageUtil.showDirectoryChooser(context);
                         } else {
                             // Show current location - cast context to Context
@@ -1662,12 +1670,37 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
         int paddingPx = (int)(paddingDp * density);
         input.setPadding(paddingPx, input.getPaddingTop(), input.getPaddingRight(), input.getPaddingBottom());
 
+        // Create container for dialog content
+        LinearLayout dialogContainer = new LinearLayout(contextThemeWrapper);
+        dialogContainer.setOrientation(LinearLayout.VERTICAL);
+
+        // Add top padding view
+        View paddingView = new View(contextThemeWrapper);
+        paddingView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, paddingPx));
+        dialogContainer.addView(paddingView);
+
+        // Add instructions link
+        TextView linkText = new TextView(contextThemeWrapper);
+        linkText.setText("Client ID creation instructions");
+        linkText.setTextColor(new ColorPreferences(contextThemeWrapper).getColor(""));
+        linkText.setPaintFlags(linkText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        linkText.setPadding(paddingPx, 0, 0, paddingPx);
+        linkText.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://github.com/edgan/Slide/blob/master/SETUP.md#reddit-client-id"));
+            context.startActivity(browserIntent);
+        });
+
+        dialogContainer.addView(linkText);
+        dialogContainer.addView(input);
+
         final TextView currentClientIdView = context.findViewById(R.id.settings_general_client_id_current);
         final TextView activeClientIdView = context.findViewById(R.id.settings_general_client_id_active_value);
 
         new MaterialAlertDialogBuilder(contextThemeWrapper)
                 .setTitle(R.string.reddit_client_id_override)
-                .setView(input)
+                .setView(dialogContainer)
                 .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
                     String clientId = input.getText().toString().trim();
 

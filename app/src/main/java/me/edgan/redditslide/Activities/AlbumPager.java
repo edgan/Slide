@@ -62,8 +62,11 @@ import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.FontPreferences;
 import me.edgan.redditslide.util.BlendModeUtil;
+import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.ShareUtil;
 import me.edgan.redditslide.util.StorageUtil;
@@ -89,6 +92,8 @@ public class AlbumPager extends BaseSaveActivity {
 
     private String lastContentUrl;
     private int lastIndex = -1;
+
+    private static final String TAG = "AlbumPager";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -257,6 +262,11 @@ public class AlbumPager extends BaseSaveActivity {
                                     new Runnable() {
                                         @Override
                                         public void run() {
+                                            if (images == null || images.isEmpty()) {
+                                                // Don't attempt to load any positions if there are no images
+                                            return;
+                                            }
+
                                             // Only try to load positions that exist
                                             if (adapter.getCount() > 0) {
                                                 adapter.instantiateItem(p, 0);
@@ -267,6 +277,7 @@ public class AlbumPager extends BaseSaveActivity {
                                             }
                                         }
                                     });
+
                             findViewById(R.id.grid)
                                     .setOnClickListener(
                                             new View.OnClickListener() {
@@ -463,7 +474,13 @@ public class AlbumPager extends BaseSaveActivity {
                             new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    MediaView.doOnClick.run();
+                                    if (url != null && getActivity() != null) {
+                                        ((AlbumPager) getActivity()).doImageSave(true, url, i);
+                                    } else if (url == null) {
+                                        LogUtil.i("URL is null");
+                                    } else if (getActivity() == null) {
+                                        LogUtil.i("getActivity is null");
+                                    }
                                 }
                             });
             if (!SettingValues.imageDownloadButton) {
@@ -535,43 +552,15 @@ public class AlbumPager extends BaseSaveActivity {
     }
 
     public void doImageSave(boolean isGif, String contentUrl, int index) {
-        if (!isGif) {
-            // StorageUtil checks for a saved directory URI and valid permissions
-            if (!StorageUtil.hasStorageAccess(this)) {
-                // No storage access yet - save the content details for later
-                lastContentUrl = contentUrl;
-                lastIndex = index;
-                // Launch the system directory picker
-                StorageUtil.showDirectoryChooser(this);
-            } else {
-                // We have storage access - get the saved URI
-                Uri storageUri = StorageUtil.getStorageUri(this);
-                if (storageUri == null) {
-                    Log.e("AlbumPager", "Unexpected null URI despite valid access.");
-                    Toast.makeText(this, R.string.error_no_storage_access, Toast.LENGTH_SHORT)
-                            .show();
-                    return;
-                }
-
-                // Start the download service
-                Intent i = new Intent(this, ImageDownloadNotificationService.class);
-                i.putExtra("actuallyLoaded", contentUrl);
-                i.putExtra("downloadUri", storageUri.toString());
-
-                // Pass along the metadata
-                if (subreddit != null && !subreddit.isEmpty()) {
-                    i.putExtra("subreddit", subreddit);
-                }
-                if (submissionTitle != null) {
-                    i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
-                }
-                i.putExtra("index", index);
-
-                startService(i);
-            }
-        } else {
-            MediaView.doOnClick.run();
-        }
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                this::showFirstDialog
+        );
     }
 
     @Override
@@ -788,31 +777,38 @@ public class AlbumPager extends BaseSaveActivity {
         image.setMinimumTileDpi(240);
         ImageView fakeImage = new ImageView(f.getActivity());
         final TextView size = rootView.findViewById(R.id.size);
-        fakeImage.setLayoutParams(
-                new LinearLayout.LayoutParams(image.getWidth(), image.getHeight()));
+        fakeImage.setLayoutParams(new LinearLayout.LayoutParams(image.getWidth(), image.getHeight()));
         fakeImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        DisplayImageOptions options =
-                new DisplayImageOptions.Builder()
-                        .resetViewBeforeLoading(true)
-                        .cacheOnDisk(true)
-                        .imageScaleType(single ? ImageScaleType.NONE : ImageScaleType.NONE_SAFE)
-                        .cacheInMemory(true)
-                        .considerExifParams(true)
-                        .build();
+
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .resetViewBeforeLoading(true)
+                .cacheOnDisk(true)
+                .imageScaleType(single ? ImageScaleType.NONE : ImageScaleType.NONE_SAFE)
+                .cacheInMemory(true)
+                .considerExifParams(true)
+                .build();
 
         ((Reddit) f.getActivity().getApplication())
                 .getImageLoader()
-                .loadImage(
-                        url,
-                        options,
-                        new SimpleImageLoadingListener() {
-                            @Override
-                            public void onLoadingComplete(
-                                    String imageUri, View view, Bitmap loadedImage) {
-                                size.setVisibility(View.GONE);
-                                image.setImage(ImageSource.bitmap(loadedImage));
-                                rootView.findViewById(R.id.progress).setVisibility(View.GONE);
-                            }
-                        });
+                .loadImage(url, options, new SimpleImageLoadingListener() {
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        // Added null‐check to avoid the "Bitmap must not be null" crash
+                        if (loadedImage == null) {
+                            // Graceful fallback, e.g. hide progress or show a placeholder
+                            size.setVisibility(View.GONE);
+                            rootView.findViewById(R.id.progress).setVisibility(View.GONE);
+                            return;
+                        }
+
+                        size.setVisibility(View.GONE);
+                        image.setImage(ImageSource.bitmap(loadedImage));
+                        rootView.findViewById(R.id.progress).setVisibility(View.GONE);
+                    }
+                });
+    }
+
+    private void showFirstDialog() {
+        runOnUiThread(() -> DialogUtil.showFirstDialog(AlbumPager.this));
     }
 }

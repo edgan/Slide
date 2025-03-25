@@ -437,6 +437,15 @@
                 android:text="@string/settings_link_peek"
                 android:textColor="?attr/fontColor"
                 android:textSize="14sp" />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha=".86"
+                    android:text="@string/settings_link_peek_description"
+                    android:textColor="?attr/fontColor"
+                    android:textSize="13sp"
+                    android:paddingBottom="8dp" />
         </LinearLayout>
 
         <androidx.appcompat.widget.SwitchCompat
