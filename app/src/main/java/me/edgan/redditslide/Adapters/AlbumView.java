@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.annotation.NonNull;
 
 import com.devspark.robototextview.RobotoTypefaces;
 
@@ -244,15 +245,18 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             holder.muteButton.setVisibility(View.GONE);
             holder.hqButton.setVisibility(View.GONE);
 
-            // Use GifUtils to load MP4 or GIF with ExoPlayer
+            // Store the position directly in the holder itself
+            holder.position = position;
+
+            // Load the video without starting playback, just to show the first frame
             new GifUtils.AsyncLoadGif(
                     main,
                     holder.exoVideoView,
                     holder.loader,
                     null,
                     null,
-                    false,
-                    false,
+                    true,
+                    false,  // autostart
                     holder.rootView.findViewById(R.id.size),
                     subreddit,
                     submissionTitle
@@ -286,6 +290,48 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return users == null ? 0 : users.size() + 1;
     }
 
+    @Override
+    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (holder instanceof AnimatedViewHolder) {
+            AnimatedViewHolder animatedHolder = (AnimatedViewHolder) holder;
+            // Just stop the player but don't release it to keep the thumbnail
+            if (animatedHolder.exoVideoView != null) {
+                animatedHolder.exoVideoView.pause();
+            }
+        }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        if (holder instanceof AnimatedViewHolder) {
+            AnimatedViewHolder animatedHolder = (AnimatedViewHolder) holder;
+            int position = animatedHolder.position;
+
+            if (position >= 0 && position < users.size()) {
+                final Image user = users.get(position);
+                final String url = user.getImageUrl();
+
+                // Reload the video preview if needed
+                if (!animatedHolder.exoVideoView.isPlaying()) {
+                    new GifUtils.AsyncLoadGif(
+                            main,
+                            animatedHolder.exoVideoView,
+                            animatedHolder.loader,
+                            null,
+                            null,
+                            true,
+                            false,
+                            animatedHolder.rootView.findViewById(R.id.size),
+                            subreddit,
+                            submissionTitle
+                    ).execute(url);
+                }
+            }
+        }
+    }
+
     public static class SpacerViewHolder extends RecyclerView.ViewHolder {
         public SpacerViewHolder(View itemView) {
             super(itemView);
@@ -316,6 +362,7 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final View saveButton;
         final View muteButton;
         final View hqButton;
+        int position = -1;
 
         public AnimatedViewHolder(View itemView) {
             super(itemView);

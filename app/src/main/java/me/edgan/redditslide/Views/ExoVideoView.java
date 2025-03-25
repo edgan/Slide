@@ -1,6 +1,8 @@
 package me.edgan.redditslide.Views;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
@@ -86,7 +88,8 @@ public class ExoVideoView extends RelativeLayout {
         this.context = context;
         Log.d(TAG, "Constructor called");
         setupPlayer();
-        if (ui) {
+        // Only setup UI if requested and not in Album view
+        if (ui && !isInAlbumView()) {
             setupUI();
         }
     }
@@ -99,7 +102,7 @@ public class ExoVideoView extends RelativeLayout {
         if (player == null) {
             Log.d(TAG, "Player is null on attach; reinitializing player.");
             setupPlayer();
-            if (playerUI == null) {
+            if (playerUI == null && !isInAlbumView()) {
                 setupUI();
             }
         }
@@ -236,7 +239,7 @@ public class ExoVideoView extends RelativeLayout {
     private void setupUI() {
         playerUI = new PlayerControlView(context);
         playerUI.setPlayer(player);
-        playerUI.setShowTimeoutMs(2000);
+        playerUI.setShowTimeoutMs(2000);  // Controls will hide after 2 seconds
 
         // Add the player UI with proper positioning constraints
         RelativeLayout.LayoutParams playerUIParams = new RelativeLayout.LayoutParams(
@@ -546,5 +549,17 @@ public class ExoVideoView extends RelativeLayout {
                 // Purposefully left blank
             }
         }
+    }
+
+    private boolean isInAlbumView() {
+        // Get the context's activity
+        Context context = getContext();
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) {
+                return context.getClass().getSimpleName().equals("Album");
+            }
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return false;
     }
 }
