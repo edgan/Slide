@@ -17,10 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.annotation.NonNull;
 
 import com.devspark.robototextview.RobotoTypefaces;
 
@@ -248,7 +248,6 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // Store the position directly in the holder itself
             holder.position = position;
 
-            // Load the video without starting playback, just to show the first frame
             new GifUtils.AsyncLoadGif(
                     main,
                     holder.exoVideoView,

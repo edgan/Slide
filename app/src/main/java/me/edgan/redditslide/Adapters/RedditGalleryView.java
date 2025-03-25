@@ -198,6 +198,9 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.muteButton.setVisibility(View.GONE);
             holder.hqButton.setVisibility(View.GONE);
 
+            // Store the position directly in the holder itself
+            holder.position = actualIndex;
+
             // Use GifUtils to load MP4 or GIF with ExoPlayer
             new GifUtils.AsyncLoadGif(
                     main,
@@ -206,7 +209,7 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
                     null,
                     null,
                     false,
-                    true,
+                    false,
                     holder.rootView.findViewById(R.id.size),
                     subreddit,
                     submissionTitle
@@ -341,6 +344,48 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
         return (images == null) ? 0 : (images.size() + 1);
     }
 
+    @Override
+    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (holder instanceof AnimatedViewHolder) {
+            AnimatedViewHolder animatedHolder = (AnimatedViewHolder) holder;
+            // Just stop the player but don't release it to keep the thumbnail
+            if (animatedHolder.exoVideoView != null) {
+                animatedHolder.exoVideoView.pause();
+            }
+        }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        if (holder instanceof AnimatedViewHolder) {
+            AnimatedViewHolder animatedHolder = (AnimatedViewHolder) holder;
+            int position = animatedHolder.position;
+
+            if (position >= 0 && position < images.size()) {
+                final GalleryImage image = images.get(position);
+                final String url = image.getImageUrl();
+
+                // Reload the video preview if needed
+                if (!animatedHolder.exoVideoView.isPlaying()) {
+                    new GifUtils.AsyncLoadGif(
+                            main,
+                            animatedHolder.exoVideoView,
+                            animatedHolder.loader,
+                            null,
+                            null,
+                            true,
+                            false,
+                            animatedHolder.rootView.findViewById(R.id.size),
+                            subreddit,
+                            submissionTitle
+                    ).execute(url);
+                }
+            }
+        }
+    }
+
     /**
      * Utility to calculate image height from aspect ratio
      */
@@ -385,6 +430,7 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
         final View saveButton;
         final View muteButton;
         final View hqButton;
+        int position = -1;
 
         public AnimatedViewHolder(View itemView) {
             super(itemView);

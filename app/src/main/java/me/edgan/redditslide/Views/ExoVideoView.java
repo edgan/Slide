@@ -86,10 +86,8 @@ public class ExoVideoView extends RelativeLayout {
     public ExoVideoView(final Context context, final AttributeSet attrs, final boolean ui) {
         super(context, attrs);
         this.context = context;
-        Log.d(TAG, "Constructor called");
         setupPlayer();
-        // Only setup UI if requested and not in Album view
-        if (ui && !isInAlbumView()) {
+        if (ui && !isVerticalMode()) {
             setupUI();
         }
     }
@@ -97,12 +95,11 @@ public class ExoVideoView extends RelativeLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        Log.d(TAG, "onAttachedToWindow() called");
         // If the player was released (player is null), reinitialize it.
         if (player == null) {
             Log.d(TAG, "Player is null on attach; reinitializing player.");
             setupPlayer();
-            if (playerUI == null && !isInAlbumView()) {
+            if (playerUI == null && !isVerticalMode()) {
                 setupUI();
             }
         }
@@ -110,7 +107,6 @@ public class ExoVideoView extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        Log.d(TAG, "onDetachedFromWindow() called");
         // Pause playback when view is detached
         stop();
 
@@ -119,7 +115,6 @@ public class ExoVideoView extends RelativeLayout {
 
     /** Initializes the player and sets up a TextureView that reuses its SurfaceTexture. */
     private void setupPlayer() {
-        Log.d(TAG, "setupPlayer() called");
         // Create a track selector with bitrate settings.
         trackSelector = new DefaultTrackSelector(context);
         if ((SettingValues.lowResAlways
@@ -551,12 +546,13 @@ public class ExoVideoView extends RelativeLayout {
         }
     }
 
-    private boolean isInAlbumView() {
+    private boolean isVerticalMode() {
         // Get the context's activity
         Context context = getContext();
         while (context instanceof ContextWrapper) {
             if (context instanceof Activity) {
-                return context.getClass().getSimpleName().equals("Album");
+                String activityName = context.getClass().getSimpleName();
+                return activityName.equals("Album") || activityName.equals("RedditGallery");
             }
             context = ((ContextWrapper) context).getBaseContext();
         }
