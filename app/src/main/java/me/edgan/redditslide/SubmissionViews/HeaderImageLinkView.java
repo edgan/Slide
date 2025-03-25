@@ -988,9 +988,20 @@ public class HeaderImageLinkView extends RelativeLayout {
                     JsonNode mediaInfo = mediaMetadata.get(mediaId);
                     if (!"failed".equals(mediaInfo.get("status").asText())) {
                         allFailed = false;
-                        if (mediaInfo.has("p") && mediaInfo.get("p").size() > 0) {
-                            String url = mediaInfo.get("p").get(0).get("u").asText()
-                                    .replace("preview", "i")
+                        String url = null;
+
+                        // Try to get source URL first
+                        if (mediaInfo.has("s") && mediaInfo.get("s").has("u")) {
+                            url = mediaInfo.get("s").get("u").asText();
+                        }
+                        // Fall back to preview array if source not available
+                        else if (mediaInfo.has("p") && mediaInfo.get("p").size() > 0) {
+                            url = mediaInfo.get("p").get(0).get("u").asText();
+                        }
+
+                        if (url != null) {
+                            // Clean up URL
+                            url = url.replace("preview.redd.it", "i.redd.it")
                                     .replaceAll("\\?.*", "");
 
                             handlePreviewImage(url, submission, baseSub, full, forceThumb);
