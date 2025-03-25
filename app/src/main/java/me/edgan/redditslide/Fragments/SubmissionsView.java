@@ -282,10 +282,12 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                                 } else if (id.contains("/m/")) {
                                     String subreddit = id;
                                     // Set the searchMulti for multireddit search
-                                    for (MultiReddit r : UserSubscriptions.multireddits) {
-                                        if (r.getDisplayName().equalsIgnoreCase(subreddit.substring(3))) {
-                                            MultiredditOverview.searchMulti = r;
-                                            break;
+                                    if (UserSubscriptions.multireddits != null) {
+                                        for (MultiReddit r : UserSubscriptions.multireddits) {
+                                            if (r.getDisplayName().equalsIgnoreCase(subreddit.substring(3))) {
+                                                MultiredditOverview.searchMulti = r;
+                                                break;
+                                            }
                                         }
                                     }
                                     builder.setPositiveButton(getString(R.string.search_subreddit, id),
