@@ -233,18 +233,20 @@ public class ExoVideoView extends RelativeLayout {
         );
     }
 
-    /** Sets up the player UI (controls) as before. */
     private void setupUI() {
-        Log.d(TAG, "setupUI() called");
         playerUI = new PlayerControlView(context);
         playerUI.setPlayer(player);
         playerUI.setShowTimeoutMs(2000);
+
+        // Add the player UI with proper positioning constraints
+        RelativeLayout.LayoutParams playerUIParams = new RelativeLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        playerUIParams.addRule(ALIGN_PARENT_BOTTOM, TRUE);
+        playerUIParams.bottomMargin = (int) (64 * context.getResources().getDisplayMetrics().density);
         addView(playerUI);
-        Log.d(TAG, "PlayerControlView added");
 
         playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, true, 0));
         setOnClickListener((v) -> {
-            Log.d(TAG, "ExoVideoView clicked");
             playerUI.clearAnimation();
             if (playerUI.isVisible()) {
                 playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, false, 300));
