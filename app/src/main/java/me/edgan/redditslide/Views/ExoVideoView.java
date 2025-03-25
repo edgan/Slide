@@ -109,7 +109,7 @@ public class ExoVideoView extends RelativeLayout {
     protected void onDetachedFromWindow() {
         Log.d(TAG, "onDetachedFromWindow() called");
         // Pause playback when view is detached
-        pause();
+        stop();
 
         super.onDetachedFromWindow();
     }
@@ -239,12 +239,10 @@ public class ExoVideoView extends RelativeLayout {
         playerUI = new PlayerControlView(context);
         playerUI.setPlayer(player);
         playerUI.setShowTimeoutMs(2000);
-        if (!SettingValues.oldSwipeMode) {
-            playerUI.hide();
-        }
         addView(playerUI);
         Log.d(TAG, "PlayerControlView added");
 
+        playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, true, 0));
         setOnClickListener((v) -> {
             Log.d(TAG, "ExoVideoView clicked");
             playerUI.clearAnimation();
@@ -545,22 +543,6 @@ public class ExoVideoView extends RelativeLayout {
             public void onAnimationRepeat(Animation animation) {
                 // Purposefully left blank
             }
-        }
-    }
-
-    /**
-     * Reset the player to prevent flickering when recycled
-     */
-    public void resetPlayer() {
-        Log.d(TAG, "resetPlayer() called");
-        // First pause any ongoing playback
-        pause();
-
-        // Clear any existing frame
-        if (videoTextureView != null) {
-            videoTextureView.setAlpha(0f);  // Hide temporarily to prevent flicker
-            // After a small delay, make visible again
-            handler.postDelayed(() -> videoTextureView.setAlpha(1f), 50);
         }
     }
 }

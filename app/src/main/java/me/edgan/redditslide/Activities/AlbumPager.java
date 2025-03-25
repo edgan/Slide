@@ -481,9 +481,6 @@ public class AlbumPager extends BaseSaveActivity {
             final ExoVideoView v = (ExoVideoView) gif;
             v.clearFocus();
 
-            // Reset player state to prevent flickering
-            v.resetPlayer();
-
             // Attach mute button and HQ button if they exist in the layout
             ImageView muteButton = rootView.findViewById(R.id.mute);
             if (muteButton != null) {

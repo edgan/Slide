@@ -415,7 +415,6 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
             gifView.setVisibility(View.VISIBLE);
 
             final me.edgan.redditslide.Views.ExoVideoView exoVideoView = (me.edgan.redditslide.Views.ExoVideoView) gifView;
-            exoVideoView.clearFocus();
 
             // Get the gallery parent interface for data
             GalleryParent galleryParent = getGalleryParent();
@@ -428,7 +427,7 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
                     final String url = current.getImageUrl();
 
                     // Use GifUtils to handle MP4 or GIF
-                    new me.edgan.redditslide.util.GifUtils.AsyncLoadGif(
+                    new GifUtils.AsyncLoadGif(
                             getActivity(),
                             exoVideoView,
                             loader,
@@ -455,6 +454,8 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
                     if (!me.edgan.redditslide.SettingValues.imageDownloadButton) {
                         rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
                     }
+                    rootView.findViewById(R.id.mute).setVisibility(View.GONE);
+                    rootView.findViewById(R.id.hq).setVisibility(View.GONE);
                 }
             }
 

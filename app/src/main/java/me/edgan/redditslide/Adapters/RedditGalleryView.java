@@ -190,10 +190,13 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
         // 1) Animated items
         if (holder2 instanceof AnimatedViewHolder) {
             AnimatedViewHolder holder = (AnimatedViewHolder) holder2;
-            final String url = image.url;
+            final String url = image.getImageUrl();
 
             // Ensure view is fully opaque to prevent bleed-through
             holder.rootView.setAlpha(1.0f);
+
+            holder.muteButton.setVisibility(View.GONE);
+            holder.hqButton.setVisibility(View.GONE);
 
             // Use GifUtils to load MP4 or GIF with ExoPlayer
             new GifUtils.AsyncLoadGif(
@@ -272,7 +275,7 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             // Load static image
             ((Reddit) main.getApplicationContext()).getImageLoader()
-                    .displayImage(image.url, holder.image, ImageGridAdapter.options);
+                    .displayImage(image.getImageUrl(), holder.image, ImageGridAdapter.options);
 
             // Title + caption hidden by default
             holder.body.setVisibility(View.GONE);
@@ -316,7 +319,7 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
                             if (SettingValues.image) {
                                 // Open MediaView for a closer look
                                 Intent myIntent = new Intent(main, MediaView.class);
-                                myIntent.putExtra(MediaView.EXTRA_URL, image.url);
+                                myIntent.putExtra(MediaView.EXTRA_URL, image.getImageUrl());
                                 myIntent.putExtra(MediaView.SUBREDDIT, subreddit);
                                 if (submissionTitle != null) {
                                     myIntent.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
@@ -325,7 +328,7 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 main.startActivity(myIntent);
                             } else {
                                 // Or open in browser if user has that setting
-                                LinkUtil.openExternally(image.url);
+                                LinkUtil.openExternally(image.getImageUrl());
                             }
                         }
                     });
@@ -380,6 +383,8 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
         final me.edgan.redditslide.Views.ExoVideoView exoVideoView;
         final View moreButton;
         final View saveButton;
+        final View muteButton;
+        final View hqButton;
 
         public AnimatedViewHolder(View itemView) {
             super(itemView);
@@ -388,6 +393,8 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
             this.exoVideoView = itemView.findViewById(R.id.gif);
             this.moreButton = itemView.findViewById(R.id.more);
             this.saveButton = itemView.findViewById(R.id.save);
+            this.muteButton = itemView.findViewById(R.id.mute);
+            this.hqButton = itemView.findViewById(R.id.hq);
 
             // Add solid background to prevent transparency issues
             itemView.setBackgroundColor(android.graphics.Color.BLACK);
