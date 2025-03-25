@@ -1294,4 +1294,7 @@
     <!-- Pause on audio focus ducking setting -->
     <string name="settings_pause_on_duck_title">Pause video instead of ducking</string>
     <string name="settings_pause_on_duck_desc">Pause videos when other apps play audio. Ducking is when the the audio volume is lowered instead of the video being paused.</string>
+
+    <!-- Add this string resource for the play button content description -->
+    <string name="btn_play">Play</string>
 </resources>

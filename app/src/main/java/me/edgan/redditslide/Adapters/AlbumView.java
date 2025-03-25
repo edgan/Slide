@@ -245,6 +245,28 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             holder.muteButton.setVisibility(View.GONE);
             holder.hqButton.setVisibility(View.GONE);
 
+            // Show play button
+            if (holder.playButton != null) {
+                holder.playButton.setVisibility(View.VISIBLE);
+                holder.playButton.setAlpha(0.8f);
+
+                // Make the play button open MediaView
+                holder.playButton.setOnClickListener(v -> {
+                    if (SettingValues.image) {
+                        Intent intent = new Intent(main, MediaView.class);
+                        intent.putExtra(MediaView.EXTRA_URL, url);
+                        intent.putExtra(MediaView.SUBREDDIT, subreddit);
+                        if (submissionTitle != null) {
+                            intent.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
+                        }
+                        intent.putExtra("index", position);
+                        main.startActivity(intent);
+                    } else {
+                        LinkUtil.openExternally(url);
+                    }
+                });
+            }
+
             // Store the position directly in the holder itself
             holder.position = position;
 
@@ -361,6 +383,7 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final View saveButton;
         final View muteButton;
         final View hqButton;
+        final ImageView playButton;
         int position = -1;
 
         public AnimatedViewHolder(View itemView) {
@@ -372,9 +395,10 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.saveButton = itemView.findViewById(R.id.save);
             this.muteButton = itemView.findViewById(R.id.mute);
             this.hqButton = itemView.findViewById(R.id.hq);
+            this.playButton = itemView.findViewById(R.id.playbutton);
 
             // Add solid background to prevent transparency issues
-            itemView.setBackgroundColor(android.graphics.Color.BLACK);
+            itemView.setBackgroundColor(Color.BLACK);
         }
     }
 }

@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -198,10 +199,16 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
             holder.muteButton.setVisibility(View.GONE);
             holder.hqButton.setVisibility(View.GONE);
 
+            // Show play button initially
+            if (holder.playButton != null) {
+                holder.playButton.setVisibility(View.VISIBLE);
+                holder.playButton.setAlpha(0.8f); // Slightly transparent
+            }
+
             // Store the position directly in the holder itself
             holder.position = actualIndex;
 
-            // Use GifUtils to load MP4 or GIF with ExoPlayer
+            // Use GifUtils to load MP4 or GIF with ExoPlayer and add player listener
             new GifUtils.AsyncLoadGif(
                     main,
                     holder.exoVideoView,
@@ -214,6 +221,47 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
                     subreddit,
                     submissionTitle
             ).execute(url);
+
+            // Show play button
+            if (holder.playButton != null) {
+                holder.playButton.setVisibility(View.VISIBLE);
+                holder.playButton.setAlpha(0.8f);
+
+                // Make the play button open MediaView instead of playing inline
+                holder.playButton.setOnClickListener(v -> {
+                    if (SettingValues.image) {
+                        Intent intent = new Intent(main, MediaView.class);
+                        intent.putExtra(MediaView.EXTRA_URL, url);
+                        intent.putExtra(MediaView.SUBREDDIT, subreddit);
+                        if (submissionTitle != null) {
+                            intent.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
+                        }
+                        intent.putExtra("index", actualIndex);
+                        main.startActivity(intent);
+                    } else {
+                        LinkUtil.openExternally(url);
+                    }
+                });
+            }
+
+            // Update the ExoVideoView click listener to do the same thing
+            holder.exoVideoView.setOnClickListener(v -> {
+                if (SettingValues.image) {
+                    Intent intent = new Intent(main, MediaView.class);
+                    intent.putExtra(MediaView.EXTRA_URL, url);
+                    intent.putExtra(MediaView.SUBREDDIT, subreddit);
+                    if (submissionTitle != null) {
+                        intent.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
+                    }
+                    intent.putExtra("index", actualIndex);
+                    main.startActivity(intent);
+                } else {
+                    LinkUtil.openExternally(url);
+                }
+            });
+
+            // Remove any playback state listener since we're not playing inline
+            holder.exoVideoView.setOnPlaybackStateChangedListener(null);
 
             // Overflow menu
             holder.moreButton.setOnClickListener(
@@ -247,29 +295,6 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (!SettingValues.imageDownloadButton) {
                 holder.saveButton.setVisibility(View.INVISIBLE);
             }
-
-            // If user taps the main video area -> open MediaView or open externally, up to you
-            holder.exoVideoView.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (SettingValues.image) {
-                                Intent intent = new Intent(main, MediaView.class);
-                                intent.putExtra(MediaView.EXTRA_URL, url);
-                                intent.putExtra(MediaView.SUBREDDIT, subreddit);
-                                if (submissionTitle != null) {
-                                    intent.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
-                                }
-                                intent.putExtra("index", actualIndex);
-                                main.startActivity(intent);
-                            } else {
-                                LinkUtil.openExternally(url);
-                            }
-                        }
-                    }
-            );
-
-        // 2) Static images
         } else if (holder2 instanceof AlbumViewHolder) {
             final AlbumViewHolder holder = (AlbumViewHolder) holder2;
 
@@ -430,6 +455,7 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
         final View saveButton;
         final View muteButton;
         final View hqButton;
+        final ImageView playButton;
         int position = -1;
 
         public AnimatedViewHolder(View itemView) {
@@ -441,6 +467,7 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
             this.saveButton = itemView.findViewById(R.id.save);
             this.muteButton = itemView.findViewById(R.id.mute);
             this.hqButton = itemView.findViewById(R.id.hq);
+            this.playButton = itemView.findViewById(R.id.playbutton);
 
             // Add solid background to prevent transparency issues
             itemView.setBackgroundColor(android.graphics.Color.BLACK);

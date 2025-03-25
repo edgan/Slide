@@ -71,6 +71,16 @@ public class ExoVideoView extends RelativeLayout {
     // The TextureView used for video playback.
     private TextureView videoTextureView;
 
+    public interface OnPlaybackStateChangedListener {
+        void onPlaybackStateChanged(boolean isPlaying);
+    }
+
+    private OnPlaybackStateChangedListener playbackStateChangedListener;
+
+    public void setOnPlaybackStateChangedListener(OnPlaybackStateChangedListener listener) {
+        this.playbackStateChangedListener = listener;
+    }
+
     public ExoVideoView(final Context context) {
         this(context, null, true);
     }
@@ -296,12 +306,18 @@ public class ExoVideoView extends RelativeLayout {
     public void play() {
         Log.d(TAG, "play() called");
         player.play();
+        if (playbackStateChangedListener != null) {
+            playbackStateChangedListener.onPlaybackStateChanged(true);
+        }
     }
 
     /** Pauses video playback. */
     public void pause() {
         if (player != null) {
             player.pause();
+            if (playbackStateChangedListener != null) {
+                playbackStateChangedListener.onPlaybackStateChanged(false);
+            }
         }
     }
 
