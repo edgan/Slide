@@ -22,6 +22,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener;
+import androidx.viewpager.widget.ViewPager;
 
 import com.devspark.robototextview.RobotoTypefaces;
 
@@ -104,9 +105,9 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
                                                         .scrollToPositionWithOffset(
                                                                 position + 1,
                                                                 context.findViewById(R.id.toolbar).getHeight());
-                                            } else if (imagesView instanceof androidx.viewpager.widget.ViewPager) {
+                                            } else if (imagesView instanceof ViewPager) {
                                                 // Or if it's a ViewPager
-                                                ((androidx.viewpager.widget.ViewPager) imagesView).setCurrentItem(position);
+                                                ((ViewPager) imagesView).setCurrentItem(position);
                                             }
                                             d.dismiss();
                                         }
