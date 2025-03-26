@@ -67,7 +67,9 @@ public class DialogUtil {
     }
 
     /**
-     * Applies a custom accent-colored border to an AlertDialog
+     * Applies a custom accent-colored border to an AlertDialog.
+     * IMPORTANT: This method must be called BEFORE dialog.show() to prevent visual "jumping".
+     *
      * @param context Context for accessing resources
      * @param dialog The AlertDialog to apply the border to
      */

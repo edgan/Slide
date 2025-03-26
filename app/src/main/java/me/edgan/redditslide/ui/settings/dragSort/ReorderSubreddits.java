@@ -108,7 +108,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                         .create();
 
                 // Apply custom border
-                d.setOnShowListener(dialog -> DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, d));
+                DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, d);
                 d.show();
 
                 new AsyncTask<Void, Void, ArrayList<String>>() {
@@ -142,14 +142,15 @@ public class ReorderSubreddits extends BaseActivityAnim {
                         }
 
                         // Show completion dialog
-                        AlertDialog completionDialog = new MaterialAlertDialogBuilder(ReorderSubreddits.this)
+                        AlertDialog dialog = new MaterialAlertDialogBuilder(ReorderSubreddits.this)
                                 .setTitle(R.string.reorder_sync_complete)
                                 .setMessage(res.getQuantityString(R.plurals.reorder_subs_added, done, done))
                                 .setPositiveButton(R.string.btn_ok, null)
                                 .create();
 
-                        DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, completionDialog);
-                        completionDialog.show();
+                        // Apply custom border
+                        DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog);
+                        dialog.show();
                     }
                 }.execute();
                 return true;
@@ -175,8 +176,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                         .create();
 
                 // Apply custom border
-                faqDialog.setOnShowListener(dialog ->
-                    DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, faqDialog));
+                DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, faqDialog);
                 faqDialog.show();
                 return true;
         }
@@ -285,7 +285,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                         .create();
 
                     // Apply custom border
-                    d.setOnShowListener(dialog -> DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, (AlertDialog)d));
+                    DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, (AlertDialog)d);
                     d.show();
                 }
             }.execute();
@@ -352,8 +352,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                         .create();
 
                                 // Apply custom border
-                                multiOptionsDialog.setOnShowListener(dialogInterface ->
-                                    DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, multiOptionsDialog));
+                                DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, multiOptionsDialog);
                                 multiOptionsDialog.show();
                             } else {
                                 doMultiReddit();
@@ -402,8 +401,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                 .create();
 
                             // Apply the custom border
-                            dialog.setOnShowListener(dialogInterface ->
-                                DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog));
+                            DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog);
 
                             dialog.show();
                         }
@@ -455,27 +453,24 @@ public class ReorderSubreddits extends BaseActivityAnim {
                             });
 
                             // Apply the custom border
-                            dialog.setOnShowListener(dialogInterface -> {
-                                // Apply border
-                                DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog);
+                            DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog);
 
-                                // Get the positive button after dialog is shown
-                                Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                            // Get the positive button after dialog is shown
+                            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
 
-                                // Set initial state (disabled until valid input)
-                                positiveButton.setEnabled(false);
+                            // Set initial state (disabled until valid input)
+                            positiveButton.setEnabled(false);
 
-                                // Override click listener to handle domain URL addition
-                                positiveButton.setOnClickListener(v2 -> {
-                                    // Get final text from EditText
-                                    input = editText.getText().toString().replaceAll("\\s", "");
+                            // Override click listener to handle domain URL addition
+                            positiveButton.setOnClickListener(v2 -> {
+                                // Get final text from EditText
+                                input = editText.getText().toString().replaceAll("\\s", "");
 
-                                    // Only proceed if input is valid
-                                    if (input.contains(".") && input.length() >= 1) {
-                                        addDomainUrl(input);
-                                        dialog.dismiss();
-                                    }
-                                });
+                                // Only proceed if input is valid
+                                if (input.contains(".") && input.length() >= 1) {
+                                    addDomainUrl(input);
+                                    dialog.dismiss();
+                                }
                             });
 
                             dialog.show();
@@ -575,8 +570,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                 .create();
 
         // Apply custom border
-        multiSelectDialog.setOnShowListener(dialog ->
-            DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, multiSelectDialog));
+        DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, multiSelectDialog);
 
         multiSelectDialog.show();
     }
@@ -606,11 +600,11 @@ public class ReorderSubreddits extends BaseActivityAnim {
                 .setNegativeButton(R.string.btn_cancel, null)
                 .create();
 
-        // Set OnShowListener to customize the dialog after it's shown
-        dialog.setOnShowListener(dialogInterface -> {
-            // Apply custom border
-            DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog);
+        // Apply custom border
+        DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog);
 
+        // Set OnShowListener for button customization only
+        dialog.setOnShowListener(dialogInterface -> {
             // Get the positive button
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
 
@@ -677,8 +671,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                 .create();
 
             // Apply custom border
-            noValidSubsDialog.setOnShowListener(dialog ->
-                DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, noValidSubsDialog));
+            DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, noValidSubsDialog);
             noValidSubsDialog.show();
             return;
         }
@@ -715,8 +708,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                 .create();
 
             // Apply custom border and show dialog
-            progressDialog.setOnShowListener(dialog ->
-                DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, progressDialog));
+            DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, progressDialog);
             progressDialog.show();
 
             // Create the multireddit via API
@@ -780,8 +772,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                             .create();
 
                         // Apply custom border
-                        errorDialog.setOnShowListener(dialog ->
-                            DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, errorDialog));
+                        DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, errorDialog);
                         errorDialog.show();
                     }
                 }
@@ -794,10 +785,9 @@ public class ReorderSubreddits extends BaseActivityAnim {
                 .setPositiveButton(R.string.btn_ok, null)
                 .create();
 
-            // Apply custom border
-            jsonErrorDialog.setOnShowListener(dialog ->
-                DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, jsonErrorDialog));
-            jsonErrorDialog.show();
+                // Apply custom border
+                DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, jsonErrorDialog);
+                jsonErrorDialog.show();
         }
     }
 
@@ -869,8 +859,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                                 .create();
 
                                         // Apply custom border
-                                        errorDialog.setOnShowListener(dialog ->
-                                            DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, errorDialog));
+                                        DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, errorDialog);
                                         errorDialog.show();
                                     } catch (Exception ignored) {
                                     }
@@ -893,8 +882,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                                 .create();
 
                                         // Apply custom border
-                                        searchResultsDialog.setOnShowListener(dialog ->
-                                            DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, searchResultsDialog));
+                                        DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, searchResultsDialog);
                                         searchResultsDialog.show();
                                     } catch (Exception ignored) {
                                     }
@@ -1275,8 +1263,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                 .create();
 
         // Apply custom border
-        dialog.setOnShowListener(dialogInterface ->
-            DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog));
+        DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog);
 
         dialog.show();
     }
@@ -1308,8 +1295,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                     .create();
 
             // Apply custom border
-            urlErrorDialog.setOnShowListener(dialog ->
-                DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, urlErrorDialog));
+            DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, urlErrorDialog);
             urlErrorDialog.show();
         }
     }
@@ -1378,8 +1364,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                 .create();
 
         // Apply custom border using the utility class
-        dialog.setOnShowListener(dialogInterface ->
-            DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog));
+        DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog);
         dialog.show();
     }
 }
