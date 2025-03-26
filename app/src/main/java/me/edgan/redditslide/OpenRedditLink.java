@@ -99,6 +99,8 @@ public class OpenRedditLink {
                     URL newUrl = new URL(url);
                     HttpURLConnection ucon = (HttpURLConnection) newUrl.openConnection();
                     ucon.setInstanceFollowRedirects(false);
+                    ucon.setRequestProperty("User-Agent", BuildConfig.APPLICATION_ID + "/" + BuildConfig.VERSION_NAME);
+                    ucon.setRequestProperty("Host", newUrl.getHost());
                     String location = ucon.getHeaderField("location");
                     if (location != null) {
                         String finalUrl = new URL(location).toString();

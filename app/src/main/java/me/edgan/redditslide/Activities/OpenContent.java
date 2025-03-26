@@ -37,7 +37,7 @@ public class OpenContent extends Activity {
             finish();
             return;
         }
-        url = url.toLowerCase(Locale.ENGLISH);
+
         OpenRedditLink.openUrl(this, url, true);
     }
 
