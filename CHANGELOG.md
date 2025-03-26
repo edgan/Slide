@@ -2,6 +2,19 @@
 
 The non-abridged changelog can be read in the [releases page](https://github.com/edgan/Slide/releases).
 
+7.2.6 / 2025-3-26
+=================
+* Lots of improvements to Imgur albums and Reddit galleries
+* Fixed /s/ style links #163
+* Fixed preview image display for Reddit videos when there is no preview
+* Fixed Posts with preview.redd.it urls and highlighted text using backticks display the images/urls wrong #161
+* Fixed crash from going back from a video
+* Ducking, lowering volume, audio play when it is interrupted by default
+* Setting to pause instead of duck in general settings
+* Fixed Crosspost has a blank preview when media list is empty #148
+* Fixed how Subreddit sync writes the urls for multireddits #143
+* Fixed Crash in SubmissionsView: NullPointerException on Click #144
+
 7.2.5 / 2025-3-21
 =================
 * Fixed Slide doesn't request notification permission on first launch #146
