@@ -189,8 +189,29 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
         gallery = new RedditGalleryPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(gallery);
         pager.setCurrentItem(1);
+        if (SettingValues.oldSwipeMode) {
+            pager.addOnPageChangeListener(
+                new ViewPager.SimpleOnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(
+                            int position, float positionOffset, int positionOffsetPixels) {
+                        if (position == 0 && positionOffsetPixels == 0) {
+                            finish();
+                        }
+                        if (position == 0 && ((RedditGalleryPagerAdapter) pager.getAdapter()).blankPage != null) {
+                            if (((RedditGalleryPagerAdapter) pager.getAdapter()).blankPage != null) {
+                                ((RedditGalleryPagerAdapter) pager.getAdapter()).blankPage.doOffset(positionOffset);
+                            }
 
-        // Rest of the code remains the same...
+                            ((RedditGalleryPagerAdapter) pager
+                                .getAdapter()).blankPage.realBack
+                                .setBackgroundColor(Palette.adjustAlpha(positionOffset * 0.7f));
+                        }
+                    }
+                }
+            );
+        }
+
     }
 
     private void configureViewPager(final ViewPager pager) {
