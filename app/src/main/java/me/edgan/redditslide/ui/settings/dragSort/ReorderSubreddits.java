@@ -404,6 +404,20 @@ public class ReorderSubreddits extends BaseActivityAnim {
                             DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog);
 
                             dialog.show();
+                            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                            positiveButton.setEnabled(false);
+
+                            // Override click listener to handle domain URL addition
+                            positiveButton.setOnClickListener(v2 -> {
+                                // Get final text from EditText
+                                input = editText.getText().toString().replaceAll("\\s", "");
+
+                                // Only proceed if input is valid
+                                if (input.contains(".") && input.length() >= 1) {
+                                    addDomainUrl(input);
+                                    dialog.dismiss();
+                                }
+                            });
                         }
                     });
         }
@@ -455,7 +469,10 @@ public class ReorderSubreddits extends BaseActivityAnim {
                             // Apply the custom border
                             DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog);
 
-                            // Get the positive button after dialog is shown
+                            // Show the dialog first
+                            dialog.show();
+
+                            // Now we can get the positive button AFTER dialog is shown
                             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
 
                             // Set initial state (disabled until valid input)
@@ -472,8 +489,6 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                     dialog.dismiss();
                                 }
                             });
-
-                            dialog.show();
                         }
                     });
         }
@@ -610,7 +625,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
 
             // Set custom click listener to handle validation
             positiveButton.setOnClickListener(v -> {
-                String displayName = editText.getText().toString().trim();
+                String displayName = editText.getText().toString().toLowerCase(Locale.ENGLISH).trim();
 
                 // Validate input
                 if (displayName.isEmpty()) {
@@ -745,7 +760,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                         int pos = addSubAlphabetically(MULTI_REDDIT + displayName);
 
                         // Set the correct URL format for accessing it in the app
-                        String urlForApp = String.format("api/multi/%s", multiPath);
+                        String urlForApp = String.format("api/%s", multiPath).toLowerCase(Locale.ENGLISH);
                         UserSubscriptions.setSubNameToProperties(MULTI_REDDIT + displayName, urlForApp);
 
                         // Sync multireddits to ensure everything is up to date
@@ -1144,7 +1159,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
 
         // New method to show the remove subreddits dialog
         private void showRemoveSubredditsDialog() {
-            AlertDialog dialog = new MaterialAlertDialogBuilder(ReorderSubreddits.this)
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ReorderSubreddits.this)
                     .setTitle(R.string.reorder_remove_title)
                     .setPositiveButton(
                             R.string.btn_remove,
@@ -1158,29 +1173,33 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                 chosen = new ArrayList<>();
                                 doOldToolbar();
                             })
-                    .setNegativeButton(R.string.btn_cancel, null)
-                    .setNeutralButton(
-                            Authentication.isLoggedIn && Authentication.didOnline && isSingle(chosen)
-                                    ? R.string.reorder_remove_unsubscribe : null,
-                            (dialogInterface, which) -> {
-                                for (String s : chosen) {
-                                    int index = subs.indexOf(s);
-                                    subs.remove(index);
-                                    adapter.notifyItemRemoved(index);
-                                }
+                    .setNegativeButton(R.string.btn_cancel, null);
 
-                                new UserSubscriptions.UnsubscribeTask()
-                                        .execute(chosen.toArray(new String[0]));
+            // Only add the neutral button if the condition is true
+            if (Authentication.isLoggedIn && Authentication.didOnline && isSingle(chosen)) {
+                builder.setNeutralButton(
+                        R.string.reorder_remove_unsubscribe,
+                        (dialogInterface, which) -> {
+                            for (String s : chosen) {
+                                int index = subs.indexOf(s);
+                                subs.remove(index);
+                                adapter.notifyItemRemoved(index);
+                            }
 
-                                for (String s : chosen) {
-                                    isSubscribed.put(s.toLowerCase(Locale.ENGLISH), false);
-                                }
+                            new UserSubscriptions.UnsubscribeTask()
+                                    .execute(chosen.toArray(new String[0]));
 
-                                isMultiple = false;
-                                chosen = new ArrayList<>();
-                                doOldToolbar();
-                            })
-                    .create();
+                            for (String s : chosen) {
+                                isSubscribed.put(s.toLowerCase(Locale.ENGLISH), false);
+                            }
+
+                            isMultiple = false;
+                            chosen = new ArrayList<>();
+                            doOldToolbar();
+                        });
+            }
+
+            AlertDialog dialog = builder.create();
 
             // Apply custom border
             DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, dialog);
@@ -1318,27 +1337,33 @@ public class ReorderSubreddits extends BaseActivityAnim {
                 .setItems(options, (dialogInterface, which) -> {
                     if (which == 2) {
                         // Delete action
-                        AlertDialog confirmDialog = new MaterialAlertDialogBuilder(ReorderSubreddits.this)
+                        MaterialAlertDialogBuilder confirmBuilder = new MaterialAlertDialogBuilder(ReorderSubreddits.this)
                             .setTitle(R.string.reorder_remove_title)
-                            .setMessage(getString(R.string.btn_remove, subredditName))
                             .setPositiveButton(R.string.btn_remove, (dialog1, which1) -> {
                                 subs.remove(items.get(position));
                                 adapter.notifyItemRemoved(position);
                             })
-                            .setNegativeButton(R.string.btn_cancel, null)
-                            .setNeutralButton(Authentication.isLoggedIn && Authentication.didOnline && isSingle(subredditName)
-                                    ? R.string.reorder_remove_unsubscribe : null, (dialog12, which12) -> {
-                                final String sub = items.get(position);
-                                subs.remove(sub);
-                                adapter.notifyItemRemoved(position);
-                                new UserSubscriptions.UnsubscribeTask().execute(sub);
-                                isSubscribed.put(sub.toLowerCase(Locale.ENGLISH), false);
-                            })
-                            .create();
+                            .setNegativeButton(R.string.btn_cancel, null);
+
+                        // Only add the neutral button if the condition is true
+                        if (Authentication.isLoggedIn && Authentication.didOnline && isSingle(subredditName)) {
+                            confirmBuilder.setNeutralButton(
+                                    R.string.reorder_remove_unsubscribe,
+                                    (dialog12, which12) -> {
+                                        final String sub = items.get(position);
+                                        subs.remove(sub);
+                                        adapter.notifyItemRemoved(position);
+                                        new UserSubscriptions.UnsubscribeTask().execute(sub);
+                                        isSubscribed.put(sub.toLowerCase(Locale.ENGLISH), false);
+                                    });
+                        }
+
+                        AlertDialog confirmDialog = confirmBuilder.create();
 
                         // Apply custom border using the utility class
                         DialogUtil.applyCustomBorderToAlertDialog(ReorderSubreddits.this, confirmDialog);
                         confirmDialog.show();
+
                     } else if (which == 0) {
                         // Move to top
                         String s = items.get(position);

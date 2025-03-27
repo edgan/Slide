@@ -1307,4 +1307,7 @@
     <string name="multireddit_created_success">Multireddit created successfully</string>
     <string name="multireddit_created_error">Failed to create Multireddit. Please try again.</string>
     <string name="multireddit_json_error">An error occurred while preparing your Multireddit data</string>
+
+    <string name="settings_dialog_colored_border">Put a colored border around dialog boxes</string>
+    <string name="settings_dialog_colored_border_desc">Display a thin colored border around alert and dialog boxes</string>
 </resources>

@@ -73,6 +73,8 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
                 (SwitchCompat) context.findViewById(R.id.settings_theme_alwaysBlackStatusbar);
         final SwitchCompat colorIconSwitch =
                 (SwitchCompat) context.findViewById(R.id.settings_theme_colorAppIcon);
+        final SwitchCompat dialogColoredBorderSwitch =
+                (SwitchCompat) context.findViewById(R.id.settings_theme_dialog_colored_border);
 
         back = new ColorPreferences(context).getFontStyle().getThemeType();
 
@@ -202,6 +204,14 @@ public class SettingsThemeFragment<ActivityType extends BaseActivity & RestartAc
                                 Slide.class.getPackage().getName() + ".Slide",
                                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
                     }
+                });
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        dialogColoredBorderSwitch.setChecked(SettingValues.dialogColoredBorder);
+        dialogColoredBorderSwitch.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> {
+                    SettingValues.dialogColoredBorder = isChecked;
+                    editSharedBooleanPreference(SettingValues.PREF_DIALOG_COLORED_BORDER, isChecked);
                 });
     }
 

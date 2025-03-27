@@ -149,6 +149,7 @@ public class SettingValues {
     public static final String PREF_SUBREDDIT_FILTER_PREFIX_MATCHING = "subredditFilterPrefixMatching";
     public static final String PREF_IMAGE_SAVE_LOCATION = "PREF_IMAGE_SAVE_LOCATION";
     public static final String PREF_REDDIT_CLIENT_ID_OVERRIDE = "redditClientOverride";
+    public static final String PREF_DIALOG_COLORED_BORDER = "dialogColoredBorder";
 
     public static String imageSaveLocation;
     public static String redditClientIdOverride = "";
@@ -298,6 +299,7 @@ public class SettingValues {
     public static boolean alwaysBlackStatusbar;
     public static boolean subredditFiltersTillRestart;
     public static boolean subredditFilterPrefixMatching;
+    public static boolean dialogColoredBorder;
 
     public static void setAllValues(SharedPreferences settings) {
         prefs = settings;
@@ -503,6 +505,7 @@ public class SettingValues {
 
         subredditFiltersTillRestart = prefs.getBoolean(PREF_SUBREDDIT_FILTERS_TILL_RESTART, true);
         subredditFilterPrefixMatching = prefs.getBoolean(PREF_SUBREDDIT_FILTER_PREFIX_MATCHING, false);
+        dialogColoredBorder = prefs.getBoolean(PREF_DIALOG_COLORED_BORDER, false);
     }
 
     public static void setPicsEnabled(String sub, boolean checked) {
