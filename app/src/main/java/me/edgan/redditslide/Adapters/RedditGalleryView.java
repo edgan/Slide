@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -39,7 +38,6 @@ import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.Visuals.FontPreferences;
 import me.edgan.redditslide.util.GifUtils;
 import me.edgan.redditslide.util.LinkUtil;
-import me.edgan.redditslide.util.LogUtil;
 
 /**
  * RecyclerView adapter for the vertical Reddit gallery,

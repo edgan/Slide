@@ -6,8 +6,6 @@ import android.net.Uri;
 import android.util.Log;
 
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
-import me.edgan.redditslide.util.GifUtils;
-import me.edgan.redditslide.util.StorageUtil;
 
 public class ImageSaveUtils {
     private static final String TAG = "ImageSaveUtils";
