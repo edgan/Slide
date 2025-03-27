@@ -65,6 +65,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.lang.ref.WeakReference;
 import java.util.stream.Collectors;
 
 public class ReorderSubreddits extends BaseActivityAnim {
@@ -126,19 +127,25 @@ public class ReorderSubreddits extends BaseActivityAnim {
                         boolean sorted = (subs.equals(UserSubscriptions.sortNoExtras(subs)));
                         Resources res = getResources();
 
-                        for (String s : newSubs) {
-                            if (!subs.contains(s)) {
-                                done++;
-                                subs.add(s);
+                        // Add null check before iterating over newSubs
+                        if (newSubs != null) {
+                            for (String s : newSubs) {
+                                if (!subs.contains(s)) {
+                                    done++;
+                                    subs.add(s);
+                                }
                             }
-                        }
-                        if (sorted && done > 0) {
-                            subs = UserSubscriptions.sortNoExtras(subs);
-                            adapter = new CustomAdapter(subs);
-                            recyclerView.setAdapter(adapter);
-                        } else if (done > 0) {
-                            adapter.notifyDataSetChanged();
-                            recyclerView.smoothScrollToPosition(subs.size());
+                            if (sorted && done > 0) {
+                                subs = UserSubscriptions.sortNoExtras(subs);
+                                adapter = new CustomAdapter(subs);
+                                recyclerView.setAdapter(adapter);
+                            } else if (done > 0) {
+                                adapter.notifyDataSetChanged();
+                                recyclerView.smoothScrollToPosition(subs.size());
+                            }
+                        } else {
+                            // Handle null case - show an error message using Toast instead of Snackbar
+                            Toast.makeText(ReorderSubreddits.this, R.string.misc_err_sync_failed, Toast.LENGTH_SHORT).show();
                         }
 
                         // Show completion dialog
@@ -405,6 +412,8 @@ public class ReorderSubreddits extends BaseActivityAnim {
 
                             dialog.show();
                             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+
+                            // Set initial state (disabled until valid input)
                             positiveButton.setEnabled(false);
 
                             // Override click listener to handle domain URL addition
@@ -521,28 +530,44 @@ public class ReorderSubreddits extends BaseActivityAnim {
     public int diff;
 
     public void doMultiReddit() {
-        // Sync subreddits first without showing a dialog
-        new AsyncTask<Void, Void, ArrayList<String>>() {
-            @Override
-            protected ArrayList<String> doInBackground(Void... params) {
-                ArrayList<String> newSubs = new ArrayList<>(UserSubscriptions.syncSubreddits(ReorderSubreddits.this));
-                UserSubscriptions.syncMultiReddits(ReorderSubreddits.this);
-                return newSubs;
-            }
+        // Use a static AsyncTask with WeakReference to prevent memory leaks
+        MultiRedditSyncTask task = new MultiRedditSyncTask(this);
+        task.execute();
+    }
 
-            @Override
-            protected void onPostExecute(ArrayList<String> newSubs) {
-                // Update the local subs list with any new subscriptions
-                for (String s : newSubs) {
-                    if (!subs.contains(s)) {
-                        subs.add(s);
-                    }
+    // Static inner class to prevent memory leaks
+    private static class MultiRedditSyncTask extends AsyncTask<Void, Void, ArrayList<String>> {
+        private final WeakReference<ReorderSubreddits> activityRef;
+
+        public MultiRedditSyncTask(ReorderSubreddits activity) {
+            this.activityRef = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected ArrayList<String> doInBackground(Void... params) {
+            ReorderSubreddits activity = activityRef.get();
+            if (activity == null) return null; // Activity has been destroyed
+
+            ArrayList<String> newSubs = new ArrayList<>(UserSubscriptions.syncSubreddits(activity));
+            UserSubscriptions.syncMultiReddits(activity);
+            return newSubs;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> newSubs) {
+            ReorderSubreddits activity = activityRef.get();
+            if (activity == null || newSubs == null) return; // Activity has been destroyed or task failed
+
+            // Update the local subs list with any new subscriptions
+            for (String s : newSubs) {
+                if (!activity.subs.contains(s)) {
+                    activity.subs.add(s);
                 }
-
-                // Continue by showing the subreddit selection dialog
-                multiRedditCreateDialog();
             }
-        }.execute();
+
+            // Continue by showing the subreddit selection dialog
+            activity.multiRedditCreateDialog();
+        }
     }
 
     // The original dialog code moved to a separate method
@@ -707,7 +732,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
             jsonData.put("subreddits", subsArray);
 
             // Create the multireddit path
-                                    String username = Authentication.name;
+            String username = Authentication.name != null ? Authentication.name : "anonymous";
             final String multiPath = "user/" + username + "/m/" + displayName;
 
             // Inflate the custom progress layout
@@ -911,7 +936,12 @@ public class ReorderSubreddits extends BaseActivityAnim {
 
     public void doOldToolbar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbar.setVisibility(View.VISIBLE);
+        if (mToolbar != null) {
+            mToolbar.setVisibility(View.VISIBLE);
+        } else {
+            Log.e("ReorderSubreddits", "Could not find toolbar");
+            Toast.makeText(ReorderSubreddits.this, "Failed to find toolbar", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public class CustomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -942,60 +972,81 @@ public class ReorderSubreddits extends BaseActivityAnim {
         }
 
         public void doNewToolbar() {
-            mToolbar.setVisibility(View.GONE);
+            if (mToolbar != null) {
+                mToolbar.setVisibility(View.GONE);
+            }
+
             mToolbar = (Toolbar) findViewById(R.id.toolbar2);
+
+            // Check if mToolbar is null after findViewById
+            if (mToolbar == null) {
+                // Handle the null case - show error message and return
+                Toast.makeText(ReorderSubreddits.this, "Failed to find toolbar", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Now it's safe to use mToolbar
             mToolbar.setTitle(getResources().getQuantityString(R.plurals.reorder_selected, chosen.size(), chosen.size()));
-            mToolbar.findViewById(R.id.delete)
-                    .setOnClickListener(
-                            new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    showRemoveSubredditsDialog();
+
+            View deleteButton = mToolbar.findViewById(R.id.delete);
+            if (deleteButton != null) {
+                deleteButton.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                showRemoveSubredditsDialog();
+                            }
+                        });
+            }
+
+            View topButton = mToolbar.findViewById(R.id.top);
+            if (topButton != null) {
+                topButton.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                for (String s : chosen) {
+                                    subs.remove(s);
+                                    subs.add(0, s);
                                 }
-                            });
-            mToolbar.findViewById(R.id.top)
-                    .setOnClickListener(
-                            new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    for (String s : chosen) {
+
+                                isMultiple = false;
+                                doOldToolbar();
+                                chosen = new ArrayList<>();
+                                notifyDataSetChanged();
+                                recyclerView.smoothScrollToPosition(0);
+                            }
+                        });
+            }
+
+            View pinButton = mToolbar.findViewById(R.id.pin);
+            if (pinButton != null) {
+                pinButton.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                List<String> pinned = UserSubscriptions.getPinned();
+                                boolean contained = pinned.containsAll(chosen);
+
+                                for (String s : chosen) {
+                                    if (contained) {
+                                        UserSubscriptions.removePinned(
+                                                s, ReorderSubreddits.this);
+                                    } else {
+                                        UserSubscriptions.addPinned(s, ReorderSubreddits.this);
                                         subs.remove(s);
                                         subs.add(0, s);
                                     }
-
-                                    isMultiple = false;
-                                    doOldToolbar();
-                                    chosen = new ArrayList<>();
-                                    notifyDataSetChanged();
-                                    recyclerView.smoothScrollToPosition(0);
                                 }
-                            });
-            mToolbar.findViewById(R.id.pin)
-                    .setOnClickListener(
-                            new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    List<String> pinned = UserSubscriptions.getPinned();
-                                    boolean contained = pinned.containsAll(chosen);
 
-                                    for (String s : chosen) {
-                                        if (contained) {
-                                            UserSubscriptions.removePinned(
-                                                    s, ReorderSubreddits.this);
-                                        } else {
-                                            UserSubscriptions.addPinned(s, ReorderSubreddits.this);
-                                            subs.remove(s);
-                                            subs.add(0, s);
-                                        }
-                                    }
-
-                                    isMultiple = false;
-                                    doOldToolbar();
-                                    chosen = new ArrayList<>();
-                                    notifyDataSetChanged();
-                                    recyclerView.smoothScrollToPosition(0);
-                                }
-                            });
+                                isMultiple = false;
+                                doOldToolbar();
+                                chosen = new ArrayList<>();
+                                notifyDataSetChanged();
+                                recyclerView.smoothScrollToPosition(0);
+                            }
+                        });
+            }
         }
 
         int[] textColorAttr = new int[] {R.attr.fontColor};
@@ -1003,7 +1054,9 @@ public class ReorderSubreddits extends BaseActivityAnim {
         int textColor = ta.getColor(0, Color.BLACK);
 
         public void updateToolbar() {
-            mToolbar.setTitle(getResources().getQuantityString(R.plurals.reorder_selected, chosen.size(), chosen.size()));
+            if (mToolbar != null) {
+                mToolbar.setTitle(getResources().getQuantityString(R.plurals.reorder_selected, chosen.size(), chosen.size()));
+            }
         }
 
         @Override

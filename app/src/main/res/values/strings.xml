@@ -1310,4 +1310,6 @@
 
     <string name="settings_dialog_colored_border">Put a colored border around dialog boxes</string>
     <string name="settings_dialog_colored_border_desc">Display a thin colored border around alert and dialog boxes</string>
+
+    <string name="misc_err_sync_failed">Failed to sync subreddits. No subscribed subreddits?</string>
 </resources>
