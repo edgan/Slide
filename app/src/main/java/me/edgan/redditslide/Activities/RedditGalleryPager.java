@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -32,11 +30,9 @@ import com.cocosw.bottomsheet.BottomSheet;
 import me.edgan.redditslide.Adapters.ImageGridAdapter;
 import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
-import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
-import me.edgan.redditslide.Views.ExoVideoView;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.util.BlendModeUtil;
@@ -44,10 +40,8 @@ import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.GifUtils;
 import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
-import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.ShareUtil;
-import me.edgan.redditslide.util.StorageUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,7 +52,7 @@ import java.util.List;
  * Displays gallery content in a horizontal paging view. This class extends BaseSaveActivity to use
  * the Storage Access Framework for saving images, replacing the old file-based approach.
  */
-public class RedditGalleryPager extends BaseSaveActivity {
+public class RedditGalleryPager extends BaseSaveActivity implements GalleryParent {
 
     private static int adapterPosition;
     public static final String SUBREDDIT = "subreddit";
@@ -403,7 +397,7 @@ public class RedditGalleryPager extends BaseSaveActivity {
 
             Fragment f;
             if (current.isAnimated()) {
-                f = new Gif();
+                f = new GalleryGifFragment();  // Use adapter class that wraps RedditGallery.Gif
             } else {
                 f = new ImageFullNoSubmission();
             }
@@ -425,101 +419,6 @@ public class RedditGalleryPager extends BaseSaveActivity {
                 return images.size();
             }
         }
-    }
-
-    public static class Gif extends Fragment {
-        private int i = 0;
-        private View gif;
-        ViewGroup rootView;
-        ProgressBar loader;
-
-        @Override
-        public void setUserVisibleHint(boolean isVisibleToUser) {
-            super.setUserVisibleHint(isVisibleToUser);
-            if (this.isVisible()) {
-                if (!isVisibleToUser) {
-                    ((ExoVideoView) gif).pause();
-                    gif.setVisibility(View.GONE);
-                }
-                if (isVisibleToUser) {
-                    ((ExoVideoView) gif).play();
-                    gif.setVisibility(View.VISIBLE);
-                }
-            }
-        }
-
-        @Override
-        public View onCreateView(
-                LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            rootView =
-                    (ViewGroup)
-                            inflater.inflate(R.layout.submission_gifcard_album, container, false);
-            loader = rootView.findViewById(R.id.gifprogress);
-            gif = rootView.findViewById(R.id.gif);
-
-            gif.setVisibility(View.VISIBLE);
-            final ExoVideoView v = (ExoVideoView) gif;
-            v.clearFocus();
-
-            GalleryImage current = ((RedditGalleryPager) getActivity()).images.get(i);
-            final String url = current.getImageUrl();
-
-            LogUtil.i(url);
-
-            new GifUtils.AsyncLoadGif(
-                            getActivity(),
-                            rootView.findViewById(R.id.gif),
-                            loader,
-                            null,
-                            null,
-                            false,
-                            true,
-                            rootView.findViewById(R.id.size),
-                            ((RedditGalleryPager) getActivity()).subreddit,
-                            getActivity().getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE))
-                    .execute(url);
-
-            rootView.findViewById(R.id.more)
-                    .setOnClickListener(
-                            v1 ->
-                                    ((RedditGalleryPager) getActivity()).showBottomSheetImage(url, true, i));
-
-            rootView.findViewById(R.id.save)
-                    .setOnClickListener(
-                            v1 -> {
-                                if (url != null && getActivity() != null) {
-                                    ((RedditGalleryPager) getActivity()).doImageSave(true, url, i);
-                                } else if (url == null) {
-                                    LogUtil.i("URL is null");
-                                } else if (getActivity() == null) {
-                                    LogUtil.i("getActivity is null");
-                                }
-                            });
-
-            if (!SettingValues.imageDownloadButton) {
-                rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
-            }
-            return rootView;
-        }
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            Bundle bundle = this.getArguments();
-            i = bundle.getInt("page", 0);
-        }
-    }
-
-    public void doImageSave(boolean isGif, String contentUrl, int index) {
-        ImageSaveUtils.doImageSave(
-                this,
-                isGif,
-                contentUrl,
-                index,
-                subreddit,
-                submissionTitle,
-                this::showFirstDialog
-        );
     }
 
     public static class ImageFullNoSubmission extends Fragment {
@@ -608,11 +507,58 @@ public class RedditGalleryPager extends BaseSaveActivity {
         }
     }
 
+    public void doImageSave(boolean isGif, String contentUrl, int index) {
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                this::showFirstDialog
+        );
+    }
+
     private void showFirstDialog() {
         runOnUiThread(() -> DialogUtil.showFirstDialog(RedditGalleryPager.this));
     }
 
     private void showErrorDialog() {
         runOnUiThread(() -> DialogUtil.showErrorDialog(RedditGalleryPager.this));
+    }
+
+    // A wrapper Fragment that uses RedditGallery.Gif internally
+    public static class GalleryGifFragment extends RedditGallery.Gif {
+        // This method will be called by RedditGallery.Gif to get gallery data
+        @Override
+        protected GalleryParent getGalleryParent() {
+            return (RedditGalleryPager) getActivity();
+        }
+    }
+
+    // Implement the GalleryParent interface for use by the Gif class
+    @Override
+    public List<GalleryImage> getGalleryImages() {
+        return images;
+    }
+
+    @Override
+    public String getGallerySubreddit() {
+        return subreddit;
+    }
+
+    @Override
+    public String getGallerySubmissionTitle() {
+        return submissionTitle;
+    }
+
+    @Override
+    public void showGalleryBottomSheet(String url, boolean isGif, int position) {
+        showBottomSheetImage(url, isGif, position);
+    }
+
+    @Override
+    public void saveGalleryMedia(boolean isGif, String url, int position) {
+        doImageSave(isGif, url, position);
     }
 }

@@ -5,6 +5,7 @@ import static me.edgan.redditslide.Notifications.ImageDownloadNotificationServic
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +14,10 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,13 +31,19 @@ import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SpoilerRobotoTextView;
+import me.edgan.redditslide.Views.ExoVideoView;
 import me.edgan.redditslide.Visuals.FontPreferences;
+import me.edgan.redditslide.util.GifUtils;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.SubmissionParser;
 
 import java.util.List;
 
 public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int VIEW_TYPE_IMAGE = 1;
+    private static final int VIEW_TYPE_SPACER = 6;
+    private static final int VIEW_TYPE_ANIMATED = 2;
+
     private final List<Image> users;
 
     private final Activity main;
@@ -74,39 +83,14 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                     final Dialog d = builder.create();
                                     gridview.setOnItemClickListener(
                                             new AdapterView.OnItemClickListener() {
-                                                public void onItemClick(
-                                                        AdapterView<?> parent,
-                                                        View v,
-                                                        int position,
-                                                        long id) {
+                                                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                                                     if (context instanceof Album) {
-                                                        ((LinearLayoutManager)
-                                                                        ((Album) context)
-                                                                                .album.album
-                                                                                        .recyclerView
-                                                                                        .getLayoutManager())
-                                                                .scrollToPositionWithOffset(
-                                                                        position + 1,
-                                                                        context.findViewById(
-                                                                                        R.id
-                                                                                                .toolbar)
-                                                                                .getHeight());
+                                                        ((LinearLayoutManager) ((Album) context).album.album.recyclerView.getLayoutManager())
+                                                                .scrollToPositionWithOffset(position + 1, context.findViewById(R.id.toolbar).getHeight());
 
                                                     } else {
-                                                        ((LinearLayoutManager)
-                                                                        ((RecyclerView)
-                                                                                        context
-                                                                                                .findViewById(
-                                                                                                        R
-                                                                                                                .id
-                                                                                                                .images))
-                                                                                .getLayoutManager())
-                                                                .scrollToPositionWithOffset(
-                                                                        position + 1,
-                                                                        context.findViewById(
-                                                                                        R.id
-                                                                                                .toolbar)
-                                                                                .getHeight());
+                                                        ((LinearLayoutManager) ((RecyclerView) context.findViewById(R.id.images)).getLayoutManager())
+                                                                .scrollToPositionWithOffset(position + 1, context.findViewById(R.id.toolbar).getHeight());
                                                     }
                                                     d.dismiss();
                                                 }
@@ -118,15 +102,16 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == 1) {
-            View v =
-                    LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.album_image, parent, false);
+        if (viewType == VIEW_TYPE_IMAGE) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.album_image, parent, false);
             return new AlbumViewHolder(v);
+        } else if (viewType == VIEW_TYPE_ANIMATED) {
+            // *** HERE is where we load the layout with ExoVideoView, e.g. submission_gifcard_album ***
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.submission_gifcard_album, parent, false);
+            return new AnimatedViewHolder(v);
         } else {
             View v =
-                    LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.spacer, parent, false);
+                    LayoutInflater.from(parent.getContext()).inflate(R.layout.spacer, parent, false);
             return new SpacerViewHolder(v);
         }
     }
@@ -138,11 +123,16 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        int SPACER = 6;
         if (!paddingBottom && position == 0) {
-            return SPACER;
+            return VIEW_TYPE_SPACER;
         } else if (paddingBottom && position == getItemCount() - 1) {
-            return SPACER;
+            return VIEW_TYPE_SPACER;
+        }
+        // Real index in images list
+        int actualIndex = paddingBottom ? position : position - 1;
+        Image image = users.get(actualIndex);
+        if (image.isAnimated()) {
+            return VIEW_TYPE_ANIMATED; // MP4 or GIF
         } else {
             return 1;
         }
@@ -156,20 +146,15 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             AlbumViewHolder holder = (AlbumViewHolder) holder2;
 
             final Image user = users.get(position);
-            ((Reddit) main.getApplicationContext())
-                    .getImageLoader()
-                    .displayImage(user.getImageUrl(), holder.image, ImageGridAdapter.options);
+            ((Reddit) main.getApplicationContext()).getImageLoader().displayImage(user.getImageUrl(), holder.image, ImageGridAdapter.options);
             holder.body.setVisibility(View.VISIBLE);
             holder.text.setVisibility(View.VISIBLE);
             View imageView = holder.image;
             if (imageView.getWidth() == 0) {
                 holder.image.setLayoutParams(
-                        new LinearLayout.LayoutParams(
-                                RelativeLayout.LayoutParams.MATCH_PARENT,
-                                RelativeLayout.LayoutParams.WRAP_CONTENT));
+                        new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
             } else {
-                holder.image.setLayoutParams(
-                        new LinearLayout.LayoutParams(
+                holder.image.setLayoutParams(new LinearLayout.LayoutParams(
                                 RelativeLayout.LayoutParams.MATCH_PARENT,
                                 (int)
                                         getHeightFromAspectRatio(
@@ -178,10 +163,7 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                                 imageView.getWidth())));
             }
             {
-                int type =
-                        new FontPreferences(holder.body.getContext())
-                                .getFontTypeComment()
-                                .getTypeface();
+                int type = new FontPreferences(holder.body.getContext()).getFontTypeComment().getTypeface();
                 Typeface typeface;
                 if (type >= 0) {
                     typeface = RobotoTypefaces.obtainTypeface(holder.body.getContext(), type);
@@ -191,10 +173,7 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 holder.body.setTypeface(typeface);
             }
             {
-                int type =
-                        new FontPreferences(holder.body.getContext())
-                                .getFontTypeTitle()
-                                .getTypeface();
+                int type = new FontPreferences(holder.body.getContext()).getFontTypeTitle().getTypeface();
                 Typeface typeface;
                 if (type >= 0) {
                     typeface = RobotoTypefaces.obtainTypeface(holder.body.getContext(), type);
@@ -246,34 +225,132 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         }
                     };
 
-            if (user.isAnimated()) {
-                holder.body.setVisibility(View.VISIBLE);
-                holder.body.setSingleLine(false);
-                holder.body.setTextHtml(
-                        holder.text.getText()
-                                + main.getString(R.string.submission_tap_gif)
-                                        .toUpperCase()); // got rid of the \n thing, because it
-                // didnt parse and it was already a new
-                // line so...
-                holder.body.setOnClickListener(onGifImageClickListener);
-            }
-
             holder.itemView.setOnClickListener(onGifImageClickListener);
         } else if (holder2 instanceof SpacerViewHolder) {
             holder2.itemView
                     .findViewById(R.id.height)
-                    .setLayoutParams(
-                            new LinearLayout.LayoutParams(
-                                    holder2.itemView.getWidth(),
-                                    paddingBottom
-                                            ? height
-                                            : main.findViewById(R.id.toolbar).getHeight()));
+                    .setLayoutParams(new LinearLayout.LayoutParams(holder2.itemView.getWidth(), paddingBottom ? height : main.findViewById(R.id.toolbar).getHeight()));
+        } else if (holder2 instanceof AnimatedViewHolder) {
+            AnimatedViewHolder holder = (AnimatedViewHolder) holder2;
+            final int position = paddingBottom ? i : i - 1;
+            final Image user = users.get(position);
+            final String url = user.getImageUrl();
+
+            // Reset view state to prevent flickering
+            holder.rootView.setAlpha(1.0f);
+            holder.exoVideoView.setVisibility(View.VISIBLE);
+
+            holder.saveButton.setVisibility(View.GONE);
+            holder.moreButton.setVisibility(View.GONE);
+            holder.muteButton.setVisibility(View.GONE);
+            holder.hqButton.setVisibility(View.GONE);
+
+            // Show play button
+            if (holder.playButton != null) {
+                holder.playButton.setVisibility(View.VISIBLE);
+                holder.playButton.setAlpha(0.8f);
+
+                // Make the play button open MediaView
+                holder.playButton.setOnClickListener(v -> {
+                    if (SettingValues.image) {
+                        Intent intent = new Intent(main, MediaView.class);
+                        intent.putExtra(MediaView.EXTRA_URL, url);
+                        intent.putExtra(MediaView.SUBREDDIT, subreddit);
+                        if (submissionTitle != null) {
+                            intent.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
+                        }
+                        intent.putExtra("index", position);
+                        main.startActivity(intent);
+                    } else {
+                        LinkUtil.openExternally(url);
+                    }
+                });
+            }
+
+            // Store the position directly in the holder itself
+            holder.position = position;
+
+            new GifUtils.AsyncLoadGif(
+                    main,
+                    holder.exoVideoView,
+                    holder.loader,
+                    null,
+                    null,
+                    true,
+                    false,  // autostart
+                    holder.rootView.findViewById(R.id.size),
+                    subreddit,
+                    submissionTitle
+            ).execute(url);
+
+            // If user taps the main video area -> open MediaView or open externally, up to you
+            holder.exoVideoView.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (SettingValues.image) {
+                                Intent intent = new Intent(main, MediaView.class);
+                                intent.putExtra(MediaView.EXTRA_URL, url);
+                                intent.putExtra(MediaView.SUBREDDIT, subreddit);
+                                if (submissionTitle != null) {
+                                    intent.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
+                                }
+                                intent.putExtra("index", position);
+                                main.startActivity(intent);
+                            } else {
+                                LinkUtil.openExternally(url);
+                            }
+                        }
+                    }
+            );
         }
     }
 
     @Override
     public int getItemCount() {
         return users == null ? 0 : users.size() + 1;
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewRecycled(holder);
+        if (holder instanceof AnimatedViewHolder) {
+            AnimatedViewHolder animatedHolder = (AnimatedViewHolder) holder;
+            // Just stop the player but don't release it to keep the thumbnail
+            if (animatedHolder.exoVideoView != null) {
+                animatedHolder.exoVideoView.pause();
+            }
+        }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        if (holder instanceof AnimatedViewHolder) {
+            AnimatedViewHolder animatedHolder = (AnimatedViewHolder) holder;
+            int position = animatedHolder.position;
+
+            if (position >= 0 && position < users.size()) {
+                final Image user = users.get(position);
+                final String url = user.getImageUrl();
+
+                // Reload the video preview if needed
+                if (!animatedHolder.exoVideoView.isPlaying()) {
+                    new GifUtils.AsyncLoadGif(
+                            main,
+                            animatedHolder.exoVideoView,
+                            animatedHolder.loader,
+                            null,
+                            null,
+                            true,
+                            false,
+                            animatedHolder.rootView.findViewById(R.id.size),
+                            subreddit,
+                            submissionTitle
+                    ).execute(url);
+                }
+            }
+        }
     }
 
     public static class SpacerViewHolder extends RecyclerView.ViewHolder {
@@ -292,6 +369,36 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             text = itemView.findViewById(R.id.imagetitle);
             body = itemView.findViewById(R.id.imageCaption);
             image = itemView.findViewById(R.id.image);
+        }
+    }
+
+    /**
+     * ViewHolder for animated items (MP4/GIF)
+     */
+    public static class AnimatedViewHolder extends RecyclerView.ViewHolder {
+        final View rootView;
+        final ProgressBar loader;
+        final ExoVideoView exoVideoView;
+        final View moreButton;
+        final View saveButton;
+        final View muteButton;
+        final View hqButton;
+        final ImageView playButton;
+        int position = -1;
+
+        public AnimatedViewHolder(View itemView) {
+            super(itemView);
+            this.rootView = itemView;
+            this.loader = itemView.findViewById(R.id.gifprogress);
+            this.exoVideoView = itemView.findViewById(R.id.gif);
+            this.moreButton = itemView.findViewById(R.id.more);
+            this.saveButton = itemView.findViewById(R.id.save);
+            this.muteButton = itemView.findViewById(R.id.mute);
+            this.hqButton = itemView.findViewById(R.id.hq);
+            this.playButton = itemView.findViewById(R.id.playbutton);
+
+            // Add solid background to prevent transparency issues
+            itemView.setBackgroundColor(Color.BLACK);
         }
     }
 }

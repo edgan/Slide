@@ -1,7 +1,10 @@
 package me.edgan.redditslide.Views;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Color;
+import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Handler;
@@ -12,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.SurfaceView;
 import android.view.TextureView;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -23,7 +27,6 @@ import androidx.core.content.ContextCompat;
 import androidx.media.AudioAttributesCompat;
 import androidx.media.AudioFocusRequestCompat;
 import androidx.media.AudioManagerCompat;
-
 import androidx.media3.common.Format;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
@@ -47,11 +50,16 @@ import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.GifUtils;
-import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.NetworkUtil;
 
-/** View containing an ExoPlayer */
+/**
+ * ExoVideoView that uses a TextureView (with a cached SurfaceTexture) so that when recycled
+ * (e.g., when scrolling in the gallery) the video decoder's surface is reused and the video does
+ * not go blank.
+ */
 public class ExoVideoView extends RelativeLayout {
+    private static final String TAG = "ExoVideoView";
+
     private Context context;
     private SimpleExoPlayer player;
     private DefaultTrackSelector trackSelector;
@@ -60,6 +68,7 @@ public class ExoVideoView extends RelativeLayout {
     private boolean hqAttached = false;
     private AudioFocusHelper audioFocusHelper;
     private Handler handler = new Handler(Looper.getMainLooper());
+
 
     private ScaleGestureDetector scaleGestureDetector;
     private float scaleFactor = 1.0f;
@@ -71,6 +80,21 @@ public class ExoVideoView extends RelativeLayout {
     private float positionX = 0f;
     private float positionY = 0f;
     private boolean isDragging = false;
+
+    // Static variable to hold the saved SurfaceTexture.
+    private static SurfaceTexture sSavedSurfaceTexture;
+    // The TextureView used for video playback.
+    private TextureView videoTextureView;
+
+    public interface OnPlaybackStateChangedListener {
+        void onPlaybackStateChanged(boolean isPlaying);
+    }
+
+    private OnPlaybackStateChangedListener playbackStateChangedListener;
+
+    public void setOnPlaybackStateChangedListener(OnPlaybackStateChangedListener listener) {
+        this.playbackStateChangedListener = listener;
+    }
 
     public ExoVideoView(final Context context) {
         this(context, null, true);
@@ -87,16 +111,36 @@ public class ExoVideoView extends RelativeLayout {
     public ExoVideoView(final Context context, final AttributeSet attrs, final boolean ui) {
         super(context, attrs);
         this.context = context;
-
         setupPlayer();
-        if (ui) {
+        if (ui && !isVerticalMode()) {
             setupUI();
         }
     }
 
-    /** Initializes the view to render onto and the SimpleExoPlayer instance */
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        // If the player was released (player is null), reinitialize it.
+        if (player == null) {
+            Log.d(TAG, "Player is null on attach; reinitializing player.");
+            setupPlayer();
+            if (playerUI == null && !isVerticalMode()) {
+                setupUI();
+            }
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        // Pause playback when view is detached
+        stop();
+
+        super.onDetachedFromWindow();
+    }
+
+    /** Initializes the player and sets up a TextureView that reuses its SurfaceTexture. */
     private void setupPlayer() {
-        // Create a track selector so we can set specific video quality for DASH
+        // Create a track selector with bitrate settings.
         trackSelector = new DefaultTrackSelector(context);
         if ((SettingValues.lowResAlways
                 || (NetworkUtil.isConnected(context)
@@ -110,19 +154,18 @@ public class ExoVideoView extends RelativeLayout {
                     trackSelector.buildUponParameters().setForceHighestSupportedBitrate(true));
         }
 
-        // If this method can be called multiple times, release the old player first
+        // Release any existing player.
         if (player != null) {
             player.release();
             player = null;
         }
 
-        // Create the player
-        player = new SimpleExoPlayer.Builder(context)
-                .setTrackSelector(trackSelector)
-                .build();
+        // Create the player.
+        player = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
 
-        // Create an AspectRatioFrameLayout to size the video correctly
+        // Create an AspectRatioFrameLayout to size the video correctly.
         AspectRatioFrameLayout frame = new AspectRatioFrameLayout(context);
+
         this.videoFrame = frame;
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         params.addRule(CENTER_IN_PARENT, TRUE);
@@ -132,128 +175,149 @@ public class ExoVideoView extends RelativeLayout {
         // Initialize scale gesture detector
         scaleGestureDetector = new ScaleGestureDetector(context, new VideoScaleListener());
 
-        if (SettingValues.oldSwipeMode) {
-            TextureView textureView = new TextureView(context);
+        // Add a Player.Listener for aspect ratio changes, logging, etc.
+        player.addListener(
+            new Player.Listener() {
+                // Make the video use the correct aspect ratio
+                @Override
+                public void onVideoSizeChanged(@NonNull VideoSize videoSize) {
+                    Log.d(TAG, "onVideoSizeChanged: width=" + videoSize.width + ", height=" + videoSize.height + ", unappliedRotationDegrees=" + videoSize.unappliedRotationDegrees);
+                    if (videoSize.width > 0 && videoSize.height > 0) {
+                        // Calculate the correct aspect ratio
+                        float aspectRatio = (float) videoSize.width / videoSize.height;
 
-            frame.addView(textureView, new LayoutParams(
-                    LayoutParams.MATCH_PARENT,
-                    LayoutParams.MATCH_PARENT
-            ));
-            player.setVideoTextureView(textureView);
-        } else {
-            SurfaceView surfaceView = new SurfaceView(context);
-            frame.addView(surfaceView, new LayoutParams(
-                    LayoutParams.MATCH_PARENT,
-                    LayoutParams.MATCH_PARENT
-            ));
-            player.setVideoSurfaceView(surfaceView);
-        }
+                        // Apply any needed rotation
+                        if (videoSize.unappliedRotationDegrees == 90 ||
+                            videoSize.unappliedRotationDegrees == 270) {
+                            aspectRatio = 1.0f / aspectRatio;
+                        }
+
+                        // Set the aspect ratio
+                        Log.d(TAG, "Setting aspect ratio to: " + aspectRatio);
+                        frame.setAspectRatio(aspectRatio);
+                    }
+                }
+
+                // Logging
+                @Override
+                public void onTracksChanged(@NonNull Tracks tracks) {
+                    StringBuilder toLog = new StringBuilder();
+                    for (int groupIndex = 0; groupIndex < tracks.getGroups().size(); groupIndex++) {
+                        Tracks.Group group = tracks.getGroups().get(groupIndex);
+                        for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
+                            Format format = group.getTrackFormat(trackIndex);
+                            boolean isSelected = group.isTrackSelected(trackIndex);
+
+                            toLog.append("Format:\t")
+                                    .append(format)
+                                    .append(isSelected ? " (selected)" : "")
+                                    .append("\n");
+                        }
+                    }
+                }
+            });
+
+        // --- Use a TextureView with a cached SurfaceTexture ---
+        videoTextureView = new TextureView(context);
+        videoTextureView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        videoTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+            @Override
+            public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
+                Log.d(TAG, "onSurfaceTextureAvailable: surface=" + surface +
+                        " (" + System.identityHashCode(surface) + "), width=" + width + ", height=" + height);
+                if (sSavedSurfaceTexture != null) {
+                    Log.d(TAG, "Reattaching saved SurfaceTexture: " + System.identityHashCode(sSavedSurfaceTexture));
+                    videoTextureView.setSurfaceTexture(sSavedSurfaceTexture);
+                } else {
+                    sSavedSurfaceTexture = surface;
+                    Log.d(TAG, "Saving new SurfaceTexture: " + System.identityHashCode(surface));
+                }
+            }
+
+            @Override
+            public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surface, int width, int height) {
+                Log.d(TAG, "onSurfaceTextureSizeChanged: surface=" + surface +
+                        " (" + System.identityHashCode(surface) + "), width=" + width + ", height=" + height);
+            }
+
+            @Override
+            public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surface) {
+                Log.d(TAG, "onSurfaceTextureDestroyed: surface=" + surface +
+                        " (" + System.identityHashCode(surface) + ")");
+                // Return false to indicate that we are managing the SurfaceTexture lifecycle.
+                return false;
+            }
+
+            @Override
+            public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
+                // Optionally log frame updates.
+                // Log.d(TAG, "onSurfaceTextureUpdated: surface=" + surface);
+            }
+        });
+
+        frame.addView(videoTextureView);
+        player.setVideoTextureView(videoTextureView);
 
         addView(frame);
 
-        // Make the video repeat infinitely
+        // Configure player options.
         player.setRepeatMode(Player.REPEAT_MODE_ALL);
-
-        // Mute by default unless setting is enabled
         player.setVolume(SettingValues.unmuteDefault ? 1f : 0f);
         SettingValues.isMuted = !SettingValues.unmuteDefault;
 
-        // Create audio focus helper
+        // Create audio focus helper.
         audioFocusHelper = new AudioFocusHelper(
                 ContextCompat.getSystemService(context, AudioManager.class)
         );
-
-        // Add a Player.Listener for aspect ratio changes, logging, etc.
-        player.addListener(
-                new Player.Listener() {
-                    // Make the video use the correct aspect ratio
-                    @Override
-                    public void onVideoSizeChanged(@NonNull VideoSize videoSize) {
-                        frame.setAspectRatio(
-                                videoSize.height == 0 || videoSize.width == 0
-                                        ? 1
-                                        : videoSize.width
-                                                * videoSize.pixelWidthHeightRatio
-                                                / videoSize.height);
-                    }
-
-                    // Logging
-                    @Override
-                    public void onTracksChanged(@NonNull Tracks tracks) {
-                        StringBuilder toLog = new StringBuilder();
-                        for (int groupIndex = 0; groupIndex < tracks.getGroups().size(); groupIndex++) {
-                            Tracks.Group group = tracks.getGroups().get(groupIndex);
-                            for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
-                                Format format = group.getTrackFormat(trackIndex);
-                                boolean isSelected = group.isTrackSelected(trackIndex);
-
-                                toLog.append("Format:\t")
-                                        .append(format)
-                                        .append(isSelected ? " (selected)" : "")
-                                        .append("\n");
-                            }
-                        }
-                        Log.v(LogUtil.getTag(), toLog.toString());
-                    }
-                });
     }
 
-    /** Sets up the player UI */
     private void setupUI() {
-        // Create a PlayerControlView for our video controls and add it
         playerUI = new PlayerControlView(context);
         playerUI.setPlayer(player);
-        playerUI.setShowTimeoutMs(2000);
+        playerUI.setShowTimeoutMs(2000);  // Controls will hide after 2 seconds
 
-        if (!SettingValues.oldSwipeMode) {
-            playerUI.hide();
-    }
-
+        // Add the player UI with proper positioning constraints
+        RelativeLayout.LayoutParams playerUIParams = new RelativeLayout.LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        playerUIParams.addRule(ALIGN_PARENT_BOTTOM, TRUE);
+        playerUIParams.bottomMargin = (int) (64 * context.getResources().getDisplayMetrics().density);
         addView(playerUI);
 
-        // Show/hide the player UI on tap
-        setOnClickListener(
-                (v) -> {
-                    playerUI.clearAnimation();
-                    if (playerUI.isVisible()) {
-                        playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, false, 300));
-                    } else {
-                        playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, true, 300));
-                    }
-                });
+        playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, true, 0));
+        setOnClickListener((v) -> {
+            playerUI.clearAnimation();
+            if (playerUI.isVisible()) {
+                playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, false, 300));
+            } else {
+                playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, true, 300));
+            }
+        });
     }
 
     /**
-     * Sets the player's URI and prepares for playback
-     *
-     * @param uri URI
-     * @param type Type of video
-     * @param listener Additional Player.Listener (optional)
+     * Sets the player's URI and prepares for playback.
      */
     public void setVideoURI(Uri uri, VideoType type, Player.Listener listener) {
-        // Create the data sources used to retrieve and cache the video
+        Log.d(TAG, "setVideoURI() called with uri: " + uri.toString());
         DataSource.Factory downloader =
                 new OkHttpDataSource.Factory(Reddit.client)
-                        .setDefaultRequestProperties(
-                                GifUtils.AsyncLoadGif.makeHeaderMap(uri.getHost()));
+                        .setDefaultRequestProperties(GifUtils.AsyncLoadGif.makeHeaderMap(uri.getHost()));
         DataSource.Factory cacheDataSourceFactory =
                 new CacheDataSource.Factory()
                         .setCache(Reddit.videoCache)
                         .setUpstreamDataSourceFactory(downloader);
 
-        // Create an appropriate media source for the video type
         MediaSource videoSource;
         switch (type) {
-            // DASH video, e.g. v.redd.it video
             case DASH:
+                Log.d(TAG, "Creating DASH media source");
                 videoSource =
                         new DashMediaSource.Factory(cacheDataSourceFactory)
                                 .createMediaSource(MediaItem.fromUri(uri));
                 break;
-
-            // Standard video, e.g. MP4 file
             case STANDARD:
             default:
+                Log.d(TAG, "Creating standard media source");
                 videoSource =
                         new ProgressiveMediaSource.Factory(cacheDataSourceFactory)
                                 .createMediaSource(MediaItem.fromUri(uri));
@@ -267,216 +331,177 @@ public class ExoVideoView extends RelativeLayout {
         }
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        if (handler != null) {
-            handler.removeCallbacksAndMessages(null);
-        }
-        // If we don't release the player here, hardware decoders won't be released, breaking
-        // ExoPlayer device-wide
-        stop();
-    }
-
-    /** Plays the video */
+    /** Starts video playback. */
     public void play() {
         player.play();
+        if (playbackStateChangedListener != null) {
+            playbackStateChangedListener.onPlaybackStateChanged(true);
+        }
     }
 
-    /** Pauses the video */
+    /** Pauses video playback. */
     public void pause() {
-        player.pause();
+        if (player != null) {
+            player.pause();
+            if (playbackStateChangedListener != null) {
+                playbackStateChangedListener.onPlaybackStateChanged(false);
+            }
+        }
     }
 
-    /** Stops the video and releases the player */
+    /** Stops video playback and releases the player. */
     public void stop() {
         if (player != null) {
             player.stop();
             player.release();
             player = null;
         }
-        audioFocusHelper.loseFocus(); // do this last so audio doesn't overlap
+        audioFocusHelper.loseFocus();
     }
 
-    public boolean isPlaying() {
-        return player.getPlaybackState() == Player.STATE_READY && player.getPlayWhenReady();
-    }
-
-    /**
-     * Seeks to a specific timestamp
-     *
-     * @param time timestamp (ms)
-     */
+    /** Seeks to a specified position (in milliseconds). */
     public void seekTo(long time) {
-        player.seekTo(time);
+        Log.d(TAG, "seekTo() called with time: " + time);
+        if (player != null) {
+            player.seekTo(time);
+        }
     }
 
-    /**
-     * Gets the current timestamp
-     *
-     * @return current position in ms
-     */
+    /** Returns the current playback position (in milliseconds). */
     public long getCurrentPosition() {
-        return player.getCurrentPosition();
+        long pos = player != null ? player.getCurrentPosition() : 0;
+        Log.d(TAG, "getCurrentPosition() called, returning: " + pos);
+        return pos;
+    }
+
+    /** Returns whether the player is currently playing. */
+    public boolean isPlaying() {
+        boolean playing = player != null &&
+                player.getPlaybackState() == Player.STATE_READY &&
+                player.getPlayWhenReady();
+        Log.d(TAG, "isPlaying() called, returning: " + playing);
+        return playing;
     }
 
     /**
-     * Attach a mute button to the view. The view will then handle hiding/showing that button as
-     * appropriate. If this is not called, audio will be permanently muted.
-     *
-     * @param mute Mute button
+     * Attaches a mute button to this view.
      */
     public void attachMuteButton(final ImageView mute) {
-        // Hide the mute button by default
+        Log.d(TAG, "attachMuteButton() called");
         mute.setVisibility(GONE);
-
-        player.addListener(
-                new Player.Listener() {
-                    @Override
-                    public void onTracksChanged(@NonNull Tracks tracks) {
-                        // Only run on first valid track change
-                        if (muteAttached && !tracks.getGroups().isEmpty()) {
-                            return;
-                        } else {
-                            muteAttached = true;
-                        }
-
-                        // Check if we have any selected audio track
-                        boolean foundAudio = false;
-                        for (Tracks.Group group : tracks.getGroups()) {
-                            for (int trackIndex = 0;
-                                    trackIndex < group.getMediaTrackGroup().length;
-                                    trackIndex++) {
-                                if (group.isTrackSelected(trackIndex)) {
-                                    Format format = group.getTrackFormat(trackIndex);
-                                    if (format != null
-                                            && MimeTypes.isAudio(format.sampleMimeType)) {
-                                        foundAudio = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (foundAudio) {
+        player.addListener(new Player.Listener() {
+            @Override
+            public void onTracksChanged(@NonNull Tracks tracks) {
+                Log.d(TAG, "attachMuteButton onTracksChanged");
+                if (muteAttached && !tracks.getGroups().isEmpty()) {
+                    return;
+                } else {
+                    muteAttached = true;
+                }
+                boolean foundAudio = false;
+                for (Tracks.Group group : tracks.getGroups()) {
+                    for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
+                        if (group.isTrackSelected(trackIndex)) {
+                            Format format = group.getTrackFormat(trackIndex);
+                            if (format != null && MimeTypes.isAudio(format.sampleMimeType)) {
+                                foundAudio = true;
                                 break;
                             }
                         }
-
-                        // If an audio track is present/selected, show the mute button
-                        if (foundAudio) {
-                            mute.setVisibility(VISIBLE);
-                            // Set initial volume state based on settings
-                            if (!SettingValues.isMuted) {
-                                player.setVolume(1f);
-                                mute.setImageResource(R.drawable.ic_volume_on);
-                                BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
-                                audioFocusHelper.gainFocus();
-                            } else {
-                                player.setVolume(0f);
-                                mute.setImageResource(R.drawable.ic_volume_off);
-                                BlendModeUtil.tintImageViewAsSrcAtop(
-                                        mute, getResources().getColor(R.color.md_red_500));
-                            }
-
-                            // Toggle mute on button click
-                            mute.setOnClickListener(
-                                    (v) -> {
-                                        if (SettingValues.isMuted) {
-                                            player.setVolume(1f);
-                                            SettingValues.isMuted = false;
-                                            SettingValues.prefs
-                                                    .edit()
-                                                    .putBoolean(SettingValues.PREF_MUTE, false)
-                                                    .apply();
-                                            mute.setImageResource(R.drawable.ic_volume_on);
-                                            BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
-                                            audioFocusHelper.gainFocus();
-                                        } else {
-                                            player.setVolume(0f);
-                                            SettingValues.isMuted = true;
-                                            SettingValues.prefs
-                                                    .edit()
-                                                    .putBoolean(SettingValues.PREF_MUTE, true)
-                                                    .apply();
-                                            mute.setImageResource(R.drawable.ic_volume_off);
-                                            BlendModeUtil.tintImageViewAsSrcAtop(
-                                                    mute,
-                                                    getResources().getColor(R.color.md_red_500));
-                                            audioFocusHelper.loseFocus();
-                                        }
-                                    });
-                        }
                     }
-                });
+                    if (foundAudio) {
+                        break;
+                    }
+                }
+                if (foundAudio) {
+                    mute.setVisibility(VISIBLE);
+                    if (!SettingValues.isMuted) {
+                        player.setVolume(1f);
+                        mute.setImageResource(R.drawable.ic_volume_on);
+                        BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
+                        audioFocusHelper.gainFocus();
+                    } else {
+                        player.setVolume(0f);
+                        mute.setImageResource(R.drawable.ic_volume_off);
+                        BlendModeUtil.tintImageViewAsSrcAtop(mute, getResources().getColor(R.color.md_red_500));
+                    }
+                    mute.setOnClickListener((v) -> {
+                        if (SettingValues.isMuted) {
+                            Log.d(TAG, "Mute button clicked: unmuting");
+                            player.setVolume(1f);
+                            SettingValues.isMuted = false;
+                            SettingValues.prefs.edit().putBoolean(SettingValues.PREF_MUTE, false).apply();
+                            mute.setImageResource(R.drawable.ic_volume_on);
+                            BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
+                            audioFocusHelper.gainFocus();
+                        } else {
+                            Log.d(TAG, "Mute button clicked: muting");
+                            player.setVolume(0f);
+                            SettingValues.isMuted = true;
+                            SettingValues.prefs.edit().putBoolean(SettingValues.PREF_MUTE, true).apply();
+                            mute.setImageResource(R.drawable.ic_volume_off);
+                            BlendModeUtil.tintImageViewAsSrcAtop(mute, getResources().getColor(R.color.md_red_500));
+                            audioFocusHelper.loseFocus();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     /**
-     * Attach an HQ button to the view. The view will then handle hiding/showing that button as
-     * appropriate.
-     *
-     * @param hq HQ button
+     * Attaches an HQ (high quality) button to this view.
      */
     public void attachHqButton(final ImageView hq) {
-        // Hidden by default - we don't yet know if we'll have multiple qualities to select from
+        Log.d(TAG, "attachHqButton() called");
         hq.setVisibility(GONE);
-
-        player.addListener(
-                new Player.Listener() {
-                    @Override
-                    public void onTracksChanged(@NonNull Tracks tracks) {
-                        // Only run if not already attached, we have track groups,
-                        // and we're not already forcing highest bitrates
-                        if (hqAttached
-                                || tracks.getGroups().isEmpty()
-                                || trackSelector.getParameters().forceHighestSupportedBitrate) {
-                            return;
-                        } else {
-                            hqAttached = true;
-                        }
-                        // Lopp through the tracks, check if they're video. If we have at least 2
-                        // video tracks we can set
-                        // up quality selection.
-
-                        int videoTrackCounter = 0;
-                        for (Tracks.Group group : tracks.getGroups()) {
-                            for (int trackIndex = 0;
-                                    trackIndex < group.getMediaTrackGroup().length;
-                                    trackIndex++) {
-                                Format format = group.getTrackFormat(trackIndex);
-                                if (format != null && MimeTypes.isVideo(format.sampleMimeType)) {
-                                    videoTrackCounter++;
-                                    if (videoTrackCounter > 1) {
-                                        break;
-                                    }
-                                }
-                            }
+        player.addListener(new Player.Listener() {
+            @Override
+            public void onTracksChanged(@NonNull Tracks tracks) {
+                Log.d(TAG, "attachHqButton onTracksChanged");
+                if (hqAttached || tracks.getGroups().isEmpty() ||
+                        trackSelector.getParameters().forceHighestSupportedBitrate) {
+                    return;
+                } else {
+                    hqAttached = true;
+                }
+                int videoTrackCounter = 0;
+                for (Tracks.Group group : tracks.getGroups()) {
+                    for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
+                        Format format = group.getTrackFormat(trackIndex);
+                        if (format != null && MimeTypes.isVideo(format.sampleMimeType)) {
+                            videoTrackCounter++;
                             if (videoTrackCounter > 1) {
                                 break;
                             }
                         }
-
-                        // If we have enough video tracks to have a quality button, set it up.
-                        if (videoTrackCounter > 1) {
-                            hq.setVisibility(VISIBLE);
-                            hq.setOnClickListener(
-                                    (v) -> {
-                                        trackSelector.setParameters(
-                                                trackSelector
-                                                        .buildUponParameters()
-                                                        .setForceLowestBitrate(false)
-                                                        .setForceHighestSupportedBitrate(true));
-                                        hq.setVisibility(GONE);
-                                    });
-                        }
                     }
-                });
+                    if (videoTrackCounter > 1) {
+                        break;
+                    }
+                }
+                if (videoTrackCounter > 1) {
+                    hq.setVisibility(VISIBLE);
+                    hq.setOnClickListener((v) -> {
+                        Log.d(TAG, "HQ button clicked: forcing high bitrate");
+                        trackSelector.setParameters(
+                                trackSelector.buildUponParameters()
+                                        .setForceLowestBitrate(false)
+                                        .setForceHighestSupportedBitrate(true));
+                        hq.setVisibility(GONE);
+                    });
+                }
+            }
+        });
     }
 
+    /** Enum for video types. */
     public enum VideoType {
         STANDARD,
         DASH
     }
 
-    /** Helps manage audio focus */
+    /** Helper class to manage audio focus. */
     private class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
         private AudioManager manager;
         private boolean wasPlaying;
@@ -484,7 +509,6 @@ public class ExoVideoView extends RelativeLayout {
 
         AudioFocusHelper(AudioManager manager) {
             this.manager = manager;
-
             if (request == null) {
                 AudioAttributesCompat audioAttributes =
                         new AudioAttributesCompat.Builder()
@@ -501,22 +525,23 @@ public class ExoVideoView extends RelativeLayout {
                 }
 
                 request = builder.build();
+
             }
         }
 
-        /** Lose audio focus */
         void loseFocus() {
+            Log.d(TAG, "AudioFocusHelper: losing focus");
             AudioManagerCompat.abandonAudioFocusRequest(manager, request);
         }
 
-        /** Gain audio focus */
         void gainFocus() {
+            Log.d(TAG, "AudioFocusHelper: gaining focus");
             AudioManagerCompat.requestAudioFocus(manager, request);
         }
 
         @Override
         public void onAudioFocusChange(int focusChange) {
-            // Pause on audiofocus loss, play on gain
+            Log.d(TAG, "AudioFocusHelper: onAudioFocusChange: " + focusChange);
             if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
                 wasPlaying = player.getPlayWhenReady();
                 player.pause();
@@ -526,6 +551,7 @@ public class ExoVideoView extends RelativeLayout {
         }
     }
 
+    /** Simple animation for fading in/out the player UI. */
     static class PlayerUIFadeInAnimation extends AnimationSet {
         private PlayerControlView animationView;
         private boolean toVisible;
@@ -534,19 +560,15 @@ public class ExoVideoView extends RelativeLayout {
             super(false);
             this.toVisible = toVisible;
             this.animationView = view;
-
             float startAlpha = toVisible ? 0 : 1;
             float endAlpha = toVisible ? 1 : 0;
-
             AlphaAnimation alphaAnimation = new AlphaAnimation(startAlpha, endAlpha);
             alphaAnimation.setDuration(duration);
-
             addAnimation(alphaAnimation);
             setAnimationListener(new PlayerUIFadeInAnimationListener());
         }
 
-        private class PlayerUIFadeInAnimationListener implements AnimationListener {
-
+        private class PlayerUIFadeInAnimationListener implements Animation.AnimationListener {
             @Override
             public void onAnimationStart(Animation animation) {
                 animationView.show();
@@ -717,5 +739,18 @@ public class ExoVideoView extends RelativeLayout {
             videoFrame.setTranslationX(0f);
             videoFrame.setTranslationY(0f);
         }
+    }
+
+    private boolean isVerticalMode() {
+        // Get the context's activity
+        Context context = getContext();
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) {
+                String activityName = context.getClass().getSimpleName();
+                return activityName.equals("Album") || activityName.equals("RedditGallery");
+            }
+            context = ((ContextWrapper) context).getBaseContext();
+        }
+        return false;
     }
 }

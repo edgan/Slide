@@ -795,7 +795,7 @@
     <!-- Subscription managing -->
     <string name="reorder_add_domain">Add a domain</string>
     <string name="reorder_add_subreddit">Add a subreddit</string>
-    <string name="reorder_fab_collection">Collection</string>
+    <string name="reorder_fab_collection">Multireddit</string>
     <string name="reorder_fab_domain">Domain</string>
     <string name="reorder_fab_subreddit">Subreddit</string>
     <string name="reorder_add_subscribe">Add &amp; Subscribe</string>
@@ -810,7 +810,7 @@
     <string name="sync_subscriptions">Sync subscriptions</string>
     <string name="cannot_be_undone">This cannot be undone.</string>
     <string name="deleting">Deleting…</string>
-    <string name="create_or_import_multi">Would you like to create a new collection or import a multireddit?</string>
+    <string name="create_or_import_multi">Would you like to create a new multireddit or import a multireddit?</string>
     <string name="sub_added">Subreddit added!</string>
     <string name="reorder_subs_FAQ">Reorder Subreddits FAQ</string>
     <string name="subscribe_to">Subscribe to /r/%1$s</string>
@@ -1294,4 +1294,22 @@
     <!-- Pause on audio focus ducking setting -->
     <string name="settings_pause_on_duck_title">Pause video instead of ducking</string>
     <string name="settings_pause_on_duck_desc">Pause videos when other apps play audio. Ducking is when the the audio volume is lowered instead of the video being paused.</string>
+
+    <!-- Add this string resource for the play button content description -->
+    <string name="btn_play">Play</string>
+
+    <string name="multireddit_name_title">Name for Multireddit</string>
+    <string name="multireddit_name_hint">Multireddit name</string>
+    <string name="multireddit_err_empty_name">Multireddit name cannot be empty</string>
+    <string name="multireddit_err_no_valid_subs">No valid subreddits selected. Please select at least one subreddit.</string>
+    <string name="multireddit_progress_title">Creating Multireddit</string>
+    <string name="multireddit_progress_message">Please wait while we create your Multireddit...</string>
+    <string name="multireddit_created_success">Multireddit created successfully</string>
+    <string name="multireddit_created_error">Failed to create Multireddit. Please try again.</string>
+    <string name="multireddit_json_error">An error occurred while preparing your Multireddit data</string>
+
+    <string name="settings_dialog_colored_border">Put a colored border around dialog boxes</string>
+    <string name="settings_dialog_colored_border_desc">Display a thin colored border around some dialog boxes.</string>
+
+    <string name="misc_err_sync_failed">Failed to sync subreddits. No subscribed subreddits?</string>
 </resources>

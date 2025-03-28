@@ -10,6 +10,14 @@ import androidx.documentfile.provider.DocumentFile;
 
 import me.edgan.redditslide.R;
 
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+
+import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.Visuals.Palette;
+
 /** Created by TacoTheDank on 07/14/2021. Updated to use Storage Access Framework */
 public class DialogUtil {
     private static final String TAG = "DialogUtil";
@@ -57,5 +65,35 @@ public class DialogUtil {
                         .create();
 
         dialog.show();
+    }
+
+    /**
+     * Applies a custom accent-colored border to an AlertDialog.
+     * IMPORTANT: This method must be called BEFORE dialog.show() to prevent visual "jumping".
+     *
+     * @param context Context for accessing resources
+     * @param dialog The AlertDialog to apply the border to
+     */
+    public static void applyCustomBorderToAlertDialog(Context context, AlertDialog dialog) {
+        // Only apply the border if the setting is enabled
+        if(SettingValues.dialogColoredBorder) {
+            if (dialog != null && dialog.getWindow() != null) {
+                // Create a GradientDrawable with the accent color
+                GradientDrawable drawable = new GradientDrawable();
+
+                // Get the appropriate background color from the current theme
+                TypedArray ta = context.obtainStyledAttributes(new int[] {android.R.attr.colorBackground});
+                int backgroundColor = ta.getColor(0, Color.BLACK);
+                ta.recycle();
+
+                // Set the drawable properties
+                drawable.setColor(backgroundColor);
+                drawable.setStroke(DisplayUtil.dpToPxVertical(1), Palette.getDarkerColor(Palette.getStatusBarColor()));
+                drawable.setCornerRadius(DisplayUtil.dpToPxVertical(1));
+
+                // Apply the drawable to the dialog window
+                dialog.getWindow().setBackgroundDrawable(drawable);
+            }
+        }
     }
 }

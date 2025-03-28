@@ -10,7 +10,6 @@
 
     android:orientation="vertical">
 
-
     <RelativeLayout
         android:id="@+id/imagearea"
         android:layout_width="match_parent"
@@ -22,7 +21,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true">
-
         </me.edgan.redditslide.Views.ExoVideoView>
 
         <ProgressBar
@@ -41,7 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_below="@+id/imagearea"
-        android:layout_marginTop="-56dp">
+        android:layout_marginTop="-52dp">
 
         <TextView
                 android:layout_width="wrap_content"
@@ -52,6 +50,27 @@
                 android:layout_alignParentLeft="true"
                 android:textSize="12sp"
                 android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/hq"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:theme="@style/Ripple.List"
+            android:padding="15dp"
+            android:layout_toLeftOf="@+id/mute"
+            app:srcCompat="@drawable/ic_high_quality"
+            android:tint="#e1e1e1" />
+
+        <ImageView
+            android:id="@+id/mute"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:theme="@style/Ripple.List"
+            android:padding="15dp"
+            android:layout_toLeftOf="@+id/save"
+            app:srcCompat="@drawable/ic_volume_off"
+            android:tint="#e1e1e1" />
+
         <ImageView
             android:id="@+id/save"
             android:layout_width="56dp"
@@ -77,7 +96,16 @@
             app:srcCompat="@drawable/ic_more_vert" />
     </RelativeLayout>
 
+    <!-- Replace the TextView with an ImageView for the play button -->
+    <ImageView
+        android:id="@+id/playbutton"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_centerInParent="true"
+        android:alpha="0.8"
+        android:background="@drawable/circle_background"
+        android:padding="16dp"
+        android:src="@drawable/ic_play"
+        android:visibility="visible" />
+
 </RelativeLayout>
-
-
-

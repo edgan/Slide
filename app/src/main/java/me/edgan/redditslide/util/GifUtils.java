@@ -603,14 +603,17 @@ public class GifUtils {
                 s = s.replace("-size_restricted", "");
                 s = s.replace(".gif", "");
             }
+
             if ((s.contains(".webm") || s.contains(".gif"))
                     && !s.contains(".gifv")
                     && s.contains("imgur.com")) {
                 s = s.replace(".gif", ".mp4");
                 s = s.replace(".webm", ".mp4");
             }
+
             if (s.endsWith("/")) s = s.substring(0, s.length() - 1);
             if (s.endsWith("?r")) s = s.substring(0, s.length() - 2);
+
             if (s.contains("v.redd.it") && !s.contains("DASHPlaylist")) {
                 if (s.contains("DASH")) {
                     s = s.substring(0, s.indexOf("DASH"));

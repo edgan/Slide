@@ -1,5 +1,6 @@
 package me.edgan.redditslide.Activities;
 
+import android.util.Log;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.apache.commons.text.StringEscapeUtils;
@@ -9,6 +10,7 @@ import java.util.Arrays;
 
 /** Created by ccrama on 09/22/2020. */
 public class GalleryImage implements Serializable {
+    private static final String TAG = "GalleryImage";
     public String url;
     public int width;
     public int height;
@@ -17,39 +19,27 @@ public class GalleryImage implements Serializable {
     public MediaMetadata metadata;
 
     public GalleryImage(JsonNode data) {
+        Log.d(TAG, "GalleryImage constructor called with data: " + data.toString());
         if (data.has("media_id")) {
             mediaId = data.get("media_id").asText();
         }
 
+        // Check if this is a mediaNode with 's' property or direct 's' node
+        JsonNode sNode = data.has("s") ? data.get("s") : data;
+
         // Parse the s node that contains the actual image URLs
-        if (data.has("s")) {
-            JsonNode s = data.get("s");
-            if (s.has("u")) {
-                url = StringEscapeUtils.unescapeHtml4(s.get("u").asText());
-            } else if (s.has("gif")) {
-                url = StringEscapeUtils.unescapeHtml4(s.get("gif").asText());
-            } else if (s.has("mp4")) {
-                url = StringEscapeUtils.unescapeHtml4(s.get("mp4").asText());
-            }
+        if (sNode.has("u")) {
+            url = StringEscapeUtils.unescapeHtml4(sNode.get("u").asText());
+        } else if (sNode.has("gif")) {
+            url = StringEscapeUtils.unescapeHtml4(sNode.get("gif").asText());
+        } else if (sNode.has("mp4")) {
+            url = StringEscapeUtils.unescapeHtml4(sNode.get("mp4").asText());
+        }
 
-            // Get dimensions from the s node
-            if (s.has("x") && s.has("y")) {
-                width = s.get("x").asInt();
-                height = s.get("y").asInt();
-            }
-        } else {
-            // Fallback to old parsing logic
-            if (data.has("u")) {
-                url = StringEscapeUtils.unescapeHtml4(data.get("u").asText());
-            } else if (data.has("mp4")) {
-                url = StringEscapeUtils.unescapeHtml4(data.get("mp4").asText());
-            }
-
-            // Safely handle x/y
-            if (data.has("x") && data.has("y")) {
-                width = data.get("x").asInt();
-                height = data.get("y").asInt();
-            }
+        // Get dimensions from the s node
+        if (sNode.has("x") && sNode.has("y")) {
+            width = sNode.get("x").asInt();
+            height = sNode.get("y").asInt();
         }
 
         // Add metadata population
@@ -60,6 +50,31 @@ public class GalleryImage implements Serializable {
         if (data.has("m")) {
             metadata.m = data.get("m").asText();
         }
+
+        // Parse preview images array if available directly in data
+        // Look for p in mediaNode first, then in sNode
+        JsonNode pNode = data.has("p") ? data.get("p") : (sNode.has("p") ? sNode.get("p") : null);
+
+        if (pNode != null && pNode.isArray() && pNode.size() > 0) {
+            metadata.p = new MediaMetadata.Preview[pNode.size()];
+            for (int i = 0; i < pNode.size(); i++) {
+                JsonNode preview = pNode.get(i);
+                MediaMetadata.Preview p = new MediaMetadata.Preview();
+                if (preview.has("u")) {
+                    p.u = StringEscapeUtils.unescapeHtml4(preview.get("u").asText());
+                }
+                if (preview.has("x")) {
+                    p.x = preview.get("x").asInt();
+                }
+                if (preview.has("y")) {
+                    p.y = preview.get("y").asInt();
+                }
+                metadata.p[i] = p;
+            }
+        } else {
+            Log.d(TAG, "No preview array found in data");
+        }
+
         if (data.has("s")) {
             JsonNode s = data.get("s");
             metadata.source = new MediaMetadata.Source();
@@ -82,45 +97,74 @@ public class GalleryImage implements Serializable {
 
         // Set animated based on type
         metadata.animated = "AnimatedImage".equals(metadata.e);
-
-        // Final URL check
-        if (url == null || url.isEmpty()) {
-            android.util.Log.e("GalleryImage", "Failed to extract URL from gallery JSON: " + data.toString());
-        }
     }
 
     public boolean isAnimated() {
+        boolean result = false;
+
         if (metadata != null) {
-            // Check metadata first
+            // Check metadata first (most reliable)
             if (metadata.animated) {
-                return true;
+                result = true;
             }
-            if ("AnimatedImage".equals(metadata.e)) {
-                return true;
+            else if ("AnimatedImage".equals(metadata.e)) {
+                result = true;
             }
-            if (metadata.m != null && metadata.m.contains("gif")) {
-                return true;
+            else if (metadata.m != null && metadata.m.contains("gif")) {
+                result = true;
+            }
+            // Check source URLs
+            else if (metadata.source != null) {
+                if (metadata.source.gif != null && !metadata.source.gif.isEmpty()) {
+                    result = true;
+                }
+                else if (metadata.source.mp4 != null && !metadata.source.mp4.isEmpty()) {
+                    result = true;
+                }
             }
         }
 
-        // Fallback to URL check if metadata is missing
-        return url != null
-                && (url.endsWith(".gif") || url.endsWith(".gifv") || url.endsWith(".mp4"));
+        // Fallback to URL check if metadata methods don't find animation
+        if (!result && url != null) {
+            result = url.endsWith(".gif") || url.endsWith(".gifv") || url.endsWith(".mp4");
+        }
+
+        return result;
     }
 
     public String getImageUrl() {
-        // For animated content, use the direct MP4 URL from metadata
-        if (isAnimated() && metadata != null && metadata.source != null) {
-            if (metadata.source.mp4 != null && !metadata.source.mp4.isEmpty()) {
-                // Return the complete MP4 URL directly
-                return metadata.source.mp4;
+        String resultUrl;
+
+        // ANIMATED CONTENT HANDLING
+        if (isAnimated()) {
+            // For video playback, prioritize MP4 URL from metadata
+            if (metadata != null && metadata.source != null) {
+                if (metadata.source.mp4 != null && !metadata.source.mp4.isEmpty()) {
+                    resultUrl = metadata.source.mp4;
+
+                    return resultUrl;
+                } else if (metadata.source.gif != null && !metadata.source.gif.isEmpty()) {
+                    resultUrl = metadata.source.gif;
+
+                    return resultUrl;
+                }
+            }
+
+            // If URL ends with .gif, .gifv, or .mp4, use it directly
+            if (url != null && (url.endsWith(".gif") || url.endsWith(".gifv") || url.endsWith(".mp4"))) {
+                return url;
             }
         }
-        // For non-animated content or if no MP4 URL exists
+
+        // STATIC CONTENT HANDLING
+        // For non-animated content or if no MP4/GIF URL exists
         if (metadata != null && metadata.source != null && metadata.source.u != null) {
             // Use the direct URL from source if available
-            return metadata.source.u;
+            resultUrl = metadata.source.u;
+
+            return resultUrl;
         }
+
         // Fall back to original URL if nothing else works
         return url;
     }
