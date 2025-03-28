@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.tasks.FinalizeBundleTask
 import java.util.Properties
 
 plugins {
@@ -18,32 +19,38 @@ android {
             def appName = "slide"
             def buildType = variant.buildType
             def flavors = variant.productFlavors.collect { it.name }.join("-") ?: "noFlavor"
-            def versionName = variant.versionName
             def versionCode = variant.versionCode
-            def newApkName = "${appName}-${flavors}-${versionName}(${versionCode}).apk"
+            def versionName = variant.versionName
+            def artifactName = "${appName}-${flavors}-${versionName}(${versionCode})"
 
             if (flavors.contains("withGPlay")) {
-                newApkName = "${appName}-${versionName}.apk"
+                artifactName = "${appName}-${versionName}"
             } else if (flavors.contains("NoGPlay")) {
-                newApkName = "${appName}-${flavor}-${versionName}.apk"
+                artifactName = "${appName}-${flavor}-${versionName}"
             } else if (buildType == "debug") {
-                newApkName = "${appName}-${buildType}-${versionName}.apk"
+                artifactName = "${appName}-${buildType}-${versionName}"
             }
 
-            // Assign the new filename
-            output.outputFileName = newApkName
+            // Assign the apk filename
+            output.outputFileName = "${artifactName}.apk"
+
+            // Rename bundle
+            tasks.named("sign${variant.name.capitalize()}Bundle", FinalizeBundleTask) {
+                File file = finalBundleFile.asFile.get()
+                File finalFile = new File(file.parentFile, "${artifactName}.aab")
+                finalBundleFile.set(finalFile)
+            }
         }
     }
 
     defaultConfig {
         applicationId "me.edgan.redditslide"
         minSdk 29
+        multiDexEnabled true
         targetSdk 34
+        vectorDrawables.useSupportLibrary true
         versionCode 727
         versionName androidGitVersion.name()
-
-        multiDexEnabled true
-        vectorDrawables.useSupportLibrary true
     }
 
     flavorDimensions "variant"
@@ -138,7 +145,7 @@ if (githubPropertiesFile.exists()) {
     githubProperties.load(new FileInputStream(githubPropertiesFile))
 
     githubRelease {
-       token = githubProperties["githubToken"]
+        token = githubProperties["githubToken"]
         owner = "edgan"
         repo = "Slide"
         tagName = android.defaultConfig.versionName ?: "default-version"
