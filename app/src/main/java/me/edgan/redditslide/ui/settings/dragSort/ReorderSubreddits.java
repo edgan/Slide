@@ -377,23 +377,6 @@ public class ReorderSubreddits extends BaseActivityAnim {
                             EditText editText = dialogView.findViewById(R.id.dialog_edit_text);
                             editText.setHint(getString(R.string.reorder_subreddit_name));
 
-                            // Create input filter for real-time validation if needed
-                            TextWatcher textWatcher = new TextWatcher() {
-                                                        @Override
-                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                                                        @Override
-                                public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-                                @Override
-                                public void afterTextChanged(Editable s) {
-                                    input = s.toString();
-                                }
-                            };
-
-                            // Add the text watcher to the EditText
-                            editText.addTextChangedListener(textWatcher);
-
                             // Create and show the dialog
                             AlertDialog dialog = new MaterialAlertDialogBuilder(ReorderSubreddits.this)
                                 .setTitle(R.string.reorder_add_or_search_subreddit)
@@ -415,16 +398,34 @@ public class ReorderSubreddits extends BaseActivityAnim {
                             // Set initial state (disabled until valid input)
                             positiveButton.setEnabled(false);
 
-                            // Override click listener to handle domain URL addition
+                            // Create input filter for real-time validation
+                            TextWatcher textWatcher = new TextWatcher() {
+                                @Override
+                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                                @Override
+                                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                                @Override
+                                public void afterTextChanged(Editable s) {
+                                    input = s.toString().trim();
+                                    // Only proceed if input is valid
+                                    // 2 min, 21 max
+                                    // de is an example of 2
+                                    positiveButton.setEnabled(input.length() >= 2 && input.length() <= 21);
+                                }
+                            };
+
+                            // Add the text watcher to the EditText
+                            editText.addTextChangedListener(textWatcher);
+
+                            // Override click listener to handle input
                             positiveButton.setOnClickListener(v2 -> {
                                 // Get final text from EditText
-                                input = editText.getText().toString().replaceAll("\\s", "");
+                                input = editText.getText().toString().trim();
 
-                                // Only proceed if input is valid
-                                if (input.contains(".") && input.length() >= 1) {
-                                    addDomainUrl(input);
-                                    dialog.dismiss();
-                                }
+                                addDomainUrl(input);
+                                dialog.dismiss();
                             });
                         }
                     });
@@ -435,6 +436,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            int maxLength = 253;
                             // Create custom layout with EditText for domain input
                             View dialogView = getLayoutInflater().inflate(R.layout.dialog_edit_text, null);
                             EditText editText = dialogView.findViewById(R.id.dialog_edit_text);
@@ -450,15 +452,15 @@ public class ReorderSubreddits extends BaseActivityAnim {
 
                             // Set input filters for length limitation (1-35 characters)
                             editText.setFilters(new android.text.InputFilter[] {
-                                new android.text.InputFilter.LengthFilter(35)
+                                new android.text.InputFilter.LengthFilter(maxLength)
                             });
 
                             // Add TextWatcher for real-time validation
                             editText.addTextChangedListener(new TextWatcher() {
-                                                @Override
+                                @Override
                                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-                                                @Override
+                                @Override
                                 public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
                                 @Override
@@ -469,7 +471,22 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                     // Enable/disable positive button based on validation
                                     Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                                     if (positiveButton != null) {
-                                        positiveButton.setEnabled(input.contains(".") && input.length() >= 1);
+                                        boolean isValid = input.contains(".") && input.length() >= 3;
+
+                                        // Check total length and segment lengths
+                                        if (isValid) {
+                                            isValid = input.length() <= maxLength;
+                                            if (isValid) {
+                                                String[] segments = input.split("\\.");
+                                                for (String segment : segments) {
+                                                    if (segment.length() > 63) {
+                                                        isValid = false;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        positiveButton.setEnabled(isValid);
                                     }
                                 }
                             });
@@ -491,11 +508,8 @@ public class ReorderSubreddits extends BaseActivityAnim {
                                 // Get final text from EditText
                                 input = editText.getText().toString().replaceAll("\\s", "");
 
-                                // Only proceed if input is valid
-                                if (input.contains(".") && input.length() >= 1) {
-                                    addDomainUrl(input);
-                                    dialog.dismiss();
-                                }
+                                addDomainUrl(input);
+                                dialog.dismiss();
                             });
                         }
                     });

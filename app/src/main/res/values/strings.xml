@@ -1309,7 +1309,7 @@
     <string name="multireddit_json_error">An error occurred while preparing your Multireddit data</string>
 
     <string name="settings_dialog_colored_border">Put a colored border around dialog boxes</string>
-    <string name="settings_dialog_colored_border_desc">Display a thin colored border around dialog boxes. Currently only some dialog boxes, but will continue to expand.</string>
+    <string name="settings_dialog_colored_border_desc">Display a thin colored border around some dialog boxes.</string>
 
     <string name="misc_err_sync_failed">Failed to sync subreddits. No subscribed subreddits?</string>
 </resources>
