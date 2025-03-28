@@ -123,6 +123,11 @@ public class LinkUtil {
                                 && SettingValues.isNight())) {
             Intent i = new Intent(contextActivity, ReaderMode.class);
             openIntentThemed(i, url, color, contextActivity, adapterPosition, submission);
+        } else if (contentType == ContentType.Type.VIDEO && (url.contains("youtube.com") || url.contains("youtu.be"))) {
+            // Special handling for YouTube videos - open in YouTube app
+            Intent intent = new Intent(Intent.ACTION_VIEW, formatURL(url));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            contextActivity.startActivity(intent);
         } else if (SettingValues.linkHandlingMode == LinkHandlingMode.EXTERNAL.getValue()) {
             openExternally(url);
         } else {

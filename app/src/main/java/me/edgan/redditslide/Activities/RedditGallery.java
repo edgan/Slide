@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,11 +23,9 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import me.edgan.redditslide.Activities.GalleryParent;
 import me.edgan.redditslide.Adapters.RedditGalleryView;
 import me.edgan.redditslide.Fragments.BlankFragment;
 import me.edgan.redditslide.Fragments.SubmissionsView;
-import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.ExoVideoView;
@@ -41,7 +38,6 @@ import me.edgan.redditslide.util.GifUtils;
 import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.LogUtil;
-import me.edgan.redditslide.util.StorageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -189,8 +185,29 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
         gallery = new RedditGalleryPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(gallery);
         pager.setCurrentItem(1);
+        if (SettingValues.oldSwipeMode) {
+            pager.addOnPageChangeListener(
+                new ViewPager.SimpleOnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(
+                            int position, float positionOffset, int positionOffsetPixels) {
+                        if (position == 0 && positionOffsetPixels == 0) {
+                            finish();
+                        }
+                        if (position == 0 && ((RedditGalleryPagerAdapter) pager.getAdapter()).blankPage != null) {
+                            if (((RedditGalleryPagerAdapter) pager.getAdapter()).blankPage != null) {
+                                ((RedditGalleryPagerAdapter) pager.getAdapter()).blankPage.doOffset(positionOffset);
+                            }
 
-        // Rest of the code remains the same...
+                            ((RedditGalleryPagerAdapter) pager
+                                .getAdapter()).blankPage.realBack
+                                .setBackgroundColor(Palette.adjustAlpha(positionOffset * 0.7f));
+                        }
+                    }
+                }
+            );
+        }
+
     }
 
     private void configureViewPager(final ViewPager pager) {

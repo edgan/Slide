@@ -21,7 +21,6 @@ import net.dean.jraw.http.NetworkException;
 import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.managers.MultiRedditManager;
 import net.dean.jraw.models.MultiReddit;
-import net.dean.jraw.models.MultiSubreddit;
 import net.dean.jraw.models.Subreddit;
 import net.dean.jraw.models.UserRecord;
 import net.dean.jraw.paginators.ImportantUserPaginator;
