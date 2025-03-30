@@ -232,7 +232,7 @@ public class MainActivity extends BaseActivity
     AsyncTask caching;
     boolean currentlySubbed;
     int back;
-    private AsyncGetSubreddit mAsyncGetSubreddit = null;
+    private AsyncGetSubredditTask mAsyncGetSubreddit = null;
     private int headerHeight; // height of the header
     public int reloadItemNumber = -2;
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1001;
@@ -2936,7 +2936,7 @@ public class MainActivity extends BaseActivity
                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.END);
             }
 
-            mAsyncGetSubreddit = new AsyncGetSubreddit();
+            mAsyncGetSubreddit = new AsyncGetSubredditTask(this);
             mAsyncGetSubreddit.execute(subreddit);
 
             final View dialoglayout = findViewById(R.id.sidebarsub);
@@ -4822,25 +4822,6 @@ public class MainActivity extends BaseActivity
             }
         }
     }
-
-    public class AsyncGetSubreddit extends AsyncTask<String, Void, Subreddit> {
-
-        @Override
-        public void onPostExecute(Subreddit subreddit) {
-            if (subreddit != null) doSubOnlyStuff(subreddit);
-        }
-
-        @Override
-        protected Subreddit doInBackground(String... params) {
-            try {
-                return Authentication.reddit.getSubreddit(params[0]);
-            } catch (Exception e) {
-                return null;
-            }
-        }
-    }
-
-
 
     public class MainPagerAdapterComment extends MainPagerAdapter {
         public int size = usedArray.size();
