@@ -7,7 +7,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -58,7 +57,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,7 +70,6 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.content.res.ResourcesCompat;
@@ -99,7 +96,6 @@ import com.lusfold.androidkeyvaluestore.core.KVManger;
 import me.edgan.redditslide.Adapters.SideArrayAdapter;
 import me.edgan.redditslide.Adapters.SubredditPosts;
 import me.edgan.redditslide.Authentication;
-import me.edgan.redditslide.Autocache.AutoCacheScheduler;
 import me.edgan.redditslide.BuildConfig;
 import me.edgan.redditslide.CaseInsensitiveArrayList;
 import me.edgan.redditslide.CommentCacheAsync;
@@ -110,7 +106,6 @@ import me.edgan.redditslide.Fragments.DrawerItemsDialog;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.ImageFlairs;
 import me.edgan.redditslide.Notifications.CheckForMail;
-import me.edgan.redditslide.Notifications.NotificationJobScheduler;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
@@ -155,7 +150,6 @@ import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.managers.ModerationManager;
 import net.dean.jraw.managers.MultiRedditManager;
 import net.dean.jraw.models.FlairTemplate;
-import net.dean.jraw.models.LoggedInAccount;
 import net.dean.jraw.models.MultiReddit;
 import net.dean.jraw.models.MultiSubreddit;
 import net.dean.jraw.models.Submission;
@@ -310,7 +304,7 @@ public class MainActivity extends BaseActivity
             UserSubscriptions.doMainActivitySubs(this);
         } else if (requestCode == INBOX_RESULT) {
             // update notification badge
-            new AsyncNotificationBadge().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new AsyncNotificationBadge(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else if (requestCode == 3333) {
             this.data = data;
             if (doImage != null) {
@@ -840,7 +834,7 @@ public class MainActivity extends BaseActivity
                             public void run() {
                                 runAfterLoad = null;
                                 if (Authentication.isLoggedIn) {
-                                    new AsyncNotificationBadge()
+                                    new AsyncNotificationBadge(MainActivity.this)
                                             .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                                 }
                                 if (!Reddit.appRestart
@@ -1171,7 +1165,7 @@ public class MainActivity extends BaseActivity
                 && NetworkUtil.isConnected(MainActivity.this)
                 && headerMain != null
                 && runAfterLoad == null) {
-            new AsyncNotificationBadge().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new AsyncNotificationBadge(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else if (Authentication.isLoggedIn && Authentication.name.equalsIgnoreCase("loggedout")) {
             restartTheme(); // force a restart because we should not be here
         }
@@ -1708,7 +1702,7 @@ public class MainActivity extends BaseActivity
             headerMain = header;
 
             if (runAfterLoad == null) {
-                new AsyncNotificationBadge().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new AsyncNotificationBadge(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
 
         } else if (Authentication.didOnline) {
@@ -4846,152 +4840,6 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    public class AsyncNotificationBadge extends AsyncTask<Void, Void, Void> {
-        int count;
-
-        boolean restart;
-        int modCount;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                LoggedInAccount me;
-                if (Authentication.me == null) {
-                    Authentication.me = Authentication.reddit.me();
-                    me = Authentication.me;
-                    if (Authentication.name.equalsIgnoreCase("loggedout")) {
-                        Authentication.name = me.getFullName();
-                        Reddit.appRestart.edit().putString("name", Authentication.name).apply();
-                        restart = true;
-                        return null;
-                    }
-                    Authentication.mod = me.isMod();
-
-                    Authentication.authentication
-                            .edit()
-                            .putBoolean(Reddit.SHARED_PREF_IS_MOD, Authentication.mod)
-                            .apply();
-
-                    if (Reddit.notificationTime != -1) {
-                        Reddit.notifications = new NotificationJobScheduler(MainActivity.this);
-                        Reddit.notifications.start();
-                    }
-                    if (Reddit.cachedData.contains("toCache")) {
-                        Reddit.autoCache = new AutoCacheScheduler(MainActivity.this);
-                        Reddit.autoCache.start();
-                    }
-                    final String name = me.getFullName();
-                    Authentication.name = name;
-                    LogUtil.v("AUTHENTICATED");
-                    if (Authentication.reddit.isAuthenticated()) {
-                        final Set<String> accounts =
-                                Authentication.authentication.getStringSet(
-                                        "accounts", new HashSet<String>());
-                        if (accounts.contains(name)) { // convert to new system
-                            accounts.remove(name);
-                            accounts.add(name + ":" + Authentication.refresh);
-                            Authentication.authentication
-                                    .edit()
-                                    .putStringSet("accounts", accounts)
-                                    .commit(); // force commit
-                        }
-                        Authentication.isLoggedIn = true;
-                        Reddit.notFirst = true;
-                    }
-                } else {
-                    me = Authentication.reddit.me();
-                }
-                count = me.getInboxCount(); // Force reload of the LoggedInAccount object
-                UserSubscriptions.doFriendsOfMain(MainActivity.this);
-
-            } catch (Exception e) {
-                Log.w(LogUtil.getTag(), "Cannot fetch inbox count");
-                count = -1;
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            if (restart) {
-                restartTheme();
-                return;
-            }
-            if (Authentication.mod && Authentication.didOnline) {
-                RelativeLayout mod = headerMain.findViewById(R.id.mod);
-                mod.setVisibility(View.VISIBLE);
-
-                mod.setOnClickListener(
-                        new OnSingleClickListener() {
-                            @Override
-                            public void onSingleClick(View view) {
-                                if (modOf != null && !modOf.isEmpty()) {
-                                    Intent inte = new Intent(MainActivity.this, ModQueue.class);
-                                    MainActivity.this.startActivity(inte);
-                                }
-                            }
-                        });
-            }
-            if (count != -1) {
-                int oldCount = Reddit.appRestart.getInt("inbox", 0);
-                if (count > oldCount) {
-                    final Snackbar s =
-                            Snackbar.make(
-                                            mToolbar,
-                                            getResources()
-                                                    .getQuantityString(
-                                                            R.plurals.new_messages,
-                                                            count - oldCount,
-                                                            count - oldCount),
-                                            Snackbar.LENGTH_LONG)
-                                    .setAction(
-                                            R.string.btn_view,
-                                            new OnSingleClickListener() {
-                                                @Override
-                                                public void onSingleClick(View v) {
-                                                    Intent i =
-                                                            new Intent(
-                                                                    MainActivity.this, Inbox.class);
-                                                    i.putExtra(Inbox.EXTRA_UNREAD, true);
-                                                    startActivity(i);
-                                                }
-                                            });
-
-                    LayoutUtils.showSnackbar(s);
-                }
-                Reddit.appRestart.edit().putInt("inbox", count).apply();
-            }
-            View badge = headerMain.findViewById(R.id.count);
-            if (count == 0) {
-                if (badge != null) {
-                    badge.setVisibility(View.GONE);
-                }
-                NotificationManager notificationManager =
-                        ContextCompat.getSystemService(
-                                MainActivity.this, NotificationManager.class);
-                if (notificationManager != null) {
-                    notificationManager.cancel(0);
-                }
-            } else if (count != -1) {
-                if (badge != null) {
-                    badge.setVisibility(View.VISIBLE);
-                }
-                ((TextView) headerMain.findViewById(R.id.count))
-                        .setText(String.format(Locale.getDefault(), "%d", count));
-            }
-
-            /* Todo possibly
-            View modBadge = headerMain.findViewById(R.id.count_mod);
-
-            if (modCount == 0) {
-                if (modBadge != null) modBadge.setVisibility(View.GONE);
-            } else if (modCount != -1) {
-                if (modBadge != null) modBadge.setVisibility(View.VISIBLE);
-                ((TextView) headerMain.findViewById(R.id.count)).setText(String.format(Locale.getDefault(), "%d", count));
-            }*/
-        }
-    }
 
 
     public class MainPagerAdapterComment extends MainPagerAdapter {
