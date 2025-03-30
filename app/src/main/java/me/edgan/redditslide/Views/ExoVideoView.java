@@ -296,49 +296,57 @@ public class ExoVideoView extends RelativeLayout {
      * Sets the player's URI and prepares for playback.
      */
     public void setVideoURI(Uri uri, VideoType type, Player.Listener listener) {
-        Log.d(TAG, "setVideoURI() called with uri: " + uri.toString());
-        DataSource.Factory downloader =
-                new OkHttpDataSource.Factory(Reddit.client)
-                        .setDefaultRequestProperties(GifUtils.AsyncLoadGif.makeHeaderMap(uri.getHost()));
-        DataSource.Factory cacheDataSourceFactory =
-                new CacheDataSource.Factory()
-                        .setCache(Reddit.videoCache)
-                        .setUpstreamDataSourceFactory(downloader);
+        Log.d(TAG, "setVideoURI() called with uri: " + (uri != null ? uri.toString() : "null"));
+        // Ensure player and uri are not null before proceeding
+        if (player != null && uri != null) {
+            DataSource.Factory downloader =
+                    new OkHttpDataSource.Factory(Reddit.client)
+                            .setDefaultRequestProperties(GifUtils.AsyncLoadGif.makeHeaderMap(uri.getHost()));
+            DataSource.Factory cacheDataSourceFactory =
+                    new CacheDataSource.Factory()
+                            .setCache(Reddit.videoCache)
+                            .setUpstreamDataSourceFactory(downloader);
 
-        MediaSource videoSource;
-        switch (type) {
-            case DASH:
-                Log.d(TAG, "Creating DASH media source");
-                videoSource =
-                        new DashMediaSource.Factory(cacheDataSourceFactory)
-                                .createMediaSource(MediaItem.fromUri(uri));
-                break;
-            case STANDARD:
-            default:
-                Log.d(TAG, "Creating standard media source");
-                videoSource =
-                        new ProgressiveMediaSource.Factory(cacheDataSourceFactory)
-                                .createMediaSource(MediaItem.fromUri(uri));
-                break;
-        }
+            MediaSource videoSource;
+            switch (type) {
+                case DASH:
+                    Log.d(TAG, "Creating DASH media source");
+                    videoSource =
+                            new DashMediaSource.Factory(cacheDataSourceFactory)
+                                    .createMediaSource(MediaItem.fromUri(uri));
+                    break;
+                case STANDARD:
+                default:
+                    Log.d(TAG, "Creating standard media source");
+                    videoSource =
+                            new ProgressiveMediaSource.Factory(cacheDataSourceFactory)
+                                    .createMediaSource(MediaItem.fromUri(uri));
+                    break;
+            }
 
-        player.setMediaSource(videoSource);
-        player.prepare();
-        if (listener != null) {
-            player.addListener(listener);
+            player.setMediaSource(videoSource);
+            player.prepare();
+            if (listener != null) {
+                player.addListener(listener);
+            }
         }
+        // No else block needed, as we just won't proceed if player or uri is null
     }
 
     /** Starts video playback. */
     public void play() {
-        player.play();
-        if (playbackStateChangedListener != null) {
-            playbackStateChangedListener.onPlaybackStateChanged(true);
+        // Ensure player is not null
+        if (player != null) {
+            player.play();
+            if (playbackStateChangedListener != null) {
+                playbackStateChangedListener.onPlaybackStateChanged(true);
+            }
         }
     }
 
     /** Pauses video playback. */
     public void pause() {
+        // Ensure player is not null
         if (player != null) {
             player.pause();
             if (playbackStateChangedListener != null) {
@@ -349,17 +357,22 @@ public class ExoVideoView extends RelativeLayout {
 
     /** Stops video playback and releases the player. */
     public void stop() {
+        // Ensure player is not null before stopping/releasing
         if (player != null) {
             player.stop();
             player.release();
             player = null;
         }
-        audioFocusHelper.loseFocus();
+        // Ensure audioFocusHelper is not null before losing focus
+        if (audioFocusHelper != null) {
+            audioFocusHelper.loseFocus();
+        }
     }
 
     /** Seeks to a specified position (in milliseconds). */
     public void seekTo(long time) {
         Log.d(TAG, "seekTo() called with time: " + time);
+        // Ensure player is not null before seeking
         if (player != null) {
             player.seekTo(time);
         }
@@ -386,65 +399,87 @@ public class ExoVideoView extends RelativeLayout {
      */
     public void attachMuteButton(final ImageView mute) {
         Log.d(TAG, "attachMuteButton() called");
-        mute.setVisibility(GONE);
-        player.addListener(new Player.Listener() {
-            @Override
-            public void onTracksChanged(@NonNull Tracks tracks) {
-                Log.d(TAG, "attachMuteButton onTracksChanged");
-                if (muteAttached && !tracks.getGroups().isEmpty()) {
-                    return;
-                } else {
-                    muteAttached = true;
-                }
-                boolean foundAudio = false;
-                for (Tracks.Group group : tracks.getGroups()) {
-                    for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
-                        if (group.isTrackSelected(trackIndex)) {
-                            Format format = group.getTrackFormat(trackIndex);
-                            if (format != null && MimeTypes.isAudio(format.sampleMimeType)) {
-                                foundAudio = true;
-                                break;
+        // Ensure mute button and player are not null
+        if (mute != null && player != null) {
+            mute.setVisibility(GONE);
+            player.addListener(new Player.Listener() {
+                @Override
+                public void onTracksChanged(@NonNull Tracks tracks) {
+                    Log.d(TAG, "attachMuteButton onTracksChanged");
+                    if (muteAttached && !tracks.getGroups().isEmpty()) {
+                        return;
+                    } else {
+                        muteAttached = true;
+                    }
+                    boolean foundAudio = false;
+                    for (Tracks.Group group : tracks.getGroups()) {
+                        for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
+                            if (group.isTrackSelected(trackIndex)) {
+                                Format format = group.getTrackFormat(trackIndex);
+                                if (format != null && MimeTypes.isAudio(format.sampleMimeType)) {
+                                    foundAudio = true;
+                                    break;
+                                }
                             }
+                        }
+                        if (foundAudio) {
+                            break;
                         }
                     }
                     if (foundAudio) {
-                        break;
-                    }
-                }
-                if (foundAudio) {
-                    mute.setVisibility(VISIBLE);
-                    if (!SettingValues.isMuted) {
-                        player.setVolume(1f);
-                        mute.setImageResource(R.drawable.ic_volume_on);
-                        BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
-                        audioFocusHelper.gainFocus();
-                    } else {
-                        player.setVolume(0f);
-                        mute.setImageResource(R.drawable.ic_volume_off);
-                        BlendModeUtil.tintImageViewAsSrcAtop(mute, getResources().getColor(R.color.md_red_500));
-                    }
-                    mute.setOnClickListener((v) -> {
-                        if (SettingValues.isMuted) {
-                            Log.d(TAG, "Mute button clicked: unmuting");
-                            player.setVolume(1f);
-                            SettingValues.isMuted = false;
-                            SettingValues.prefs.edit().putBoolean(SettingValues.PREF_MUTE, false).apply();
-                            mute.setImageResource(R.drawable.ic_volume_on);
-                            BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
-                            audioFocusHelper.gainFocus();
-                        } else {
-                            Log.d(TAG, "Mute button clicked: muting");
-                            player.setVolume(0f);
-                            SettingValues.isMuted = true;
-                            SettingValues.prefs.edit().putBoolean(SettingValues.PREF_MUTE, true).apply();
-                            mute.setImageResource(R.drawable.ic_volume_off);
-                            BlendModeUtil.tintImageViewAsSrcAtop(mute, getResources().getColor(R.color.md_red_500));
-                            audioFocusHelper.loseFocus();
+                        mute.setVisibility(VISIBLE);
+                        // Ensure player still exists when setting initial state
+                        if (player != null) {
+                           if (!SettingValues.isMuted) {
+                                player.setVolume(1f);
+                                mute.setImageResource(R.drawable.ic_volume_on);
+                                BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
+                                // Gain focus only if helper exists
+                                if (audioFocusHelper != null) {
+                                    audioFocusHelper.gainFocus();
+                                }
+                            } else {
+                                player.setVolume(0f);
+                                mute.setImageResource(R.drawable.ic_volume_off);
+                                BlendModeUtil.tintImageViewAsSrcAtop(mute, getResources().getColor(R.color.md_red_500));
+                                // Lose focus only if helper exists
+                                if (audioFocusHelper != null) {
+                                     audioFocusHelper.loseFocus(); // Already checked, but good practice
+                                }
+                            }
                         }
-                    });
+                        mute.setOnClickListener((v) -> {
+                            // Ensure player still exists when clicked
+                            if (player != null) {
+                                if (SettingValues.isMuted) {
+                                    Log.d(TAG, "Mute button clicked: unmuting");
+                                    player.setVolume(1f);
+                                    SettingValues.isMuted = false;
+                                    SettingValues.prefs.edit().putBoolean(SettingValues.PREF_MUTE, false).apply();
+                                    mute.setImageResource(R.drawable.ic_volume_on);
+                                    BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
+                                    // Gain focus only if helper exists
+                                    if (audioFocusHelper != null) {
+                                        audioFocusHelper.gainFocus();
+                                    }
+                                } else {
+                                    Log.d(TAG, "Mute button clicked: muting");
+                                    player.setVolume(0f);
+                                    SettingValues.isMuted = true;
+                                    SettingValues.prefs.edit().putBoolean(SettingValues.PREF_MUTE, true).apply();
+                                    mute.setImageResource(R.drawable.ic_volume_off);
+                                    BlendModeUtil.tintImageViewAsSrcAtop(mute, getResources().getColor(R.color.md_red_500));
+                                    // Lose focus only if helper exists
+                                    if (audioFocusHelper != null) {
+                                        audioFocusHelper.loseFocus();
+                                    }
+                                }
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -452,45 +487,54 @@ public class ExoVideoView extends RelativeLayout {
      */
     public void attachHqButton(final ImageView hq) {
         Log.d(TAG, "attachHqButton() called");
-        hq.setVisibility(GONE);
-        player.addListener(new Player.Listener() {
-            @Override
-            public void onTracksChanged(@NonNull Tracks tracks) {
-                Log.d(TAG, "attachHqButton onTracksChanged");
-                if (hqAttached || tracks.getGroups().isEmpty() ||
-                        trackSelector.getParameters().forceHighestSupportedBitrate) {
-                    return;
-                } else {
-                    hqAttached = true;
-                }
-                int videoTrackCounter = 0;
-                for (Tracks.Group group : tracks.getGroups()) {
-                    for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
-                        Format format = group.getTrackFormat(trackIndex);
-                        if (format != null && MimeTypes.isVideo(format.sampleMimeType)) {
-                            videoTrackCounter++;
+        // Ensure hq button and player are not null
+        if (hq != null && player != null) {
+            hq.setVisibility(GONE);
+            player.addListener(new Player.Listener() {
+                @Override
+                public void onTracksChanged(@NonNull Tracks tracks) {
+                    Log.d(TAG, "attachHqButton onTracksChanged");
+                    // Ensure trackSelector exists
+                    if (trackSelector != null) {
+                        if (hqAttached || tracks.getGroups().isEmpty() ||
+                                trackSelector.getParameters().forceHighestSupportedBitrate) {
+                            return;
+                        } else {
+                            hqAttached = true;
+                        }
+                        int videoTrackCounter = 0;
+                        for (Tracks.Group group : tracks.getGroups()) {
+                            for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
+                                Format format = group.getTrackFormat(trackIndex);
+                                if (format != null && MimeTypes.isVideo(format.sampleMimeType)) {
+                                    videoTrackCounter++;
+                                    if (videoTrackCounter > 1) {
+                                        break;
+                                    }
+                                }
+                            }
                             if (videoTrackCounter > 1) {
                                 break;
                             }
                         }
-                    }
-                    if (videoTrackCounter > 1) {
-                        break;
+                        if (videoTrackCounter > 1) {
+                            hq.setVisibility(VISIBLE);
+                            hq.setOnClickListener((v) -> {
+                                Log.d(TAG, "HQ button clicked: forcing high bitrate");
+                                // Ensure trackSelector still exists when clicked
+                                if (trackSelector != null) {
+                                    trackSelector.setParameters(
+                                            trackSelector.buildUponParameters()
+                                                    .setForceLowestBitrate(false)
+                                                    .setForceHighestSupportedBitrate(true));
+                                    hq.setVisibility(GONE);
+                                }
+                            });
+                        }
                     }
                 }
-                if (videoTrackCounter > 1) {
-                    hq.setVisibility(VISIBLE);
-                    hq.setOnClickListener((v) -> {
-                        Log.d(TAG, "HQ button clicked: forcing high bitrate");
-                        trackSelector.setParameters(
-                                trackSelector.buildUponParameters()
-                                        .setForceLowestBitrate(false)
-                                        .setForceHighestSupportedBitrate(true));
-                        hq.setVisibility(GONE);
-                    });
-                }
-            }
-        });
+            });
+        }
     }
 
     /** Enum for video types. */
@@ -506,45 +550,61 @@ public class ExoVideoView extends RelativeLayout {
         private AudioFocusRequestCompat request;
 
         AudioFocusHelper(AudioManager manager) {
-            this.manager = manager;
-            if (request == null) {
-                AudioAttributesCompat audioAttributes =
-                        new AudioAttributesCompat.Builder()
-                                .setContentType(AudioAttributesCompat.CONTENT_TYPE_MOVIE)
-                                .setUsage(AudioAttributesCompat.USAGE_MEDIA)
-                                .build();
+            // Only proceed if manager is not null
+            if (manager != null) {
+                this.manager = manager;
+                // Initialize request only if it's null and manager is valid
+                if (request == null) {
+                    AudioAttributesCompat audioAttributes =
+                            new AudioAttributesCompat.Builder()
+                                    .setContentType(AudioAttributesCompat.CONTENT_TYPE_MOVIE)
+                                    .setUsage(AudioAttributesCompat.USAGE_MEDIA)
+                                    .build();
 
-                AudioFocusRequestCompat.Builder builder = new AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT)
-                        .setAudioAttributes(audioAttributes)
-                        .setOnAudioFocusChangeListener(this);
+                    AudioFocusRequestCompat.Builder builder = new AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT)
+                            .setAudioAttributes(audioAttributes)
+                            .setOnAudioFocusChangeListener(this);
 
-                if (SettingValues.pauseOnAudioFocus) {
-                    builder.setWillPauseWhenDucked(true);
+                    if (SettingValues.pauseOnAudioFocus) {
+                        builder.setWillPauseWhenDucked(true);
+                    }
+
+                    request = builder.build();
                 }
-
-                request = builder.build();
-
+            } else {
+                // If manager is null, ensure helper state reflects that
+                this.manager = null;
+                this.request = null;
             }
         }
 
         void loseFocus() {
             Log.d(TAG, "AudioFocusHelper: losing focus");
-            AudioManagerCompat.abandonAudioFocusRequest(manager, request);
+            // Only abandon focus if manager and request are valid
+            if (manager != null && request != null) {
+                AudioManagerCompat.abandonAudioFocusRequest(manager, request);
+            }
         }
 
         void gainFocus() {
             Log.d(TAG, "AudioFocusHelper: gaining focus");
-            AudioManagerCompat.requestAudioFocus(manager, request);
+            // Only request focus if manager and request are valid
+            if (manager != null && request != null) {
+                AudioManagerCompat.requestAudioFocus(manager, request);
+            }
         }
 
         @Override
         public void onAudioFocusChange(int focusChange) {
             Log.d(TAG, "AudioFocusHelper: onAudioFocusChange: " + focusChange);
-            if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                wasPlaying = player.getPlayWhenReady();
-                player.pause();
-            } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-                player.setPlayWhenReady(wasPlaying);
+            // Only proceed if player exists
+            if (player != null) {
+                if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                    wasPlaying = player.getPlayWhenReady();
+                    player.pause();
+                } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+                    player.setPlayWhenReady(wasPlaying);
+                }
             }
         }
     }
@@ -590,85 +650,100 @@ public class ExoVideoView extends RelativeLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // Handle scale gestures
-        scaleGestureDetector.onTouchEvent(event);
+        // Ensure event is not null
+        if (event != null) {
+            // Ensure scale detector is not null
+            if (scaleGestureDetector != null) {
+                // Handle scale gestures
+                scaleGestureDetector.onTouchEvent(event);
 
-        // Only handle panning when zoomed in
-        if (scaleFactor > 1.0f) {
-            final int action = event.getActionMasked();
+                // Only handle panning when zoomed in
+                if (scaleFactor > 1.0f) {
+                    final int action = event.getActionMasked();
 
-            switch (action) {
-                case MotionEvent.ACTION_DOWN: {
-                    // Start tracking touch position for potential dragging
-                    lastTouchX = event.getX();
-                    lastTouchY = event.getY();
-                    isDragging = false;
-                    break;
-                }
-
-                case MotionEvent.ACTION_MOVE: {
-                    // Only process if not in a scaling operation
-                    if (!scaleGestureDetector.isInProgress()) {
-                        // Calculate distance moved
-                        float dx = event.getX() - lastTouchX;
-                        float dy = event.getY() - lastTouchY;
-
-                        // If movement is significant enough, consider it a drag
-                        if (!isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
-                            isDragging = true;
+                    switch (action) {
+                        case MotionEvent.ACTION_DOWN: {
+                            // Start tracking touch position for potential dragging
+                            lastTouchX = event.getX();
+                            lastTouchY = event.getY();
+                            isDragging = false;
+                            break;
                         }
 
-                        if (isDragging) {
-                            // Update position with constraints to keep video partially visible
-                            positionX += dx;
-                            positionY += dy;
+                        case MotionEvent.ACTION_MOVE: {
+                            // Only process if not in a scaling operation
+                            if (!scaleGestureDetector.isInProgress()) {
+                                // Calculate distance moved
+                                float dx = event.getX() - lastTouchX;
+                                float dy = event.getY() - lastTouchY;
 
-                            // Calculate maximum allowed movement based on scale
-                            float maxDeltaX = (videoFrame.getWidth() * (scaleFactor - 1)) / 2;
-                            float maxDeltaY = (videoFrame.getHeight() * (scaleFactor - 1)) / 2;
+                                // If movement is significant enough, consider it a drag
+                                if (!isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+                                    isDragging = true;
+                                }
 
-                            // Constrain movement
-                            positionX = Math.max(-maxDeltaX, Math.min(maxDeltaX, positionX));
-                            positionY = Math.max(-maxDeltaY, Math.min(maxDeltaY, positionY));
+                                if (isDragging) {
+                                    // Update position with constraints to keep video partially visible
+                                    positionX += dx;
+                                    positionY += dy;
 
-                            // Apply translation
-                            videoFrame.setTranslationX(positionX);
-                            videoFrame.setTranslationY(positionY);
+                                    // Ensure videoFrame exists before accessing dimensions
+                                    if (videoFrame != null) {
+                                        // Calculate maximum allowed movement based on scale
+                                        float maxDeltaX = (videoFrame.getWidth() * (scaleFactor - 1)) / 2;
+                                        float maxDeltaY = (videoFrame.getHeight() * (scaleFactor - 1)) / 2;
+
+                                        // Constrain movement
+                                        positionX = Math.max(-maxDeltaX, Math.min(maxDeltaX, positionX));
+                                        positionY = Math.max(-maxDeltaY, Math.min(maxDeltaY, positionY));
+
+                                        // Apply translation
+                                        videoFrame.setTranslationX(positionX);
+                                        videoFrame.setTranslationY(positionY);
+                                    }
+                                }
+
+                                // Update last position
+                                lastTouchX = event.getX();
+                                lastTouchY = event.getY();
+                            }
+                            break;
                         }
 
-                        // Update last position
-                        lastTouchX = event.getX();
-                        lastTouchY = event.getY();
+                        case MotionEvent.ACTION_UP: {
+                            // Handle click if it wasn't a drag
+                            if (!isDragging) {
+                                return super.onTouchEvent(event);
+                            }
+                            isDragging = false;
+                            break;
+                        }
+
+                        case MotionEvent.ACTION_CANCEL: {
+                            isDragging = false;
+                            break;
+                        }
                     }
-                    break;
-                }
 
-                case MotionEvent.ACTION_UP: {
-                    // Handle click if it wasn't a drag
-                    if (!isDragging) {
-                        return super.onTouchEvent(event);
+                    // If we're handling a drag, intercept the event
+                    if (isDragging) {
+                        return true;
                     }
-                    isDragging = false;
-                    break;
                 }
 
-                case MotionEvent.ACTION_CANCEL: {
-                    isDragging = false;
-                    break;
+                // Continue with normal touch handling if not scaling or panning
+                if (!scaleGestureDetector.isInProgress() && !isDragging) {
+                    return super.onTouchEvent(event);
                 }
+                return true; // Handled by scale detector or panning logic
+            } else {
+                // Fallback if scale detector is null
+                return super.onTouchEvent(event);
             }
-
-            // If we're handling a drag, intercept the event
-            if (isDragging) {
-                return true;
-            }
+        } else {
+            // Fallback if event is null
+            return super.onTouchEvent(null); // Or return false, depending on desired behavior
         }
-
-        // Continue with normal touch handling if not scaling or panning
-        if (!scaleGestureDetector.isInProgress() && !isDragging) {
-            return super.onTouchEvent(event);
-        }
-        return true;
     }
 
     /**
@@ -677,38 +752,36 @@ public class ExoVideoView extends RelativeLayout {
     private class VideoScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            scaleFactor *= detector.getScaleFactor();
+            // Ensure detector is not null
+            if (detector != null) {
+                scaleFactor *= detector.getScaleFactor();
 
-            // Limit the scale factor to reasonable bounds
-            scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 3.0f));
+                // Limit the scale factor to reasonable bounds
+                scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 3.0f));
 
-            // Apply the scale to the video frame
-            if (videoFrame != null) {
-                videoFrame.setScaleX(scaleFactor);
-                videoFrame.setScaleY(scaleFactor);
+                // Apply the scale to the video frame if it exists
+                if (videoFrame != null) {
+                    videoFrame.setScaleX(scaleFactor);
+                    videoFrame.setScaleY(scaleFactor);
+                }
+                return true;
             }
-            return true;
-        }
-
-        @Override
-        public boolean onScaleBegin(ScaleGestureDetector detector) {
-            // Change resize mode when scaling begins to allow proper zooming
-            if (videoFrame != null) {
-                videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_ZOOM);
-            }
-            return true;
+            return false; // Indicate scale was not handled
         }
 
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
-            // If scale is back to normal (or very close), reset to FIT mode and reset position
-            if (scaleFactor <= 1.05f) {
-                scaleFactor = 1.0f;
-                resetPosition();
-                if (videoFrame != null) {
-                    videoFrame.setScaleX(1.0f);
-                    videoFrame.setScaleY(1.0f);
-                    videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+            // Ensure detector is not null
+            if (detector != null) {
+                // If scale is back to normal (or very close), reset to FIT mode and reset position
+                if (scaleFactor <= 1.05f) {
+                    scaleFactor = 1.0f;
+                    resetPosition(); // resetPosition handles internal null check
+                    if (videoFrame != null) {
+                        videoFrame.setScaleX(1.0f);
+                        videoFrame.setScaleY(1.0f);
+                        videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+                    }
                 }
             }
         }
@@ -719,7 +792,8 @@ public class ExoVideoView extends RelativeLayout {
      */
     public void resetZoom() {
         scaleFactor = 1.0f;
-        resetPosition();
+        resetPosition(); // resetPosition already has a null check for videoFrame
+        // Ensure videoFrame exists before resetting scale/mode
         if (videoFrame != null) {
             videoFrame.setScaleX(1.0f);
             videoFrame.setScaleY(1.0f);
@@ -733,6 +807,7 @@ public class ExoVideoView extends RelativeLayout {
     private void resetPosition() {
         positionX = 0f;
         positionY = 0f;
+        // Ensure videoFrame exists before resetting translation
         if (videoFrame != null) {
             videoFrame.setTranslationX(0f);
             videoFrame.setTranslationY(0f);
