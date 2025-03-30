@@ -4,7 +4,6 @@ import static me.edgan.redditslide.UserSubscriptions.modOf;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
@@ -22,7 +21,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -43,7 +41,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.ViewTreeObserver;
 import android.view.Window;
@@ -85,7 +82,6 @@ import androidx.customview.widget.ViewDragHelper;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.viewpager.widget.ViewPager;
 
@@ -203,7 +199,7 @@ public class MainActivity extends BaseActivity
     public static boolean isRestart;
     public static int restartPage;
     public final long ANIMATE_DURATION = 250; // duration of animations
-    private final long ANIMATE_DURATION_OFFSET = 45; // offset for smoothing out the exit animations
+    final long ANIMATE_DURATION_OFFSET = 45; // offset for smoothing out the exit animations
     public boolean singleMode;
     public ToggleSwipeViewPager pager;
     public CaseInsensitiveArrayList usedArray;
@@ -257,7 +253,7 @@ public class MainActivity extends BaseActivity
                 current = current - 1;
             }
             if (current < 0) current = 0;
-            adapter = new MainPagerAdapter(getSupportFragmentManager());
+            adapter = new MainPagerAdapter(this, getSupportFragmentManager());
             pager.setAdapter(adapter);
             pager.setCurrentItem(current);
             if (mTabLayout != null) {
@@ -3947,9 +3943,9 @@ public class MainActivity extends BaseActivity
             reloadItemNumber = current;
             if (adapter instanceof MainPagerAdapterComment) {
                 pager.setAdapter(null);
-                adapter = new MainPagerAdapterComment(getSupportFragmentManager());
+                adapter = new MainPagerAdapterComment(this, getSupportFragmentManager());
             } else {
-                adapter = new MainPagerAdapter(getSupportFragmentManager());
+                adapter = new MainPagerAdapter(this, getSupportFragmentManager());
             }
             pager.setAdapter(adapter);
 
@@ -4007,7 +4003,7 @@ public class MainActivity extends BaseActivity
                             usedArray =
                                     new CaseInsensitiveArrayList(
                                             UserSubscriptions.getSubscriptions(MainActivity.this));
-                            adapter = new MainPagerAdapter(getSupportFragmentManager());
+                            adapter = new MainPagerAdapter(MainActivity.this, getSupportFragmentManager());
 
                             pager.setAdapter(adapter);
                             if (mTabLayout != null) {
@@ -4099,9 +4095,9 @@ public class MainActivity extends BaseActivity
             usedArray = new CaseInsensitiveArrayList(data);
             if (adapter == null) {
                 if (commentPager && singleMode) {
-                    adapter = new MainPagerAdapterComment(getSupportFragmentManager());
+                    adapter = new MainPagerAdapterComment(this, getSupportFragmentManager());
                 } else {
-                    adapter = new MainPagerAdapter(getSupportFragmentManager());
+                    adapter = new MainPagerAdapter(this, getSupportFragmentManager());
                 }
             } else {
                 adapter.notifyDataSetChanged();
@@ -4997,209 +4993,14 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    public class MainPagerAdapter extends FragmentStatePagerAdapter {
-        protected SubmissionsView mCurrentFragment;
-
-        public MainPagerAdapter(FragmentManager fm) {
-            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-
-            pager.clearOnPageChangeListeners();
-            pager.addOnPageChangeListener(
-                    new ViewPager.SimpleOnPageChangeListener() {
-                        @Override
-                        public void onPageScrolled(
-                                int position, float positionOffset, int positionOffsetPixels) {
-                            if (positionOffset == 0) {
-                                header.animate()
-                                        .translationY(0)
-                                        .setInterpolator(new LinearInterpolator())
-                                        .setDuration(180);
-                                doSubSidebarNoLoad(usedArray.get(position));
-                            }
-                        }
-
-                        @Override
-                        public void onPageSelected(final int position) {
-                            Reddit.currentPosition = position;
-                            selectedSub = usedArray.get(position);
-                            SubmissionsView page = (SubmissionsView) adapter.getCurrentFragment();
-
-                            if (hea != null) {
-                                hea.setBackgroundColor(Palette.getColor(selectedSub));
-                                if (accountsArea != null) {
-                                    accountsArea.setBackgroundColor(
-                                            Palette.getDarkerColor(selectedSub));
-                                }
-                            }
-
-                            int colorFrom = ((ColorDrawable) header.getBackground()).getColor();
-                            int colorTo = Palette.getColor(selectedSub);
-
-                            ValueAnimator colorAnimation =
-                                    ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-
-                            colorAnimation.addUpdateListener(
-                                    new ValueAnimator.AnimatorUpdateListener() {
-                                        @Override
-                                        public void onAnimationUpdate(ValueAnimator animator) {
-                                            int color = (int) animator.getAnimatedValue();
-
-                                            header.setBackgroundColor(color);
-
-                                            if (Build.VERSION.SDK_INT
-                                                    >= Build.VERSION_CODES.LOLLIPOP) {
-                                                int finalColor = Palette.getDarkerColor(color);
-
-                                                if (SettingValues.alwaysBlackStatusbar) {
-                                                    finalColor = Color.BLACK;
-                                                }
-
-                                                getWindow().setStatusBarColor(finalColor);
-
-                                                if (SettingValues.colorNavBar) {
-                                                    getWindow()
-                                                            .setNavigationBarColor(
-                                                                    Palette.getDarkerColor(color));
-                                                }
-                                            }
-                                        }
-                                    });
-                            colorAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
-                            colorAnimation.setDuration(200);
-                            colorAnimation.start();
-
-                            setRecentBar(selectedSub);
-
-                            if (SettingValues.single || mTabLayout == null) {
-                                // Smooth out the fading animation for the toolbar subreddit search
-                                // UI
-                                if ((SettingValues.subredditSearchMethod
-                                                        == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR
-                                                || SettingValues.subredditSearchMethod
-                                                        == Constants.SUBREDDIT_SEARCH_METHOD_BOTH)
-                                        && findViewById(R.id.toolbar_search).getVisibility()
-                                                == View.VISIBLE) {
-                                    new Handler()
-                                            .postDelayed(
-                                                    new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            getSupportActionBar()
-                                                                    .setTitle(selectedSub);
-                                                        }
-                                                    },
-                                                    ANIMATE_DURATION + ANIMATE_DURATION_OFFSET);
-                                } else {
-                                    getSupportActionBar().setTitle(selectedSub);
-                                }
-                            } else {
-                                mTabLayout.setSelectedTabIndicatorColor(
-                                        new ColorPreferences(MainActivity.this)
-                                                .getColor(selectedSub));
-                            }
-                            if (page != null && page.adapter != null) {
-                                SubredditPosts p = page.adapter.dataSet;
-                                if (p.offline && !isRestart) {
-                                    p.doMainActivityOffline(MainActivity.this, p.displayer);
-                                }
-                            }
-                        }
-                    });
-
-            if (pager.getAdapter() != null) {
-                pager.getAdapter().notifyDataSetChanged();
-                pager.setCurrentItem(1);
-                pager.setCurrentItem(0);
-            }
-        }
-
-        @Override
-        public int getCount() {
-            if (usedArray == null) {
-                return 1;
-            } else {
-                return usedArray.size();
-            }
-        }
-
-        @NonNull
-        @Override
-        public Fragment getItem(int i) {
-            SubmissionsView f = new SubmissionsView();
-            Bundle args = new Bundle();
-            String name;
-            if (multiNameToSubsMap.containsKey(usedArray.get(i))) {
-                name = multiNameToSubsMap.get(usedArray.get(i));
-            } else {
-                name = usedArray.get(i);
-            }
-            args.putString("id", name);
-            f.setArguments(args);
-
-            return f;
-        }
-
-        @Override
-        public void setPrimaryItem(
-                @NonNull ViewGroup container, int position, @NonNull Object object) {
-            if (reloadItemNumber == position || reloadItemNumber < 0) {
-                super.setPrimaryItem(container, position, object);
-                if (usedArray.size() >= position) doSetPrimary(object, position);
-            } else {
-                shouldLoad = usedArray.get(reloadItemNumber);
-                if (multiNameToSubsMap.containsKey(usedArray.get(reloadItemNumber))) {
-                    shouldLoad = multiNameToSubsMap.get(usedArray.get(reloadItemNumber));
-                } else {
-                    shouldLoad = usedArray.get(reloadItemNumber);
-                }
-            }
-        }
-
-        @Override
-        public Parcelable saveState() {
-            return null;
-        }
-
-        public void doSetPrimary(Object object, int position) {
-            if (object != null
-                    && getCurrentFragment() != object
-                    && position != toOpenComments
-                    && object instanceof SubmissionsView) {
-                shouldLoad = usedArray.get(position);
-                if (multiNameToSubsMap.containsKey(usedArray.get(position))) {
-                    shouldLoad = multiNameToSubsMap.get(usedArray.get(position));
-                } else {
-                    shouldLoad = usedArray.get(position);
-                }
-
-                mCurrentFragment = ((SubmissionsView) object);
-                if (mCurrentFragment.posts == null && mCurrentFragment.isAdded()) {
-                    mCurrentFragment.doAdapter();
-                }
-            }
-        }
-
-        public Fragment getCurrentFragment() {
-            return mCurrentFragment;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            if (usedArray != null) {
-                return StringUtil.abbreviate(usedArray.get(position), 25);
-            } else {
-                return "";
-            }
-        }
-    }
 
     public class MainPagerAdapterComment extends MainPagerAdapter {
         public int size = usedArray.size();
         public Fragment storedFragment;
         private CommentPage mCurrentComments;
 
-        public MainPagerAdapterComment(FragmentManager fm) {
-            super(fm);
+        public MainPagerAdapterComment(MainActivity mainActivity, FragmentManager fm) {
+            super(mainActivity, fm);
             pager.clearOnPageChangeListeners();
             pager.addOnPageChangeListener(
                     new ViewPager.SimpleOnPageChangeListener() {
