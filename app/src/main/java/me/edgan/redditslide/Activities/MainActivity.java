@@ -38,10 +38,7 @@ import android.view.View;
 import android.view.ViewStub;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -60,7 +57,6 @@ import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.content.res.ResourcesCompat;
@@ -122,7 +118,6 @@ import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.StringUtil;
 import me.edgan.redditslide.util.SubmissionParser;
 import me.edgan.redditslide.util.TimeUtils;
-import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
 import me.edgan.redditslide.util.FilterContentUtil;
 
 import net.dean.jraw.ApiException;
@@ -213,14 +208,14 @@ public class MainActivity extends BaseActivity
     boolean currentlySubbed;
     int back;
     AsyncGetSubredditTask mAsyncGetSubreddit = null;
-    private int headerHeight; // height of the header
+    int headerHeight;
     public int reloadItemNumber = -2;
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1001;
 
     private View rootView;
 
     DrawerController drawerController;
-
+    public ToolbarSearchController toolbarSearchController;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SETTINGS_RESULT) {
@@ -961,6 +956,7 @@ public class MainActivity extends BaseActivity
 
         setContentView(R.layout.activity_overview);
         drawerController = new DrawerController(this);
+        toolbarSearchController = new ToolbarSearchController(this);
 
         rootView = findViewById(android.R.id.content);
 
@@ -1097,7 +1093,7 @@ public class MainActivity extends BaseActivity
         if (SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR
                 || SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_BOTH) {
 
-            setupSubredditSearchToolbar();
+            toolbarSearchController.setupSubredditSearchToolbar();
         }
 
         /**
@@ -1195,11 +1191,11 @@ public class MainActivity extends BaseActivity
                     findViewById(R.id.drawer_divider).setVisibility(View.GONE);
                 } else if (SettingValues.subredditSearchMethod
                         == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR) {
-                    setupSubredditSearchToolbar();
+                    toolbarSearchController.setupSubredditSearchToolbar();
                 } else if (SettingValues.subredditSearchMethod
                         == Constants.SUBREDDIT_SEARCH_METHOD_BOTH) {
                     findViewById(R.id.drawer_divider).setVisibility(View.GONE);
-                    setupSubredditSearchToolbar();
+                    toolbarSearchController.setupSubredditSearchToolbar();
                     drawerController.setDrawerSubList();
                 }
                 SettingsGeneralFragment.searchChanged = false;
@@ -2668,32 +2664,6 @@ public class MainActivity extends BaseActivity
      * @param GO_TO_SUB_FIELD search field in toolbar
      * @param CLOSE_BUTTON button that clears the search and closes the search UI
      */
-    public void enterAnimationsForToolbarSearch(
-            final long ANIMATION_DURATION,
-            final CardView SUGGESTIONS_BACKGROUND,
-            final AutoCompleteTextView GO_TO_SUB_FIELD,
-            final ImageView CLOSE_BUTTON) {
-        SUGGESTIONS_BACKGROUND
-                .animate()
-                .translationY(headerHeight)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setDuration(ANIMATION_DURATION + ANIMATE_DURATION_OFFSET)
-                .start();
-
-        GO_TO_SUB_FIELD
-                .animate()
-                .alpha(1f)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setDuration(ANIMATION_DURATION)
-                .start();
-
-        CLOSE_BUTTON
-                .animate()
-                .alpha(1f)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setDuration(ANIMATION_DURATION)
-                .start();
-    }
 
     /**
      * Starts the exit animations for various UI components of the toolbar subreddit search
@@ -2703,56 +2673,6 @@ public class MainActivity extends BaseActivity
      * @param GO_TO_SUB_FIELD search field in toolbar
      * @param CLOSE_BUTTON button that clears the search and closes the search UI
      */
-    public void exitAnimationsForToolbarSearch(
-            final long ANIMATION_DURATION,
-            final CardView SUGGESTIONS_BACKGROUND,
-            final AutoCompleteTextView GO_TO_SUB_FIELD,
-            final ImageView CLOSE_BUTTON) {
-        SUGGESTIONS_BACKGROUND
-                .animate()
-                .translationY(-SUGGESTIONS_BACKGROUND.getHeight())
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setDuration(ANIMATION_DURATION + ANIMATE_DURATION_OFFSET)
-                .start();
-
-        GO_TO_SUB_FIELD
-                .animate()
-                .alpha(0f)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setDuration(ANIMATION_DURATION)
-                .start();
-
-        CLOSE_BUTTON
-                .animate()
-                .alpha(0f)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .setDuration(ANIMATION_DURATION)
-                .start();
-
-        // Helps smooth the transition between the toolbar title being reset and the search elements
-        // fading out.
-        final long OFFSET_ANIM = (ANIMATION_DURATION == 0) ? 0 : ANIMATE_DURATION_OFFSET;
-
-        // Hide the various UI components after the animations are complete and
-        // reset the toolbar title
-        new Handler()
-                .postDelayed(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                SUGGESTIONS_BACKGROUND.setVisibility(View.GONE);
-                                GO_TO_SUB_FIELD.setVisibility(View.GONE);
-                                CLOSE_BUTTON.setVisibility(View.GONE);
-
-                                if (SettingValues.single) {
-                                    getSupportActionBar().setTitle(selectedSub);
-                                } else {
-                                    getSupportActionBar().setTitle(tabViewModeTitle);
-                                }
-                            }
-                        },
-                        ANIMATION_DURATION + ANIMATE_DURATION_OFFSET);
-    }
 
     public int getCurrentPage() {
         int position = 0;
@@ -2993,7 +2913,7 @@ public class MainActivity extends BaseActivity
 
             if (SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR
                     || SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_BOTH) {
-                setupSubredditSearchToolbar();
+                toolbarSearchController.setupSubredditSearchToolbar();
             }
 
             // When setting tab text, add null check and try-catch
@@ -3439,265 +3359,6 @@ public class MainActivity extends BaseActivity
      * OnLongClickListener needs to be set for the toolbar as well as handling all of the relevant
      * onClicks for the views of the search bar.
      */
-    private void setupSubredditSearchToolbar() {
-        if (!NetworkUtil.isConnected(this)) {
-            if (findViewById(R.id.drawer_divider) != null) {
-                findViewById(R.id.drawer_divider).setVisibility(View.GONE);
-            }
-        } else {
-            if ((SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR
-                            || SettingValues.subredditSearchMethod
-                                    == Constants.SUBREDDIT_SEARCH_METHOD_BOTH)
-                    && usedArray != null
-                    && !usedArray.isEmpty()) {
-                if (findViewById(R.id.drawer_divider) != null) {
-                    if (SettingValues.subredditSearchMethod
-                            == Constants.SUBREDDIT_SEARCH_METHOD_BOTH) {
-                        findViewById(R.id.drawer_divider).setVisibility(View.GONE);
-                    } else {
-                        findViewById(R.id.drawer_divider).setVisibility(View.VISIBLE);
-                    }
-                }
-                final ListView TOOLBAR_SEARCH_SUGGEST_LIST =
-                        (ListView) findViewById(R.id.toolbar_search_suggestions_list);
-                final ArrayList<String> subs_copy = new ArrayList<>(usedArray);
-                final SideArrayAdapter TOOLBAR_SEARCH_SUGGEST_ADAPTER =
-                        new SideArrayAdapter(
-                                this,
-                                subs_copy,
-                                UserSubscriptions.getAllSubreddits(this),
-                                TOOLBAR_SEARCH_SUGGEST_LIST);
-
-                if (TOOLBAR_SEARCH_SUGGEST_LIST != null) {
-                    TOOLBAR_SEARCH_SUGGEST_LIST.setAdapter(TOOLBAR_SEARCH_SUGGEST_ADAPTER);
-                }
-
-                if (mToolbar != null) {
-                    mToolbar.setOnLongClickListener(
-                            new View.OnLongClickListener() {
-                                @Override
-                                public boolean onLongClick(View v) {
-                                    final AutoCompleteTextView GO_TO_SUB_FIELD =
-                                            (AutoCompleteTextView)
-                                                    findViewById(R.id.toolbar_search);
-                                    final ImageView CLOSE_BUTTON =
-                                            (ImageView) findViewById(R.id.close_search_toolbar);
-                                    final CardView SUGGESTIONS_BACKGROUND =
-                                            (CardView)
-                                                    findViewById(R.id.toolbar_search_suggestions);
-
-                                    // if the view mode is set to Subreddit Tabs, save the title
-                                    // ("Slide" or "Slide (debug)")
-                                    tabViewModeTitle =
-                                            (!SettingValues.single)
-                                                    ? getSupportActionBar().getTitle().toString()
-                                                    : null;
-
-                                    getSupportActionBar()
-                                            .setTitle(""); // clear title to make room for search
-                                    // field
-
-                                    if (GO_TO_SUB_FIELD != null
-                                            && CLOSE_BUTTON != null
-                                            && SUGGESTIONS_BACKGROUND != null) {
-                                        GO_TO_SUB_FIELD.setVisibility(View.VISIBLE);
-                                        CLOSE_BUTTON.setVisibility(View.VISIBLE);
-                                        SUGGESTIONS_BACKGROUND.setVisibility(View.VISIBLE);
-
-                                        // run enter animations
-                                        enterAnimationsForToolbarSearch(
-                                                ANIMATE_DURATION,
-                                                SUGGESTIONS_BACKGROUND,
-                                                GO_TO_SUB_FIELD,
-                                                CLOSE_BUTTON);
-
-                                        // Get focus of the search field and show the keyboard
-                                        GO_TO_SUB_FIELD.requestFocus();
-                                        KeyboardUtil.toggleKeyboard(
-                                                MainActivity.this,
-                                                InputMethodManager.SHOW_FORCED,
-                                                InputMethodManager.HIDE_IMPLICIT_ONLY);
-
-                                        // Close the search UI and keyboard when clicking the close
-                                        // button
-                                        CLOSE_BUTTON.setOnClickListener(
-                                                new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(View v) {
-                                                        final View view =
-                                                                MainActivity.this.getCurrentFocus();
-                                                        if (view != null) {
-                                                            // Hide the keyboard
-                                                            KeyboardUtil.hideKeyboard(
-                                                                    MainActivity.this,
-                                                                    view.getWindowToken(),
-                                                                    0);
-                                                        }
-
-                                                        // run the exit animations
-                                                        exitAnimationsForToolbarSearch(
-                                                                ANIMATE_DURATION,
-                                                                SUGGESTIONS_BACKGROUND,
-                                                                GO_TO_SUB_FIELD,
-                                                                CLOSE_BUTTON);
-
-                                                        // clear sub text when close button is
-                                                        // clicked
-                                                        GO_TO_SUB_FIELD.setText("");
-                                                    }
-                                                });
-
-                                        GO_TO_SUB_FIELD.setOnEditorActionListener(
-                                                new TextView.OnEditorActionListener() {
-                                                    @Override
-                                                    public boolean onEditorAction(
-                                                            TextView arg0,
-                                                            int arg1,
-                                                            KeyEvent arg2) {
-                                                        if (arg1 == EditorInfo.IME_ACTION_SEARCH) {
-                                                            // If it the input text doesn't match a
-                                                            // subreddit from the list exactly,
-                                                            // openInSubView is true
-                                                            if (sideArrayAdapter.fitems == null
-                                                                    || sideArrayAdapter
-                                                                            .openInSubView
-                                                                    || !usedArray.contains(
-                                                                            GO_TO_SUB_FIELD
-                                                                                    .getText()
-                                                                                    .toString()
-                                                                                    .toLowerCase(
-                                                                                            Locale
-                                                                                                    .ENGLISH))) {
-                                                                Intent intent =
-                                                                        new Intent(
-                                                                                MainActivity.this,
-                                                                                SubredditView
-                                                                                        .class);
-                                                                intent.putExtra(
-                                                                        SubredditView
-                                                                                .EXTRA_SUBREDDIT,
-                                                                        GO_TO_SUB_FIELD
-                                                                                .getText()
-                                                                                .toString());
-                                                                MainActivity.this
-                                                                        .startActivityForResult(
-                                                                                intent, 2002);
-                                                            } else {
-                                                                if (commentPager
-                                                                        && adapter
-                                                                                instanceof
-                                                                                MainPagerAdapterComment) {
-                                                                    openingComments = null;
-                                                                    toOpenComments = -1;
-                                                                    ((MainPagerAdapterComment)
-                                                                                            adapter)
-                                                                                    .size =
-                                                                            (usedArray.size() + 1);
-                                                                    adapter.notifyDataSetChanged();
-
-                                                                    if (usedArray.contains(
-                                                                            GO_TO_SUB_FIELD
-                                                                                    .getText()
-                                                                                    .toString()
-                                                                                    .toLowerCase(
-                                                                                            Locale
-                                                                                                    .ENGLISH))) {
-                                                                        doPageSelectedComments(
-                                                                                usedArray.indexOf(
-                                                                                        GO_TO_SUB_FIELD
-                                                                                                .getText()
-                                                                                                .toString()
-                                                                                                .toLowerCase(
-                                                                                                        Locale
-                                                                                                                .ENGLISH)));
-                                                                    } else {
-                                                                        doPageSelectedComments(
-                                                                                usedArray.indexOf(
-                                                                                        sideArrayAdapter
-                                                                                                .fitems
-                                                                                                .get(
-                                                                                                        0)));
-                                                                    }
-                                                                }
-                                                                if (usedArray.contains(
-                                                                        GO_TO_SUB_FIELD
-                                                                                .getText()
-                                                                                .toString()
-                                                                                .toLowerCase(
-                                                                                        Locale
-                                                                                                .ENGLISH))) {
-                                                                    pager.setCurrentItem(
-                                                                            usedArray.indexOf(
-                                                                                    GO_TO_SUB_FIELD
-                                                                                            .getText()
-                                                                                            .toString()
-                                                                                            .toLowerCase(
-                                                                                                    Locale
-                                                                                                            .ENGLISH)));
-                                                                } else {
-                                                                    pager.setCurrentItem(
-                                                                            usedArray.indexOf(
-                                                                                    sideArrayAdapter
-                                                                                            .fitems
-                                                                                            .get(
-                                                                                                    0)));
-                                                                }
-                                                            }
-
-                                                            View view =
-                                                                    MainActivity.this
-                                                                            .getCurrentFocus();
-                                                            if (view != null) {
-                                                                // Hide the keyboard
-                                                                KeyboardUtil.hideKeyboard(
-                                                                        MainActivity.this,
-                                                                        view.getWindowToken(),
-                                                                        0);
-                                                            }
-
-                                                            SUGGESTIONS_BACKGROUND.setVisibility(
-                                                                    View.GONE);
-                                                            GO_TO_SUB_FIELD.setVisibility(
-                                                                    View.GONE);
-                                                            CLOSE_BUTTON.setVisibility(View.GONE);
-
-                                                            if (SettingValues.single) {
-                                                                getSupportActionBar()
-                                                                        .setTitle(selectedSub);
-                                                            } else {
-                                                                // Set the title back to "Slide" or
-                                                                // "Slide (debug)"
-                                                                getSupportActionBar()
-                                                                        .setTitle(tabViewModeTitle);
-                                                            }
-                                                        }
-                                                        return false;
-                                                    }
-                                                });
-
-                                        GO_TO_SUB_FIELD.addTextChangedListener(
-                                                new SimpleTextWatcher() {
-                                                    @Override
-                                                    public void afterTextChanged(
-                                                            Editable editable) {
-                                                        final String RESULT =
-                                                                GO_TO_SUB_FIELD
-                                                                        .getText()
-                                                                        .toString()
-                                                                        .replaceAll(" ", "");
-                                                        TOOLBAR_SEARCH_SUGGEST_ADAPTER
-                                                                .getFilter()
-                                                                .filter(RESULT);
-                                                    }
-                                                });
-                                    }
-                                    return true;
-                                }
-                            });
-                }
-            }
-        }
-    }
 
 
 }

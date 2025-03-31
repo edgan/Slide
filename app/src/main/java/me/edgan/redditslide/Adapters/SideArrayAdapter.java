@@ -106,7 +106,7 @@ public class SideArrayAdapter extends ArrayAdapter<String> {
                 // to animate upon the next time
                 // the search toolbar UI is called. Set animation to 0 because the UI is already
                 // hidden.
-                ((MainActivity) getContext())
+                ((MainActivity) getContext()).toolbarSearchController
                         .exitAnimationsForToolbarSearch(
                                 0,
                                 ((CardView)
