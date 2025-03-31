@@ -51,7 +51,7 @@ import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SecretConstants;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SubmissionViews.PopulateShadowboxInfo;
-import me.edgan.redditslide.SubmissionViews.PopulateSubmissionViewHolder;
+import me.edgan.redditslide.util.SubmissionThumbnailHelper;
 import me.edgan.redditslide.Views.ExoVideoView;
 import me.edgan.redditslide.Views.ImageSource;
 import me.edgan.redditslide.Views.SubsamplingScaleImageView;
@@ -383,7 +383,7 @@ public class MediaFragment extends Fragment {
                                     }
                                     break;
                                 case REDDIT:
-                                    PopulateSubmissionViewHolder.openRedditContent(
+                                    SubmissionThumbnailHelper.openRedditContent(
                                             submission.getUrl(), contextActivity);
 
                                     break;
@@ -482,11 +482,11 @@ public class MediaFragment extends Fragment {
                                 case DEVIANTART:
                                 case XKCD:
                                 case IMAGE:
-                                    PopulateSubmissionViewHolder.openImage(
+                                    SubmissionThumbnailHelper.openImage(
                                             type, contextActivity, submission, null, -1);
                                     break;
                                 case GIF:
-                                    PopulateSubmissionViewHolder.openGif(
+                                    SubmissionThumbnailHelper.openGif(
                                             contextActivity, submission, -1);
                                     break;
                                 case VIDEO:
