@@ -39,11 +39,9 @@ public class MainPagerAdapterComment extends MainPagerAdapter {
                                 mainActivity.header.setBackgroundColor(
                                         Palette.getColor(mainActivity.usedArray.get(position)));
                                 mainActivity.doPageSelectedComments(position);
-                                if (position == mainActivity.toOpenComments - 1
-                                        && mainActivity.adapter != null
-                                        && mainActivity.adapter.getCurrentFragment() != null) {
-                                    SubmissionsView page =
-                                            (SubmissionsView) mainActivity.adapter.getCurrentFragment();
+                                if (position == mainActivity.toOpenComments - 1 && mainActivity.adapter != null && mainActivity.adapter.getCurrentFragment() != null) {
+                                    SubmissionsView page = (SubmissionsView) mainActivity.adapter.getCurrentFragment();
+
                                     if (page != null && page.adapter != null) {
                                         page.adapter.refreshView();
                                     }
@@ -59,15 +57,10 @@ public class MainPagerAdapterComment extends MainPagerAdapter {
                                             .setInterpolator(new android.view.animation.LinearInterpolator())
                                             .setDuration(180);
                                 }
+
                                 mainActivity.pager.setSwipeLeftOnly(true);
-                                mainActivity.themeSystemBars(
-                                        mainActivity.openingComments
-                                                .getSubredditName()
-                                                .toLowerCase(Locale.ENGLISH));
-                                mainActivity.setRecentBar(
-                                        mainActivity.openingComments
-                                                .getSubredditName()
-                                                .toLowerCase(Locale.ENGLISH));
+                                mainActivity.themeSystemBars(mainActivity.openingComments.getSubredditName().toLowerCase(Locale.ENGLISH));
+                                mainActivity.setRecentBar(mainActivity.openingComments.getSubredditName().toLowerCase(Locale.ENGLISH));
                             }
                         }
                     }
@@ -132,8 +125,7 @@ public class MainPagerAdapterComment extends MainPagerAdapter {
             String name = mainActivity.openingComments.getFullName();
             args.putString("id", name.substring(3));
             args.putBoolean("archived", mainActivity.openingComments.isArchived());
-            args.putBoolean(
-                    "contest", mainActivity.openingComments.getDataNode().get("contest_mode").asBoolean());
+            args.putBoolean("contest", mainActivity.openingComments.getDataNode().get("contest_mode").asBoolean());
             args.putBoolean("locked", mainActivity.openingComments.isLocked());
             args.putInt("page", mainActivity.currentComment);
             args.putString("subreddit", mainActivity.openingComments.getSubredditName());
@@ -158,9 +150,7 @@ public class MainPagerAdapterComment extends MainPagerAdapter {
             }
             if (getCurrentFragment() != object) {
                 mCurrentFragment = ((SubmissionsView) object);
-                if (mCurrentFragment != null
-                        && mCurrentFragment.posts == null
-                        && mCurrentFragment.isAdded()) {
+                if (mCurrentFragment != null && mCurrentFragment.posts == null && mCurrentFragment.isAdded()) {
                     mCurrentFragment.doAdapter();
                 }
             }
