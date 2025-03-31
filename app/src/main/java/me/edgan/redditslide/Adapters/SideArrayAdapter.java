@@ -19,6 +19,7 @@ import androidx.cardview.widget.CardView;
 
 import me.edgan.redditslide.Activities.MainActivity;
 import me.edgan.redditslide.Activities.SubredditView;
+import me.edgan.redditslide.Activities.MainPagerAdapterComment;
 import me.edgan.redditslide.CaseInsensitiveArrayList;
 import me.edgan.redditslide.Constants;
 import me.edgan.redditslide.R;
@@ -191,10 +192,10 @@ public class SideArrayAdapter extends ArrayAdapter<String> {
                             } else {
                                 if (((MainActivity) getContext()).commentPager
                                         && ((MainActivity) getContext()).adapter
-                                                instanceof MainActivity.MainPagerAdapterComment) {
+                                                instanceof MainPagerAdapterComment) {
                                     ((MainActivity) getContext()).openingComments = null;
                                     ((MainActivity) getContext()).toOpenComments = -1;
-                                    ((MainActivity.MainPagerAdapterComment)
+                                    ((MainPagerAdapterComment)
                                                             ((MainActivity) getContext()).adapter)
                                                     .size =
                                             (((MainActivity) getContext()).usedArray.size() + 1);
