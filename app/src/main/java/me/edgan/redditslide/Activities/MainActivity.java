@@ -22,12 +22,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.InputType;
-import android.text.Spannable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Pair;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,7 +47,6 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.pm.ShortcutInfoCompat;
@@ -103,16 +100,13 @@ import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.NetworkStateReceiver;
 import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.OnSingleClickListener;
-import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.TimeUtils;
 import me.edgan.redditslide.util.FilterContentUtil;
 
 import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.models.MultiReddit;
 import net.dean.jraw.models.Submission;
-import net.dean.jraw.paginators.Sorting;
 import net.dean.jraw.paginators.SubredditPaginator;
-import net.dean.jraw.paginators.TimePeriod;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -191,6 +185,7 @@ public class MainActivity extends BaseActivity
     public ToolbarSearchController toolbarSearchController;
     SidebarController sidebarController;
     SidebarActions sidebarActions;
+    SubredditSortController subredditSortController;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SETTINGS_RESULT) {
@@ -553,7 +548,7 @@ public class MainActivity extends BaseActivity
                                     Snackbar.LENGTH_SHORT);
                     LayoutUtils.showSnackbar(s);
                 } else {
-                    openPopup();
+                    subredditSortController.openPopup();
                 }
                 return true;
             case R.id.search:
@@ -934,6 +929,7 @@ public class MainActivity extends BaseActivity
         toolbarSearchController = new ToolbarSearchController(this);
         sidebarController = new SidebarController(this); // Added initialization
         sidebarActions = new SidebarActions(this);
+        subredditSortController = new SubredditSortController(this);
 
         rootView = findViewById(android.R.id.content);
 
@@ -1359,63 +1355,7 @@ public class MainActivity extends BaseActivity
     }
 
 
-    Sorting sorts;
 
-
-    TimePeriod time = TimePeriod.DAY;
-
-    private void askTimePeriod(final Sorting sort, final String sub, final View dialoglayout) {
-        final DialogInterface.OnClickListener l2 =
-                new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        switch (i) {
-                            case 0:
-                                time = TimePeriod.HOUR;
-                                break;
-                            case 1:
-                                time = TimePeriod.DAY;
-                                break;
-                            case 2:
-                                time = TimePeriod.WEEK;
-                                break;
-                            case 3:
-                                time = TimePeriod.MONTH;
-                                break;
-                            case 4:
-                                time = TimePeriod.YEAR;
-                                break;
-                            case 5:
-                                time = TimePeriod.ALL;
-                                break;
-                        }
-                        SettingValues.setSubSorting(sort, time, sub);
-                        SortingUtil.setSorting(sub, sort);
-                        SortingUtil.setTime(sub, time);
-                        final TextView sort = dialoglayout.findViewById(R.id.sort);
-                        if (SettingValues.hasSort(sub)) {
-                            Sorting sortingis = SettingValues.getBaseSubmissionSort(sub);
-                            sort.setText(
-                                    sortingis.name()
-                                            + ((sortingis == Sorting.CONTROVERSIAL
-                                                            || sortingis == Sorting.TOP)
-                                                    ? " of "
-                                                            + SettingValues.getBaseTimePeriod(sub)
-                                                                    .name()
-                                                    : ""));
-                        } else {
-                            sort.setText("Set default sorting");
-                        }
-                        reloadSubs();
-                    }
-                };
-        new AlertDialog.Builder(MainActivity.this)
-                .setTitle(R.string.sorting_choose)
-                .setSingleChoiceItems(
-                        SortingUtil.getSortingTimesStrings(), SortingUtil.getSortingTimeId(""), l2)
-                .show();
-    }
 
 
     /**
@@ -1473,171 +1413,7 @@ public class MainActivity extends BaseActivity
         return position;
     }
 
-    public void openPopup() {
-        PopupMenu popup =
-                new PopupMenu(MainActivity.this, findViewById(R.id.anchor), Gravity.RIGHT);
-        String id =
-                ((SubmissionsView) (((MainPagerAdapter) pager.getAdapter()).getCurrentFragment()))
-                        .id;
 
-        final Spannable[] base = SortingUtil.getSortingSpannables(id);
-        for (Spannable s : base) {
-            // Do not add option for "Best" in any subreddit except for the frontpage.
-            if (!id.equals("frontpage") && s.toString().equals(getString(R.string.sorting_best))) {
-                continue;
-            }
-            MenuItem m = popup.getMenu().add(s);
-        }
-        popup.setOnMenuItemClickListener(
-                new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        int i = 0;
-                        for (Spannable s : base) {
-                            if (s.equals(item.getTitle())) {
-                                break;
-                            }
-                            i++;
-                        }
-
-                        LogUtil.v("Chosen is " + i);
-                        switch (i) {
-                            case 0:
-                                if (id.equals("frontpage")) {
-                                    SortingUtil.frontpageSorting = Sorting.HOT;
-                                } else {
-                                    SortingUtil.setSorting(id, Sorting.HOT);
-                                }
-                                reloadSubs();
-                                break;
-                            case 1:
-                                if (id.equals("frontpage")) {
-                                    SortingUtil.frontpageSorting = Sorting.NEW;
-                                } else {
-                                    SortingUtil.setSorting(id, Sorting.NEW);
-                                }
-                                reloadSubs();
-                                break;
-                            case 2:
-                                if (id.equals("frontpage")) {
-                                    SortingUtil.frontpageSorting = Sorting.RISING;
-                                } else {
-                                    SortingUtil.setSorting(id, Sorting.RISING);
-                                }
-                                reloadSubs();
-                                break;
-                            case 3:
-                                if (id.equals("frontpage")) {
-                                    SortingUtil.frontpageSorting = Sorting.TOP;
-                                } else {
-                                    SortingUtil.setSorting(id, Sorting.TOP);
-                                }
-                                openPopupTime();
-                                break;
-                            case 4:
-                                if (id.equals("frontpage")) {
-                                    SortingUtil.frontpageSorting = Sorting.CONTROVERSIAL;
-                                } else {
-                                    SortingUtil.setSorting(id, Sorting.CONTROVERSIAL);
-                                }
-                                openPopupTime();
-                                break;
-                            case 5:
-                                if (id.equals("frontpage")) {
-                                    SortingUtil.frontpageSorting = Sorting.BEST;
-                                } else {
-                                    SortingUtil.setSorting(id, Sorting.BEST);
-                                }
-                                reloadSubs();
-                                break;
-                        }
-                        return true;
-                    }
-                });
-        popup.show();
-    }
-
-    public void openPopupTime() {
-        PopupMenu popup =
-                new PopupMenu(MainActivity.this, findViewById(R.id.anchor), Gravity.RIGHT);
-        String id =
-                ((SubmissionsView) (((MainPagerAdapter) pager.getAdapter()).getCurrentFragment()))
-                        .id;
-        final Spannable[] base = SortingUtil.getSortingTimesSpannables(id);
-        for (Spannable s : base) {
-            MenuItem m = popup.getMenu().add(s);
-        }
-        popup.setOnMenuItemClickListener(
-                new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        LogUtil.v("Chosen is " + item.getOrder());
-                        int i = 0;
-                        for (Spannable s : base) {
-                            if (s.equals(item.getTitle())) {
-                                break;
-                            }
-                            i++;
-                        }
-                        switch (i) {
-                            case 0:
-                                SortingUtil.setTime(
-                                        ((SubmissionsView)
-                                                        (((MainPagerAdapter) pager.getAdapter())
-                                                                .getCurrentFragment()))
-                                                .id,
-                                        TimePeriod.HOUR);
-                                reloadSubs();
-                                break;
-                            case 1:
-                                SortingUtil.setTime(
-                                        ((SubmissionsView)
-                                                        (((MainPagerAdapter) pager.getAdapter())
-                                                                .getCurrentFragment()))
-                                                .id,
-                                        TimePeriod.DAY);
-                                reloadSubs();
-                                break;
-                            case 2:
-                                SortingUtil.setTime(
-                                        ((SubmissionsView)
-                                                        (((MainPagerAdapter) pager.getAdapter())
-                                                                .getCurrentFragment()))
-                                                .id,
-                                        TimePeriod.WEEK);
-                                reloadSubs();
-                                break;
-                            case 3:
-                                SortingUtil.setTime(
-                                        ((SubmissionsView)
-                                                        (((MainPagerAdapter) pager.getAdapter())
-                                                                .getCurrentFragment()))
-                                                .id,
-                                        TimePeriod.MONTH);
-                                reloadSubs();
-                                break;
-                            case 4:
-                                SortingUtil.setTime(
-                                        ((SubmissionsView)
-                                                        (((MainPagerAdapter) pager.getAdapter())
-                                                                .getCurrentFragment()))
-                                                .id,
-                                        TimePeriod.YEAR);
-                                reloadSubs();
-                                break;
-                            case 5:
-                                SortingUtil.setTime(
-                                        ((SubmissionsView)
-                                                        (((MainPagerAdapter) pager.getAdapter())
-                                                                .getCurrentFragment()))
-                                                .id,
-                                        TimePeriod.ALL);
-                                reloadSubs();
-                                break;
-                        }
-                        return true;
-                    }
-                });
-        popup.show();
-    }
 
     public static String randomoverride;
 
