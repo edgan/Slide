@@ -53,7 +53,7 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
                                     .setInterpolator(new LinearInterpolator())
                                     .setDuration(180);
                             if (position < mainActivity.usedArray.size()) {
-                                mainActivity.doSubSidebarNoLoad(mainActivity.usedArray.get(position));
+                                mainActivity.sidebarController.doSubSidebarNoLoad(mainActivity.usedArray.get(position));
                             }
                         }
                     }

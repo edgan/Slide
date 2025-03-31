@@ -839,11 +839,11 @@ public class DrawerController {
                                                     .adapter
                                                     .dataSet
                                                     .subredditRandom;
-                                    mainActivity.doSubSidebarNoLoad(sub);
-                                    mainActivity.doSubSidebar(sub);
+                                    mainActivity.sidebarController.doSubSidebarNoLoad(sub);
+                                    mainActivity.sidebarController.doSubSidebar(sub);
                                 }
                             } else {
-                                mainActivity.doSubSidebar(mainActivity.usedArray.get(current));
+                                mainActivity.sidebarController.doSubSidebar(mainActivity.usedArray.get(current));
                             }
                         }
                     }

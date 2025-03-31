@@ -22,7 +22,7 @@ public class AsyncGetSubredditTask extends AsyncTask<String, Void, Subreddit> {
     public void onPostExecute(Subreddit subreddit) {
         // Ensure mainActivity is still valid before calling its method
         if (mainActivity != null && !mainActivity.isDestroyed() && subreddit != null) {
-            mainActivity.doSubOnlyStuff(subreddit);
+            mainActivity.sidebarController.doSubOnlyStuff(subreddit);
         } else if (mainActivity != null && !mainActivity.isDestroyed()) {
              // Handle cases where subreddit is null (e.g., network error, subreddit not found)
             Log.w(LogUtil.getTag(), "Failed to fetch subreddit details or subreddit is null.");
