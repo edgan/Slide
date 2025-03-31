@@ -12,22 +12,23 @@ import net.dean.jraw.models.Subreddit;
  */
 public class AsyncGetSubredditTask extends AsyncTask<String, Void, Subreddit> {
 
-    private MainActivity mainActivity;
+    private SidebarController sidebarController;
 
-    public AsyncGetSubredditTask(MainActivity activity) {
-        this.mainActivity = activity;
+    public AsyncGetSubredditTask(SidebarController controller) {
+        this.sidebarController = controller;
     }
 
     @Override
     public void onPostExecute(Subreddit subreddit) {
         // Ensure mainActivity is still valid before calling its method
-        if (mainActivity != null && !mainActivity.isDestroyed() && subreddit != null) {
-            mainActivity.sidebarController.doSubOnlyStuff(subreddit);
-        } else if (mainActivity != null && !mainActivity.isDestroyed()) {
+        // Ensure sidebarController and its activity are still valid
+        if (sidebarController != null && sidebarController.isActivityValid() && subreddit != null) {
+            sidebarController.doSubOnlyStuff(subreddit);
+        } else if (sidebarController != null && sidebarController.isActivityValid()) {
              // Handle cases where subreddit is null (e.g., network error, subreddit not found)
             Log.w(LogUtil.getTag(), "Failed to fetch subreddit details or subreddit is null.");
-             // Optionally, inform the user or update UI accordingly in MainActivity
-             // mainActivity.handleSubredditFetchError();
+             // Optionally, inform the user or update UI accordingly via SidebarController
+             // sidebarController.handleSubredditFetchError();
         }
     }
 

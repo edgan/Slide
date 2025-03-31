@@ -47,8 +47,8 @@ public class MainPagerAdapterComment extends MainPagerAdapter {
                                     }
                                 }
                             } else {
-                                if (mainActivity.mAsyncGetSubreddit != null) {
-                                    mainActivity.mAsyncGetSubreddit.cancel(true);
+                                if (mainActivity.sidebarController != null) {
+                                    mainActivity.sidebarController.cancelAsyncGetSubredditTask();
                                 }
 
                                 if (mainActivity.header.getTranslationY() == 0) {

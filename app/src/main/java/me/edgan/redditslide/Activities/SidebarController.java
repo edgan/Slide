@@ -72,14 +72,20 @@ public class SidebarController {
     private Sorting sorts;
     private TimePeriod time = TimePeriod.DAY;
     private AsyncTask<View, Void, View> currentFlair;
+    private final SpoilerRobotoTextView sidebarBody; // Moved from MainActivity
+    private final CommentOverflow sidebarOverflow; // Moved from MainActivity
+    private AsyncGetSubredditTask mAsyncGetSubreddit = null; // Moved from MainActivity
 
     public SidebarController(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
+        // Initialize views moved from MainActivity
+        this.sidebarBody = (SpoilerRobotoTextView) mainActivity.findViewById(R.id.sidebar_text);
+        this.sidebarOverflow = (CommentOverflow) mainActivity.findViewById(R.id.commentOverflow);
     }
 
     public void doSubSidebar(final String subreddit) {
-        if (mainActivity.mAsyncGetSubreddit != null) {
-            mainActivity.mAsyncGetSubreddit.cancel(true);
+        if (this.mAsyncGetSubreddit != null) {
+            this.mAsyncGetSubreddit.cancel(true);
         }
         mainActivity.findViewById(R.id.loader).setVisibility(View.VISIBLE);
 
@@ -96,8 +102,8 @@ public class SidebarController {
                 mainActivity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.END);
             }
 
-            mainActivity.mAsyncGetSubreddit = new AsyncGetSubredditTask(mainActivity);
-            mainActivity.mAsyncGetSubreddit.execute(subreddit);
+            this.mAsyncGetSubreddit = new AsyncGetSubredditTask(this);
+            this.mAsyncGetSubreddit.execute(subreddit);
 
             final View dialoglayout = mainActivity.findViewById(R.id.sidebarsub);
             {
@@ -570,8 +576,8 @@ public class SidebarController {
     }
 
     public void doSubSidebarNoLoad(final String subreddit) {
-        if (mainActivity.mAsyncGetSubreddit != null) {
-            mainActivity.mAsyncGetSubreddit.cancel(true);
+        if (this.mAsyncGetSubreddit != null) {
+            this.mAsyncGetSubreddit.cancel(true);
         }
 
         mainActivity.findViewById(R.id.loader).setVisibility(View.GONE);
@@ -589,7 +595,7 @@ public class SidebarController {
                 mainActivity.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.END);
             }
 
-            mainActivity.findViewById(R.id.sidebar_text).setVisibility(View.GONE);
+            this.sidebarBody.setVisibility(View.GONE);
             mainActivity.findViewById(R.id.sub_title).setVisibility(View.GONE);
             mainActivity.findViewById(R.id.subscribers).setVisibility(View.GONE);
             mainActivity.findViewById(R.id.active_users).setVisibility(View.GONE);
@@ -625,7 +631,7 @@ public class SidebarController {
             mainActivity.findViewById(R.id.sidebar_text).setVisibility(View.VISIBLE);
 
             final String text = subreddit.getDataNode().get("description_html").asText().trim();
-            setViews(text, subreddit.getDisplayName(), mainActivity.sidebarBody, mainActivity.sidebarOverflow);
+            setViews(text, subreddit.getDisplayName(), this.sidebarBody, this.sidebarOverflow);
 
             // get all subs that have Notifications enabled
             ArrayList<String> rawSubs = StringUtil.stringToArray(Reddit.appRestart.getString(CheckForMail.SUBS_TO_GET, ""));
@@ -643,7 +649,7 @@ public class SidebarController {
             boolean isNotified =subThresholds.containsKey(subreddit.getDisplayName().toLowerCase(Locale.ENGLISH));
             ((AppCompatCheckBox) mainActivity.findViewById(R.id.notify_posts_state)).setChecked(isNotified);
         } else {
-            mainActivity.findViewById(R.id.sidebar_text).setVisibility(View.GONE);
+            this.sidebarBody.setVisibility(View.GONE);
         }
         {
             View collection = mainActivity.findViewById(R.id.collection);
@@ -827,11 +833,11 @@ public class SidebarController {
         }
         {
             final TextView subscribe = (TextView) mainActivity.findViewById(R.id.subscribe);
-            mainActivity.currentlySubbed =
+            mainActivity.sidebarActions.currentlySubbed =
                 (!Authentication.isLoggedIn && mainActivity.usedArray.contains(subreddit.getDisplayName().toLowerCase(Locale.ENGLISH)))
                 || subreddit.isUserSubscriber();
 
-            MiscUtil.doSubscribeButtonText(mainActivity.currentlySubbed, subscribe);
+            MiscUtil.doSubscribeButtonText(mainActivity.sidebarActions.currentlySubbed, subscribe);
 
             assert subscribe != null;
             subscribe.setOnClickListener(
@@ -853,7 +859,7 @@ public class SidebarController {
                                                     .setPositiveButton(
                                                         R.string.btn_yes,
                                                         (dialog1, which1) -> {
-                                                            mainActivity.changeSubscription( subreddit, true); // Force add the subscription
+                                                            mainActivity.sidebarActions.changeSubscription( subreddit, true); // Force add the subscription
                                                             Snackbar s = Snackbar.make(
                                                                 mainActivity.mToolbar, mainActivity.getString(R.string.misc_subscribed),
                                                                 Snackbar.LENGTH_LONG
@@ -864,7 +870,7 @@ public class SidebarController {
                                                     .setCancelable(false)
                                                     .show();
                                             } else {
-                                                mainActivity.changeSubscription(
+                                                mainActivity.sidebarActions.changeSubscription(
                                                         subreddit, true);
                                             }
                                         }
@@ -883,14 +889,14 @@ public class SidebarController {
                                 .setNeutralButton(
                                         R.string.btn_add_to_sublist,
                                         (dialog, which) -> {
-                                            mainActivity.changeSubscription(subreddit, true); // Force add the subscription
+                                            mainActivity.sidebarActions.changeSubscription(subreddit, true); // Force add the subscription
                                             Snackbar s = Snackbar.make(mainActivity.mToolbar, R.string.sub_added, Snackbar.LENGTH_LONG);
                                             LayoutUtils.showSnackbar(s);
                                         })
                                 .setNegativeButton(R.string.btn_cancel, null)
                                 .show();
                         } else {
-                            mainActivity.changeSubscription(subreddit, true);
+                            mainActivity.sidebarActions.changeSubscription(subreddit, true);
                         }
                     }
 
@@ -909,7 +915,7 @@ public class SidebarController {
                                                     .setMessage(R.string.force_change_subscription_desc)
                                                     .setPositiveButton(R.string.btn_yes,
                                                         (dialog12, which12) -> {
-                                                            mainActivity.changeSubscription(subreddit, false); // Force add the subscription
+                                                            mainActivity.sidebarActions.changeSubscription(subreddit, false); // Force add the subscription
                                                             Snackbar s = Snackbar.make(
                                                                 mainActivity.mToolbar,
                                                                 mainActivity.getString(R.string.misc_unsubscribed),
@@ -922,7 +928,7 @@ public class SidebarController {
                                                     .setCancelable(false)
                                                     .show();
                                             } else {
-                                                mainActivity.changeSubscription(subreddit, false);
+                                                mainActivity.sidebarActions.changeSubscription(subreddit, false);
                                             }
                                         }
 
@@ -939,7 +945,7 @@ public class SidebarController {
                                     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR))
                                 .setNeutralButton(
                                     R.string.just_unsub,
-                                    (dialog, which) -> { mainActivity.changeSubscription(subreddit, false); // Force add the subscription
+                                    (dialog, which) -> { mainActivity.sidebarActions.changeSubscription(subreddit, false); // Force add the subscription
                                         Snackbar s = Snackbar.make(mainActivity.mToolbar, R.string.misc_unsubscribed, Snackbar.LENGTH_LONG);
                                         LayoutUtils.showSnackbar(s);
                                     }
@@ -947,18 +953,18 @@ public class SidebarController {
                                 .setNegativeButton(R.string.btn_cancel, null)
                                 .show();
                         } else {
-                            mainActivity.changeSubscription(subreddit, false);
+                            mainActivity.sidebarActions.changeSubscription(subreddit, false);
                         }
                     }
 
                     @Override
                     public void onClick(View v) {
-                        if (!mainActivity.currentlySubbed) {
+                        if (!mainActivity.sidebarActions.currentlySubbed) {
                             doSubscribe();
                         } else {
                             doUnsubscribe();
                         }
-                        MiscUtil.doSubscribeButtonText(mainActivity.currentlySubbed, subscribe);
+                        MiscUtil.doSubscribeButtonText(mainActivity.sidebarActions.currentlySubbed, subscribe);
                     }
                 });
         }
@@ -967,8 +973,8 @@ public class SidebarController {
             setViews(
                 subreddit.getDataNode().get("public_description_html").asText(),
                 subreddit.getDisplayName().toLowerCase(Locale.ENGLISH),
-                ((SpoilerRobotoTextView) mainActivity.findViewById(R.id.sub_title)),
-                (CommentOverflow) mainActivity.findViewById(R.id.sub_title_overflow)
+                ((SpoilerRobotoTextView) mainActivity.findViewById(R.id.sub_title)), // Keep using findViewById for views not moved
+                (CommentOverflow) mainActivity.findViewById(R.id.sub_title_overflow) // Keep using findViewById for views not moved
             );
         } else {
             mainActivity.findViewById(R.id.sub_title).setVisibility(View.GONE);
@@ -1038,9 +1044,28 @@ public class SidebarController {
                 if (maybeScrollable instanceof HorizontalScrollView) {
                     sidebar.addScrollable(maybeScrollable);
                 }
+
             }
         } else {
             commentOverflow.removeAllViews();
+        }
+    }
+
+    /**
+     * Helper method to check if the associated MainActivity is still valid.
+     * Used by AsyncGetSubredditTask to avoid crashes if the activity is destroyed.
+     * @return true if the activity is not null and not destroyed, false otherwise.
+     */
+    public boolean isActivityValid() {
+        return mainActivity != null && !mainActivity.isDestroyed();
+    }
+
+    /**
+     * Cancels the currently running AsyncGetSubredditTask, if any.
+     */
+    public void cancelAsyncGetSubredditTask() {
+        if (mAsyncGetSubreddit != null) {
+            mAsyncGetSubreddit.cancel(true);
         }
     }
 }

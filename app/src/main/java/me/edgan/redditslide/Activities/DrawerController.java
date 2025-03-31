@@ -800,7 +800,7 @@ public class DrawerController {
                                 Intent i = new Intent(mainActivity, SettingsActivity.class);
                                 mainActivity.startActivity(i);
                                 // Cancel sub loading because exiting the settings will reload it anyway
-                                if (mainActivity.mAsyncGetSubreddit != null) mainActivity.mAsyncGetSubreddit.cancel(true);
+                                if (mainActivity.sidebarController != null) mainActivity.sidebarController.cancelAsyncGetSubredditTask();
                                 mainActivity.drawerLayout.closeDrawers();
                             }
                         });

@@ -1,6 +1,5 @@
 package me.edgan.redditslide.Activities;
 
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -84,12 +83,10 @@ import me.edgan.redditslide.Notifications.CheckForMail;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
-import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.Synccit.MySynccitUpdateTask;
 import me.edgan.redditslide.Synccit.SynccitRead;
 import me.edgan.redditslide.UserSubscriptions;
 import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
-import me.edgan.redditslide.Views.CommentOverflow;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToggleSwipeViewPager;
 import me.edgan.redditslide.Visuals.ColorPreferences;
@@ -113,7 +110,6 @@ import me.edgan.redditslide.util.FilterContentUtil;
 import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.models.MultiReddit;
 import net.dean.jraw.models.Submission;
-import net.dean.jraw.models.Subreddit;
 import net.dean.jraw.paginators.Sorting;
 import net.dean.jraw.paginators.SubredditPaginator;
 import net.dean.jraw.paginators.TimePeriod;
@@ -179,16 +175,12 @@ public class MainActivity extends BaseActivity
     String term;
     View headerMain;
     MaterialDialog d;
-    public AsyncTask<View, Void, View> currentFlair; // Made public
-    public SpoilerRobotoTextView sidebarBody; // Made public
-    public CommentOverflow sidebarOverflow; // Made public
+    public AsyncTask<View, Void, View> currentFlair;
     View accountsArea;
     SideArrayAdapter sideArrayAdapter;
     Menu menu;
     AsyncTask caching;
-    public boolean currentlySubbed; // Made public
     int back;
-    public AsyncGetSubredditTask mAsyncGetSubreddit = null; // Made public
     int headerHeight;
     public int reloadItemNumber = -2;
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1001;
@@ -197,7 +189,8 @@ public class MainActivity extends BaseActivity
 
     DrawerController drawerController;
     public ToolbarSearchController toolbarSearchController;
-    SidebarController sidebarController; // Added declaration
+    SidebarController sidebarController;
+    SidebarActions sidebarActions;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SETTINGS_RESULT) {
@@ -940,6 +933,7 @@ public class MainActivity extends BaseActivity
         drawerController = new DrawerController(this);
         toolbarSearchController = new ToolbarSearchController(this);
         sidebarController = new SidebarController(this); // Added initialization
+        sidebarActions = new SidebarActions(this);
 
         rootView = findViewById(android.R.id.content);
 
@@ -995,10 +989,6 @@ public class MainActivity extends BaseActivity
         if (singleMode) {
             pager.setSwipingEnabled(false);
         }
-
-        sidebarBody = (SpoilerRobotoTextView) findViewById(R.id.sidebar_text);
-
-        sidebarOverflow = (CommentOverflow) findViewById(R.id.commentOverflow);
 
         if (!Reddit.appRestart.getBoolean("isRestarting", false)
                 && Reddit.colors.contains("Tutorial")) {
@@ -2063,20 +2053,6 @@ public class MainActivity extends BaseActivity
 
         return IconCompat.createWithBitmap(color);
     }
-
-    void changeSubscription(Subreddit subreddit, boolean isChecked) { // Made package-private
-        currentlySubbed = isChecked;
-        if (isChecked) {
-            UserSubscriptions.addSubreddit(
-                    subreddit.getDisplayName().toLowerCase(Locale.ENGLISH), MainActivity.this);
-        } else {
-            UserSubscriptions.removeSubreddit(
-                    subreddit.getDisplayName().toLowerCase(Locale.ENGLISH), MainActivity.this);
-            pager.setCurrentItem(pager.getCurrentItem() - 1);
-            restartTheme();
-        }
-    }
-
 
     private void dismissProgressDialog() {
         if (d != null && d.isShowing()) {
