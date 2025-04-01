@@ -4,6 +4,8 @@ import android.graphics.PointF;
 import android.util.Log;
 import androidx.annotation.NonNull;
 
+import me.edgan.redditslide.util.SubsamplingScaleImageViewDrawHelper;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -166,7 +168,7 @@ public final class AnimationBuilder {
             float vTranslateYEnd = vFocus.y - (targetScale * view.anim.sCenterStart.y);
             SubsamplingScaleImageView.ScaleAndTranslate satEnd = new SubsamplingScaleImageView.ScaleAndTranslate(targetScale, new PointF(vTranslateXEnd, vTranslateYEnd));
             // Fit the end translation into bounds
-            view.fitToBounds(true, satEnd);
+            SubsamplingScaleImageViewDrawHelper.fitToBounds(view, true, satEnd);
             // Adjust the position of the focus point at end so image will be in bounds
             view.anim.vFocusEnd = new PointF(vFocus.x + (satEnd.vTranslate.x - vTranslateXEnd), vFocus.y + (satEnd.vTranslate.y - vTranslateYEnd));
         }
