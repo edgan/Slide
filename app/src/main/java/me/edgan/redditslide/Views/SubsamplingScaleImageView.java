@@ -319,7 +319,7 @@ public class SubsamplingScaleImageView extends View {
     private PointF quickScaleVStart;
 
     // Scale and center animation tracking
-    private Anim anim;
+    Anim anim;
 
     // Whether a ready notification has been sent to subclasses
     private boolean readySent;
@@ -347,7 +347,7 @@ public class SubsamplingScaleImageView extends View {
     private Paint tileBgPaint;
 
     // Volatile fields used to reduce object creation
-    private ScaleAndTranslate satTemp;
+    ScaleAndTranslate satTemp;
     private Matrix matrix;
     private RectF sRect;
     private final float[] srcArray = new float[8];
@@ -727,7 +727,7 @@ public class SubsamplingScaleImageView extends View {
                                             ((getWidth() / 2.0f) - vTranslateEnd.x) / scale;
                                     float sCenterYEnd =
                                             ((getHeight() / 2.0f) - vTranslateEnd.y) / scale;
-                                    new AnimationBuilder(new PointF(sCenterXEnd, sCenterYEnd))
+                                    new AnimationBuilder(SubsamplingScaleImageView.this, new PointF(sCenterXEnd, sCenterYEnd))
                                             .withEasing(EASE_OUT_QUAD)
                                             .withPanLimited(false)
                                             .withOrigin(ORIGIN_FLING)
@@ -1181,13 +1181,13 @@ public class SubsamplingScaleImageView extends View {
         if (doubleTapZoomStyle == ZOOM_FOCUS_CENTER_IMMEDIATE) {
             setScaleAndCenter(targetScale, sCenter);
         } else if (doubleTapZoomStyle == ZOOM_FOCUS_CENTER || !zoomIn || !panEnabled) {
-            new AnimationBuilder(targetScale, sCenter)
+            new AnimationBuilder(this, targetScale, sCenter)
                     .withInterruptible(false)
                     .withDuration(doubleTapZoomDuration)
                     .withOrigin(ORIGIN_DOUBLE_TAP_ZOOM)
                     .start();
         } else if (doubleTapZoomStyle == ZOOM_FOCUS_FIXED) {
-            new AnimationBuilder(targetScale, sCenter, vFocus)
+            new AnimationBuilder(this, targetScale, sCenter, vFocus)
                     .withInterruptible(false)
                     .withDuration(doubleTapZoomDuration)
                     .withOrigin(ORIGIN_DOUBLE_TAP_ZOOM)
@@ -1798,7 +1798,7 @@ public class SubsamplingScaleImageView extends View {
      * @param sat The scale we want and the translation we're aiming for. The values are adjusted to
      *     be valid.
      */
-    private void fitToBounds(boolean center, ScaleAndTranslate sat) {
+    void fitToBounds(boolean center, ScaleAndTranslate sat) {
         if (panLimit == PAN_LIMIT_OUTSIDE && isReady()) {
             center = false;
         }
@@ -1856,7 +1856,7 @@ public class SubsamplingScaleImageView extends View {
      * @param center Whether the image should be centered in the dimension it's too small to fill.
      *     While animating this can be false to avoid changes in direction as bounds are reached.
      */
-    private void fitToBounds(boolean center) {
+    void fitToBounds(boolean center) {
         boolean init = false;
         if (vTranslate == null) {
             init = true;
@@ -2348,32 +2348,30 @@ public class SubsamplingScaleImageView extends View {
         private Rect fileSRect;
     }
 
-    private static class Anim {
-
-        private float scaleStart; // Scale at start of anim
-        private float scaleEnd; // Scale at end of anim (target)
-        private PointF sCenterStart; // Source center point at start
-        private PointF sCenterEnd; // Source center point at end, adjusted for pan limits
-        private PointF
-                sCenterEndRequested; // Source center point that was requested, without adjustment
-        private PointF vFocusStart; // View point that was double tapped
-        private PointF vFocusEnd; // Where the view focal point should be moved to during the anim
-        private long duration = 500; // How long the anim takes
-        private boolean interruptible = true; // Whether the anim can be interrupted by a touch
-        private int easing = EASE_IN_OUT_QUAD; // Easing style
-        private int origin = ORIGIN_ANIM; // Animation origin (API, double tap or fling)
-        private long time = System.currentTimeMillis(); // Start time
-        private OnAnimationEventListener listener; // Event listener
+    static class Anim {
+        float scaleStart; // Scale at start of anim
+        float scaleEnd; // Scale at end of anim (target)
+        PointF sCenterStart; // Source center point at start
+        PointF sCenterEnd; // Source center point at end, adjusted for pan limits
+        PointF sCenterEndRequested; // Source center point that was requested, without adjustment
+        PointF vFocusStart; // View point that was double tapped
+        PointF vFocusEnd; // Where the view focal point should be moved to during the anim
+        long duration = 500; // How long the anim takes
+        boolean interruptible = true; // Whether the anim can be interrupted by a touch
+        int easing = EASE_IN_OUT_QUAD; // Easing style
+        int origin = ORIGIN_ANIM; // Animation origin (API, double tap or fling)
+        long time = System.currentTimeMillis(); // Start time
+        OnAnimationEventListener listener; // Event listener
     }
 
-    private static class ScaleAndTranslate {
-        private ScaleAndTranslate(float scale, PointF vTranslate) {
+    static class ScaleAndTranslate {
+        ScaleAndTranslate(float scale, PointF vTranslate) {
             this.scale = scale;
             this.vTranslate = vTranslate;
         }
 
-        private float scale;
-        private final PointF vTranslate;
+        float scale;
+        final PointF vTranslate;
     }
 
     /** Set scale, center and orientation from saved state. */
@@ -2718,7 +2716,7 @@ public class SubsamplingScaleImageView extends View {
      * screen as allowed.
      */
     @NonNull
-    private PointF limitedSCenter(
+    PointF limitedSCenter(
             float sCenterX, float sCenterY, float scale, @NonNull PointF sTarget) {
         PointF vTranslate = vTranslateForSCenter(sCenterX, sCenterY, scale);
         int vxCenter = getPaddingLeft() + (getWidth() - getPaddingRight() - getPaddingLeft()) / 2;
@@ -2747,7 +2745,7 @@ public class SubsamplingScaleImageView extends View {
     }
 
     /** Adjust a requested scale to be within the allowed limits. */
-    private float limitedScale(float targetScale) {
+    float limitedScale(float targetScale) {
         targetScale = Math.max(minScale(), targetScale);
         targetScale = Math.min(maxScale, targetScale);
         return targetScale;
@@ -3415,7 +3413,7 @@ public class SubsamplingScaleImageView extends View {
         if (!isReady()) {
             return null;
         }
-        return new AnimationBuilder(sCenter);
+        return new AnimationBuilder(this, sCenter);
     }
 
     /**
@@ -3432,7 +3430,7 @@ public class SubsamplingScaleImageView extends View {
         if (!isReady()) {
             return null;
         }
-        return new AnimationBuilder(scale);
+        return new AnimationBuilder(this, scale);
     }
 
     /**
@@ -3450,177 +3448,7 @@ public class SubsamplingScaleImageView extends View {
         if (!isReady()) {
             return null;
         }
-        return new AnimationBuilder(scale, sCenter);
-    }
-
-    /**
-     * Builder class used to set additional options for a scale animation. Create an instance using
-     * {@link #animateScale(float)}, then set your options and call {@link #start()}.
-     */
-    public final class AnimationBuilder {
-
-        private final float targetScale;
-        private final PointF targetSCenter;
-        private final PointF vFocus;
-        private long duration = 500;
-        private int easing = EASE_IN_OUT_QUAD;
-        private int origin = ORIGIN_ANIM;
-        private boolean interruptible = true;
-        private boolean panLimited = true;
-        private OnAnimationEventListener listener;
-
-        private AnimationBuilder(PointF sCenter) {
-            this.targetScale = scale;
-            this.targetSCenter = sCenter;
-            this.vFocus = null;
-        }
-
-        private AnimationBuilder(float scale) {
-            this.targetScale = scale;
-            this.targetSCenter = getCenter();
-            this.vFocus = null;
-        }
-
-        private AnimationBuilder(float scale, PointF sCenter) {
-            this.targetScale = scale;
-            this.targetSCenter = sCenter;
-            this.vFocus = null;
-        }
-
-        private AnimationBuilder(float scale, PointF sCenter, PointF vFocus) {
-            this.targetScale = scale;
-            this.targetSCenter = sCenter;
-            this.vFocus = vFocus;
-        }
-
-        /**
-         * Desired duration of the anim in milliseconds. Default is 500.
-         *
-         * @param duration duration in milliseconds.
-         * @return this builder for method chaining.
-         */
-        @NonNull
-        public AnimationBuilder withDuration(long duration) {
-            this.duration = duration;
-            return this;
-        }
-
-        /**
-         * Whether the animation can be interrupted with a touch. Default is true.
-         *
-         * @param interruptible interruptible flag.
-         * @return this builder for method chaining.
-         */
-        @NonNull
-        public AnimationBuilder withInterruptible(boolean interruptible) {
-            this.interruptible = interruptible;
-            return this;
-        }
-
-        /**
-         * Set the easing style. See static fields. {@link #EASE_IN_OUT_QUAD} is recommended, and
-         * the default.
-         *
-         * @param easing easing style.
-         * @return this builder for method chaining.
-         */
-        @NonNull
-        public AnimationBuilder withEasing(int easing) {
-            if (!VALID_EASING_STYLES.contains(easing)) {
-                throw new IllegalArgumentException("Unknown easing type: " + easing);
-            }
-            this.easing = easing;
-            return this;
-        }
-
-        /**
-         * Add an animation event listener.
-         *
-         * @param listener The listener.
-         * @return this builder for method chaining.
-         */
-        @NonNull
-        public AnimationBuilder withOnAnimationEventListener(OnAnimationEventListener listener) {
-            this.listener = listener;
-            return this;
-        }
-
-        /**
-         * Only for internal use. When set to true, the animation proceeds towards the actual end
-         * point - the nearest point to the center allowed by pan limits. When false, animation is
-         * in the direction of the requested end point and is stopped when the limit for each axis
-         * is reached. The latter behaviour is used for flings but nothing else.
-         */
-        @NonNull
-        private AnimationBuilder withPanLimited(boolean panLimited) {
-            this.panLimited = panLimited;
-            return this;
-        }
-
-        /** Only for internal use. Indicates what caused the animation. */
-        @NonNull
-        private AnimationBuilder withOrigin(int origin) {
-            this.origin = origin;
-            return this;
-        }
-
-        /** Starts the animation. */
-        public void start() {
-            if (anim != null && anim.listener != null) {
-                try {
-                    anim.listener.onInterruptedByNewAnim();
-                } catch (Exception e) {
-                    Log.w(TAG, "Error thrown by animation listener", e);
-                }
-            }
-
-            int vxCenter =
-                    getPaddingLeft() + (getWidth() - getPaddingRight() - getPaddingLeft()) / 2;
-            int vyCenter =
-                    getPaddingTop() + (getHeight() - getPaddingBottom() - getPaddingTop()) / 2;
-            float targetScale = limitedScale(this.targetScale);
-            PointF targetSCenter =
-                    panLimited
-                            ? limitedSCenter(
-                                    this.targetSCenter.x,
-                                    this.targetSCenter.y,
-                                    targetScale,
-                                    new PointF())
-                            : this.targetSCenter;
-            anim = new Anim();
-            anim.scaleStart = scale;
-            anim.scaleEnd = targetScale;
-            anim.time = System.currentTimeMillis();
-            anim.sCenterEndRequested = targetSCenter;
-            anim.sCenterStart = getCenter();
-            anim.sCenterEnd = targetSCenter;
-            anim.vFocusStart = sourceToViewCoord(targetSCenter);
-            anim.vFocusEnd = new PointF(vxCenter, vyCenter);
-            anim.duration = duration;
-            anim.interruptible = interruptible;
-            anim.easing = easing;
-            anim.origin = origin;
-            anim.time = System.currentTimeMillis();
-            anim.listener = listener;
-
-            if (vFocus != null) {
-                // Calculate where translation will be at the end of the anim
-                float vTranslateXEnd = vFocus.x - (targetScale * anim.sCenterStart.x);
-                float vTranslateYEnd = vFocus.y - (targetScale * anim.sCenterStart.y);
-                ScaleAndTranslate satEnd =
-                        new ScaleAndTranslate(
-                                targetScale, new PointF(vTranslateXEnd, vTranslateYEnd));
-                // Fit the end translation into bounds
-                fitToBounds(true, satEnd);
-                // Adjust the position of the focus point at end so image will be in bounds
-                anim.vFocusEnd =
-                        new PointF(
-                                vFocus.x + (satEnd.vTranslate.x - vTranslateXEnd),
-                                vFocus.y + (satEnd.vTranslate.y - vTranslateYEnd));
-            }
-
-            invalidate();
-        }
+        return new AnimationBuilder(this, scale, sCenter);
     }
 
     /**
