@@ -1,6 +1,5 @@
 package me.edgan.redditslide.util;
 
-// Removed unused Handler import, will rely on view.handler
 import android.view.MotionEvent;
 import androidx.annotation.NonNull;
 
@@ -20,7 +19,6 @@ public class TouchEventUtil {
     }
 
     // Copied and modified from SubsamplingScaleImageView
-    // Visibility of accessed members in SubsamplingScaleImageView might need adjustment (private -> package-private/protected)
     @SuppressWarnings("deprecation")
     public static boolean handleTouchEventInternal(@NonNull SubsamplingScaleImageView view, @NonNull MotionEvent event) {
         int touchCount = event.getPointerCount();
@@ -29,7 +27,7 @@ public class TouchEventUtil {
             case MotionEvent.ACTION_POINTER_1_DOWN:
             case MotionEvent.ACTION_POINTER_2_DOWN:
                 view.anim = null;
-                view.requestDisallowInterceptTouchEvent(true); // Assuming accessible
+                view.requestDisallowInterceptTouchEvent(true);
                 view.maxTouchCount = Math.max(view.maxTouchCount, touchCount);
 
                 if (touchCount >= 2) {

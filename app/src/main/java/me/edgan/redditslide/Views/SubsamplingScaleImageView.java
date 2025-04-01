@@ -867,7 +867,6 @@ public class SubsamplingScaleImageView extends View {
         return handled || super.onTouchEvent(event);
     }
 
-
     public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
         ViewParent parent = getParent();
         if (parent != null) {
