@@ -44,6 +44,7 @@ import com.davemorrissey.labs.subscaleview.decoder.SkiaImageDecoder;
 import com.davemorrissey.labs.subscaleview.decoder.SkiaImageRegionDecoder;
 
 import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.util.ImageViewGestureListener;
 import me.edgan.redditslide.util.SubsamplingScaleImageViewDrawHelper;
 import me.edgan.redditslide.util.TouchEventUtil;
 
@@ -681,80 +682,15 @@ public class SubsamplingScaleImageView extends View {
         setGestureDetector(getContext());
     }
 
+    // Public method to reset the gesture detector, used by the listener if needed
+    public void setGestureDetectorPublic(final Context context) {
+        setGestureDetector(context);
+    }
+
     private void setGestureDetector(final Context context) {
-        this.detector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                if (panEnabled
-                        && readySent
-                        && vTranslate != null
-                        && e1 != null
-                        && e2 != null
-                        && (Math.abs(e1.getX() - e2.getX()) > 50
-                                || Math.abs(e1.getY() - e2.getY()) > 50)
-                        && (Math.abs(velocityX) > 500 || Math.abs(velocityY) > 500)
-                        && !isZooming) {
-                    PointF vTranslateEnd =
-                            new PointF(
-                                    vTranslate.x + (velocityX * 0.25f),
-                                    vTranslate.y + (velocityY * 0.25f));
-                    float sCenterXEnd =
-                            ((getWidth() / 2.0f) - vTranslateEnd.x) / scale;
-                    float sCenterYEnd =
-                            ((getHeight() / 2.0f) - vTranslateEnd.y) / scale;
-                    new AnimationBuilder(SubsamplingScaleImageView.this, new PointF(sCenterXEnd, sCenterYEnd))
-                            .withEasing(EASE_OUT_QUAD)
-                            .withPanLimited(false)
-                            .withOrigin(ORIGIN_FLING)
-                            .start();
-                    return true;
-                }
-                return super.onFling(e1, e2, velocityX, velocityY);
-            }
-
-            @Override
-            public boolean onSingleTapConfirmed(MotionEvent e) {
-                performClick();
-                return true;
-            }
-
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-                if (zoomEnabled && readySent && vTranslate != null) {
-                    // Hacky solution for #15 - after a double tap the
-                    // GestureDetector gets in a state
-                    // where the next fling is ignored, so here we replace it with a
-                    // new one.
-                    setGestureDetector(context);
-                    if (quickScaleEnabled) {
-                        // Store quick scale params. This will become either a
-                        // double tap zoom or a
-                        // quick scale depending on whether the user swipes.
-                        vCenterStart = new PointF(e.getX(), e.getY());
-                        vTranslateStart = new PointF(vTranslate.x, vTranslate.y);
-                        scaleStart = scale;
-                        isQuickScaling = true;
-                        isZooming = true;
-                        quickScaleLastDistance = -1F;
-                        quickScaleSCenter = viewToSourceCoord(vCenterStart);
-                        quickScaleVStart = new PointF(e.getX(), e.getY());
-                        quickScaleVLastPoint =
-                                new PointF(
-                                        quickScaleSCenter.x, quickScaleSCenter.y);
-                        quickScaleMoved = false;
-                        // We need to get events in onTouchEvent after this.
-                        return false;
-                    } else {
-                        // Start double tap zoom animation.
-                        doubleTapZoom(
-                                viewToSourceCoord(new PointF(e.getX(), e.getY())),
-                                new PointF(e.getX(), e.getY()));
-                        return true;
-                    }
-                }
-                return super.onDoubleTapEvent(e);
-            }
-        });
+        // Use the new external listener class directly.
+        // The methods onSingleTapConfirmed and onDoubleTap will be moved next.
+        this.detector = new GestureDetector(context, new ImageViewGestureListener(this, context));
 
         singleDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -1683,19 +1619,19 @@ public class SubsamplingScaleImageView extends View {
     }
 
     public static class Anim {
-        float scaleStart; // Scale at start of anim
-        float scaleEnd; // Scale at end of anim (target)
-        PointF sCenterStart; // Source center point at start
-        PointF sCenterEnd; // Source center point at end, adjusted for pan limits
-        PointF sCenterEndRequested; // Source center point that was requested, without adjustment
-        PointF vFocusStart; // View point that was double tapped
-        PointF vFocusEnd; // Where the view focal point should be moved to during the anim
-        long duration = 500; // How long the anim takes
-        boolean interruptible = true; // Whether the anim can be interrupted by a touch
-        int easing = EASE_IN_OUT_QUAD; // Easing style
-        int origin = ORIGIN_ANIM; // Animation origin (API, double tap or fling)
-        long time = System.currentTimeMillis(); // Start time
-        OnAnimationEventListener listener; // Event listener
+        public float scaleStart; // Scale at start of anim
+        public float scaleEnd; // Scale at end of anim (target)
+        public PointF sCenterStart; // Source center point at start
+        public PointF sCenterEnd; // Source center point at end, adjusted for pan limits
+        public PointF sCenterEndRequested; // Source center point that was requested, without adjustment
+        public PointF vFocusStart; // View point that was double tapped
+        public PointF vFocusEnd; // Where the view focal point should be moved to during the anim
+        public long duration = 500; // How long the anim takes
+        public boolean interruptible = true; // Whether the anim can be interrupted by a touch
+        public int easing = EASE_IN_OUT_QUAD; // Easing style
+        public int origin = ORIGIN_ANIM; // Animation origin (API, double tap or fling)
+        public long time = System.currentTimeMillis(); // Start time
+        public OnAnimationEventListener listener; // Event listener
     }
 
     public static class ScaleAndTranslate {

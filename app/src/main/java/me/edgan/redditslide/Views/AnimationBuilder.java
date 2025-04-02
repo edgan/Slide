@@ -29,13 +29,12 @@ public final class AnimationBuilder {
     private SubsamplingScaleImageView.OnAnimationEventListener listener;
 
     // Reference static constants via class
-    private static final List<Integer> VALID_EASING_STYLES =
-            Arrays.asList(SubsamplingScaleImageView.EASE_IN_OUT_QUAD, SubsamplingScaleImageView.EASE_OUT_QUAD);
+    private static final List<Integer> VALID_EASING_STYLES =  Arrays.asList(SubsamplingScaleImageView.EASE_IN_OUT_QUAD, SubsamplingScaleImageView.EASE_OUT_QUAD);
 
 
-    AnimationBuilder(SubsamplingScaleImageView view, PointF sCenter) {
+    public AnimationBuilder(SubsamplingScaleImageView view, PointF sCenter) {
         this.view = view;
-        this.targetScale = view.scale; // Access via view instance
+        this.targetScale = view.scale;
         this.targetSCenter = sCenter;
         this.vFocus = null;
     }
@@ -43,7 +42,7 @@ public final class AnimationBuilder {
     AnimationBuilder(SubsamplingScaleImageView view, float scale) {
         this.view = view;
         this.targetScale = scale;
-        this.targetSCenter = view.getCenter(); // Access via view instance
+        this.targetSCenter = view.getCenter();
         this.vFocus = null;
     }
 
@@ -70,6 +69,7 @@ public final class AnimationBuilder {
     @NonNull
     public AnimationBuilder withDuration(long duration) {
         this.duration = duration;
+
         return this;
     }
 
@@ -82,6 +82,7 @@ public final class AnimationBuilder {
     @NonNull
     public AnimationBuilder withInterruptible(boolean interruptible) {
         this.interruptible = interruptible;
+
         return this;
     }
 
@@ -97,7 +98,9 @@ public final class AnimationBuilder {
         if (!VALID_EASING_STYLES.contains(easing)) {
             throw new IllegalArgumentException("Unknown easing type: " + easing);
         }
+
         this.easing = easing;
+
         return this;
     }
 
@@ -110,6 +113,7 @@ public final class AnimationBuilder {
     @NonNull
     public AnimationBuilder withOnAnimationEventListener(SubsamplingScaleImageView.OnAnimationEventListener listener) {
         this.listener = listener;
+
         return this;
     }
 
@@ -120,15 +124,17 @@ public final class AnimationBuilder {
      * is reached. The latter behaviour is used for flings but nothing else.
      */
     @NonNull
-    AnimationBuilder withPanLimited(boolean panLimited) {
+    public AnimationBuilder withPanLimited(boolean panLimited) {
         this.panLimited = panLimited;
+
         return this;
     }
 
     /** Only for internal use. Indicates what caused the animation. */
     @NonNull
-    AnimationBuilder withOrigin(int origin) {
+    public AnimationBuilder withOrigin(int origin) {
         this.origin = origin;
+
         return this;
     }
 
