@@ -49,15 +49,14 @@ import me.edgan.redditslide.util.SubsamplingScaleImageViewDrawHelper;
 import me.edgan.redditslide.util.TouchEventUtil;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import me.edgan.redditslide.util.SubsamplingScaleImageViewStateHelper; // Added import
+import me.edgan.redditslide.util.TileManager; // Added import
 import me.edgan.redditslide.util.TilesInitTask;
 
 /**
@@ -999,59 +998,12 @@ public class SubsamplingScaleImageView extends View {
      *     performance.
      */
     public void refreshRequiredTiles(boolean load) {
-        if (decoder == null || tileMap == null) {
-            return;
-        }
-
-        int sampleSize = Math.min(fullImageSampleSize, calculateInSampleSize(scale));
-
-        // Load tiles of the correct sample size that are on screen. Discard tiles off screen, and
-        // those that are higher
-        // resolution than required, or lower res than required but not the base layer, so the base
-        // layer is always present.
-        for (Map.Entry<Integer, List<Tile>> tileMapEntry : tileMap.entrySet()) {
-            for (Tile tile : tileMapEntry.getValue()) {
-                if (tile.sampleSize < sampleSize
-                        || (tile.sampleSize > sampleSize
-                                && tile.sampleSize != fullImageSampleSize)) {
-                    tile.visible = false;
-                    if (tile.bitmap != null) {
-                        tile.bitmap.recycle();
-                        tile.bitmap = null;
-                    }
-                }
-                if (tile.sampleSize == sampleSize) {
-                    if (tileVisible(tile)) {
-                        tile.visible = true;
-                        if (!tile.loading && tile.bitmap == null && load) {
-                            TileLoadTask task = new TileLoadTask(this, decoder, tile);
-                            execute(task);
-                        }
-                    } else if (tile.sampleSize != fullImageSampleSize) {
-                        tile.visible = false;
-                        if (tile.bitmap != null) {
-                            tile.bitmap.recycle();
-                            tile.bitmap = null;
-                        }
-                    }
-                } else if (tile.sampleSize == fullImageSampleSize) {
-                    tile.visible = true;
-                }
-            }
-        }
+        TileManager.refreshRequiredTiles(this, load);
     }
 
     /** Determine whether tile is visible. */
     private boolean tileVisible(Tile tile) {
-        float sVisLeft = SubsamplingScaleImageViewStateHelper.viewToSourceX(this, 0), // Use helper
-                sVisRight = SubsamplingScaleImageViewStateHelper.viewToSourceX(this, getWidth()), // Use helper
-                sVisTop = SubsamplingScaleImageViewStateHelper.viewToSourceY(this, 0), // Use helper
-                sVisBottom = SubsamplingScaleImageViewStateHelper.viewToSourceY(this, getHeight()); // Use helper
-
-        return !(sVisLeft > tile.sRect.right
-                || tile.sRect.left > sVisRight
-                || sVisTop > tile.sRect.bottom
-                || tile.sRect.top > sVisBottom);
+        return TileManager.tileVisible(this, tile);
     }
 
     /** Sets scale and translate ready for the next draw. */
@@ -1162,58 +1114,7 @@ public class SubsamplingScaleImageView extends View {
      * Once source image and view dimensions are known, creates a map of sample size to tile grid.
      */
     private void initialiseTileMap(Point maxTileDimensions) {
-        debug("initialiseTileMap maxTileDimensions=%dx%d", maxTileDimensions.x, maxTileDimensions.y);
-        this.tileMap = new LinkedHashMap<>();
-        int sampleSize = fullImageSampleSize;
-        int xTiles = 1;
-        int yTiles = 1;
-        while (true) {
-            int sTileWidth = SubsamplingScaleImageViewStateHelper.sWidth(this) / xTiles;
-            int sTileHeight = SubsamplingScaleImageViewStateHelper.sHeight(this) / yTiles;
-            int subTileWidth = sTileWidth / sampleSize;
-            int subTileHeight = sTileHeight / sampleSize;
-
-            while (subTileWidth + xTiles + 1 > maxTileDimensions.x
-                    || (subTileWidth > getWidth() * 1.25 && sampleSize < fullImageSampleSize)) {
-                xTiles += 1;
-                sTileWidth = SubsamplingScaleImageViewStateHelper.sWidth(this) / xTiles;
-                subTileWidth = sTileWidth / sampleSize;
-            }
-
-            while (subTileHeight + yTiles + 1 > maxTileDimensions.y
-                    || (subTileHeight > getHeight() * 1.25 && sampleSize < fullImageSampleSize)) {
-                yTiles += 1;
-                sTileHeight = SubsamplingScaleImageViewStateHelper.sHeight(this) / yTiles;
-                subTileHeight = sTileHeight / sampleSize;
-            }
-
-            List<Tile> tileGrid = new ArrayList<>(xTiles * yTiles);
-
-            for (int x = 0; x < xTiles; x++) {
-                for (int y = 0; y < yTiles; y++) {
-                    Tile tile = new Tile();
-                    tile.sampleSize = sampleSize;
-                    tile.visible = sampleSize == fullImageSampleSize;
-                    tile.sRect =
-                            new Rect(
-                                    x * sTileWidth,
-                                    y * sTileHeight,
-                                    x == xTiles - 1 ? SubsamplingScaleImageViewStateHelper.sWidth(this) : (x + 1) * sTileWidth,
-                                    y == yTiles - 1 ? SubsamplingScaleImageViewStateHelper.sHeight(this) : (y + 1) * sTileHeight);
-                    tile.vRect = new Rect(0, 0, 0, 0);
-                    tile.fileSRect = new Rect(tile.sRect);
-                    tileGrid.add(tile);
-                }
-            }
-
-            tileMap.put(sampleSize, tileGrid);
-
-            if (sampleSize == 1) {
-                break;
-            } else {
-                sampleSize /= 2;
-            }
-        }
+        TileManager.initialiseTileMap(this, maxTileDimensions);
     }
 
     /** Async task used to get image details without blocking the UI thread. */
@@ -1258,13 +1159,13 @@ public class SubsamplingScaleImageView extends View {
     }
 
     /** Async task used to load images without blocking the UI thread. */
-    private static class TileLoadTask extends AsyncTask<Void, Void, Bitmap> {
+    public static class TileLoadTask extends AsyncTask<Void, Void, Bitmap> { // Changed visibility to public
         private final WeakReference<SubsamplingScaleImageView> viewRef;
         private final WeakReference<ImageRegionDecoder> decoderRef;
         private final WeakReference<Tile> tileRef;
         private Exception exception;
 
-        TileLoadTask(SubsamplingScaleImageView view, ImageRegionDecoder decoder, Tile tile) {
+        public TileLoadTask(SubsamplingScaleImageView view, ImageRegionDecoder decoder, Tile tile) { // Added public modifier
             this.viewRef = new WeakReference<>(view);
             this.decoderRef = new WeakReference<>(decoder);
             this.tileRef = new WeakReference<>(tile);
@@ -1531,7 +1432,7 @@ public class SubsamplingScaleImageView extends View {
         return exifOrientation;
     }
 
-    private void execute(AsyncTask<Void, Void, ?> asyncTask) {
+    public void execute(AsyncTask<Void, Void, ?> asyncTask) { // Changed visibility to public
         asyncTask.executeOnExecutor(executor);
     }
     public static class Tile {
