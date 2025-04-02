@@ -3,7 +3,7 @@ package me.edgan.redditslide.util;
 import android.graphics.Point;
 import android.graphics.Rect;
 import me.edgan.redditslide.Views.SubsamplingScaleImageView;
-import me.edgan.redditslide.Views.SubsamplingScaleImageView.Tile; // Assuming Tile is public or package-private and accessible
+import me.edgan.redditslide.Views.SubsamplingScaleImageView.Tile;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -90,10 +90,8 @@ public class TileManager {
 
         int sampleSize = Math.min(view.fullImageSampleSize, view.calculateInSampleSize(view.scale));
 
-        // Load tiles of the correct sample size that are on screen. Discard tiles off screen, and
-        // those that are higher
-        // resolution than required, or lower res than required but not the base layer, so the base
-        // layer is always present.
+        // Load tiles of the correct sample size that are on screen. Discard tiles off screen, and those that are higher
+        // resolution than required, or lower res than required but not the base layer, so the base layer is always present.
         for (Map.Entry<Integer, List<Tile>> tileMapEntry : view.tileMap.entrySet()) {
             for (Tile tile : tileMapEntry.getValue()) {
                 if (tile.sampleSize < sampleSize
@@ -135,10 +133,10 @@ public class TileManager {
      * @return true if the tile is visible.
      * */
     public static boolean tileVisible(SubsamplingScaleImageView view, Tile tile) {
-        float sVisLeft = SubsamplingScaleImageViewStateHelper.viewToSourceX(view, 0), // Use helper
-                sVisRight = SubsamplingScaleImageViewStateHelper.viewToSourceX(view, view.getWidth()), // Use helper
-                sVisTop = SubsamplingScaleImageViewStateHelper.viewToSourceY(view, 0), // Use helper
-                sVisBottom = SubsamplingScaleImageViewStateHelper.viewToSourceY(view, view.getHeight()); // Use helper
+        float sVisLeft = SubsamplingScaleImageViewStateHelper.viewToSourceX(view, 0),
+                sVisRight = SubsamplingScaleImageViewStateHelper.viewToSourceX(view, view.getWidth()),
+                sVisTop = SubsamplingScaleImageViewStateHelper.viewToSourceY(view, 0),
+                sVisBottom = SubsamplingScaleImageViewStateHelper.viewToSourceY(view, view.getHeight());
 
         return !(sVisLeft > tile.sRect.right
                 || tile.sRect.left > sVisRight

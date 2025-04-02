@@ -711,7 +711,7 @@ public class SubsamplingScaleImageView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         debug("onSizeChanged %dx%d -> %dx%d", oldw, oldh, w, h);
-        PointF sCenter = SubsamplingScaleImageViewStateHelper.getCenter(this); // Use helper
+        PointF sCenter = SubsamplingScaleImageViewStateHelper.getCenter(this);
         if (readySent && sCenter != null) {
             this.anim = null;
             this.pendingScale = scale;
@@ -737,12 +737,12 @@ public class SubsamplingScaleImageView extends View {
 
         if (sWidth > 0 && sHeight > 0) {
             if (resizeWidth && resizeHeight) {
-                width = SubsamplingScaleImageViewStateHelper.sWidth(this); // Use helper
-                height = SubsamplingScaleImageViewStateHelper.sHeight(this); // Use helper
+                width = SubsamplingScaleImageViewStateHelper.sWidth(this);
+                height = SubsamplingScaleImageViewStateHelper.sHeight(this);
             } else if (resizeHeight) {
-                height = (int) ((((double) SubsamplingScaleImageViewStateHelper.sHeight(this) / (double) SubsamplingScaleImageViewStateHelper.sWidth(this)) * width)); // Use helper
+                height = (int) ((((double) SubsamplingScaleImageViewStateHelper.sHeight(this) / (double) SubsamplingScaleImageViewStateHelper.sWidth(this)) * width));
             } else if (resizeWidth) {
-                width = (int) ((((double) SubsamplingScaleImageViewStateHelper.sWidth(this) / (double) SubsamplingScaleImageViewStateHelper.sHeight(this)) * height)); // Use helper
+                width = (int) ((((double) SubsamplingScaleImageViewStateHelper.sWidth(this) / (double) SubsamplingScaleImageViewStateHelper.sHeight(this)) * height));
             }
         }
 
@@ -825,14 +825,14 @@ public class SubsamplingScaleImageView extends View {
                 sCenter.y = sRequestedCenter.y;
             } else {
                 // With no requested center, scale around the image center.
-                sCenter.x = SubsamplingScaleImageViewStateHelper.sWidth(this) / 2.0f; // Use helper
-                sCenter.y = SubsamplingScaleImageViewStateHelper.sHeight(this) / 2.0f; // Use helper
+                sCenter.x = SubsamplingScaleImageViewStateHelper.sWidth(this) / 2.0f;
+                sCenter.y = SubsamplingScaleImageViewStateHelper.sHeight(this) / 2.0f;
             }
         }
 
         float doubleTapZoomScale = Math.min(maxScale, this.doubleTapZoomScale);
-        boolean zoomIn = (scale <= doubleTapZoomScale * 0.9) || scale == SubsamplingScaleImageViewStateHelper.minScale(this); // Use helper
-        float targetScale = zoomIn ? doubleTapZoomScale : SubsamplingScaleImageViewStateHelper.minScale(this); // Use helper
+        boolean zoomIn = (scale <= doubleTapZoomScale * 0.9) || scale == SubsamplingScaleImageViewStateHelper.minScale(this);
+        float targetScale = zoomIn ? doubleTapZoomScale : SubsamplingScaleImageViewStateHelper.minScale(this);
 
         if (doubleTapZoomStyle == ZOOM_FOCUS_CENTER_IMMEDIATE) {
             setScaleAndCenter(targetScale, sCenter);
@@ -958,18 +958,17 @@ public class SubsamplingScaleImageView extends View {
         SubsamplingScaleImageViewDrawHelper.fitToBounds(this, true, satTemp);
 
         // Load double resolution - next level will be split into four tiles and at the center all
-        // four are required,
-        // so don't bother with tiling until the next level 16 tiles are needed.
+        // four are required, so don't bother with tiling until the next level 16 tiles are needed.
         fullImageSampleSize = calculateInSampleSize(satTemp.scale);
 
         if (fullImageSampleSize > 1) {
             fullImageSampleSize /= 2;
         }
 
-        if (fullImageSampleSize == 1 && sRegion == null && SubsamplingScaleImageViewStateHelper.sWidth(this) < maxTileDimensions.x && SubsamplingScaleImageViewStateHelper.sHeight(this) < maxTileDimensions.y) { // Use helper
+        if (fullImageSampleSize == 1 && sRegion == null && SubsamplingScaleImageViewStateHelper.sWidth(this) < maxTileDimensions.x
+                && SubsamplingScaleImageViewStateHelper.sHeight(this) < maxTileDimensions.y) {
             // Whole image is required at native resolution, and is smaller than the canvas max
-            // bitmap size.
-            // Use BitmapDecoder for better image support.
+            // bitmap size. Use BitmapDecoder for better image support.
             decoder.recycle();
             decoder = null;
             BitmapLoadTask task =
@@ -1039,8 +1038,8 @@ public class SubsamplingScaleImageView extends View {
             scale = (minimumTileDpi / averageDpi) * scale;
         }
 
-        int reqWidth = (int) (SubsamplingScaleImageViewStateHelper.sWidth(this) * scale); // Use helper
-        int reqHeight = (int) (SubsamplingScaleImageViewStateHelper.sHeight(this) * scale); // Use helper
+        int reqWidth = (int) (SubsamplingScaleImageViewStateHelper.sWidth(this) * scale);
+        int reqHeight = (int) (SubsamplingScaleImageViewStateHelper.sHeight(this) * scale);
 
         // Raw height and width of image
         int inSampleSize = 1;
@@ -1048,12 +1047,11 @@ public class SubsamplingScaleImageView extends View {
             return 32;
         }
 
-        if (SubsamplingScaleImageViewStateHelper.sHeight(this) > reqHeight || SubsamplingScaleImageViewStateHelper.sWidth(this) > reqWidth) { // Use helper
+        if (SubsamplingScaleImageViewStateHelper.sHeight(this) > reqHeight || SubsamplingScaleImageViewStateHelper.sWidth(this) > reqWidth) {
 
             // Calculate ratios of height and width to requested height and width
-            final int heightRatio = Math.round((float) SubsamplingScaleImageViewStateHelper.sHeight(this) / (float) reqHeight); // Use helper
-            final int widthRatio = Math.round((float) SubsamplingScaleImageViewStateHelper.sWidth(this) / (float) reqWidth); // Use helper
-
+            final int heightRatio = Math.round((float) SubsamplingScaleImageViewStateHelper.sHeight(this) / (float) reqHeight);
+            final int widthRatio = Math.round((float) SubsamplingScaleImageViewStateHelper.sWidth(this) / (float) reqWidth);
             // Choose the smallest ratio as inSampleSize value, this will guarantee
             // a final image with both dimensions larger than or equal to the
             // requested height and width.
@@ -1106,7 +1104,8 @@ public class SubsamplingScaleImageView extends View {
         scale = satTemp.scale;
         vTranslate.set(satTemp.vTranslate);
         if (init && minimumScaleType != SCALE_TYPE_START) {
-            vTranslate.set(SubsamplingScaleImageViewStateHelper.vTranslateForSCenter(this, SubsamplingScaleImageViewStateHelper.sWidth(this) / 2.0f, SubsamplingScaleImageViewStateHelper.sHeight(this) / 2.0f, scale)); // Use helper
+            vTranslate.set(SubsamplingScaleImageViewStateHelper.vTranslateForSCenter(
+                this, SubsamplingScaleImageViewStateHelper.sWidth(this) / 2.0f, SubsamplingScaleImageViewStateHelper.sHeight(this) / 2.0f, scale));
         }
     }
 
@@ -1159,13 +1158,13 @@ public class SubsamplingScaleImageView extends View {
     }
 
     /** Async task used to load images without blocking the UI thread. */
-    public static class TileLoadTask extends AsyncTask<Void, Void, Bitmap> { // Changed visibility to public
+    public static class TileLoadTask extends AsyncTask<Void, Void, Bitmap> {
         private final WeakReference<SubsamplingScaleImageView> viewRef;
         private final WeakReference<ImageRegionDecoder> decoderRef;
         private final WeakReference<Tile> tileRef;
         private Exception exception;
 
-        public TileLoadTask(SubsamplingScaleImageView view, ImageRegionDecoder decoder, Tile tile) { // Added public modifier
+        public TileLoadTask(SubsamplingScaleImageView view, ImageRegionDecoder decoder, Tile tile) {
             this.viewRef = new WeakReference<>(view);
             this.decoderRef = new WeakReference<>(decoder);
             this.tileRef = new WeakReference<>(tile);
@@ -1432,7 +1431,7 @@ public class SubsamplingScaleImageView extends View {
         return exifOrientation;
     }
 
-    public void execute(AsyncTask<Void, Void, ?> asyncTask) { // Changed visibility to public
+    public void execute(AsyncTask<Void, Void, ?> asyncTask) {
         asyncTask.executeOnExecutor(executor);
     }
     public static class Tile {
@@ -1538,9 +1537,6 @@ public class SubsamplingScaleImageView extends View {
         debugLinePaint = null;
         tileBgPaint = null;
     }
-
-    // Methods related to coordinate transformations, state, and derived properties
-    // have been moved to SubsamplingScaleImageViewStateHelper.java
 
     /**
      * Apply a selected type of easing.
@@ -1808,7 +1804,7 @@ public class SubsamplingScaleImageView extends View {
      * @return the minimum scale as a source/view pixels ratio.
      */
     public final float getMinScale() {
-        return SubsamplingScaleImageViewStateHelper.minScale(this); // Use helper
+        return SubsamplingScaleImageViewStateHelper.minScale(this);
     }
 
     /**
@@ -1839,7 +1835,7 @@ public class SubsamplingScaleImageView extends View {
      */
     @Nullable
     public final PointF getCenter() {
-        return SubsamplingScaleImageViewStateHelper.getCenter(this); // Use helper
+        return SubsamplingScaleImageViewStateHelper.getCenter(this);
     }
 
     /**
@@ -1966,7 +1962,7 @@ public class SubsamplingScaleImageView extends View {
      * @return the orientation applied after EXIF information has been extracted. See static fields.
      */
     public final int getAppliedOrientation() {
-        return SubsamplingScaleImageViewStateHelper.getRequiredRotation(this); // Use helper
+        return SubsamplingScaleImageViewStateHelper.getRequiredRotation(this);
     }
 
     /**
@@ -1980,7 +1976,7 @@ public class SubsamplingScaleImageView extends View {
     public final ImageViewState getState() {
         if (vTranslate != null && sWidth > 0 && sHeight > 0) {
             // noinspection ConstantConditions
-            return new ImageViewState(getScale(), SubsamplingScaleImageViewStateHelper.getCenter(this), getOrientation()); // Use helper for getCenter()
+            return new ImageViewState(getScale(), SubsamplingScaleImageViewStateHelper.getCenter(this), getOrientation());
         }
         return null;
     }
@@ -2204,7 +2200,7 @@ public class SubsamplingScaleImageView extends View {
         }
 
         if (onStateChangedListener != null && !vTranslate.equals(oldVTranslate)) {
-            onStateChangedListener.onCenterChanged(SubsamplingScaleImageViewStateHelper.getCenter(this), origin); // Use helper
+            onStateChangedListener.onCenterChanged(SubsamplingScaleImageViewStateHelper.getCenter(this), origin);
         }
     }
 
