@@ -57,6 +57,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import me.edgan.redditslide.util.TilesInitTask;
 
 /**
  * Displays an image subsampled as necessary to avoid loading too much image data into memory. After
@@ -271,7 +272,7 @@ public class SubsamplingScaleImageView extends View {
     public int sWidth;
     public int sHeight;
     public int sOrientation;
-    private Rect sRegion;
+    public Rect sRegion;
     private Rect pRegion;
 
     // Is two-finger zooming in progress
@@ -324,7 +325,7 @@ public class SubsamplingScaleImageView extends View {
     public boolean imageLoadedSent;
 
     // Event listener
-    private OnImageEventListener onImageEventListener;
+    public OnImageEventListener onImageEventListener;
 
     // Scale and center listener
     private OnStateChangedListener onStateChangedListener;
@@ -1213,84 +1214,9 @@ public class SubsamplingScaleImageView extends View {
     }
 
     /** Async task used to get image details without blocking the UI thread. */
-    private static class TilesInitTask extends AsyncTask<Void, Void, int[]> {
-        private final WeakReference<SubsamplingScaleImageView> viewRef;
-        private final WeakReference<Context> contextRef;
-        private final WeakReference<DecoderFactory<? extends ImageRegionDecoder>> decoderFactoryRef;
-        private final Uri source;
-        private ImageRegionDecoder decoder;
-        private Exception exception;
-
-        TilesInitTask(
-                SubsamplingScaleImageView view,
-                Context context,
-                DecoderFactory<? extends ImageRegionDecoder> decoderFactory,
-                Uri source) {
-            this.viewRef = new WeakReference<>(view);
-            this.contextRef = new WeakReference<>(context);
-            this.decoderFactoryRef =
-                    new WeakReference<DecoderFactory<? extends ImageRegionDecoder>>(decoderFactory);
-            this.source = source;
-        }
-
-        @Override
-        protected int[] doInBackground(Void... params) {
-            try {
-                String sourceUri = source.toString();
-                Context context = contextRef.get();
-                DecoderFactory<? extends ImageRegionDecoder> decoderFactory =
-                        decoderFactoryRef.get();
-                SubsamplingScaleImageView view = viewRef.get();
-                if (context != null && decoderFactory != null && view != null) {
-                    view.debug("TilesInitTask.doInBackground");
-                    Point dimensions;
-                    try {
-                        decoder = decoderFactory.make();
-                        dimensions = decoder.init(context, source);
-                    } catch (Exception e) {
-                        // switch to new decoder
-                        cancel(true);
-                        view.doLoader(true);
-                        return null;
-                    }
-                    int sWidth = dimensions.x;
-                    int sHeight = dimensions.y;
-                    int exifOrientation = view.getExifOrientation(context, sourceUri);
-                    if (view.sRegion != null) {
-                        view.sRegion.left = Math.max(0, view.sRegion.left);
-                        view.sRegion.top = Math.max(0, view.sRegion.top);
-                        view.sRegion.right = Math.min(sWidth, view.sRegion.right);
-                        view.sRegion.bottom = Math.min(sHeight, view.sRegion.bottom);
-                        sWidth = view.sRegion.width();
-                        sHeight = view.sRegion.height();
-                    }
-
-                    return new int[] {sWidth, sHeight, exifOrientation};
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to initialise bitmap decoder", e);
-                this.exception = e;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(int[] xyo) {
-            if (xyo != null) {
-                final SubsamplingScaleImageView view = viewRef.get();
-                if (view != null) {
-                    if (decoder != null && xyo != null && xyo.length == 3) {
-                        view.onTilesInited(decoder, xyo[0], xyo[1], xyo[2]);
-                    } else if (exception != null && view.onImageEventListener != null) {
-                        view.onImageEventListener.onImageLoadError(exception);
-                    }
-                }
-            }
-        }
-    }
 
     /** Called by worker task when decoder is ready and image size and EXIF orientation is known. */
-    private synchronized void onTilesInited(ImageRegionDecoder decoder, int sWidth, int sHeight, int sOrientation) {
+    public synchronized void onTilesInited(ImageRegionDecoder decoder, int sWidth, int sHeight, int sOrientation) {
         debug("onTilesInited sWidth=%d, sHeight=%d, sOrientation=%d", sWidth, sHeight, sOrientation);
 
         // If actual dimensions don't match the declared size, reset everything.
@@ -1552,9 +1478,8 @@ public class SubsamplingScaleImageView extends View {
      * orientation. This will only work for external files, not assets, resources or other URIs.
      */
     @AnyThread
-    private int getExifOrientation(Context context, String sourceUri) {
+    public int getExifOrientation(Context context, String sourceUri) {
         int exifOrientation = ORIENTATION_0;
-
         if (sourceUri.startsWith(ContentResolver.SCHEME_CONTENT)) {
             Cursor cursor = null;
             try {
@@ -1565,8 +1490,7 @@ public class SubsamplingScaleImageView extends View {
                     if (cursor.moveToFirst()) {
                         int orientation = cursor.getInt(0);
 
-                        if (VALID_ORIENTATIONS.contains(orientation)
-                                && orientation != ORIENTATION_USE_EXIF) {
+                        if (VALID_ORIENTATIONS.contains(orientation) && orientation != ORIENTATION_USE_EXIF) {
                             exifOrientation = orientation;
                         } else {
                             Log.w(TAG, "Unsupported orientation: " + orientation);
