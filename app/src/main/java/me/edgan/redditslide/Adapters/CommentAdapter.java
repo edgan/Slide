@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -49,7 +48,6 @@ import me.edgan.redditslide.ImageFlairs;
 import me.edgan.redditslide.LastComments;
 import me.edgan.redditslide.OpenRedditLink;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.SubmissionViews.PopulateSubmissionViewHolder;
@@ -65,6 +63,7 @@ import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.OnSingleClickListener;
 import me.edgan.redditslide.util.SubmissionParser;
 import me.edgan.redditslide.util.CommentStateUtil;
+import me.edgan.redditslide.util.AsyncLoadMoreTask;
 
 import net.dean.jraw.ApiException;
 import net.dean.jraw.RedditClient;
@@ -76,17 +75,11 @@ import net.dean.jraw.models.Contribution;
 import net.dean.jraw.models.Submission;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -711,13 +704,16 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 progress.setVisibility(View.VISIBLE);
                                 holder.content.setText(R.string.comment_loading_more);
                                 currentLoading =
-                                        new AsyncLoadMore(
-                                                getRealPosition(
-                                                        holder.getBindingAdapterPosition() - 2),
+                                        new AsyncLoadMoreTask(
+                                                finalNextPos,
                                                 holder.getBindingAdapterPosition(),
                                                 holder,
-                                                finalNextPos,
-                                                baseNode.comment.getComment().getFullName());
+                                                baseNode.comment.getComment().getFullName(),
+                                                mContext,
+                                                CommentAdapter.this,
+                                                listView,
+                                                currentComments,
+                                                keys);
                                 currentLoading.execute(baseNode);
                             }
                         }
@@ -742,7 +738,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    AsyncLoadMore currentLoading;
+    public AsyncLoadMoreTask currentLoading;
     public String changedProfile;
 
     private void doReplySubmission(RecyclerView.ViewHolder submissionViewHolder) {
@@ -1648,193 +1644,6 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return count;
     }
 
-    public class AsyncLoadMore extends AsyncTask<MoreChildItem, Void, Integer> {
-        public MoreCommentViewHolder holder;
-        public int holderPos;
-        public int position;
-        public int dataPos;
-        public String fullname;
-
-        public AsyncLoadMore(
-                int position,
-                int holderPos,
-                MoreCommentViewHolder holder,
-                int dataPos,
-                String fullname) {
-            this.holderPos = holderPos;
-            this.holder = holder;
-            this.position = position;
-            this.dataPos = dataPos;
-            this.fullname = fullname;
-        }
-
-        @Override
-        public void onPostExecute(Integer data) {
-            currentLoading = null;
-            if (!isCancelled() && data != null) {
-                shifted += data;
-                ((Activity) mContext)
-                        .runOnUiThread(
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        currentComments.remove(position);
-                                        notifyItemRemoved(holderPos);
-                                    }
-                                });
-                int oldSize = currentComments.size();
-                currentComments.addAll(position, finalData);
-                int newSize = currentComments.size();
-
-                for (int i2 = 0; i2 < currentComments.size(); i2++) {
-                    keys.put(currentComments.get(i2).getName(), i2);
-                }
-                data = newSize - oldSize;
-                listView.setItemAnimator(new SlideRightAlphaAnimator());
-                notifyItemRangeInserted(holderPos, data);
-                currentPos = holderPos;
-                toShiftTo =
-                        ((LinearLayoutManager) listView.getLayoutManager())
-                                .findLastVisibleItemPosition();
-                shiftFrom =
-                        ((LinearLayoutManager) listView.getLayoutManager())
-                                .findFirstVisibleItemPosition();
-
-            } else if (data == null && currentComments.get(dataPos) instanceof MoreChildItem) {
-                final MoreChildItem baseNode = (MoreChildItem) currentComments.get(dataPos);
-                if (baseNode.children.getCount() > 0) {
-                    holder.content.setText(
-                            mContext.getString(
-                                    R.string.comment_load_more, baseNode.children.getCount()));
-                } else if (!baseNode.children.getChildrenIds().isEmpty()) {
-                    holder.content.setText(R.string.comment_load_more_number_unknown);
-                } else {
-                    holder.content.setText(R.string.thread_continue);
-                }
-                holder.loading.setVisibility(View.GONE);
-            }
-        }
-
-        ArrayList<CommentObject> finalData;
-
-        @Override
-        protected Integer doInBackground(MoreChildItem... params) {
-            finalData = new ArrayList<>();
-            int i = 0;
-            if (params.length > 0) {
-                try {
-                    CommentNode node = params[0].comment;
-                    node.loadMoreComments(Authentication.reddit);
-                    HashMap<Integer, MoreChildItem> waiting = new HashMap<>();
-
-                    for (CommentNode n : node.walkTree()) {
-                        if (!keys.containsKey(n.getComment().getFullName())) {
-
-                            CommentObject obj = new CommentItem(n);
-                            ArrayList<Integer> removed = new ArrayList<>();
-                            Map<Integer, MoreChildItem> map =
-                                    new TreeMap<>(Collections.reverseOrder());
-                            map.putAll(waiting);
-
-                            for (Integer i2 : map.keySet()) {
-                                if (i2 >= n.getDepth()) {
-                                    finalData.add(waiting.get(i2));
-                                    removed.add(i2);
-                                    waiting.remove(i2);
-                                    i++;
-                                }
-                            }
-
-                            finalData.add(obj);
-                            i++;
-
-                            if (n.hasMoreComments()) {
-                                waiting.put(
-                                        n.getDepth(), new MoreChildItem(n, n.getMoreChildren()));
-                            }
-                        }
-                    }
-                    if (node.hasMoreComments()) {
-                        finalData.add(new MoreChildItem(node, node.getMoreChildren()));
-                        i++;
-                    }
-                } catch (Exception e) {
-                    Log.w(LogUtil.getTag(), "Cannot load more comments " + e);
-                    Writer writer = new StringWriter();
-                    PrintWriter printWriter = new PrintWriter(writer);
-                    e.printStackTrace(printWriter);
-                    String stacktrace = writer.toString().replace(";", ",");
-                    if (stacktrace.contains("UnknownHostException")
-                            || stacktrace.contains("SocketTimeoutException")
-                            || stacktrace.contains("ConnectException")) {
-                        // is offline
-                        final Handler mHandler = new Handler(Looper.getMainLooper());
-                        mHandler.post(
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            new AlertDialog.Builder(mContext)
-                                                    .setTitle(R.string.err_title)
-                                                    .setMessage(R.string.err_connection_failed_msg)
-                                                    .setNegativeButton(R.string.btn_ok, null)
-                                                    .show();
-                                        } catch (Exception ignored) {
-
-                                        }
-                                    }
-                                });
-                    } else if (stacktrace.contains("403 Forbidden")
-                            || stacktrace.contains("401 Unauthorized")) {
-                        // Un-authenticated
-                        final Handler mHandler = new Handler(Looper.getMainLooper());
-                        mHandler.post(
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            new AlertDialog.Builder(mContext)
-                                                    .setTitle(R.string.err_title)
-                                                    .setMessage(R.string.err_refused_request_msg)
-                                                    .setNegativeButton(R.string.btn_no, null)
-                                                    .setPositiveButton(
-                                                            R.string.btn_yes,
-                                                            (dialog, which) ->
-                                                                    Reddit.authentication
-                                                                            .updateToken(mContext))
-                                                    .show();
-                                        } catch (Exception ignored) {
-
-                                        }
-                                    }
-                                });
-
-                    } else if (stacktrace.contains("404 Not Found")
-                            || stacktrace.contains("400 Bad Request")) {
-                        final Handler mHandler = new Handler(Looper.getMainLooper());
-                        mHandler.post(
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            new AlertDialog.Builder(mContext)
-                                                    .setTitle(R.string.err_title)
-                                                    .setMessage(
-                                                            R.string.err_could_not_find_content_msg)
-                                                    .setNegativeButton(R.string.btn_close, null)
-                                                    .show();
-                                        } catch (Exception ignored) {
-
-                                        }
-                                    }
-                                });
-                    }
-                    return null;
-                }
-            }
-            return i;
-        }
-    }
 
     public class AsyncForceLoadChild extends AsyncTask<String, Void, Integer> {
         CommentNode node;
