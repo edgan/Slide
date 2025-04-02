@@ -48,13 +48,13 @@ public class TilesInitTask extends AsyncTask<Void, Void, int[]> {
                 } catch (Exception e) {
                     // switch to new decoder
                     cancel(true);
-                    view.doLoader(true);
+                    view.loader.doLoader(true);
                     return null;
                 }
 
                 int sWidth = dimensions.x;
                 int sHeight = dimensions.y;
-                int exifOrientation = view.getExifOrientation(context, sourceUri);
+                int exifOrientation = view.loader.getExifOrientation(context, sourceUri);
 
                 if (view.sRegion != null) {
                     view.sRegion.left = Math.max(0, view.sRegion.left);
@@ -79,9 +79,9 @@ public class TilesInitTask extends AsyncTask<Void, Void, int[]> {
         if (xyo != null) {
             final SubsamplingScaleImageView view = viewRef.get();
             if (view != null) {
-                if (decoder != null && xyo != null && xyo.length == 3) { // Fixed &&
-                    view.onTilesInited(decoder, xyo[0], xyo[1], xyo[2]);
-                } else if (exception != null && view.onImageEventListener != null) { // Fixed &&
+                if (decoder != null && xyo != null && xyo.length == 3) {
+                    view.loader.onTilesInited(decoder, xyo[0], xyo[1], xyo[2]);
+                } else if (exception != null && view.onImageEventListener != null) {
                     view.onImageEventListener.onImageLoadError(exception);
                 }
             }

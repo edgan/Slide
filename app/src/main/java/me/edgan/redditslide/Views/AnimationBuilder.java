@@ -153,7 +153,7 @@ public final class AnimationBuilder {
         int vxCenter = view.getPaddingLeft() + (view.getWidth() - view.getPaddingRight() - view.getPaddingLeft()) / 2;
         int vyCenter = view.getPaddingTop() + (view.getHeight() - view.getPaddingBottom() - view.getPaddingTop()) / 2;
         float targetScale = SubsamplingScaleImageViewStateHelper.limitedScale(view, this.targetScale);
-        PointF targetSCenter = panLimited ? SubsamplingScaleImageViewStateHelper.limitedSCenter(view, this.targetSCenter.x, this.targetSCenter.y, targetScale, new PointF()): this.targetSCenter; // Use helper
+        PointF targetSCenter = panLimited ? SubsamplingScaleImageViewStateHelper.limitedSCenter(view, this.targetSCenter.x, this.targetSCenter.y, targetScale, new PointF()): this.targetSCenter;
         view.anim = new SubsamplingScaleImageView.Anim();
         view.anim.scaleStart = view.scale;
         view.anim.scaleEnd = targetScale;

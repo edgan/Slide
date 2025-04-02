@@ -54,7 +54,7 @@ public class ImageViewGestureListener extends GestureDetector.SimpleOnGestureLis
         if (view.zoomEnabled && view.readySent && view.vTranslate != null) {
             // Hacky solution for #15 - after a double tap the GestureDetector gets in a state where the next fling is ignored, so here we replace it with a new one.
             // Use the public method we added to the view.
-            view.setGestureDetectorPublic(context);
+            view.loader.setGestureDetector(context);
 
             if (view.quickScaleEnabled) {
                 // Store quick scale params. This will become either a double tap zoom or a quick scale depending on whether the user swipes.
@@ -64,7 +64,7 @@ public class ImageViewGestureListener extends GestureDetector.SimpleOnGestureLis
                 view.isQuickScaling = true;
                 view.isZooming = true;
                 view.quickScaleLastDistance = -1F;
-                view.quickScaleSCenter = SubsamplingScaleImageViewStateHelper.viewToSourceCoord(view, view.vCenterStart); // Use helper
+                view.quickScaleSCenter = SubsamplingScaleImageViewStateHelper.viewToSourceCoord(view, view.vCenterStart);
                 view.quickScaleVStart = new PointF(e.getX(), e.getY());
                 view.quickScaleVLastPoint = new PointF(view.quickScaleSCenter.x, view.quickScaleSCenter.y);
                 view.quickScaleMoved = false;
@@ -73,7 +73,7 @@ public class ImageViewGestureListener extends GestureDetector.SimpleOnGestureLis
                 return false;
             } else {
                 // Start double tap zoom animation.
-                view.doubleTapZoom(SubsamplingScaleImageViewStateHelper.viewToSourceCoord(view, new PointF(e.getX(), e.getY())), new PointF(e.getX(), e.getY())); // Use helper
+                view.doubleTapZoom(SubsamplingScaleImageViewStateHelper.viewToSourceCoord(view, new PointF(e.getX(), e.getY())), new PointF(e.getX(), e.getY()));
 
                 return true;
             }

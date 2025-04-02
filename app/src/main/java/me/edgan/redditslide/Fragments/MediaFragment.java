@@ -933,7 +933,7 @@ public class MediaFragment extends Fragment {
                 imageShown = true;
 
                 try {
-                    i.setImage(ImageSource.uri(f.getAbsolutePath()));
+                    i.loader.setImage(ImageSource.uri(f.getAbsolutePath()));
                 } catch (Exception e) {
                     // todo  i.setImage(ImageSource.bitmap(loadedImage));
                 }
@@ -1024,9 +1024,9 @@ public class MediaFragment extends Fragment {
                                                             .get(url);
                                         }
                                         if (f != null && f.exists()) {
-                                            i.setImage(ImageSource.uri(f.getAbsolutePath()));
+                                            i.loader.setImage(ImageSource.uri(f.getAbsolutePath()));
                                         } else {
-                                            i.setImage(ImageSource.bitmap(loadedImage));
+                                            i.loader.setImage(ImageSource.bitmap(loadedImage));
                                         }
                                         (rootView.findViewById(R.id.progress))
                                                 .setVisibility(View.GONE);
