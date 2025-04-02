@@ -75,10 +75,10 @@ public class TouchEventUtil {
                             double previousScale = view.scale;
                             view.scale = Math.min(view.maxScale, (vDistEnd / view.vDistStart) * view.scaleStart);
 
-                            if (view.scale <= view.minScale()) {
+                            if (view.scale <= SubsamplingScaleImageViewStateHelper.minScale(view)) { // Use helper
                                 // Minimum scale reached so don't pan. Adjust start settings so any expand will zoom in.
                                 view.vDistStart = vDistEnd;
-                                view.scaleStart = view.minScale();
+                                view.scaleStart = SubsamplingScaleImageViewStateHelper.minScale(view); // Use helper
                                 view.vCenterStart.set(vCenterEndX, vCenterEndY);
                                 view.vTranslateStart.set(view.vTranslate);
                             } else if (view.panEnabled) {
@@ -89,10 +89,10 @@ public class TouchEventUtil {
                                 float vTopNow = vTopStart * (view.scale / view.scaleStart);
                                 view.vTranslate.x = vCenterEndX - vLeftNow;
                                 view.vTranslate.y = vCenterEndY - vTopNow;
-                                if ((previousScale * view.sHeight() < view.getHeight()
-                                                && view.scale * view.sHeight() >= view.getHeight())
-                                        || (previousScale * view.sWidth() < view.getWidth()
-                                                && view.scale * view.sWidth() >= view.getWidth())) {
+                                if ((previousScale * SubsamplingScaleImageViewStateHelper.sHeight(view) < view.getHeight() // Use helper
+                                                && view.scale * SubsamplingScaleImageViewStateHelper.sHeight(view) >= view.getHeight()) // Use helper
+                                        || (previousScale * SubsamplingScaleImageViewStateHelper.sWidth(view) < view.getWidth() // Use helper
+                                                && view.scale * SubsamplingScaleImageViewStateHelper.sWidth(view) >= view.getWidth())) { // Use helper
                                     view.fitToBounds(true);
                                     view.vCenterStart.set(vCenterEndX, vCenterEndY);
                                     view.vTranslateStart.set(view.vTranslate);
@@ -105,8 +105,8 @@ public class TouchEventUtil {
                                 view.vTranslate.y = (view.getHeight() / 2.0f) - (view.scale * view.sRequestedCenter.y);
                             } else {
                                 // With no requested center, scale around the image center.
-                                view.vTranslate.x = (view.getWidth() / 2.0f) - (view.scale * (view.sWidth() / 2.0f));
-                                view.vTranslate.y = (view.getHeight() / 2.0f) - (view.scale * (view.sHeight() / 2.0f));
+                                view.vTranslate.x = (view.getWidth() / 2.0f) - (view.scale * (SubsamplingScaleImageViewStateHelper.sWidth(view) / 2.0f)); // Use helper
+                                view.vTranslate.y = (view.getHeight() / 2.0f) - (view.scale * (SubsamplingScaleImageViewStateHelper.sHeight(view) / 2.0f)); // Use helper
                             }
 
                             view.fitToBounds(true);
@@ -136,7 +136,7 @@ public class TouchEventUtil {
                             }
 
                             double previousScale = view.scale;
-                            view.scale = Math.max(view.minScale(), Math.min(view.maxScale, view.scale * multiplier));
+                            view.scale = Math.max(SubsamplingScaleImageViewStateHelper.minScale(view), Math.min(view.maxScale, view.scale * multiplier)); // Use helper
 
                             if (view.panEnabled) {
                                 float vLeftStart = view.vCenterStart.x - view.vTranslateStart.x;
@@ -146,12 +146,12 @@ public class TouchEventUtil {
                                 view.vTranslate.x = view.vCenterStart.x - vLeftNow;
                                 view.vTranslate.y = view.vCenterStart.y - vTopNow;
 
-                                if ((previousScale * view.sHeight() < view.getHeight()
-                                                && view.scale * view.sHeight() >= view.getHeight())
-                                        || (previousScale * view.sWidth() < view.getWidth()
-                                                && view.scale * view.sWidth() >= view.getWidth())) {
+                                if ((previousScale * SubsamplingScaleImageViewStateHelper.sHeight(view) < view.getHeight() // Use helper
+                                                && view.scale * SubsamplingScaleImageViewStateHelper.sHeight(view) >= view.getHeight()) // Use helper
+                                        || (previousScale * SubsamplingScaleImageViewStateHelper.sWidth(view) < view.getWidth() // Use helper
+                                                && view.scale * SubsamplingScaleImageViewStateHelper.sWidth(view) >= view.getWidth())) { // Use helper
                                     view.fitToBounds(true);
-                                    view.vCenterStart.set(view.sourceToViewCoord(view.quickScaleSCenter));
+                                    view.vCenterStart.set(SubsamplingScaleImageViewStateHelper.sourceToViewCoord(view, view.quickScaleSCenter)); // Use helper
                                     view.vTranslateStart.set(view.vTranslate);
                                     view.scaleStart = view.scale;
                                     dist = 0;
@@ -162,8 +162,8 @@ public class TouchEventUtil {
                                 view.vTranslate.y = (view.getHeight() / 2.0f) - (view.scale * view.sRequestedCenter.y);
                             } else {
                                 // With no requested center, scale around the image center.
-                                view.vTranslate.x = (view.getWidth() / 2.0f) - (view.scale * (view.sWidth() / 2.0f));
-                                view.vTranslate.y = (view.getHeight() / 2.0f) - (view.scale * (view.sHeight() / 2.0f));
+                                view.vTranslate.x = (view.getWidth() / 2.0f) - (view.scale * (SubsamplingScaleImageViewStateHelper.sWidth(view) / 2.0f)); // Use helper
+                                view.vTranslate.y = (view.getHeight() / 2.0f) - (view.scale * (SubsamplingScaleImageViewStateHelper.sHeight(view) / 2.0f)); // Use helper
                             }
                         }
 

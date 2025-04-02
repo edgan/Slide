@@ -64,7 +64,7 @@ public class ImageViewGestureListener extends GestureDetector.SimpleOnGestureLis
                 view.isQuickScaling = true;
                 view.isZooming = true;
                 view.quickScaleLastDistance = -1F;
-                view.quickScaleSCenter = view.viewToSourceCoord(view.vCenterStart);
+                view.quickScaleSCenter = SubsamplingScaleImageViewStateHelper.viewToSourceCoord(view, view.vCenterStart); // Use helper
                 view.quickScaleVStart = new PointF(e.getX(), e.getY());
                 view.quickScaleVLastPoint = new PointF(view.quickScaleSCenter.x, view.quickScaleSCenter.y);
                 view.quickScaleMoved = false;
@@ -73,7 +73,7 @@ public class ImageViewGestureListener extends GestureDetector.SimpleOnGestureLis
                 return false;
             } else {
                 // Start double tap zoom animation.
-                view.doubleTapZoom(view.viewToSourceCoord(new PointF(e.getX(), e.getY())), new PointF(e.getX(), e.getY()));
+                view.doubleTapZoom(SubsamplingScaleImageViewStateHelper.viewToSourceCoord(view, new PointF(e.getX(), e.getY())), new PointF(e.getX(), e.getY())); // Use helper
 
                 return true;
             }

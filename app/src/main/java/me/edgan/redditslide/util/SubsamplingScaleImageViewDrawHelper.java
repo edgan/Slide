@@ -62,8 +62,8 @@ public class SubsamplingScaleImageViewDrawHelper {
             float vFocusNowY = view.ease(view.anim.easing, scaleElapsed, view.anim.vFocusStart.y, view.anim.vFocusEnd.y - view.anim.vFocusStart.y, view.anim.duration);
 
             // Find out where the focal point is at this scale and adjust its position to follow the animation path
-            view.vTranslate.x -= view.sourceToViewX(view.anim.sCenterEnd.x) - vFocusNowX;
-            view.vTranslate.y -= view.sourceToViewY(view.anim.sCenterEnd.y) - vFocusNowY;
+            view.vTranslate.x -= SubsamplingScaleImageViewStateHelper.sourceToViewX(view, view.anim.sCenterEnd.x) - vFocusNowX; // Use helper
+            view.vTranslate.y -= SubsamplingScaleImageViewStateHelper.sourceToViewY(view, view.anim.sCenterEnd.y) - vFocusNowY; // Use helper
 
             // For translate anims, showing the image non-centered is never allowed, for scaling anims it is during the animation.
             view.fitToBounds(finished || (view.anim.scaleStart == view.anim.scaleEnd));
@@ -108,7 +108,7 @@ public class SubsamplingScaleImageViewDrawHelper {
             for (Map.Entry<Integer, List<SubsamplingScaleImageView.Tile>> tileMapEntry : view.tileMap.entrySet()) {
                 if (tileMapEntry.getKey() == sampleSize || hasMissingTiles) {
                     for (SubsamplingScaleImageView.Tile tile : tileMapEntry.getValue()) {
-                        view.sourceToViewRect(tile.sRect, tile.vRect);
+                        SubsamplingScaleImageViewStateHelper.sourceToViewRect(view, tile.sRect, tile.vRect); // Use helper
                         if (!tile.loading && tile.bitmap != null) {
                             if (view.tileBgPaint != null) {
                                 canvas.drawRect(tile.vRect, view.tileBgPaint);
@@ -130,7 +130,7 @@ public class SubsamplingScaleImageViewDrawHelper {
                                 0,
                                 tile.bitmap.getHeight());
 
-                            if (view.getRequiredRotation() == SubsamplingScaleImageView.ORIENTATION_0) {
+                            if (SubsamplingScaleImageViewStateHelper.getRequiredRotation(view) == SubsamplingScaleImageView.ORIENTATION_0) { // Use helper
                                 setMatrixArray(
                                     view.dstArray,
                                     tile.vRect.left,
@@ -141,7 +141,7 @@ public class SubsamplingScaleImageViewDrawHelper {
                                     tile.vRect.bottom,
                                     tile.vRect.left,
                                     tile.vRect.bottom);
-                            } else if (view.getRequiredRotation() == SubsamplingScaleImageView.ORIENTATION_90) {
+                            } else if (SubsamplingScaleImageViewStateHelper.getRequiredRotation(view) == SubsamplingScaleImageView.ORIENTATION_90) { // Use helper
                                 setMatrixArray(
                                     view.dstArray,
                                     tile.vRect.right,
@@ -152,7 +152,7 @@ public class SubsamplingScaleImageViewDrawHelper {
                                     tile.vRect.bottom,
                                     tile.vRect.left,
                                     tile.vRect.top);
-                            } else if (view.getRequiredRotation() == SubsamplingScaleImageView.ORIENTATION_180) {
+                            } else if (SubsamplingScaleImageViewStateHelper.getRequiredRotation(view) == SubsamplingScaleImageView.ORIENTATION_180) { // Use helper
                                 setMatrixArray(
                                     view.dstArray,
                                     tile.vRect.right,
@@ -163,7 +163,7 @@ public class SubsamplingScaleImageViewDrawHelper {
                                     tile.vRect.top,
                                     tile.vRect.right,
                                     tile.vRect.top);
-                            } else if (view.getRequiredRotation() == SubsamplingScaleImageView.ORIENTATION_270) {
+                            } else if (SubsamplingScaleImageViewStateHelper.getRequiredRotation(view) == SubsamplingScaleImageView.ORIENTATION_270) { // Use helper
                                 setMatrixArray(
                                     view.dstArray,
                                     tile.vRect.left,
@@ -224,14 +224,14 @@ public class SubsamplingScaleImageViewDrawHelper {
 
             view.matrix.reset();
             view.matrix.postScale(xScale, yScale);
-            view.matrix.postRotate(view.getRequiredRotation());
+            view.matrix.postRotate(SubsamplingScaleImageViewStateHelper.getRequiredRotation(view)); // Use helper
             view.matrix.postTranslate(view.vTranslate.x, view.vTranslate.y);
 
-            if (view.getRequiredRotation() == SubsamplingScaleImageView.ORIENTATION_180) {
+            if (SubsamplingScaleImageViewStateHelper.getRequiredRotation(view) == SubsamplingScaleImageView.ORIENTATION_180) { // Use helper
                 view.matrix.postTranslate(view.scale * view.sWidth, view.scale * view.sHeight);
-            } else if (view.getRequiredRotation() == SubsamplingScaleImageView.ORIENTATION_90) {
+            } else if (SubsamplingScaleImageViewStateHelper.getRequiredRotation(view) == SubsamplingScaleImageView.ORIENTATION_90) { // Use helper
                 view.matrix.postTranslate(view.scale * view.sHeight, 0);
-            } else if (view.getRequiredRotation() == SubsamplingScaleImageView.ORIENTATION_270) {
+            } else if (SubsamplingScaleImageViewStateHelper.getRequiredRotation(view) == SubsamplingScaleImageView.ORIENTATION_270) { // Use helper
                 view.matrix.postTranslate(0, view.scale * view.sWidth);
             }
 
@@ -255,7 +255,7 @@ public class SubsamplingScaleImageViewDrawHelper {
                 "Scale: "
                     + String.format(Locale.ENGLISH, "%.2f", view.scale)
                     + " ("
-                    + String.format(Locale.ENGLISH, "%.2f", view.minScale())
+                    + String.format(Locale.ENGLISH, "%.2f", SubsamplingScaleImageViewStateHelper.minScale(view)) // Use helper
                     + " - "
                     + String.format(Locale.ENGLISH, "%.2f", view.maxScale)
                     + ")",
@@ -281,9 +281,9 @@ public class SubsamplingScaleImageViewDrawHelper {
                 px(view, 45),
                 view.debugTextPaint);
             if (view.anim != null) {
-                PointF vCenterStart = view.sourceToViewCoord(view.anim.sCenterStart);
-                PointF vCenterEndRequested = view.sourceToViewCoord(view.anim.sCenterEndRequested);
-                PointF vCenterEnd = view.sourceToViewCoord(view.anim.sCenterEnd);
+                PointF vCenterStart = SubsamplingScaleImageViewStateHelper.sourceToViewCoord(view, view.anim.sCenterStart); // Use helper
+                PointF vCenterEndRequested = SubsamplingScaleImageViewStateHelper.sourceToViewCoord(view, view.anim.sCenterEndRequested); // Use helper
+                PointF vCenterEnd = SubsamplingScaleImageViewStateHelper.sourceToViewCoord(view, view.anim.sCenterEnd); // Use helper
                 // noinspection ConstantConditions
                 canvas.drawCircle(vCenterStart.x, vCenterStart.y, px(view, 10), view.debugLinePaint);
                 view.debugLinePaint.setColor(Color.RED);
@@ -302,7 +302,7 @@ public class SubsamplingScaleImageViewDrawHelper {
             }
             if (view.quickScaleSCenter != null) {
                 view.debugLinePaint.setColor(Color.BLUE);
-                canvas.drawCircle(view.sourceToViewX(view.quickScaleSCenter.x), view.sourceToViewY(view.quickScaleSCenter.y), px(view, 35), view.debugLinePaint);
+                canvas.drawCircle(SubsamplingScaleImageViewStateHelper.sourceToViewX(view, view.quickScaleSCenter.x), SubsamplingScaleImageViewStateHelper.sourceToViewY(view, view.quickScaleSCenter.y), px(view, 35), view.debugLinePaint); // Use helper
             }
             if (view.quickScaleVStart != null && view.isQuickScaling) {
                 view.debugLinePaint.setColor(Color.CYAN);
@@ -357,9 +357,9 @@ static void setMatrixArray(
 
         PointF vTranslate = sat.vTranslate;
         // Use view's limitedScale method - ensure it's accessible (made public in next step)
-        float scale = view.limitedScale(sat.scale);
-        float scaleWidth = scale * view.sWidth();
-        float scaleHeight = scale * view.sHeight();
+        float scale = SubsamplingScaleImageViewStateHelper.limitedScale(view, sat.scale); // Use helper
+        float scaleWidth = scale * SubsamplingScaleImageViewStateHelper.sWidth(view); // Use helper
+        float scaleHeight = scale * SubsamplingScaleImageViewStateHelper.sHeight(view); // Use helper
 
         if (view.panLimit == SubsamplingScaleImageView.PAN_LIMIT_CENTER && view.isReady()) {
             vTranslate.x = Math.max(vTranslate.x, view.getWidth() / 2.0f - scaleWidth);

@@ -1,5 +1,7 @@
 package me.edgan.redditslide.Views;
 
+import me.edgan.redditslide.util.SubsamplingScaleImageViewStateHelper;
+
 import android.graphics.PointF;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -150,8 +152,8 @@ public final class AnimationBuilder {
 
         int vxCenter = view.getPaddingLeft() + (view.getWidth() - view.getPaddingRight() - view.getPaddingLeft()) / 2;
         int vyCenter = view.getPaddingTop() + (view.getHeight() - view.getPaddingBottom() - view.getPaddingTop()) / 2;
-        float targetScale = view.limitedScale(this.targetScale);
-        PointF targetSCenter = panLimited ? view.limitedSCenter(this.targetSCenter.x, this.targetSCenter.y, targetScale, new PointF()): this.targetSCenter;
+        float targetScale = SubsamplingScaleImageViewStateHelper.limitedScale(view, this.targetScale);
+        PointF targetSCenter = panLimited ? SubsamplingScaleImageViewStateHelper.limitedSCenter(view, this.targetSCenter.x, this.targetSCenter.y, targetScale, new PointF()): this.targetSCenter; // Use helper
         view.anim = new SubsamplingScaleImageView.Anim();
         view.anim.scaleStart = view.scale;
         view.anim.scaleEnd = targetScale;
@@ -159,7 +161,7 @@ public final class AnimationBuilder {
         view.anim.sCenterEndRequested = targetSCenter;
         view.anim.sCenterStart = view.getCenter();
         view.anim.sCenterEnd = targetSCenter;
-        view.anim.vFocusStart = view.sourceToViewCoord(targetSCenter);
+        view.anim.vFocusStart = SubsamplingScaleImageViewStateHelper.sourceToViewCoord(view, targetSCenter);
         view.anim.vFocusEnd = new PointF(vxCenter, vyCenter);
         view.anim.duration = duration;
         view.anim.interruptible = interruptible;
