@@ -1,6 +1,8 @@
-### CHANGELOG
+# CHANGELOG
 
 The old changelog can be read in the [CHANGELOG.md](https://github.com/Haptic-Apps/Slide/blob/master/CHANGELOG.md).
+
+---
 
 7.2.8 / 2025-4-3
 ================
