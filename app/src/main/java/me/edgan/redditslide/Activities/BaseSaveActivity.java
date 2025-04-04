@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
+import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.StorageUtil;
 
 /**
@@ -61,25 +61,16 @@ public abstract class BaseSaveActivity extends FullScreenActivity {
      * @param index Index in a gallery (if applicable)
      */
     protected void doImageSave(boolean isGif, String contentUrl, int index) {
-        if (!isGif) {
-            if (!StorageUtil.hasStorageAccess(this)) {
-                StorageUtil.showDirectoryChooser(this);
-            } else {
-                // We have permission, start the download service
-                Intent i = new Intent(this, ImageDownloadNotificationService.class);
-                i.putExtra("actuallyLoaded", contentUrl);
-                if (subreddit != null && !subreddit.isEmpty()) {
-                    i.putExtra("subreddit", subreddit);
-                }
-                if (submissionTitle != null) {
-                    i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
-                }
-                i.putExtra("index", index);
-                startService(i);
-            }
-        } else {
-            MediaView.doOnClick.run();
-        }
+        // Updated to use the unified ImageSaveUtils, removing the old logic and doOnClick reference
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                () -> StorageUtil.showDirectoryChooser(this) // Use directory chooser as the callback
+        );
     }
 
     /**

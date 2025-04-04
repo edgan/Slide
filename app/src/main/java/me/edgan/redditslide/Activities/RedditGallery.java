@@ -458,10 +458,9 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
                             getActivity(),
                             exoVideoView,
                             loader,
-                            null,
-                            null,
-                            false,
-                            true,
+                            null, // placeholder
+                            false, // closeIfNull
+                            true, // autostart
                             rootView.findViewById(R.id.size),
                             galleryParent.getGallerySubreddit(),
                             galleryParent.getGallerySubmissionTitle()

@@ -274,9 +274,8 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     main,
                     holder.exoVideoView,
                     holder.loader,
-                    null,
-                    null,
-                    true,
+                    null, // placeholder
+                    true, // closeIfNull
                     false,  // autostart
                     holder.rootView.findViewById(R.id.size),
                     subreddit,
@@ -340,10 +339,9 @@ public class AlbumView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             main,
                             animatedHolder.exoVideoView,
                             animatedHolder.loader,
-                            null,
-                            null,
-                            true,
-                            false,
+                            null, // placeholder
+                            true, // closeIfNull
+                            false, // autostart
                             animatedHolder.rootView.findViewById(R.id.size),
                             subreddit,
                             submissionTitle

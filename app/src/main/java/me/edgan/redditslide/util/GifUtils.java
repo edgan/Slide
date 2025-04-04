@@ -393,7 +393,7 @@ public class GifUtils {
                                 } else {
                                     // Just copy video file if no audio
                                     try (FileInputStream fis = new FileInputStream(videoFile);
-                                         FileOutputStream fos = new FileOutputStream(outputFile)) {
+                                        FileOutputStream fos = new FileOutputStream(outputFile)) {
                                         byte[] buffer = new byte[8192];
                                         int bytesRead;
                                         while ((bytesRead = fis.read(buffer)) != -1) {
@@ -490,9 +490,7 @@ public class GifUtils {
         private ExoVideoView video;
         private ProgressBar progressBar;
         private View placeholder;
-        private View gifSave;
         private boolean closeIfNull;
-        private Runnable doOnClick;
         private boolean autostart;
         public String subreddit;
         public String submissionTitle;
@@ -505,7 +503,6 @@ public class GifUtils {
                 @NonNull ExoVideoView video,
                 @Nullable ProgressBar p,
                 @Nullable View placeholder,
-                @Nullable Runnable gifSave,
                 boolean closeIfNull,
                 boolean autostart,
                 String subreddit) {
@@ -515,7 +512,6 @@ public class GifUtils {
             this.progressBar = p;
             this.closeIfNull = closeIfNull;
             this.placeholder = placeholder;
-            this.doOnClick = gifSave;
             this.autostart = autostart;
         }
 
@@ -524,7 +520,6 @@ public class GifUtils {
                 @NonNull ExoVideoView video,
                 @Nullable ProgressBar p,
                 @Nullable View placeholder,
-                @Nullable Runnable gifSave,
                 boolean closeIfNull,
                 boolean autostart,
                 TextView size,
@@ -536,30 +531,12 @@ public class GifUtils {
             this.progressBar = p;
             this.closeIfNull = closeIfNull;
             this.placeholder = placeholder;
-            this.doOnClick = gifSave;
             this.autostart = autostart;
             this.size = size;
             this.submissionTitle = submissionTitle;
         }
 
         public void onError() {}
-
-        public AsyncLoadGif(
-                @NonNull Activity c,
-                @NonNull ExoVideoView video,
-                @Nullable ProgressBar p,
-                @Nullable View placeholder,
-                boolean closeIfNull,
-                boolean autostart,
-                String subreddit) {
-            this.c = c;
-            this.video = video;
-            this.subreddit = subreddit;
-            this.progressBar = p;
-            this.closeIfNull = closeIfNull;
-            this.placeholder = placeholder;
-            this.autostart = autostart;
-        }
 
         public void cancel() {
             LogUtil.v("cancelling");
@@ -569,10 +546,9 @@ public class GifUtils {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            gson = new Gson();
         }
 
-        Gson gson;
+        public static Gson gson = new Gson();
 
         public enum VideoType {
             IMGUR,
@@ -681,7 +657,7 @@ public class GifUtils {
          * @param name the name of the gfy
          * @return the result
          */
-        JsonObject getApiResponse(String host, String name) {
+        public static JsonObject getApiResponse(String host, String name) {
             String domain = "api." + host + ".com";
             String gfycatUrl = "https://" + domain + "/v1/gfycats" + name;
 
@@ -694,7 +670,7 @@ public class GifUtils {
          * @param result the result to check
          * @return the video url
          */
-        String getUrlFromApi(JsonObject result) {
+        public static String getUrlFromApi(JsonObject result) {
             if (!SettingValues.hqgif && result.getAsJsonObject("gfyItem").has("mobileUrl")) {
                 return result.getAsJsonObject("gfyItem").get("mobileUrl").getAsString();
             } else {
@@ -702,11 +678,11 @@ public class GifUtils {
             }
         }
 
-        OkHttpClient client = Reddit.client;
+        public static OkHttpClient client = Reddit.client;
 
-        private static final AtomicReference<AuthToken> TOKEN = new AtomicReference<>(new AuthToken("", 0));
+        public static final AtomicReference<AuthToken> TOKEN = new AtomicReference<>(new AuthToken("", 0));
 
-        private static class AuthToken {
+        public static class AuthToken {
             @NonNull public final String token;
             private final long expireAt;
 
@@ -727,7 +703,7 @@ public class GifUtils {
         }
 
 
-        private AuthToken getNewToken(OkHttpClient client) throws IOException {
+        public static AuthToken getNewToken(OkHttpClient client) throws IOException {
             Request tokenRequest = new Request.Builder()
                 .url("https://api.redgifs.com/v2/auth/temporary")
                 .get()
@@ -740,7 +716,7 @@ public class GifUtils {
             return newToken;
         }
 
-        private Response makeApiCall(OkHttpClient client, String name, AuthToken currentToken) throws IOException {
+        public static Response makeApiCall(OkHttpClient client, String name, AuthToken currentToken) throws IOException {
             Request request = new Request.Builder()
                 .url("https://api.redgifs.com/v2/gifs/" + name)
                 .header("Authorization", "Bearer " + currentToken.token)
@@ -748,7 +724,7 @@ public class GifUtils {
             return client.newCall(request).execute();
         }
 
-        Uri loadRedGifs(String name, String fullUrl) {
+        public static Uri loadRedGifs(String name, String fullUrl, Activity c, ProgressBar progressBar, boolean closeIfNull, Runnable onErrorCallback) {
             showProgressBar(c, progressBar, true);
 
             // Remove leading slash if present
@@ -773,10 +749,11 @@ public class GifUtils {
                 // Process the response
                 JsonObject result = gson.fromJson(response.body().string(), JsonObject.class);
                 if (result == null || !result.has("gif")) {
-                    onError();
-                    if (closeIfNull) {
+                    if (onErrorCallback != null) onErrorCallback.run();
+                    if (closeIfNull && c != null) {
                         c.runOnUiThread(() -> {
-                            // Show error dialog
+                            // TODO: Consider showing a generic error dialog here
+                            Log.e(TAG, "Failed to load RedGifs, result invalid: " + fullUrl);
                         });
                     }
                     return null;
@@ -789,9 +766,9 @@ public class GifUtils {
                 return Uri.parse(url);
             } catch (Exception e) {
                 LogUtil.e(e, "Error loading RedGifs video url = [" + fullUrl + "]");
-                onError();
-                if (closeIfNull) {
-                    c.runOnUiThread(() -> openWebsite(fullUrl));
+                if (onErrorCallback != null) onErrorCallback.run();
+                if (closeIfNull && c != null) {
+                    c.runOnUiThread(() -> openWebsite(c, fullUrl));
                 }
                 return null;
             }
@@ -805,7 +782,7 @@ public class GifUtils {
          * @param gson
          * @return Correct URL
          */
-        Uri loadGfycat(String name, String fullUrl, Gson gson) {
+        public static Uri loadGfycat(String name, String fullUrl, Activity c, ProgressBar progressBar, boolean closeIfNull, Runnable onErrorCallback) {
             showProgressBar(c, progressBar, true);
             String host = "gfycat";
             if (fullUrl.contains("redgifs")) {
@@ -840,8 +817,8 @@ public class GifUtils {
                     }
                 }
 
-                onError();
-                if (closeIfNull) {
+                if (onErrorCallback != null) onErrorCallback.run();
+                if (closeIfNull && c != null) {
                     c.runOnUiThread(
                             new Runnable() {
                                 @Override
@@ -882,28 +859,17 @@ public class GifUtils {
                         new Runnable() {
                             @Override
                             public void run() {
-                                (c)
-                                        .startActivity(
-                                                new Intent(c, MediaView.class)
-                                                        .putExtra(
-                                                                MediaView.EXTRA_URL,
-                                                                url.replace(
-                                                                        ".mp4",
-                                                                        ".png"))); // Link is likely
-                                // an image and
-                                // not a gif
+                                (c).startActivity(new Intent(c, MediaView.class).putExtra(MediaView.EXTRA_URL, url.replace(".mp4", ".png"))); // Link is likely an image and not a gif
                                 (c).finish();
                             }
                         });
             } else {
-                openWebsite(url);
+                openWebsite(c, url); // Pass activity context
             }
         }
 
         @Override
         protected Uri doInBackground(String... sub) {
-            MediaView.didLoadGif = false;
-            Gson gson = new Gson();
             final String url = formatUrl(sub[0]);
             VideoType videoType = getVideoType(url);
             LogUtil.v(url + ", VideoType: " + videoType);
@@ -915,43 +881,19 @@ public class GifUtils {
                     String id = url.substring(url.lastIndexOf("/"));
                     String redgifsUrl = "https://api.redgifs.com/v2/gifs/" + id;
 
-                    try {
-                        Uri uri = loadRedGifs(id, url);
-                        return uri;
-                    } catch (Exception e) {
-                        LogUtil.e(
-                                e,
-                                "Error loading redgifs video url = ["
-                                        + url
-                                        + "] redgifsUrl = ["
-                                        + redgifsUrl
-                                        + "]");
-                    }
-                    break;
+                    return loadRedGifs(id, url, c, progressBar, closeIfNull, this::onError);
                 case VREDDIT:
                     return Uri.parse(url);
                 case GFYCAT:
                     String name = url.substring(url.lastIndexOf("/"));
-                    String gfycatUrl = "https://api.gfycat.com/v1/gfycats" + name;
+                    Uri uri = loadGfycat(name, url, c, progressBar, closeIfNull, this::onError);
+                    if (uri != null && uri.toString().contains("gifdeliverynetwork")) {
+                        openWebsite(c, url);
 
-                    // Check if resolved gfycat link is gifdeliverynetwork. If it is
-                    // gifdeliverynetwork, open the link externally
-                    try {
-                        Uri uri = loadGfycat(name, url, gson);
-                        if (uri.toString().contains("gifdeliverynetwork")) {
-                            openWebsite(url);
-                            return null;
-                        } else return uri;
-                    } catch (Exception e) {
-                        LogUtil.e(
-                                e,
-                                "Error loading gfycat video url = ["
-                                        + url
-                                        + "] gfycatUrl = ["
-                                        + gfycatUrl
-                                        + "]");
+                        return null;
+                    } else {
+                        return uri;
                     }
-                    break;
                 case REDDIT_GALLERY:
                     return Uri.parse(url);
                 case DIRECT:
@@ -969,19 +911,12 @@ public class GifUtils {
                                     new Runnable() {
                                         @Override
                                         public void run() {
-                                            (c)
-                                                    .startActivity(
-                                                            new Intent(c, MediaView.class)
-                                                                    .putExtra(
-                                                                            MediaView.EXTRA_URL,
-                                                                            url.replace(
-                                                                                    ".mp4",
-                                                                                    ".png"))); // Link is likely an image and not a gif
+                                            (c).startActivity(new Intent(c, MediaView.class).putExtra(MediaView.EXTRA_URL, url.replace(".mp4", ".png"))); // Link is likely an image and not a gif
                                             (c).finish();
                                         }
                                     });
                         } else {
-                            openWebsite(url);
+                            openWebsite(c, url);
                         }
                     }
                     break;
@@ -993,59 +928,32 @@ public class GifUtils {
                         final JsonObject result =
                                 HttpUtil.getJsonObject(client, gson, streamableUrl);
                         String obj;
-                        if (result == null
-                                || result.get("files") == null
-                                || !(result.getAsJsonObject("files").has("mp4")
-                                        || result.getAsJsonObject("files").has("mp4-mobile"))) {
-
+                        if (result == null || result.get("files") == null || !(result.getAsJsonObject("files").has("mp4") || result.getAsJsonObject("files").has("mp4-mobile"))) {
                             onError();
-                            if (closeIfNull) {
+                            if (closeIfNull && c != null) {
                                 c.runOnUiThread(
                                         new Runnable() {
                                             @Override
                                             public void run() {
-                                                new AlertDialog.Builder(c)
-                                                        .setTitle(R.string.error_video_not_found)
-                                                        .setMessage(R.string.error_video_message)
-                                                        .setCancelable(false)
-                                                        .setPositiveButton(
-                                                                R.string.btn_ok,
-                                                                (dialog, which) -> c.finish())
-                                                        .create()
-                                                        .show();
+                                                try { // Added try-catch for safety
+                                                    new AlertDialog.Builder(c)
+                                                            .setTitle(R.string.error_video_not_found)
+                                                            .setMessage(R.string.error_video_message)
+                                                            .setCancelable(false)
+                                                            .setPositiveButton(R.string.btn_ok, (dialog, which) -> c.finish())
+                                                            .create()
+                                                            .show();
+                                                } catch (Exception ignored) {}
                                             }
                                         });
                             }
+                            // Return null if streamable fails
+                            return null;
                         } else {
-                            if (result.getAsJsonObject()
-                                            .get("files")
-                                            .getAsJsonObject()
-                                            .has("mp4-mobile")
-                                    && !result.getAsJsonObject()
-                                            .get("files")
-                                            .getAsJsonObject()
-                                            .get("mp4-mobile")
-                                            .getAsJsonObject()
-                                            .get("url")
-                                            .getAsString()
-                                            .isEmpty()) {
-                                obj =
-                                        result.getAsJsonObject()
-                                                .get("files")
-                                                .getAsJsonObject()
-                                                .get("mp4-mobile")
-                                                .getAsJsonObject()
-                                                .get("url")
-                                                .getAsString();
+                            if (result.getAsJsonObject().get("files").getAsJsonObject().has("mp4-mobile") && !result.getAsJsonObject().get("files").getAsJsonObject().get("mp4-mobile").getAsJsonObject().get("url").getAsString().isEmpty()) {
+                                obj = result.getAsJsonObject().get("files").getAsJsonObject().get("mp4-mobile").getAsJsonObject().get("url").getAsString();
                             } else {
-                                obj =
-                                        result.getAsJsonObject()
-                                                .get("files")
-                                                .getAsJsonObject()
-                                                .get("mp4")
-                                                .getAsJsonObject()
-                                                .get("url")
-                                                .getAsString();
+                                obj = result.getAsJsonObject().get("files").getAsJsonObject().get("mp4").getAsJsonObject().get("url").getAsString();
                             }
                             return Uri.parse(obj);
                         }
@@ -1058,8 +966,8 @@ public class GifUtils {
                                         + streamableUrl
                                         + "]");
 
-                        c.runOnUiThread(this::onError);
-                        if (closeIfNull) {
+                        if (c != null) c.runOnUiThread(this::onError);
+                        if (closeIfNull && c != null) {
                             c.runOnUiThread(
                                     new Runnable() {
                                         @Override
@@ -1069,9 +977,7 @@ public class GifUtils {
                                                         .setTitle(R.string.error_video_not_found)
                                                         .setMessage(R.string.error_video_message)
                                                         .setCancelable(false)
-                                                        .setPositiveButton(
-                                                                R.string.btn_ok,
-                                                                (dialog, which) -> c.finish())
+                                                        .setPositiveButton(R.string.btn_ok, (dialog, which) -> c.finish())
                                                         .create()
                                                         .show();
                                             } catch (Exception ignored) {
@@ -1083,10 +989,7 @@ public class GifUtils {
                     break;
                 case OTHER:
                     LogUtil.e("We shouldn't be here!");
-                    // unless it's a .gif that reddit didn't generate a preview vid for, then we
-                    // should be here
-                    // e.g. https://www.reddit.com/r/testslideforreddit/comments/hpht5o/stinky/
-                    openWebsite(url);
+                    openWebsite(c, url);
                     break;
             }
             return null;
@@ -1101,24 +1004,6 @@ public class GifUtils {
 
             if (progressBar != null) {
                 progressBar.setIndeterminate(true);
-            }
-
-            if (gifSave != null) {
-                gifSave.setOnClickListener(
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                cacheSaveGif(uri, c, subreddit, submissionTitle, true);
-                            }
-                        });
-            } else if (doOnClick != null) {
-                MediaView.doOnClick =
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                cacheSaveGif(uri, c, subreddit, submissionTitle, true);
-                            }
-                        };
             }
 
             try {
@@ -1236,11 +1121,10 @@ public class GifUtils {
                             new Runnable() {
                                 @Override
                                 public void run() {
-                                    // We can't know which quality will be selected, so we display
-                                    // <= the highest quality size
-                                    if (totalSize > 0)
-                                        sizeText.setText(
-                                                "≤ " + FileUtil.readableFileSize(totalSize));
+                                    // We can't know which quality will be selected, so we display <= the highest quality size
+                                    if (totalSize > 0) {
+                                        sizeText.setText("≤ " + FileUtil.readableFileSize(totalSize));
+                                    }
                                 }
                             });
                 } catch (IOException ignored) {
@@ -1248,14 +1132,13 @@ public class GifUtils {
             }
         }
 
-        private void openWebsite(String url) {
-            if (closeIfNull) {
-                Intent web = new Intent(c, Website.class);
+        private static void openWebsite(Activity c, String url) {
+            Intent web = new Intent(c, Website.class);
                 web.putExtra(LinkUtil.EXTRA_URL, url);
                 web.putExtra(LinkUtil.EXTRA_COLOR, Color.BLACK);
                 c.startActivity(web);
                 c.finish();
-            }
+            // }
         }
 
         public void onPause() {
@@ -1267,7 +1150,7 @@ public class GifUtils {
 
         public void onResume() {
             if (video != null && !wasPlayingBeforePause) {
-                video.pause(); // Ensure it stays paused if it was paused before
+                video.pause();
             }
         }
     }
