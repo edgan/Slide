@@ -506,9 +506,8 @@ public class AlbumPager extends BaseSaveActivity {
                             getActivity(),
                             rootView.findViewById(R.id.gif),
                             loader,
-                            null,
-                            null,
-                            false,
+                            null, // placeholder
+                            false, // closeIfNull
                             false, // NEVER autostart
                             rootView.findViewById(R.id.size),
                             ((AlbumPager) getActivity()).subreddit,
