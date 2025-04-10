@@ -1132,13 +1132,12 @@ public class GifUtils {
             }
         }
 
-        private static void openWebsite(Activity c, String url) {
+        public static void openWebsite(Activity c, String url) {
             Intent web = new Intent(c, Website.class);
-                web.putExtra(LinkUtil.EXTRA_URL, url);
-                web.putExtra(LinkUtil.EXTRA_COLOR, Color.BLACK);
-                c.startActivity(web);
-                c.finish();
-            // }
+            web.putExtra(LinkUtil.EXTRA_URL, url);
+            web.putExtra(LinkUtil.EXTRA_COLOR, Color.BLACK);
+            c.startActivity(web);
+            c.finish();
         }
 
         public void onPause() {

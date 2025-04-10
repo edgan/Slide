@@ -564,6 +564,7 @@ public class MediaView extends BaseSaveActivity {
 
     public void doLoad(final String contentUrl) {
         ContentType.Type contentType = ContentType.getContentType(contentUrl);
+        Log.v(TAG, "contentType: " + contentType.toString());
         switch (contentType) {
             case DEVIANTART:
                 doLoadDeviantArt(contentUrl);
@@ -573,6 +574,11 @@ public class MediaView extends BaseSaveActivity {
                 break;
             case IMGUR:
                 doLoadImgur(contentUrl);
+                break;
+            case LINK:
+                if (contentUrl.startsWith("https://giphy.com/")) {
+                    doLoadGif(contentUrl);
+                }
                 break;
             case XKCD:
                 doLoadXKCD(contentUrl);

@@ -936,8 +936,12 @@ private void loadGiphyEmote(EmoteSpanRequest request, TextView textView, int pos
                     OpenRedditLink.openUrl(activity, url, true);
                     break;
                 case LINK:
-                    LogUtil.v("Opening link");
-                    LinkUtil.openUrl(url, Palette.getColor(subreddit), activity);
+                    if (url.startsWith("https://giphy.com/")) {
+                        openGif(url, subreddit, activity);
+                    } else {
+                        LogUtil.v("Opening link");
+                        LinkUtil.openUrl(url, Palette.getColor(subreddit), activity);
+                    }
                     break;
                 case SELF:
                 case NONE:
@@ -1078,14 +1082,11 @@ private void loadGiphyEmote(EmoteSpanRequest request, TextView textView, int pos
 
     private void openGif(String url, String subreddit, Activity activity) {
         if (SettingValues.gif) {
-            if (GifUtils.AsyncLoadGif.getVideoType(url).shouldLoadPreview()) {
-                LinkUtil.openUrl(url, Palette.getColor(subreddit), activity);
-            } else {
-                Intent myIntent = new Intent(getContext(), MediaView.class);
-                myIntent.putExtra(MediaView.EXTRA_URL, url);
-                myIntent.putExtra(MediaView.SUBREDDIT, subreddit);
-                getContext().startActivity(myIntent);
-            }
+            Intent myIntent = new Intent(getContext(), MediaView.class);
+            myIntent.putExtra(MediaView.EXTRA_URL, url);
+            myIntent.putExtra(MediaView.SUBREDDIT, subreddit);
+            getContext().startActivity(myIntent);
+            //}
         } else {
             LinkUtil.openExternally(url);
         }
