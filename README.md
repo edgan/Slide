@@ -1,6 +1,12 @@
 # Current project status
 This project is back with this fork, and is being **maintained**.
 
+# Discord
+Get a invite to the Discord server [here](https://discord.gg/vDuSpJEDrW).
+
+# Subreddit
+You can find the subreddit [here](https://old.reddit.com/r/slidereddit/).
+
 # Setup
 See [SETUP.md](/SETUP.md)
 
