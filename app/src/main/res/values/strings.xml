@@ -1276,6 +1276,11 @@
     <string name="reddit_client_id_override">Reddit Client ID Override</string>
     <string name="click_custom_client_id">Click to set custom client ID</string>
     <string name="client_id_saved">Client ID saved: </string>
+    <string name="client_id_instructions">Client ID creation instructions</string>
+    <string name="client_id_scan_qr">Scan QR Code</string>
+    <string name="client_id_scan_prompt">Scan a QR code containing your Reddit Client ID</string>
+    <string name="camera_permission_denied">Camera permission is required to scan QR codes</string>
+    <string name="client_id_invalid_length">Invalid client ID: must be exactly 22 characters</string>
 
     <!-- Notification permission strings -->
     <string name="notifications_permission_title">Enable Notifications</string>
