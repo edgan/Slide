@@ -20,7 +20,7 @@ incorrectly it won't work.
 9. Reload the [reddit.com/prefs/apps](https://www.reddit.com/prefs/apps) page.
 10. Click `[Show QR]` button to display the QR code for the `Slide` client ID.
 
-![Client ID](/screenshots/client_id.png)
+![Client ID](/screenshots/client_id_with_qr_code.png)
 
 > [!NOTE]
 >
