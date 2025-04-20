@@ -47,6 +47,11 @@ first time the app is being set up.
 
 ![Client ID](/screenshots/client_id_with_qr_code.png)
 
+> [!NOTE]
+>
+> This is just an example Client ID and QR code. It was created and deleted.
+> Keep both private.
+
 4. Press [`OK`](screenshots/pre-saved_client_id_override.png)
 5. Press [`OK`](screenshots/post-saved_client_id_override.png)
 6. Wait for Slide to restart
