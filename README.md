@@ -8,10 +8,10 @@ Get a invite to the Discord server [here](https://discord.gg/vDuSpJEDrW).
 You can find the subreddit [here](https://old.reddit.com/r/slidereddit/).
 
 # Setup
-See [SETUP.md](/SETUP.md)
+See [SETUP.md](/docs/SETUP.md)
 
 # Android device debugging via USB
-See [DEBUGGING.md](/DEBUGGING.md)
+See [DEBUGGING.md](/docs/DEBUGGING.md)
 
 # Updates
 The easiest way, for now, to get updates is
