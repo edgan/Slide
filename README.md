@@ -1,11 +1,34 @@
+<h1 align="center">Slide</h1>
+<p align="center">
+<img src="app/src/main/res/drawable/ic_launcher.png" width="180">
+</p>
+
+<hr style="display: inline-block; width: 100%; border: 1px dotted #ff00cc;">
+
+<p align="center" style="margin-top: -2em;">
+  <a href="https://discord.gg/vDuSpJEDrW">
+    <picture>
+      <source height="24px" media="(prefers-color-scheme: dark)" srcset="/assets/icons/Discord.png" />
+      <img height="24px" src="/assets/icons/Discord.png" />
+    </picture>
+  </a>&nbsp;&nbsp;&nbsp;
+  <a href="https://old.reddit.com/r/slidereddit/">
+    <picture>
+      <source height="24px" media="(prefers-color-scheme: dark)" srcset="/assets/icons/Reddit.png" />
+      <img height="24px" src="/assets/icons/Reddit.png" />
+    </picture>
+  </a>
+</p>
+
+Slide is an open-source, ad-free [Reddit](https://www.reddit.com) browser for
+Android. It is based around the
+[Java Reddit API Wrapper](https://github.com/mattbdean/JRAW).
+
+Slide is available here on [GitHub](https://github.com/) in
+[releases](https://github.com/edgan/Slide/releases), and [Google Play Store](https://play.google.com/store/apps/details?id=me.edgan.redditslide&hl=en_US).
+
 # Current project status
 This project is back with this fork, and is being **maintained**.
-
-# Discord
-Get a invite to the Discord server [here](https://discord.gg/vDuSpJEDrW).
-
-# Subreddit
-You can find the subreddit [here](https://old.reddit.com/r/slidereddit/).
 
 # Setup
 See [SETUP.md](/docs/SETUP.md)
@@ -18,22 +41,6 @@ The easiest way, for now, to get updates is
 [Obtainium](https://github.com/ImranR98/Obtainium).
 [Obtainium](https://github.com/ImranR98/Obtainium) can also be found on
 [F-Droid](https://f-droid.org/).
-
-# Slide
-<img src="app/src/main/res/drawable/ic_launcher.png"
-    align="left" width="180" hspace="10" vspace="10">
-
-Slide is an open-source, ad-free [Reddit](https://www.reddit.com) browser for
-Android. It is based around the
-[Java Reddit API Wrapper](https://github.com/mattbdean/JRAW).
-
-Slide is available here on [GitHub](https://github.com/) in
-[releases](https://github.com/edgan/Slide/releases), and [Google Play Store](https://play.google.com/store/apps/details?id=me.edgan.redditslide&hl=en_US). I plan
-[F-Droid](https://f-droid.org/) in the future.
-
-There is an active community for Slide on the
-[/r/slidereddit](https://www.reddit.com/r/slidereddit) subreddit,
-which anybody is welcome to join.
 
 ### Issues
 In any project it's likely that a few bugs will slip through the cracks, so it
