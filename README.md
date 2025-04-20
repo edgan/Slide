@@ -27,6 +27,8 @@ Android. It is based around the
 Slide is available here on [GitHub](https://github.com/) in
 [releases](https://github.com/edgan/Slide/releases), and [Google Play Store](https://play.google.com/store/apps/details?id=me.edgan.redditslide&hl=en_US).
 
+<hr style="display: inline-block; width: 100%; border: 1px dotted #ff00cc;">
+
 # Current project status
 This project is back with this fork, and is being **maintained**.
 
