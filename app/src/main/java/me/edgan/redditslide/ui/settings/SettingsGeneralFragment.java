@@ -47,9 +47,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
-import com.journeyapps.barcodescanner.BarcodeCallback;
-import com.journeyapps.barcodescanner.BarcodeResult;
-import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.CaseInsensitiveArrayList;
@@ -65,6 +62,7 @@ import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.ImageLoaderUtils;
 import me.edgan.redditslide.util.OnSingleClickListener;
 import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.QrCodeScannerHelper;
 import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.StorageUtil;
 import me.edgan.redditslide.util.StringUtil;
@@ -81,6 +79,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import android.content.pm.PackageManager;
+
 /** Created by ccrama on 3/5/2015. */
 public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
 
@@ -88,8 +88,6 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
     private final ActivityType context;
     private String input;
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1337;
-    private static final int CAMERA_PERMISSION_REQUEST_CODE = 1338;
-    private EditText pendingInputEditText; // To hold EditText reference across permission request
 
     public SettingsGeneralFragment(ActivityType context) {
         this.context = context;
@@ -1728,18 +1726,11 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
         scanQrButton.setOnClickListener(v -> {
             // Check camera permission
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                // Request camera permission
-                ActivityCompat.requestPermissions(
-                    context,
-                    new String[]{Manifest.permission.CAMERA},
-                    CAMERA_PERMISSION_REQUEST_CODE
-                );
-                // Store the input field reference temporarily if needed for the callback
-                // Note: This might need adjustment if the dialog is recreated before permission result
-                pendingInputEditText = input;
+                // Request camera permission via helper (which handles callback storage)
+                QrCodeScannerHelper.startScan(context, new QrCodeScannerHelper.EditTextUpdateCallback(input, context));
             } else {
                 // Permission already granted, show the scanner dialog
-                showEmbeddedScannerDialog(input);
+                QrCodeScannerHelper.startScan(context, new QrCodeScannerHelper.EditTextUpdateCallback(input, context));
             }
         });
 
@@ -1799,23 +1790,11 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
      * @param grantResults the permission grant results
      */
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            EditText targetInput = pendingInputEditText; // Use the stored reference
-            pendingInputEditText = null; // Clear the reference
-
-            if (grantResults.length > 0 && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                // Permission was granted, show the scanner dialog
-                if (targetInput != null) {
-                    showEmbeddedScannerDialog(targetInput);
-                } else {
-                    // Handle case where input field reference was lost (should ideally not happen)
-                    LogUtil.e("Lost reference to input field after permission request");
-                    Toast.makeText(context, "Error: Could not initiate scan.", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                // Permission denied, show a toast
-                Toast.makeText(context, R.string.camera_permission_denied, Toast.LENGTH_SHORT).show();
-            }
+        if (requestCode == QrCodeScannerHelper.CAMERA_PERMISSION_REQUEST_CODE) {
+            QrCodeScannerHelper.handlePermissionsResult(requestCode, grantResults, context);
+        } else if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+             // Handle notification permission result (if needed, currently handled by system)
+             LogUtil.v("Received notification permission result: " + (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED));
         }
     }
 
@@ -1864,65 +1843,5 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                     .setNegativeButton(R.string.btn_cancel, null)
                     .show();
         }
-    }
-
-    /**
-     * Shows a dialog containing an embedded QR code scanner view.
-     * @param targetEditText The EditText field to update with the scanned result.
-     */
-    private void showEmbeddedScannerDialog(final EditText targetEditText) {
-        final Context contextThemeWrapper = new ContextThemeWrapper(context,
-                new ColorPreferences(context).getFontStyle().getBaseId());
-
-        final DecoratedBarcodeView barcodeView = new DecoratedBarcodeView(contextThemeWrapper);
-        // Basic layout params, adjust as needed
-        LinearLayout.LayoutParams viewParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        barcodeView.setLayoutParams(viewParams);
-        barcodeView.setStatusText(context.getString(R.string.client_id_scan_prompt));
-
-        // Build the dialog
-        final AlertDialog scannerDialog = new MaterialAlertDialogBuilder(contextThemeWrapper)
-                .setTitle(R.string.client_id_scan_qr)
-                .setView(barcodeView)
-                .setNegativeButton(R.string.btn_cancel, (dialog, which) -> dialog.dismiss()) // Allow cancelling
-                .create();
-
-        // Set the callback for scan results
-        barcodeView.decodeSingle(new BarcodeCallback() {
-            @Override
-            public void barcodeResult(BarcodeResult result) {
-                scannerDialog.dismiss(); // Dismiss immediately after a result
-                if (result.getText() != null) {
-                    String contents = result.getText();
-                    // Validate that the QR code contains exactly 22 characters
-                    if (contents.length() == 22) {
-                        targetEditText.setText(contents);
-                    } else {
-                        // Show error if client ID is not 22 characters
-                        Toast.makeText(context,
-                            R.string.client_id_invalid_length,
-                            Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    // Handle case where scan was successful but text is null
-                    Toast.makeText(context, "Scan failed: No data found.", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void possibleResultPoints(List<com.google.zxing.ResultPoint> resultPoints) {
-                // Optional: handle potential result points for drawing overlays
-            }
-        });
-
-        // Pause the scanner when the dialog is dismissed
-        scannerDialog.setOnDismissListener(dialog -> barcodeView.pause());
-
-        // Resume the scanner after the dialog is shown
-        scannerDialog.setOnShowListener(dialog -> barcodeView.resume());
-
-        scannerDialog.show();
     }
 }
