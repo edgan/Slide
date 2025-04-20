@@ -1695,8 +1695,7 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
         linkText.setPaintFlags(linkText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         linkText.setPadding(paddingPx, 0, 0, paddingPx);
         linkText.setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/edgan/Slide/blob/master/SETUP.md#reddit-client-id"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.setup_md_url)));
             context.startActivity(browserIntent);
         });
         dialogContainer.addView(linkText);

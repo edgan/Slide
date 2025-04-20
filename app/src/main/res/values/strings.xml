@@ -1317,4 +1317,6 @@
     <string name="settings_dialog_colored_border_desc">Display a thin colored border around some dialog boxes.</string>
 
     <string name="misc_err_sync_failed">Failed to sync subreddits. No subscribed subreddits?</string>
+
+    <string name="setup_md_url">https://github.com/edgan/Slide/blob/master/docs/SETUP.md#reddit-client-id</string>
 </resources>

@@ -383,8 +383,7 @@ public class Tutorial extends AppCompatActivity {
                 linkText.setPadding(0, 0, 0, paddingDp);
                 linkText.setPaintFlags(linkText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                 linkText.setOnClickListener(v -> {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://github.com/edgan/Slide/blob/master/SETUP.md#reddit-client-id"));
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(this.getString(R.string.setup_md_url)));
                     startActivity(browserIntent);
                 });
                 dialogContainer.addView(linkText);
