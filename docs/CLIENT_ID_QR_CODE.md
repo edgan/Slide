@@ -1,6 +1,15 @@
 ## Reddit Client ID
 A Reddit Client ID is needed to access Reddit from 3rd party clients.
 
+## Alternative browser extensions
+These let you select text, right click, and generate a QR code
+
+### Chrome
+[QR Code Generator](https://chromewebstore.google.com/detail/qr-code-generator/afpbjjgbdimpioenaedcjgkaigggcdpp?hl=en-US)
+
+### Firefox
+[Offline QR Code Generator](https://addons.mozilla.org/en-US/firefox/addon/offline-qr-code-generator/)
+
 ## Reddit Client ID creation steps
 ![Create application](/screenshots/create_application.png)
 
