@@ -703,10 +703,13 @@ public class ExoVideoView extends RelativeLayout {
                                     }
                                 }
 
-                                // Update last position
-                                lastTouchX = event.getX();
-                                lastTouchY = event.getY();
                             }
+
+                            // While scaling, keep the reference point in sync so that when the scale ends
+                            // we do not compute an unexpectedly large delta that would "jump" the view.
+                            lastTouchX = event.getX();
+                            lastTouchY = event.getY();
+
                             break;
                         }
 
@@ -721,6 +724,23 @@ public class ExoVideoView extends RelativeLayout {
 
                         case MotionEvent.ACTION_CANCEL: {
                             isDragging = false;
+                            break;
+                        }
+
+                        case MotionEvent.ACTION_POINTER_DOWN:
+                        case MotionEvent.ACTION_POINTER_UP: {
+                            // Update reference point to the remaining (or new) primary pointer
+                            int index = event.getActionIndex();
+                            // Choose a pointer that is still down after this event (0 if possible)
+                            int newIndex = 0;
+
+                            if (action == MotionEvent.ACTION_POINTER_UP && index == 0 && event.getPointerCount() > 1) {
+                                newIndex = 1; // first remaining pointer
+                            }
+
+                            lastTouchX = event.getX(newIndex);
+                            lastTouchY = event.getY(newIndex);
+
                             break;
                         }
                     }
