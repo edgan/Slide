@@ -15,9 +15,6 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.TextureView;
 import android.view.ViewGroup.LayoutParams;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.view.View;
@@ -67,6 +64,7 @@ public class ExoVideoView extends RelativeLayout {
     private boolean hqAttached = false;
     private AudioFocusHelper audioFocusHelper;
     private Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable hideControlsRunnable;
 
 
     private ScaleGestureDetector scaleGestureDetector;
@@ -133,6 +131,11 @@ public class ExoVideoView extends RelativeLayout {
     protected void onDetachedFromWindow() {
         // Pause playback when view is detached
         stop();
+
+        // Cancel pending hide runnable
+        if (handler != null && hideControlsRunnable != null) {
+            handler.removeCallbacks(hideControlsRunnable);
+        }
 
         super.onDetachedFromWindow();
     }
@@ -216,6 +219,28 @@ public class ExoVideoView extends RelativeLayout {
                 }
             });
 
+        // --- Add listener for play state changes to manage UI timeout ---
+        player.addListener(new Player.Listener() {
+            @Override
+            public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
+                // If controls are visible when play state changes,
+                // reset the hide timer accordingly.
+                if (playerUI != null && playerUI.isVisible() && handler != null) {
+                    Log.d(TAG, "PlayWhenReady changed while UI visible. New state=" + playWhenReady);
+                    // Cancel any pending hide task
+                    Log.d(TAG, "PlayWhenReady Listener: Cancelling any pending hide runnable.");
+                    handler.removeCallbacks(hideControlsRunnable);
+                    // If starting to play, schedule a new hide task
+                    if (playWhenReady) {
+                        Log.d(TAG, "PlayWhenReady Listener: Scheduling hide runnable (delay 1000ms).");
+                        handler.postDelayed(hideControlsRunnable, 1000);
+                    } else {
+                        Log.d(TAG, "PlayWhenReady Listener: Not scheduling hide runnable (paused).");
+                    }
+                }
+            }
+        });
+
         // --- Use a TextureView with a cached SurfaceTexture ---
         videoTextureView = new TextureView(context);
         videoTextureView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -274,7 +299,7 @@ public class ExoVideoView extends RelativeLayout {
         playerUI = new PlayerControlView(context);
         playerUI.setPlayer(player);
         playerUI.setVisibility(View.GONE);
-        playerUI.setShowTimeoutMs(2000);  // Controls will hide after 2 seconds
+        playerUI.setShowTimeoutMs(-1);  // Ensure built-in timeout is disabled
 
         // Add the player UI with proper positioning constraints
         RelativeLayout.LayoutParams playerUIParams = new RelativeLayout.LayoutParams(
@@ -283,12 +308,35 @@ public class ExoVideoView extends RelativeLayout {
         playerUIParams.bottomMargin = (int) (64 * context.getResources().getDisplayMetrics().density);
         addView(playerUI);
 
+        // Define the hide action - it just hides if run.
+        hideControlsRunnable = () -> {
+            // The decision to run this is made elsewhere.
+            if (playerUI != null) {
+                // Check visibility just before hiding to avoid hiding if user tapped again quickly
+                if (playerUI.isVisible()) {
+                    playerUI.hide();
+                }
+            }
+        };
+
         setOnClickListener((v) -> {
-            playerUI.clearAnimation();
+            // Ensure playerUI, player, and handler are not null
+            if (playerUI == null || player == null || handler == null) return;
+
+            // Always remove pending runnable when screen is tapped
+            handler.removeCallbacks(hideControlsRunnable);
+
             if (playerUI.isVisible()) {
-                playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, false, 300));
+                // If visible, just hide.
+                playerUI.hide();
             } else {
-                playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, true, 300));
+                // If hidden, show and decide whether to schedule auto-hide.
+                playerUI.show();
+                boolean isPlaying = player.getPlayWhenReady();
+                if (isPlaying) {
+                    // If playing, schedule the hide runnable.
+                    handler.postDelayed(hideControlsRunnable, 2000);
+                }
             }
         });
     }
@@ -367,6 +415,10 @@ public class ExoVideoView extends RelativeLayout {
         // Ensure audioFocusHelper is not null before losing focus
         if (audioFocusHelper != null) {
             audioFocusHelper.loseFocus();
+        }
+        // Cancel pending hide runnable when explicitly stopping
+        if (handler != null && hideControlsRunnable != null) {
+            handler.removeCallbacks(hideControlsRunnable);
         }
     }
 
@@ -606,45 +658,6 @@ public class ExoVideoView extends RelativeLayout {
                 } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
                     player.setPlayWhenReady(wasPlaying);
                 }
-            }
-        }
-    }
-
-    /** Simple animation for fading in/out the player UI. */
-    static class PlayerUIFadeInAnimation extends AnimationSet {
-        private PlayerControlView animationView;
-        private boolean toVisible;
-
-        PlayerUIFadeInAnimation(PlayerControlView view, boolean toVisible, long duration) {
-            super(false);
-            this.toVisible = toVisible;
-            this.animationView = view;
-            float startAlpha = toVisible ? 0 : 1;
-            float endAlpha = toVisible ? 1 : 0;
-            AlphaAnimation alphaAnimation = new AlphaAnimation(startAlpha, endAlpha);
-            alphaAnimation.setDuration(duration);
-            addAnimation(alphaAnimation);
-            setAnimationListener(new PlayerUIFadeInAnimationListener());
-        }
-
-        private class PlayerUIFadeInAnimationListener implements Animation.AnimationListener {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                animationView.show();
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                if (toVisible) {
-                    animationView.show();
-                } else {
-                    animationView.hide();
-                }
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-                // Purposefully left blank
             }
         }
     }
