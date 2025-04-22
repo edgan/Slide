@@ -7,7 +7,6 @@ import static me.edgan.redditslide.Constants.FAB_SEARCH;
 import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_BOTH;
 import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_DRAWER;
 import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR;
-import static me.edgan.redditslide.Constants.getClientId;
 
 import android.Manifest;
 import android.app.Activity;
@@ -1280,8 +1279,6 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
         RelativeLayout clientId = context.findViewById(R.id.settings_general_client_id);
         final TextView currentClientId =
                 context.findViewById(R.id.settings_general_client_id_current);
-        final TextView activeClientId =
-                context.findViewById(R.id.settings_general_client_id_active_value);
 
         // Update current value display
         String savedClientId =
@@ -1289,9 +1286,6 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
         if (!savedClientId.isEmpty()) {
             currentClientId.setText(savedClientId);
         }
-
-        // Show active client ID
-        updateActiveClientId(activeClientId);
 
         clientId.setOnClickListener(
                 v -> {
@@ -1359,13 +1353,6 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                         });
             }
         }
-    }
-
-    // Add helper method
-    private void updateActiveClientId(TextView view) {
-        // Get the actual client ID that will be used
-        String activeId = getClientId();
-        view.setText(activeId);
     }
 
     private void askTimePeriod() {
@@ -1741,42 +1728,37 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
         dialogContainer.addView(inputLayout);
 
         final TextView currentClientIdView = context.findViewById(R.id.settings_general_client_id_current);
-        final TextView activeClientIdView = context.findViewById(R.id.settings_general_client_id_active_value);
 
         new MaterialAlertDialogBuilder(contextThemeWrapper)
                 .setTitle(R.string.reddit_client_id_override)
                 .setView(dialogContainer)
                 .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
-                    String clientId = input.getText().toString().trim();
+                    String newClientId = input.getText().toString().trim();
+                    String oldClientId = SettingValues.prefs.getString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
 
-                    // Set the value in memory
-                    SettingValues.redditClientIdOverride = clientId;
+                    // Only proceed if the client ID has changed
+                    if (!newClientId.equals(oldClientId)) {
+                        // Set the value in memory
+                        SettingValues.redditClientIdOverride = newClientId;
 
-                    // Save to preferences
-                    if (clientId.isEmpty()) {
-                        SettingValues.prefs.edit()
-                                .remove(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE)
-                                .commit();
-                    } else {
-                        SettingValues.prefs.edit()
-                                .putString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, clientId)
-                                .commit();
+                        // Save to preferences
+                        if (newClientId.isEmpty()) {
+                            SettingValues.prefs.edit()
+                                    .remove(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE)
+                                    .commit();
+                        } else {
+                            SettingValues.prefs.edit()
+                                    .putString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, newClientId)
+                                    .commit();
+                        }
+
+                        // Update displays
+                        currentClientIdView.setText(newClientId.isEmpty() ?
+                                context.getString(R.string.click_custom_client_id) : newClientId);
+
+                        // Restart the app immediately
+                        ((Reddit) context.getApplicationContext()).forceRestart(context, false);
                     }
-
-                    // Update displays
-                    currentClientIdView.setText(clientId.isEmpty() ?
-                            context.getString(R.string.click_custom_client_id) : clientId);
-                    updateActiveClientId(activeClientIdView);
-
-                    // Show confirmation dialog
-                    new MaterialAlertDialogBuilder(contextThemeWrapper)
-                            .setMessage(context.getString(R.string.client_id_saved) +
-                                    (clientId.isEmpty() ? "cleared" : clientId))
-                            .setPositiveButton(R.string.btn_ok, (d, w) -> {
-                                ((Reddit) context.getApplicationContext()).forceRestart(context, false);
-                            })
-                            .setCancelable(false)
-                            .show();
                 })
                 .setNegativeButton(R.string.btn_cancel, null)
                 .show();
@@ -1792,8 +1774,8 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
         if (requestCode == QrCodeScannerHelper.CAMERA_PERMISSION_REQUEST_CODE) {
             QrCodeScannerHelper.handlePermissionsResult(requestCode, grantResults, context);
         } else if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
-             // Handle notification permission result (if needed, currently handled by system)
-             LogUtil.v("Received notification permission result: " + (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED));
+            // Handle notification permission result (if needed, currently handled by system)
+            LogUtil.v("Received notification permission result: " + (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED));
         }
     }
 

@@ -75,9 +75,9 @@ public class QrCodeScannerHelper {
                     callback.onScanFailed(activity.getString(R.string.camera_permission_denied));
                 }
             } else {
-                 LogUtil.w("QrCodeScannerHelper: No callback found for activity after permission result.");
-                 // Optionally show a generic error toast if callback is lost
-                 // Toast.makeText(activity, "Scan initiation failed.", Toast.LENGTH_SHORT).show();
+                LogUtil.w("QrCodeScannerHelper: No callback found for activity after permission result.");
+                // Optionally show a generic error toast if callback is lost
+                Toast.makeText(activity, "Scan initiation failed.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -152,6 +152,7 @@ public class QrCodeScannerHelper {
         public void onQrCodeScanned(String result) {
             EditText editText = editTextRef.get();
             if (editText != null) {
+                editText.setText(""); // Clear existing text first
                 editText.setText(result);
             }
         }
