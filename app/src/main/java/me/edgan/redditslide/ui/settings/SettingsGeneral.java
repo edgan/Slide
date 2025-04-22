@@ -154,4 +154,11 @@ public class SettingsGeneral extends BaseActivityAnim implements StorageUtil.Dir
     public StorageUtil.OnDirectorySelectedListener getDirectorySelectedListener() {
         return directorySelectedListener;
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Forward permission results to our fragment
+        fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }

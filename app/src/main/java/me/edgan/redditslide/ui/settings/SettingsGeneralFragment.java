@@ -7,7 +7,6 @@ import static me.edgan.redditslide.Constants.FAB_SEARCH;
 import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_BOTH;
 import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_DRAWER;
 import static me.edgan.redditslide.Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR;
-import static me.edgan.redditslide.Constants.getClientId;
 
 import android.Manifest;
 import android.app.Activity;
@@ -25,9 +24,11 @@ import android.provider.Settings;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -60,6 +61,7 @@ import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.ImageLoaderUtils;
 import me.edgan.redditslide.util.OnSingleClickListener;
 import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.QrCodeScannerHelper;
 import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.StorageUtil;
 import me.edgan.redditslide.util.StringUtil;
@@ -75,6 +77,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import android.content.pm.PackageManager;
 
 /** Created by ccrama on 3/5/2015. */
 public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
@@ -1275,8 +1279,6 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
         RelativeLayout clientId = context.findViewById(R.id.settings_general_client_id);
         final TextView currentClientId =
                 context.findViewById(R.id.settings_general_client_id_current);
-        final TextView activeClientId =
-                context.findViewById(R.id.settings_general_client_id_active_value);
 
         // Update current value display
         String savedClientId =
@@ -1284,9 +1286,6 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
         if (!savedClientId.isEmpty()) {
             currentClientId.setText(savedClientId);
         }
-
-        // Show active client ID
-        updateActiveClientId(activeClientId);
 
         clientId.setOnClickListener(
                 v -> {
@@ -1354,13 +1353,6 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                         });
             }
         }
-    }
-
-    // Add helper method
-    private void updateActiveClientId(TextView view) {
-        // Get the actual client ID that will be used
-        String activeId = getClientId();
-        view.setText(activeId);
     }
 
     private void askTimePeriod() {
@@ -1685,59 +1677,126 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
 
         // Add instructions link
         TextView linkText = new TextView(contextThemeWrapper);
-        linkText.setText("Client ID creation instructions");
+        linkText.setText(R.string.client_id_instructions);
         linkText.setTextColor(new ColorPreferences(contextThemeWrapper).getColor(""));
         linkText.setPaintFlags(linkText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         linkText.setPadding(paddingPx, 0, 0, paddingPx);
         linkText.setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/edgan/Slide/blob/master/SETUP.md#reddit-client-id"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.setup_md_url)));
             context.startActivity(browserIntent);
         });
-
         dialogContainer.addView(linkText);
-        dialogContainer.addView(input);
+
+        // Create horizontal layout for input field and camera button
+        LinearLayout inputLayout = new LinearLayout(contextThemeWrapper);
+        inputLayout.setOrientation(LinearLayout.HORIZONTAL);
+        inputLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        inputLayout.setPadding(paddingPx, 0, paddingPx, paddingPx);
+
+        // Configure input field to take most of the space
+        LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+        input.setLayoutParams(inputParams);
+
+        // Add themed QR code scan button (camera icon)
+        ImageButton scanQrButton = new ImageButton(contextThemeWrapper);
+        scanQrButton.setImageResource(R.drawable.ic_camera);
+        scanQrButton.setPadding(0,0,0,0); // Remove padding to make it compact
+
+        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        buttonParams.setMargins(paddingPx/2, 0, 0, 0); // Add margin to separate from input
+        scanQrButton.setLayoutParams(buttonParams);
+
+        scanQrButton.setOnClickListener(v -> {
+            // Check camera permission
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                // Request camera permission via helper (which handles callback storage)
+                QrCodeScannerHelper.startScan(context, new QrCodeScannerHelper.EditTextUpdateCallback(input, context));
+            } else {
+                // Permission already granted, show the scanner dialog
+                QrCodeScannerHelper.startScan(context, new QrCodeScannerHelper.EditTextUpdateCallback(input, context));
+            }
+        });
+
+        // Add views to horizontal layout
+        inputLayout.addView(input);
+        inputLayout.addView(scanQrButton);
+
+        // Add horizontal layout to main container
+        dialogContainer.addView(inputLayout);
 
         final TextView currentClientIdView = context.findViewById(R.id.settings_general_client_id_current);
-        final TextView activeClientIdView = context.findViewById(R.id.settings_general_client_id_active_value);
 
         new MaterialAlertDialogBuilder(contextThemeWrapper)
                 .setTitle(R.string.reddit_client_id_override)
                 .setView(dialogContainer)
                 .setPositiveButton(R.string.btn_ok, (dialog, which) -> {
-                    String clientId = input.getText().toString().trim();
+                    String newClientId = input.getText().toString().trim();
+                    String oldClientId = SettingValues.prefs.getString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
 
-                    // Set the value in memory
-                    SettingValues.redditClientIdOverride = clientId;
+                    // Only proceed if the client ID has changed
+                    if (!newClientId.equals(oldClientId)) {
+                        // Set the value in memory
+                        SettingValues.redditClientIdOverride = newClientId;
 
-                    // Save to preferences
-                    if (clientId.isEmpty()) {
-                        SettingValues.prefs.edit()
-                                .remove(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE)
-                                .commit();
-                    } else {
-                        SettingValues.prefs.edit()
-                                .putString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, clientId)
-                                .commit();
+                        // Save to preferences
+                        if (newClientId.isEmpty()) {
+                            SettingValues.prefs.edit()
+                                    .remove(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE)
+                                    .commit();
+                        } else {
+                            SettingValues.prefs.edit()
+                                    .putString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, newClientId)
+                                    .commit();
+                        }
+
+                        // Update displays
+                        currentClientIdView.setText(newClientId.isEmpty() ?
+                                context.getString(R.string.click_custom_client_id) : newClientId);
+
+                        // Restart the app immediately
+                        ((Reddit) context.getApplicationContext()).forceRestart(context, false);
                     }
-
-                    // Update displays
-                    currentClientIdView.setText(clientId.isEmpty() ?
-                            context.getString(R.string.click_custom_client_id) : clientId);
-                    updateActiveClientId(activeClientIdView);
-
-                    // Show confirmation dialog
-                    new MaterialAlertDialogBuilder(contextThemeWrapper)
-                            .setMessage(context.getString(R.string.client_id_saved) +
-                                    (clientId.isEmpty() ? "cleared" : clientId))
-                            .setPositiveButton(R.string.btn_ok, (d, w) -> {
-                                ((Reddit) context.getApplicationContext()).forceRestart(context, false);
-                            })
-                            .setCancelable(false)
-                            .show();
                 })
                 .setNegativeButton(R.string.btn_cancel, null)
                 .show();
+    }
+
+    /**
+     * Handle permission request results for camera access
+     * @param requestCode the request code
+     * @param permissions the requested permissions
+     * @param grantResults the permission grant results
+     */
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == QrCodeScannerHelper.CAMERA_PERMISSION_REQUEST_CODE) {
+            QrCodeScannerHelper.handlePermissionsResult(requestCode, grantResults, context);
+        } else if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            // Handle notification permission result (if needed, currently handled by system)
+            LogUtil.v("Received notification permission result: " + (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED));
+        }
+    }
+
+    /**
+     * Helper method to find an EditText within a view hierarchy
+     * @param view the parent view to search in
+     * @return the first EditText found, or null
+     */
+    private EditText findEditTextInView(View view) {
+        if (view instanceof EditText) {
+            return (EditText) view;
+        } else if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                EditText found = findEditTextInView(viewGroup.getChildAt(i));
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
     }
 
     private void checkNotificationListenerPermission() {
