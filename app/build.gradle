@@ -49,7 +49,7 @@ android {
         multiDexEnabled true
         targetSdk 34
         vectorDrawables.useSupportLibrary true
-        versionCode 727
+        versionCode 729
         versionName androidGitVersion.name()
     }
 
@@ -145,13 +145,15 @@ if (githubPropertiesFile.exists()) {
     githubProperties.load(new FileInputStream(githubPropertiesFile))
 
     githubRelease {
+        def releaseNotes = System.getenv("RELEASE_NOTES") ?: "Automated release of version ${android.defaultConfig.versionName ?: "default-version"}"
+
         token = githubProperties["githubToken"]
         owner = "edgan"
         repo = "Slide"
         tagName = android.defaultConfig.versionName ?: "default-version"
         targetCommitish = "master"
         releaseName = "Release ${android.defaultConfig.versionName ?: "default-version"}"
-        body = "Automated release of version ${android.defaultConfig.versionName ?: "default-version"}"
+        body = "$releaseNotes"
         draft = false
         prerelease = false
         overwrite = false

@@ -414,10 +414,9 @@ public class TumblrPager extends BaseSaveActivity {
                             getActivity(),
                             rootView.findViewById(R.id.gif),
                             loader,
-                            null,
-                            null,
-                            false,
-                            true,
+                            null, // placeholder
+                            false, // closeIfNull
+                            true, // autostart
                             rootView.findViewById(R.id.size),
                             ((TumblrPager) getActivity()).subreddit,
                             null)
@@ -436,7 +435,13 @@ public class TumblrPager extends BaseSaveActivity {
                             new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    MediaView.doOnClick.run();
+                                    // Call the parent activity's save method
+                                    if (getActivity() instanceof TumblrPager) {
+                                        ((TumblrPager) getActivity()).doImageSave(true, url, i);
+                                    } else {
+                                        Log.e(TAG, "Parent activity is not TumblrPager, cannot save.");
+                                        // Optionally show a toast or dialog
+                                    }
                                 }
                             });
             return rootView;
