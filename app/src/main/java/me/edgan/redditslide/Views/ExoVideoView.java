@@ -20,6 +20,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -272,6 +273,7 @@ public class ExoVideoView extends RelativeLayout {
     private void setupUI() {
         playerUI = new PlayerControlView(context);
         playerUI.setPlayer(player);
+        playerUI.setVisibility(View.GONE);
         playerUI.setShowTimeoutMs(2000);  // Controls will hide after 2 seconds
 
         // Add the player UI with proper positioning constraints
@@ -281,7 +283,6 @@ public class ExoVideoView extends RelativeLayout {
         playerUIParams.bottomMargin = (int) (64 * context.getResources().getDisplayMetrics().density);
         addView(playerUI);
 
-        playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, true, 0));
         setOnClickListener((v) -> {
             playerUI.clearAnimation();
             if (playerUI.isVisible()) {
