@@ -77,6 +77,7 @@ public class ExoVideoView extends RelativeLayout {
     private float positionX = 0f;
     private float positionY = 0f;
     private boolean isDragging = false;
+    private boolean wasScaling = false; // Flag to track if scaling happened in the gesture
 
     // Static variable to hold the saved SurfaceTexture.
     private static SurfaceTexture sSavedSurfaceTexture;
@@ -673,119 +674,91 @@ public class ExoVideoView extends RelativeLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // Ensure event is not null
-        if (event != null) {
-            // Ensure scale detector is not null
-            if (scaleGestureDetector != null) {
-                // Handle scale gestures
-                scaleGestureDetector.onTouchEvent(event);
+        if (event == null) return super.onTouchEvent(null);
+        if (scaleGestureDetector == null) return super.onTouchEvent(event);
 
-                // Only handle panning when zoomed in
-                if (scaleFactor > 1.0f) {
-                    final int action = event.getActionMasked();
+        // Pass event to scale detector FIRST
+        boolean scaleHandledByDetector = scaleGestureDetector.onTouchEvent(event);
+        boolean scalingInProgress = scaleGestureDetector.isInProgress();
 
-                    switch (action) {
-                        case MotionEvent.ACTION_DOWN: {
-                            // Start tracking touch position for potential dragging
-                            lastTouchX = event.getX();
-                            lastTouchY = event.getY();
-                            isDragging = false;
-                            break;
-                        }
+        final int action = event.getActionMasked();
 
-                        case MotionEvent.ACTION_MOVE: {
-                            // Only process if not in a scaling operation
-                            if (!scaleGestureDetector.isInProgress()) {
-                                // Calculate distance moved
-                                float dx = event.getX() - lastTouchX;
-                                float dy = event.getY() - lastTouchY;
+        // Reset flags on ACTION_DOWN
+        if (action == MotionEvent.ACTION_DOWN) {
+            lastTouchX = event.getX();
+            lastTouchY = event.getY();
+            isDragging = false;
+            wasScaling = false; // Reset scaling history flag for the new gesture
+        }
 
-                                // If movement is significant enough, consider it a drag
-                                if (!isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
-                                    isDragging = true;
-                                }
-
-                                if (isDragging) {
-                                    // Update position with constraints to keep video partially visible
-                                    positionX += dx;
-                                    positionY += dy;
-
-                                    // Ensure videoFrame exists before accessing dimensions
-                                    if (videoFrame != null) {
-                                        // Calculate maximum allowed movement based on scale
-                                        float maxDeltaX = (videoFrame.getWidth() * (scaleFactor - 1)) / 2;
-                                        float maxDeltaY = (videoFrame.getHeight() * (scaleFactor - 1)) / 2;
-
-                                        // Constrain movement
-                                        positionX = Math.max(-maxDeltaX, Math.min(maxDeltaX, positionX));
-                                        positionY = Math.max(-maxDeltaY, Math.min(maxDeltaY, positionY));
-
-                                        // Apply translation
-                                        videoFrame.setTranslationX(positionX);
-                                        videoFrame.setTranslationY(positionY);
-                                    }
-                                }
-
-                            }
-
-                            // While scaling, keep the reference point in sync so that when the scale ends
-                            // we do not compute an unexpectedly large delta that would "jump" the view.
-                            lastTouchX = event.getX();
-                            lastTouchY = event.getY();
-
-                            break;
-                        }
-
-                        case MotionEvent.ACTION_UP: {
-                            // Handle click if it wasn't a drag
-                            if (!isDragging) {
-                                return super.onTouchEvent(event);
-                            }
-                            isDragging = false;
-                            break;
-                        }
-
-                        case MotionEvent.ACTION_CANCEL: {
-                            isDragging = false;
-                            break;
-                        }
-
-                        case MotionEvent.ACTION_POINTER_DOWN:
-                        case MotionEvent.ACTION_POINTER_UP: {
-                            // Update reference point to the remaining (or new) primary pointer
-                            int index = event.getActionIndex();
-                            // Choose a pointer that is still down after this event (0 if possible)
-                            int newIndex = 0;
-
-                            if (action == MotionEvent.ACTION_POINTER_UP && index == 0 && event.getPointerCount() > 1) {
-                                newIndex = 1; // first remaining pointer
-                            }
-
-                            lastTouchX = event.getX(newIndex);
-                            lastTouchY = event.getY(newIndex);
-
-                            break;
-                        }
+        boolean dragHandled = false;
+        // Panning logic (only when zoomed and not currently scaling)
+        if (scaleFactor > 1.0f && !scalingInProgress) {
+            switch (action) {
+                case MotionEvent.ACTION_MOVE: {
+                    float dx = event.getX() - lastTouchX;
+                    float dy = event.getY() - lastTouchY;
+                    // Start dragging if movement is significant
+                    if (!isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+                        isDragging = true;
                     }
-
-                    // If we're handling a drag, intercept the event
                     if (isDragging) {
-                        return true;
+                        // Update position with constraints
+                        positionX += dx;
+                        positionY += dy;
+                        if (videoFrame != null) {
+                            float maxDeltaX = (videoFrame.getWidth() * (scaleFactor - 1)) / 2;
+                            float maxDeltaY = (videoFrame.getHeight() * (scaleFactor - 1)) / 2;
+                            positionX = Math.max(-maxDeltaX, Math.min(maxDeltaX, positionX));
+                            positionY = Math.max(-maxDeltaY, Math.min(maxDeltaY, positionY));
+                            // Apply translation
+                            videoFrame.setTranslationX(positionX);
+                            videoFrame.setTranslationY(positionY);
+                        }
+                        dragHandled = true; // Mark that dragging occurred
                     }
+                    // Update last touch position regardless for next move calculation
+                    lastTouchX = event.getX();
+                    lastTouchY = event.getY();
+                    break;
                 }
-
-                // Continue with normal touch handling if not scaling or panning
-                if (!scaleGestureDetector.isInProgress() && !isDragging) {
-                    return super.onTouchEvent(event);
-                }
-                return true; // Handled by scale detector or panning logic
-            } else {
-                // Fallback if scale detector is null
-                return super.onTouchEvent(event);
+                 case MotionEvent.ACTION_POINTER_DOWN:
+                 case MotionEvent.ACTION_POINTER_UP: {
+                    // Update reference point to maintain smooth panning across pointer changes
+                     int index = event.getActionIndex();
+                     int newIndex = 0; // Default to the first pointer
+                     // If the primary pointer went up, use the next available one
+                     if (action == MotionEvent.ACTION_POINTER_UP && index == 0 && event.getPointerCount() > 1) {
+                         newIndex = 1;
+                     }
+                     lastTouchX = event.getX(newIndex);
+                     lastTouchY = event.getY(newIndex);
+                     break;
+                 }
+                 // ACTION_UP and ACTION_CANCEL handled below the switch
             }
+        } // end if (scaleFactor > 1.0f && !scalingInProgress)
+
+
+        // Determine if the event should be consumed (preventing click)
+        // Consume if:
+        // 1. Scaling is currently in progress (mid-gesture)
+        // 2. Dragging occurred during this MOVE event
+        // 3. The action is UP or CANCEL *and* scaling happened at any point during this gesture sequence
+        boolean consumeEvent = scalingInProgress || dragHandled || ((action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) && wasScaling);
+
+        // Reset dragging state on UP or CANCEL, regardless of consumption, ready for next gesture
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            isDragging = false;
+            // wasScaling is reset on ACTION_DOWN
+        }
+
+        if (consumeEvent) {
+            return true; // Consume the event, preventing click listener
         } else {
-            // Fallback if event is null
-            return super.onTouchEvent(null); // Or return false, depending on desired behavior
+            // Not scaling, not dragging, not an UP/CANCEL after scaling.
+            // Pass to superclass to handle potential clicks etc.
+            return super.onTouchEvent(event);
         }
     }
 
@@ -797,6 +770,8 @@ public class ExoVideoView extends RelativeLayout {
         public boolean onScale(ScaleGestureDetector detector) {
             // Ensure detector is not null
             if (detector != null) {
+                wasScaling = true; // Mark that scaling has occurred in this gesture sequence
+
                 scaleFactor *= detector.getScaleFactor();
 
                 // Limit the scale factor to reasonable bounds
