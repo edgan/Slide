@@ -217,6 +217,14 @@ public class ExoVideoView extends RelativeLayout {
                         }
                     }
                 }
+
+                @Override
+                public void onRenderedFirstFrame() {
+                    Log.d(TAG, "onRenderedFirstFrame: Fading in TextureView.");
+                    if (videoTextureView != null) {
+                        videoTextureView.animate().alpha(1f).setDuration(150).start(); // Short fade-in
+                    }
+                }
             });
 
         // --- Add listener for play state changes to manage UI timeout ---
@@ -244,6 +252,7 @@ public class ExoVideoView extends RelativeLayout {
         // --- Use a TextureView with a cached SurfaceTexture ---
         videoTextureView = new TextureView(context);
         videoTextureView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        videoTextureView.setAlpha(0f); // Make it transparent initially
         videoTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
