@@ -78,6 +78,7 @@ public class ExoVideoView extends RelativeLayout {
     private float positionY = 0f;
     private boolean isDragging = false;
     private boolean wasScaling = false; // Flag to track if scaling happened in the gesture
+    private boolean wasDragging = false; // Flag to track if dragging happened in the gesture
 
     // Static variable to hold the saved SurfaceTexture.
     private static SurfaceTexture sSavedSurfaceTexture;
@@ -689,6 +690,7 @@ public class ExoVideoView extends RelativeLayout {
             lastTouchY = event.getY();
             isDragging = false;
             wasScaling = false; // Reset scaling history flag for the new gesture
+            wasDragging = false; // Reset dragging history flag for the new gesture
         }
 
         boolean dragHandled = false;
@@ -716,6 +718,7 @@ public class ExoVideoView extends RelativeLayout {
                             videoFrame.setTranslationY(positionY);
                         }
                         dragHandled = true; // Mark that dragging occurred
+                        wasDragging = true; // Mark that dragging occurred in this gesture
                     }
                     // Update last touch position regardless for next move calculation
                     lastTouchX = event.getX();
@@ -744,13 +747,14 @@ public class ExoVideoView extends RelativeLayout {
         // Consume if:
         // 1. Scaling is currently in progress (mid-gesture)
         // 2. Dragging occurred during this MOVE event
-        // 3. The action is UP or CANCEL *and* scaling happened at any point during this gesture sequence
-        boolean consumeEvent = scalingInProgress || dragHandled || ((action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) && wasScaling);
+        // 3. The action is UP or CANCEL *and* scaling or dragging happened at any point during this gesture sequence
+        boolean consumeEvent = scalingInProgress || dragHandled ||
+                ((action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) && (wasScaling || wasDragging));
 
         // Reset dragging state on UP or CANCEL, regardless of consumption, ready for next gesture
         if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
             isDragging = false;
-            // wasScaling is reset on ACTION_DOWN
+            // wasScaling and wasDragging are reset on ACTION_DOWN
         }
 
         if (consumeEvent) {
