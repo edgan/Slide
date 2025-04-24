@@ -163,6 +163,7 @@ public class SpoilerRobotoTextView extends RobotoTextView implements ClickableTe
      */
     public void setTextHtml(CharSequence baseText, String subreddit) {
         String text = wrapAlternateSpoilers(saveEmotesFromDestruction(baseText.toString().trim()));
+        text = replaceCodeBlocks(text);
         SpannableStringBuilder builder = (SpannableStringBuilder) CompatUtil.fromHtml(text);
 
         // replace the <blockquote> blue line with something more colorful
@@ -1290,8 +1291,7 @@ private void loadGiphyEmote(EmoteSpanRequest request, TextView textView, int pos
     }
 
     private boolean isRedditPreviewImage(String url) {
-        return (url.startsWith("https://preview.redd.it/") || url.startsWith("https://i.redd.it/")) &&
-               (url.endsWith(".jpeg") || url.endsWith(".jpg") || url.endsWith(".png") ||
+        return (url.startsWith("https://preview.redd.it/") || url.startsWith("https://i.redd.it/")) && (url.endsWith(".jpeg") || url.endsWith(".jpg") || url.endsWith(".png") ||
                 url.contains(".gif") || url.contains("format=pjpg") || url.contains("format=png"));
     }
 
@@ -1470,4 +1470,44 @@ private void loadGiphyEmote(EmoteSpanRequest request, TextView textView, int pos
     private interface ImageCallback {
         void onImageLoaded(Bitmap bitmap);
     }
+
+    /**
+     * Replaces Markdown code block delimiters wrapped in paragraph tags
+     * with standard HTML code tags.
+     *
+     * @param html The input HTML string.
+     * @return The HTML string with code blocks replaced.
+     */
+    private String replaceCodeBlocks(String html) {
+        Log.d("SpoilerRobotoTextView", "Initial HTML for code block replacement: " + html);
+        StringBuffer sb = new StringBuffer();
+
+        // Refined Pattern:
+        // 1. `<div>\s*```(.*?)```\s*</div>`: Matches standard ```content``` within a div, capturing content.
+        // 2. `<div>\s*([^`\s][^<]*)```\s*</div>`: Matches content``` within a div, where content doesn't start with ` or whitespace, and doesn't contain '<'.
+        Pattern combinedPattern = Pattern.compile("<div>\\s*(?:```(.*?)```|([^`\\s][^<]*)```)\\s*</div>", Pattern.DOTALL);
+        Matcher matcher = combinedPattern.matcher(html);
+
+        while (matcher.find()) {
+            String content;
+            if (matcher.group(1) != null) {
+                // Matched ```content```
+                content = matcher.group(1);
+            } else {
+                // Matched content```
+                content = matcher.group(2);
+            }
+            content = content.trim(); // Trim whitespace
+
+            // Replace the entire matched <div>...</div> block
+            String replacement = "<div><code>[[&lt;[" + Matcher.quoteReplacement(content) + "]&gt;]]</code></div>";
+            matcher.appendReplacement(sb, replacement);
+        }
+        matcher.appendTail(sb);
+        String result = sb.toString();
+        Log.d("SpoilerRobotoTextView", "Final HTML after code block replacement: " + result);
+
+        return result;
+    }
 }
+

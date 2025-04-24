@@ -22,6 +22,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.util.TypedValue;
@@ -56,6 +57,7 @@ import me.edgan.redditslide.databinding.FragmentWelcomeBinding;
 import me.edgan.redditslide.ui.settings.SettingsBackup;
 import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.QrCodeScannerHelper;
 
 /** Created by ccrama on 3/5/2015. */
 public class Tutorial extends AppCompatActivity {
@@ -126,6 +128,18 @@ public class Tutorial extends AppCompatActivity {
         } else {
             // Otherwise, select the previous step.
             binding.tutorialViewPager.setCurrentItem(currentItem - 1);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Forward camera permission results to the helper
+        if (requestCode == QrCodeScannerHelper.CAMERA_PERMISSION_REQUEST_CODE) {
+            QrCodeScannerHelper.handlePermissionsResult(requestCode, grantResults, this);
+        } else if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            // Handle notification permission result (optional)
+            LogUtil.v("Tutorial: Received notification permission result: " + (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED));
         }
     }
 
@@ -350,11 +364,6 @@ public class Tutorial extends AppCompatActivity {
                 final Context contextThemeWrapper = new ContextThemeWrapper(getContext(),
                         new ColorPreferences(getContext()).getFontStyle().getBaseId());
 
-                // Create TextInputLayout for proper error handling
-                TextInputLayout inputLayout = new TextInputLayout(contextThemeWrapper);
-                inputLayout.setErrorIconDrawable(null); // Remove error icon
-                inputLayout.setErrorEnabled(true);
-
                 // Calculate padding in dp
                 int paddingDp = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
@@ -362,35 +371,69 @@ public class Tutorial extends AppCompatActivity {
                     getResources().getDisplayMetrics()
                 );
 
-                // Create a vertical LinearLayout to hold both the link and input
+                // Create a vertical LinearLayout to hold the dialog contents
                 LinearLayout dialogContainer = new LinearLayout(contextThemeWrapper);
                 dialogContainer.setOrientation(LinearLayout.VERTICAL);
                 dialogContainer.setPadding(paddingDp, paddingDp, paddingDp, 0);
 
                 // Add the link TextView
                 TextView linkText = new TextView(contextThemeWrapper);
-                linkText.setText("Client ID creation instructions");
+                linkText.setText(R.string.client_id_instructions);
                 linkText.setTextColor(new ColorPreferences(getContext()).getColor(""));
                 linkText.setPadding(0, 0, 0, paddingDp);
                 linkText.setPaintFlags(linkText.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                 linkText.setOnClickListener(v -> {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("https://github.com/edgan/Slide/blob/master/SETUP.md#reddit-client-id"));
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(this.getString(R.string.setup_md_url)));
                     startActivity(browserIntent);
                 });
-
-                // Add views to container
                 dialogContainer.addView(linkText);
-                dialogContainer.addView(inputLayout);
 
+                // Declare EditText here and make it final
                 final EditText input = new EditText(contextThemeWrapper);
                 String savedClientId = SettingValues.prefs.getString(SettingValues.PREF_REDDIT_CLIENT_ID_OVERRIDE, "");
                 input.setText(savedClientId);
                 input.setHint(R.string.enter_client_id);
                 input.setSingleLine(true);  // Make input single line
 
-                // Add EditText to TextInputLayout
-                inputLayout.addView(input);
+                // Create horizontal layout for input field and camera button
+                LinearLayout inputRowLayout = new LinearLayout(contextThemeWrapper);
+                inputRowLayout.setOrientation(LinearLayout.HORIZONTAL);
+                inputRowLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                // Create TextInputLayout for proper error handling
+                final TextInputLayout inputLayout = new TextInputLayout(contextThemeWrapper); // Make final
+                LinearLayout.LayoutParams inputLayoutParams = new LinearLayout.LayoutParams(
+                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+                inputLayout.setLayoutParams(inputLayoutParams);
+                inputLayout.setErrorIconDrawable(null); // Remove error icon
+                inputLayout.setErrorEnabled(true);
+
+                inputLayout.addView(input); // Add input to its layout first
+
+                // Add themed QR code scan button (camera icon)
+                ImageButton scanQrButton = new ImageButton(contextThemeWrapper);
+                scanQrButton.setImageResource(R.drawable.ic_camera);
+                // scanQrButton.setBackground(null); // REMOVED: Potential cause of visibility issue
+                scanQrButton.setPadding(0,0,0,0); // Remove padding
+
+                LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                buttonParams.setMargins(paddingDp, 0, paddingDp, 0);
+                scanQrButton.setLayoutParams(buttonParams);
+
+                // Add views to horizontal layout
+                inputRowLayout.addView(inputLayout);
+                inputRowLayout.addView(scanQrButton);
+
+                // Add horizontal layout to main container
+                dialogContainer.addView(inputRowLayout);
+
+                // Add bottom padding view
+                View paddingViewBottom = new View(contextThemeWrapper);
+                paddingViewBottom.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, paddingDp));
+                dialogContainer.addView(paddingViewBottom);
 
                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(contextThemeWrapper)
                         .setTitle(R.string.reddit_client_id_override)
@@ -404,6 +447,12 @@ public class Tutorial extends AppCompatActivity {
                 // Get the positive button and initially disable it
                 Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 positiveButton.setEnabled(false);
+
+                // Set click listener for Scan button
+                scanQrButton.setOnClickListener(vScan -> {
+                    QrCodeScannerHelper.startScan(getActivity(),
+                            new QrCodeScannerHelper.EditTextUpdateCallback(input, getContext()));
+                });
 
                 // Set click listener for positive button
                 positiveButton.setOnClickListener(v -> {

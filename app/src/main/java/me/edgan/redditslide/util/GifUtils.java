@@ -26,17 +26,18 @@ import androidx.documentfile.provider.DocumentFile;
 import android.os.SystemClock;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;
-import com.google.android.exoplayer2.source.dash.manifest.AdaptationSet;
-import com.google.android.exoplayer2.source.dash.manifest.DashManifest;
-import com.google.android.exoplayer2.source.dash.manifest.DashManifestParser;
-import com.google.android.exoplayer2.source.dash.manifest.Representation;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DataSourceInputStream;
-import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.util.MimeTypes;
+import androidx.media3.common.MimeTypes;
+import androidx.media3.common.Player;
+import androidx.media3.datasource.DataSource;
+import androidx.media3.datasource.DataSourceInputStream;
+import androidx.media3.datasource.DataSpec;
+import androidx.media3.datasource.cache.CacheDataSource;
+import androidx.media3.datasource.okhttp.OkHttpDataSource;
+import androidx.media3.exoplayer.dash.manifest.AdaptationSet;
+import androidx.media3.exoplayer.dash.manifest.DashManifest;
+import androidx.media3.exoplayer.dash.manifest.DashManifestParser;
+import androidx.media3.exoplayer.dash.manifest.Representation;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
