@@ -2266,8 +2266,10 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 new Runnable() {
                                     @Override
                                     public void run() {
-                                        currentComments.remove(position);
-                                        notifyItemRemoved(holderPos);
+                                        if (position >= 0 && position < currentComments.size()) {
+                                            currentComments.remove(position);
+                                            notifyItemRemoved(holderPos);
+                                        }
                                     }
                                 });
                 int oldSize = currentComments.size();
