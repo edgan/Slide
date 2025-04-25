@@ -19,7 +19,7 @@ import me.edgan.redditslide.R; // Added
 
 public class ImageSaveUtils {
     private static final String TAG = "ImageSaveUtils";
-    public static final String EXTRA_SUBMISSION_TITLE = "title";
+    public static final String EXTRA_SUBMISSION_TITLE = ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
 
     /**
      * Saves an image or gif to the device storage
@@ -56,7 +56,8 @@ public class ImageSaveUtils {
                         contentUrl,
                         subreddit,
                         submissionTitle,
-                        showFirstDialogCallback
+                        showFirstDialogCallback,
+                        index
                 ).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else {
                 // Handle image save (remains synchronous start of service)
@@ -67,6 +68,8 @@ public class ImageSaveUtils {
                 if (subreddit != null && !subreddit.isEmpty()) {
                     i.putExtra("subreddit", subreddit);
                 }
+
+                Log.d(TAG, "ImageSaveUtils - Saving with submissionTitle: " + (submissionTitle != null ? "'" + submissionTitle + "'" : "null"));
                 if (submissionTitle != null) {
                     i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
                 }
@@ -84,14 +87,20 @@ public class ImageSaveUtils {
         private final String subreddit;
         private final String submissionTitle;
         private final Runnable showFirstDialogCallback;
+        private final int index;
         private Exception error = null;
 
         ResolveAndSaveGifTask(Activity activity, String initialUrl, String subreddit, String submissionTitle, Runnable showFirstDialogCallback) {
+            this(activity, initialUrl, subreddit, submissionTitle, showFirstDialogCallback, -1);
+        }
+
+        ResolveAndSaveGifTask(Activity activity, String initialUrl, String subreddit, String submissionTitle, Runnable showFirstDialogCallback, int index) {
             this.activity = activity;
             this.initialUrl = initialUrl;
             this.subreddit = subreddit;
             this.submissionTitle = submissionTitle;
             this.showFirstDialogCallback = showFirstDialogCallback;
+            this.index = index;
         }
 
         @Override
@@ -169,7 +178,7 @@ public class ImageSaveUtils {
                 } catch (Exception ignored) {} // Ignore if toast fails
 
                 // Proceed with saving using the resolved URI
-                GifUtils.cacheSaveGif(resolvedUri, activity, subreddit != null ? subreddit : "", submissionTitle != null ? submissionTitle : "", true);
+                GifUtils.cacheSaveGif(resolvedUri, activity, subreddit != null ? subreddit : "", submissionTitle != null ? submissionTitle : "", true, index);
             } else {
                 // Handle errors during resolution
                 Log.e(TAG, "Failed to resolve URI for " + initialUrl + (error != null ? ": " + error.getMessage() : ""));

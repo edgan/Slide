@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
 import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.StorageUtil;
 
@@ -16,8 +17,8 @@ public abstract class BaseSaveActivity extends FullScreenActivity {
 
     // Fields that child activities will need for image saving
     protected String subreddit;
-    protected String submissionTitle;
-    public static final String EXTRA_SUBMISSION_TITLE = "submissionTitle";
+    public String submissionTitle;
+    public static final String EXTRA_SUBMISSION_TITLE = ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
 
     private static final String TAG = "BaseSaveActivity";
     private static final int REQUEST_STORAGE_ACCESS = 1;

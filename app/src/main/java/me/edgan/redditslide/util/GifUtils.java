@@ -52,8 +52,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,13 +64,13 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.media.MediaCodec;
 
-import java.io.FileInputStream;
 import org.apache.commons.io.IOUtils;
 
 /** GIF handling utilities */
@@ -139,7 +139,7 @@ public class GifUtils {
         private GifDownloadCallback callback;
         private Context context;
         private Exception exception;
-        private String submissionTitle;
+        private final String submissionTitle;
 
         DownloadGifTask(String url, GifDownloadCallback callback, Context context) {
             this.url = url;
@@ -169,14 +169,12 @@ public class GifUtils {
 
                 // Create unique filename based on URL
                 String fileName;
+                Log.d("GifUtils", "DownloadGifTask - submissionTitle: " + (submissionTitle != null ? "'" + submissionTitle + "'" : "null"));
                 if (submissionTitle != null && !submissionTitle.trim().isEmpty()) {
                     fileName = FileUtil.getValidFileName(submissionTitle, "", ".gif");
                 } else {
-                    fileName =
-                            System.currentTimeMillis()
-                                    + "_"
-                                    + (int) (Math.random() * 100000)
-                                    + ".gif";
+                    // If no title available, use a timestamp
+                    fileName = System.currentTimeMillis() + ".gif";
                 }
                 File gifFile = new File(context.getCacheDir(), fileName);
 
@@ -222,7 +220,21 @@ public class GifUtils {
     }
 
     public static void cacheSaveGif(
-            Uri uri, Activity activity, String subreddit, String submissionTitle, boolean save) {
+            Uri uri, Activity activity, String subreddit, String submissionTitle, boolean save, int index) {
+        // Add debug logging
+        Log.d(TAG, "cacheSaveGif called with submissionTitle: " + (submissionTitle != null ? "'" + submissionTitle + "'" : "null") + ", index: " + index);
+
+        // Convert empty strings to null to avoid treating them as valid titles
+        final String finalSubmissionTitle;
+        if (submissionTitle != null && submissionTitle.trim().isEmpty()) {
+            finalSubmissionTitle = null;
+            Log.d(TAG, "Empty submission title, setting to null");
+        } else {
+            finalSubmissionTitle = submissionTitle;
+        }
+
+        final int finalIndex = index;
+
         if (save) {
             try {
                 Toast.makeText(
@@ -303,8 +315,16 @@ public class GifUtils {
                             }
 
                             // Create output file with .mp4 extension
-                            String fileName =
-                                    FileUtil.getValidFileName(submissionTitle, "", ".mp4");
+                            String fileName;
+                            Log.d("GifUtils", "Creating file with submissionTitle: " + (finalSubmissionTitle != null ? "'" + finalSubmissionTitle + "'" : "null"));
+                            if (finalSubmissionTitle != null && !finalSubmissionTitle.trim().isEmpty()) {
+                                String fileIndex = finalIndex > -1 ? String.format(Locale.ENGLISH, "_%03d", finalIndex) : "";
+                                fileName = FileUtil.getValidFileName(finalSubmissionTitle + fileIndex, "", ".mp4");
+                            } else {
+                                // If no title available, use a timestamp
+                                String fileIndex = finalIndex > -1 ? String.format(Locale.ENGLISH, "_%03d", finalIndex) : "";
+                                fileName = System.currentTimeMillis() + fileIndex + ".mp4";
+                            }
                             Log.d("GifUtils", "Creating output file: " + fileName);
                             DocumentFile outDocFile = parentDir.createFile("video/mp4", fileName);
                             if (outDocFile == null) {
@@ -483,6 +503,12 @@ public class GifUtils {
                 }
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
+    }
+
+    public static void cacheSaveGif(
+            Uri uri, Activity activity, String subreddit, String submissionTitle, boolean save) {
+        // Call the new overloaded method with default index of -1
+        cacheSaveGif(uri, activity, subreddit, submissionTitle, save, -1);
     }
 
     public static class AsyncLoadGif extends AsyncTask<String, Void, Uri> {

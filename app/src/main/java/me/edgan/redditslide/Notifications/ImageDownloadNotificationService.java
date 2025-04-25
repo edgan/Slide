@@ -295,8 +295,15 @@ public class ImageDownloadNotificationService extends Service {
             // Prepare the file index string (e.g., "_001" for series of images)
             String fileIndex = index > -1 ? String.format(Locale.ENGLISH, "_%03d", index) : "";
 
-            // Get a valid, safe filename using FileUtil's built-in method
-            String title = submissionTitle != null ? submissionTitle : "download";
+            // Use the submission title directly if available, otherwise use a timestamp
+            String title;
+            if (submissionTitle != null && !submissionTitle.trim().isEmpty()) {
+                title = submissionTitle;
+            } else {
+                // If no title available, use a timestamp to avoid generic names
+                title = String.valueOf(System.currentTimeMillis());
+            }
+
             String subfolderPath =
                     subreddit != null && !subreddit.isEmpty() ? File.separator + subreddit : "/";
 
