@@ -301,9 +301,10 @@ public class ExoVideoView extends RelativeLayout {
         SettingValues.isMuted = !SettingValues.unmuteDefault;
 
         // Create audio focus helper.
-        audioFocusHelper = new AudioFocusHelper(
-                ContextCompat.getSystemService(context, AudioManager.class)
-        );
+        AudioManager audioManager = ContextCompat.getSystemService(context, AudioManager.class);
+        if (audioManager != null) {
+            audioFocusHelper = new AudioFocusHelper(audioManager);
+        }
     }
 
     private void setupUI() {
@@ -398,6 +399,10 @@ public class ExoVideoView extends RelativeLayout {
         // Ensure player is not null
         if (player != null) {
             player.play();
+            // Gain audio focus if helper is available
+            if (audioFocusHelper != null) {
+                audioFocusHelper.gainFocus();
+            }
             if (playbackStateChangedListener != null) {
                 playbackStateChangedListener.onPlaybackStateChanged(true);
             }
@@ -409,6 +414,10 @@ public class ExoVideoView extends RelativeLayout {
         // Ensure player is not null
         if (player != null) {
             player.pause();
+            // Lose audio focus if helper is available
+            if (audioFocusHelper != null) {
+                audioFocusHelper.loseFocus();
+            }
             if (playbackStateChangedListener != null) {
                 playbackStateChangedListener.onPlaybackStateChanged(false);
             }
