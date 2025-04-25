@@ -14,10 +14,23 @@ public class JsonUtil {
     private static final String TAG = "JsonUtil";
 
     public static void getGalleryData(final JsonNode data, final ArrayList<GalleryImage> urls) {
+        if (data == null || !data.has("gallery_data") || data.get("gallery_data") == null ||
+            !data.get("gallery_data").has("items") || data.get("gallery_data").get("items") == null) {
+            Log.w(TAG, "Missing or null gallery_data or items in gallery data");
+            return;
+        }
+
         for (JsonNode identifier : data.get("gallery_data").get("items")) {
+            if (identifier == null || !identifier.has("media_id")) {
+                continue;
+            }
+
             String mediaId = identifier.get("media_id").asText();
             if (data.has("media_metadata") && data.get("media_metadata").has(mediaId)) {
                 JsonNode mediaNode = data.get("media_metadata").get(mediaId);
+                if (mediaNode == null || !mediaNode.has("s")) {
+                    continue;
+                }
 
                 // Create a base GalleryImage with the source data
                 GalleryImage image = new GalleryImage(mediaNode.get("s"));
@@ -61,14 +74,16 @@ public class JsonUtil {
 
                 // Ensure source URLs are correct for animated content
                 JsonNode s = mediaNode.get("s");
-                if (s.has("mp4")) {
-                    image.metadata.source.mp4 = StringEscapeUtils.unescapeHtml4(s.get("mp4").asText());
-                }
-                if (s.has("gif")) {
-                    image.metadata.source.gif = StringEscapeUtils.unescapeHtml4(s.get("gif").asText());
-                }
-                if (s.has("u")) {
-                    image.metadata.source.u = StringEscapeUtils.unescapeHtml4(s.get("u").asText());
+                if (s != null) {
+                    if (s.has("mp4")) {
+                        image.metadata.source.mp4 = StringEscapeUtils.unescapeHtml4(s.get("mp4").asText());
+                    }
+                    if (s.has("gif")) {
+                        image.metadata.source.gif = StringEscapeUtils.unescapeHtml4(s.get("gif").asText());
+                    }
+                    if (s.has("u")) {
+                        image.metadata.source.u = StringEscapeUtils.unescapeHtml4(s.get("u").asText());
+                    }
                 }
 
                 // Add preview images if available
@@ -78,6 +93,10 @@ public class JsonUtil {
 
                     for (int i = 0; i < previewArray.size(); i++) {
                         JsonNode preview = previewArray.get(i);
+                        if (preview == null) {
+                            continue;
+                        }
+
                         GalleryImage.MediaMetadata.Preview p = new GalleryImage.MediaMetadata.Preview();
 
                         if (preview.has("u")) {
