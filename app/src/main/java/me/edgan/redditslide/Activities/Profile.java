@@ -170,6 +170,7 @@ public class Profile extends BaseActivityAnim {
                         }
                         if (categoryItem != null
                                 && Authentication.me != null
+                                && Authentication.me.hasGold() != null
                                 && Authentication.me.hasGold()) {
                             categoryItem.setVisible(position == 6);
                         }
