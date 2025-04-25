@@ -4,6 +4,17 @@ The old changelog can be read in the [CHANGELOG.md](https://github.com/Haptic-Ap
 
 ---
 
+7.3.0 / 2025-4-24
+============
+* Fixed Downloaded images are always saved as <subreddit>/download.jpeg #173
+* Fixed issue with badly formatted code blocks
+* Fixed Brief flash when opening videos/GIFs #162
+* Fixed Controls briefly reappear when tapping to hide them #121
+* Fixed Controls briefly appear when opening a video #119
+* Fixed Pinch-to-zoom causes jumping in video player #168
+* Added support for inputting the client ID via a QR code
+* Fixed opening redd.it links inside and outside Slide #172
+
 7.2.9 / 2025-4-3
 ===========
 * Fixed Some video downloads are corrupted #169
