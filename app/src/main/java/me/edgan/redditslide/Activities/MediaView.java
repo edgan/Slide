@@ -131,7 +131,9 @@ public class MediaView extends BaseSaveActivity {
         super.onResume();
         if (videoView != null) {
             videoView.seekTo(stopPosition);
-            videoView.play();
+            if (videoView.isPlaying() || gif != null) {
+                videoView.play();
+            }
         }
     }
 
