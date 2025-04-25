@@ -19,7 +19,18 @@ DATE="$(date +%Y-%-m-%-d)"
 
 COMMIT_MESSAGE_PREFIX='    '
 COMMIT_MESSAGE_SPECIAL_PREFIX='\* '
-RELEVANT_COMMIT_MESSAGES=`git log $(git describe --tags --abbrev=0)..HEAD | grep "^${COMMIT_MESSAGE_PREFIX}${COMMIT_MESSAGE_SPECIAL_PREFIX}" | sed "s/^${COMMIT_MESSAGE_PREFIX}//g"`
+
+CHANGELOG_OVERRIDE_FILENAME="changelog_override.txt"
+if [ ! -f ${CHANGELOG_OVERRIDE_FILENAME} ]; then
+  # Grab commit messages since that tag, matching specific format
+  RELEVANT_COMMIT_MESSAGES=`git log $(git describe --tags --abbrev=0)..HEAD | grep "^${COMMIT_MESSAGE_PREFIX}${COMMIT_MESSAGE_SPECIAL_PREFIX}" | sed "s/^${COMMIT_MESSAGE_PREFIX}//g"`
+  if [ -z "$RELEVANT_COMMIT_MESSAGES" ]; then
+    echo "Warning: No relevant commit messages found after latest tag"
+  fi
+else
+  RELEVANT_COMMIT_MESSAGES=`cat ${CHANGELOG_OVERRIDE_FILENAME}`
+fi
+
 # Building release notes for the Google Play Store and truncating them to avoid going over the max length
 PLAYSTORE_RELEASE_NOTES=`echo "${RELEVANT_COMMIT_MESSAGES}" | sed "s/^${COMMIT_MESSAGE_SPECIAL_PREFIX}//g" | head -5`
 
