@@ -1353,6 +1353,25 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                         });
             }
         }
+
+        {
+            SwitchCompat hideSubredditTabsSwitch =
+                    context.findViewById(R.id.settings_general_hide_subreddit_tabs);
+            if (hideSubredditTabsSwitch != null) {
+                hideSubredditTabsSwitch.setChecked(SettingValues.hideSubredditTabs);
+                hideSubredditTabsSwitch.setOnCheckedChangeListener(
+                        (buttonView, isChecked) -> {
+                            SettingsThemeFragment.changed = true;
+                            SettingValues.hideSubredditTabs = isChecked;
+                            SettingValues.prefs
+                                    .edit()
+                                    .putBoolean(SettingValues.PREF_HIDE_SUBREDDIT_TABS, isChecked)
+                                    .apply();
+                            // Explicitly re-read all settings to ensure static values are up-to-date
+                            SettingValues.setAllValues(SettingValues.prefs);
+                        });
+            }
+        }
     }
 
     private void askTimePeriod() {

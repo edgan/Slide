@@ -83,6 +83,7 @@ public class SettingValues {
     public static final String PREF_OVERRIDE_LANGUAGE = "overrideLanguage";
     public static final String PREF_IMMERSIVE_MODE = "immersiveMode";
     public static final String PREF_OLD_SWIPE_MODE = "oldSwipeMode";
+    public static final String PREF_HIDE_SUBREDDIT_TABS = "hideSubredditTabs";
     public static final String PREF_SHOW_DOMAIN = "showDomain";
     public static final String PREF_CARD_TEXT = "cardText";
     public static final String PREF_ZOOM_DEFAULT = "zoomDefault";
@@ -300,6 +301,7 @@ public class SettingValues {
     public static boolean subredditFiltersTillRestart;
     public static boolean subredditFilterPrefixMatching;
     public static boolean dialogColoredBorder;
+    public static boolean hideSubredditTabs;
 
     public static void setAllValues(SharedPreferences settings) {
         prefs = settings;
@@ -506,6 +508,7 @@ public class SettingValues {
         subredditFiltersTillRestart = prefs.getBoolean(PREF_SUBREDDIT_FILTERS_TILL_RESTART, true);
         subredditFilterPrefixMatching = prefs.getBoolean(PREF_SUBREDDIT_FILTER_PREFIX_MATCHING, false);
         dialogColoredBorder = prefs.getBoolean(PREF_DIALOG_COLORED_BORDER, false);
+        hideSubredditTabs = prefs.getBoolean(PREF_HIDE_SUBREDDIT_TABS, false);
     }
 
     public static void setPicsEnabled(String sub, boolean checked) {

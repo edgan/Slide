@@ -85,9 +85,9 @@
 
 
     <!-- For editing the submission card layout -->
-    <string name="card_hide_post_button">“Hide post” button in actionbar</string>
+    <string name="card_hide_post_button">"Hide post" button in actionbar</string>
     <string name="card_tint_outside">Only tint outside the subreddit</string>
-    <string name="card_save_button">“Save post” button in actionbar</string>
+    <string name="card_save_button">"Save post" button in actionbar</string>
 
 
     <!-- Settings for Multi-column view -->
@@ -1319,4 +1319,7 @@
     <string name="misc_err_sync_failed">Failed to sync subreddits. No subscribed subreddits?</string>
 
     <string name="setup_md_url">https://github.com/edgan/Slide/blob/master/docs/SETUP.md#reddit-client-id</string>
+
+    <string name="settings_general_hide_subreddit_tabs">Hide subreddit tabs</string>
+    <string name="settings_general_hide_subreddit_tabs_desc">Hide subscribed subreddits as tabs, but keep navigation buttons</string>
 </resources>

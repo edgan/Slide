@@ -147,10 +147,10 @@ import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.OnSingleClickListener;
 import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.StringUtil;
-import me.edgan.redditslide.util.SubmissionParser;
 import me.edgan.redditslide.util.TimeUtils;
 import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
 import me.edgan.redditslide.util.FilterContentUtil;
+import me.edgan.redditslide.util.SubmissionParser;
 
 import net.dean.jraw.ApiException;
 import net.dean.jraw.http.MultiRedditUpdateRequest;
@@ -5020,6 +5020,12 @@ public class MainActivity extends BaseActivity
     public class MainPagerAdapter extends FragmentStatePagerAdapter {
         protected SubmissionsView mCurrentFragment;
 
+        // Helper method to check if a subreddit is special (frontpage, all) or a multi-reddit
+        protected boolean isSpecialOrMulti(String subreddit) {
+            String lowercase = subreddit.toLowerCase(Locale.ENGLISH);
+            return UserSubscriptions.specialSubreddits.contains(lowercase) || lowercase.contains("/m/");
+        }
+
         public MainPagerAdapter(FragmentManager fm) {
             super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
@@ -5138,7 +5144,18 @@ public class MainActivity extends BaseActivity
             if (usedArray == null) {
                 return 1;
             } else {
-                return usedArray.size();
+                if (SettingValues.hideSubredditTabs) {
+                    // Count special subreddits like frontpage, all, etc. and multi-reddits
+                    int count = 0;
+                    for (String sub : usedArray) {
+                        if (isSpecialOrMulti(sub)) {
+                            count++;
+                        }
+                    }
+                    return count > 0 ? count : 1; // Always show at least one tab
+                } else {
+                    return usedArray.size();
+                }
             }
         }
 
@@ -5147,16 +5164,93 @@ public class MainActivity extends BaseActivity
         public Fragment getItem(int i) {
             SubmissionsView f = new SubmissionsView();
             Bundle args = new Bundle();
-            String name;
-            if (multiNameToSubsMap.containsKey(usedArray.get(i))) {
-                name = multiNameToSubsMap.get(usedArray.get(i));
+            String name = ""; // Initialize with default empty string
+
+            if (SettingValues.hideSubredditTabs) {
+                int specialIndex = 0;
+                boolean found = false;
+
+                for (String sub : usedArray) {
+                    if (isSpecialOrMulti(sub)) {
+                        if (specialIndex == i) {
+                            // Ensure full path for multi-reddits even when hidden
+                            if (sub.startsWith("/m/")) {
+                                if (multiNameToSubsMap.containsKey(sub)) {
+                                    name = multiNameToSubsMap.get(sub);
+                                } else {
+                                    // Construct full path if map lookup fails
+                                    name = "api/user/" + Authentication.name + sub; // sub already starts with /m/
+                                }
+                            } else {
+                                name = sub; // Standard special subreddits (frontpage, all)
+                            }
+                            found = true;
+                            break;
+                        }
+                        specialIndex++;
+                    }
+                }
+
+                // Fallback to the first subreddit if no special subreddit or multi-reddit was found
+                if (!found && !usedArray.isEmpty()) {
+                    name = usedArray.get(0);
+                    // Handle potential multi-reddit fallback case
+                    if (name.startsWith("/m/")) {
+                         if (multiNameToSubsMap.containsKey(name)) {
+                            name = multiNameToSubsMap.get(name);
+                        } else {
+                            // Construct full path if map lookup fails
+                            name = "api/user/" + Authentication.name + name; // name already starts with /m/
+                        }
+                    }
+                }
             } else {
-                name = usedArray.get(i);
+                if (usedArray.size() > i) {
+                    String potentialMulti = usedArray.get(i);
+                    if (multiNameToSubsMap.containsKey(potentialMulti)) {
+                        name = multiNameToSubsMap.get(potentialMulti); // Use the full path from the map
+                    } else if (potentialMulti.startsWith("/m/")) {
+                        // If map lookup fails BUT it looks like a multi-reddit, construct the path
+                        name = "api/user/" + Authentication.name + potentialMulti; // potentialMulti starts with /m/
+                    } else {
+                        // Regular subreddit or other special case
+                        name = potentialMulti;
+                    }
+                }
             }
+
             args.putString("id", name);
             f.setArguments(args);
 
             return f;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            if (usedArray != null) {
+                if (SettingValues.hideSubredditTabs) {
+                    // Find the position-th special subreddit or multi-reddit
+                    int specialIndex = 0;
+                    for (String sub : usedArray) {
+                        if (isSpecialOrMulti(sub)) {
+                            if (specialIndex == position) {
+                                // Display only the name part for tabs, e.g., "/m/tech" or "frontpage"
+                                return StringUtil.abbreviate(sub, 25);
+                            }
+                            specialIndex++;
+                        }
+                    }
+                    // Fallback to the first subreddit if no special subreddit or multi-reddit was found at index position
+                    if (!usedArray.isEmpty()) {
+                         // Display only the name part for tabs
+                        return StringUtil.abbreviate(usedArray.get(0), 25);
+                    }
+                } else {
+                    // Display only the name part for tabs
+                    return StringUtil.abbreviate(usedArray.get(position), 25);
+                }
+            }
+            return "";
         }
 
         @Override
@@ -5201,15 +5295,6 @@ public class MainActivity extends BaseActivity
 
         public Fragment getCurrentFragment() {
             return mCurrentFragment;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            if (usedArray != null) {
-                return StringUtil.abbreviate(usedArray.get(position), 25);
-            } else {
-                return "";
-            }
         }
     }
 
@@ -5299,7 +5384,20 @@ public class MainActivity extends BaseActivity
             if (usedArray == null) {
                 return 1;
             } else {
-                return size;
+                if (SettingValues.hideSubredditTabs) {
+                    // Count special subreddits and multi-reddits
+                    int count = 0;
+                    for (String sub : usedArray) {
+                        if (isSpecialOrMulti(sub)) {
+                            count++;
+                        }
+                    }
+
+                    // Always include the comment page
+                    return count + 1;
+                } else {
+                    return size;
+                }
             }
         }
 
@@ -5309,21 +5407,71 @@ public class MainActivity extends BaseActivity
             if (openingComments == null || i != toOpenComments) {
                 SubmissionsView f = new SubmissionsView();
                 Bundle args = new Bundle();
-                if (usedArray.size() > i) {
-                    if (multiNameToSubsMap.containsKey(usedArray.get(i))) {
-                        args.putString("id", multiNameToSubsMap.get(usedArray.get(i)));
-                    } else {
-                        args.putString("id", usedArray.get(i));
+                String name = ""; // Initialize name
+
+                if (SettingValues.hideSubredditTabs) {
+                    // Find the i-th special subreddit or multi-reddit
+                    int specialIndex = 0;
+                    boolean found = false;
+
+                    for (String s : usedArray) {
+                        if (isSpecialOrMulti(s)) {
+                            if (specialIndex == i) {
+                                // Ensure full path for multi-reddits even when hidden
+                                if (s.startsWith("/m/")) {
+                                     if (multiNameToSubsMap.containsKey(s)) {
+                                        name = multiNameToSubsMap.get(s);
+                                    } else {
+                                        // Construct full path if map lookup fails
+                                        name = "api/user/" + Authentication.name + s; // s already starts with /m/
+                                    }
+                                } else {
+                                    name = s; // Standard special subreddits (frontpage, all)
+                                }
+                                found = true;
+                                break;
+                            }
+                            specialIndex++;
+                        }
                     }
+
+                    // Fallback to the first subreddit if no special subreddit or multi-reddit was found at index i
+                    if (!found && !usedArray.isEmpty()) {
+                         name = usedArray.get(0);
+                         // Handle potential multi-reddit fallback case
+                         if (name.startsWith("/m/")) {
+                             if (multiNameToSubsMap.containsKey(name)) {
+                                name = multiNameToSubsMap.get(name);
+                            } else {
+                                // Construct full path if map lookup fails
+                                name = "api/user/" + Authentication.name + name; // name already starts with /m/
+                            }
+                         }
+                    }
+
+                } else if (usedArray.size() > i) {
+                     String potentialMulti = usedArray.get(i);
+                     if (multiNameToSubsMap.containsKey(potentialMulti)) {
+                        name = multiNameToSubsMap.get(potentialMulti); // Use the full path from the map
+                    } else if (potentialMulti.startsWith("/m/")) {
+                        // If map lookup fails BUT it looks like a multi-reddit, construct the path
+                        name = "api/user/" + Authentication.name + potentialMulti; // potentialMulti starts with /m/
+                    } else {
+                        // Regular subreddit or other special case
+                        name = potentialMulti;
+                    }
+                }
+
+                if (!name.isEmpty()) { // Ensure name is not empty before putting in args
+                    args.putString("id", name);
                 }
                 f.setArguments(args);
                 return f;
-
             } else {
                 Fragment f = new CommentPage();
                 Bundle args = new Bundle();
-                String name = openingComments.getFullName();
-                args.putString("id", name.substring(3));
+                String submissionFullName = openingComments.getFullName();
+                args.putString("id", submissionFullName.substring(3));
                 args.putBoolean("archived", openingComments.isArchived());
                 args.putBoolean(
                         "contest", openingComments.getDataNode().get("contest_mode").asBoolean());
@@ -5375,10 +5523,31 @@ public class MainActivity extends BaseActivity
         @Override
         public CharSequence getPageTitle(int position) {
             if (usedArray != null && position != toOpenComments) {
-                return StringUtil.abbreviate(usedArray.get(position), 25);
-            } else {
-                return "";
+                if (SettingValues.hideSubredditTabs) {
+                    // Find the position-th special subreddit or multi-reddit
+                    int specialIndex = 0;
+                    for (String sub : usedArray) {
+                        if (isSpecialOrMulti(sub)) {
+                            if (specialIndex == position) {
+                                // Display only the name part for tabs
+                                return StringUtil.abbreviate(sub, 25);
+                            }
+                            specialIndex++;
+                        }
+                    }
+                    // Fallback to the first subreddit if no special subreddit or multi-reddit was found at index position
+                    if (!usedArray.isEmpty()) {
+                        // Display only the name part for tabs
+                        return StringUtil.abbreviate(usedArray.get(0), 25);
+                    }
+                } else {
+                     // Display only the name part for tabs
+                    return StringUtil.abbreviate(usedArray.get(position), 25);
+                }
+            } else if (position == toOpenComments) {
+                return "Comments";
             }
+            return "";
         }
     }
 
