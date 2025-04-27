@@ -706,6 +706,16 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
 
         final RelativeLayout viewTypeLayout = context.findViewById(R.id.settings_general_viewtype);
         if (viewTypeLayout != null) {
+            TextView viewTypeCurrentView = context.findViewById(R.id.settings_general_viewtype_current);
+            if (viewTypeCurrentView != null) {
+                viewTypeCurrentView.setText(
+                        SettingValues.single
+                                ? (SettingValues.commentPager
+                                        ? context.getString(R.string.view_type_comments)
+                                        : context.getString(R.string.view_type_none))
+                                : context.getString(R.string.view_type_tabs));
+            }
+
             viewTypeLayout.setOnClickListener(
                     new OnSingleClickListener() {
                         @Override

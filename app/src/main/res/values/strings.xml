@@ -1319,6 +1319,6 @@
 
     <string name="setup_md_url">https://github.com/edgan/Slide/blob/master/docs/SETUP.md#reddit-client-id</string>
 
-    <string name="settings_general_hide_subreddit_tabs">Hide subreddit tabs</string>
+    <string name="settings_general_hide_subreddit_tabs">Hide subscribed subreddit tabs</string>
     <string name="settings_general_hide_subreddit_tabs_desc">Hide subscribed subreddits as tabs, but keep navigation buttons</string>
 </resources>

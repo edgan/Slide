@@ -149,6 +149,16 @@
                 android:paddingBottom="8dp" />
 
             <TextView
+                android:id="@+id/settings_general_viewtype_current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha=".86"
+                android:textColor="?attr/fontColor"
+                android:textSize="13sp"
+                android:visibility="visible"
+                android:paddingBottom="8dp" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha=".86"
@@ -173,16 +183,69 @@
         android:background="?android:selectableItemBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingLeft="16dp">
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginEnd="64dp"
-            android:orientation="vertical"
-            android:layout_marginRight="64dp">
+            android:layout_marginRight="64dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_general_hide_subreddit_tabs"
+                android:textColor="?attr/fontColor"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha=".86"
+                android:text="@string/settings_general_hide_subreddit_tabs_desc"
+                android:textColor="?attr/fontColor"
+                android:textSize="13sp"
+                android:paddingBottom="8dp" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/settings_general_hide_subreddit_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:backgroundTint="?attr/tintColor"
+            android:button="@null"
+            android:buttonTint="?attr/tintColor"
+            android:hapticFeedbackEnabled="true"
+            android:paddingEnd="16dp"
+            android:textColor="?attr/fontColor"
+            android:textColorHint="?attr/fontColor"
+            android:paddingRight="16dp"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.25dp"
+        android:alpha=".25"
+        android:background="?attr/tintColor" />
+
+    <RelativeLayout
+        android:id="@+id/settings_general_expanded_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -276,8 +339,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginEnd="64dp"
-            android:orientation="vertical"
-            android:layout_marginRight="64dp">
+            android:layout_marginRight="64dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -410,8 +473,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginEnd="64dp"
-            android:orientation="vertical"
-            android:layout_marginRight="64dp">
+            android:layout_marginRight="64dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -722,8 +785,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginEnd="64dp"
-            android:orientation="vertical"
-            android:layout_marginRight="64dp">
+            android:layout_marginRight="64dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -777,8 +840,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="64dp"
-                android:orientation="vertical"
-                android:layout_marginRight="64dp">
+                android:layout_marginRight="64dp"
+                android:orientation="vertical">
 
             <TextView
                     android:layout_width="wrap_content"
@@ -832,8 +895,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="64dp"
-                android:orientation="vertical"
-                android:layout_marginRight="64dp">
+                android:layout_marginRight="64dp"
+                android:orientation="vertical">
 
             <TextView
                     android:layout_width="wrap_content"
@@ -887,8 +950,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="64dp"
-                android:orientation="vertical"
-                android:layout_marginRight="64dp">
+                android:layout_marginRight="64dp"
+                android:orientation="vertical">
 
             <TextView
                     android:layout_width="wrap_content"
@@ -942,8 +1005,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="64dp"
-                android:orientation="vertical"
-                android:layout_marginRight="64dp">
+                android:layout_marginRight="64dp"
+                android:orientation="vertical">
 
             <TextView
                     android:layout_width="wrap_content"
@@ -1037,6 +1100,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginEnd="64dp"
+            android:layout_marginRight="64dp"
             android:orientation="vertical">
 
             <TextView
@@ -1094,8 +1158,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginEnd="64dp"
-            android:orientation="vertical"
-            android:layout_marginRight="64dp">
+            android:layout_marginRight="64dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -1149,8 +1213,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginEnd="64dp"
-            android:orientation="vertical"
-            android:layout_marginRight="64dp">
+            android:layout_marginRight="64dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -1172,61 +1236,6 @@
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/settings_general_old_swipe_mode"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:backgroundTint="?attr/tintColor"
-            android:button="@null"
-            android:buttonTint="?attr/tintColor"
-            android:hapticFeedbackEnabled="true"
-            android:paddingEnd="16dp"
-            android:textColor="?attr/fontColor"
-            android:textColorHint="?attr/fontColor"
-            android:paddingRight="16dp"/>
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.25dp"
-        android:alpha=".25"
-        android:background="?attr/tintColor" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:selectableItemBackground"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingLeft="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="64dp"
-            android:orientation="vertical"
-            android:layout_marginRight="64dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_general_hide_subreddit_tabs"
-                android:textColor="?attr/fontColor"
-                android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:alpha=".86"
-                android:text="@string/settings_general_hide_subreddit_tabs_desc"
-                android:textColor="?attr/fontColor"
-                android:textSize="13sp"
-                android:paddingBottom="8dp" />
-
-        </LinearLayout>
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/settings_general_hide_subreddit_tabs"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:backgroundTint="?attr/tintColor"
@@ -1328,8 +1337,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginEnd="64dp"
-            android:orientation="vertical"
-            android:layout_marginRight="64dp">
+            android:layout_marginRight="64dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/pause_on_audio_focus_text"

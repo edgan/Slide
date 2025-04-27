@@ -161,4 +161,19 @@ public class SettingsGeneral extends BaseActivityAnim implements StorageUtil.Dir
         // Forward permission results to our fragment
         fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Update viewtype display when returning from SettingsViewType
+        TextView viewTypeCurrentView = (TextView) findViewById(R.id.settings_general_viewtype_current);
+        if (viewTypeCurrentView != null) {
+            viewTypeCurrentView.setText(
+                    SettingValues.single
+                            ? (SettingValues.commentPager
+                                    ? getString(R.string.view_type_comments)
+                                    : getString(R.string.view_type_none))
+                            : getString(R.string.view_type_tabs));
+        }
+    }
 }
