@@ -18,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.LinearLayout;
 import android.widget.EditText;
@@ -198,15 +199,28 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                                 FrameLayout frameLayout = new FrameLayout(getActivity());
                                 int padding = getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin);
 
-                                // Set max width for the dialog content
-                                frameLayout.setLayoutParams(new FrameLayout.LayoutParams(
+                                // Calculate fixed dimensions for the dialog
+                                int screenWidth = getResources().getDisplayMetrics().widthPixels;
+                                // Increased max width by 50% (from 720 to 1080) and increased screen percentage
+                                int dialogWidth = Math.min((int)(screenWidth * 0.95), 1080);
+
+                                // Use fixed width container with WRAP_CONTENT height
+                                FrameLayout fixedWidthContainer = new FrameLayout(getActivity());
+                                fixedWidthContainer.setLayoutParams(new FrameLayout.LayoutParams(
+                                    dialogWidth - (padding * 2),
+                                    ViewGroup.LayoutParams.WRAP_CONTENT
+                                ));
+
+                                // Create and configure TextInputLayout
+                                TextInputLayout inputLayout = new TextInputLayout(getActivity());
+                                inputLayout.setLayoutParams(new FrameLayout.LayoutParams(
                                     ViewGroup.LayoutParams.MATCH_PARENT,
                                     ViewGroup.LayoutParams.WRAP_CONTENT
                                 ));
 
-                                TextInputLayout inputLayout = new TextInputLayout(getActivity());
+                                // Create and configure EditText
                                 EditText editText = new EditText(inputLayout.getContext());
-                                editText.setSingleLine(true);  // Make input single line
+                                editText.setSingleLine(true);
                                 editText.setInputType(InputType.TYPE_CLASS_TEXT);
                                 editText.setLayoutParams(new LinearLayout.LayoutParams(
                                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -214,22 +228,23 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                                 ));
                                 editText.setHint(R.string.search_msg);
 
-                                // Use theme's font color
+                                // Set theme colors
                                 TypedValue typedValue = new TypedValue();
                                 getActivity().getTheme().resolveAttribute(R.attr.fontColor, typedValue, true);
                                 int textColor = typedValue.data;
-                                int hintColor = ColorUtils.setAlphaComponent(textColor, 138); // 54% opacity for hint
+                                int hintColor = ColorUtils.setAlphaComponent(textColor, 138);
 
                                 editText.setTextColor(textColor);
                                 editText.setHintTextColor(hintColor);
                                 inputLayout.setHintTextColor(ColorStateList.valueOf(hintColor));
                                 inputLayout.setDefaultHintTextColor(ColorStateList.valueOf(hintColor));
 
-                                editText.setMaxWidth(getResources().getDisplayMetrics().widthPixels / 2);
+                                // No focus listener here yet - will add after dialog creation
 
+                                // Build layout hierarchy
                                 inputLayout.addView(editText);
-
-                                frameLayout.addView(inputLayout);
+                                fixedWidthContainer.addView(inputLayout);
+                                frameLayout.addView(fixedWidthContainer);
                                 frameLayout.setPadding(padding, padding/2, padding, 0);
 
                                 MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity(),
@@ -313,21 +328,54 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
                                 }
 
                                 AlertDialog dialog = builder.create();
+
+                                // Now add focus listener after dialog is created
+                                editText.setOnFocusChangeListener((view, hasFocus) -> {
+                                    // Maintain dialog size during focus changes
+                                    view.post(() -> {
+                                        Window window = dialog.getWindow();
+                                        if (window != null) {
+                                            window.setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                        }
+                                    });
+                                });
+
+                                // Configure the dialog window before showing it
+                                Window window = dialog.getWindow();
+                                if (window != null) {
+                                    // Prevent window insets from changing the dialog size
+                                    WindowManager.LayoutParams params = window.getAttributes();
+                                    params.width = dialogWidth;
+                                    params.softInputMode =
+                                        WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE |
+                                        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING;
+
+                                    // Apply flags to prevent layout changes
+                                    window.setFlags(
+                                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                                        WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
+                                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                                        WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+                                    window.setAttributes(params);
+                                }
+
                                 dialog.show();
+
+                                // After showing, clear flags that might interfere with focus
+                                if (window != null) {
+                                    window.clearFlags(
+                                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                                        WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+
+                                    // Re-apply fixed layout size
+                                    window.setLayout(dialogWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                }
 
                                 // Set colors for buttons and text
                                 int accentColor = new ColorPreferences(getActivity()).getColor(id);
                                 dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(accentColor);
                                 dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setTextColor(accentColor);
-
-                                // Set max width for the dialog window
-                                Window window = dialog.getWindow();
-                                if (window != null) {
-                                    window.setLayout(
-                                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                                        ViewGroup.LayoutParams.WRAP_CONTENT
-                                    );
-                                }
                             }
                         });
             } else {
