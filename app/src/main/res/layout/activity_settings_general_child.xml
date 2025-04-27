@@ -148,6 +148,16 @@
                 android:textSize="14sp"
                 android:paddingBottom="8dp" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:alpha=".86"
+                android:text="@string/settings_short_description_view_type"
+                android:textColor="?attr/fontColor"
+                android:textSize="13sp"
+                android:visibility="visible"
+                android:paddingBottom="8dp" />
+
         </LinearLayout>
     </RelativeLayout>
 
