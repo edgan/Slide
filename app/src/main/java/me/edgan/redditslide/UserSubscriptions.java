@@ -536,6 +536,11 @@ public class UserSubscriptions {
         return finished;
     }
 
+    // Public method to safely get moderated subreddits
+    public static CaseInsensitiveArrayList getModeratedSubs() {
+        return doModOf();
+    }
+
     public static void doFriendsOfMain(MainActivity main) {
         main.doFriends(doFriendsOf());
     }

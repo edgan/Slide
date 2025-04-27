@@ -1,6 +1,5 @@
 package me.edgan.redditslide.Activities;
 
-import static me.edgan.redditslide.UserSubscriptions.modOf;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -1436,7 +1435,8 @@ public class MainActivity extends BaseActivity
              * If the user is a known mod, show the "Moderation" drawer item quickly to stop the UI
              * from jumping
              */
-            if (modOf != null && !modOf.isEmpty() && Authentication.mod) {
+            header.findViewById(R.id.mod).setVisibility(View.GONE);
+            if (Authentication.mod && UserSubscriptions.modOf != null && !UserSubscriptions.modOf.isEmpty()) {
                 header.findViewById(R.id.mod).setVisibility(View.VISIBLE);
             }
 
@@ -1647,6 +1647,9 @@ public class MainActivity extends BaseActivity
                                                 .apply();
                                     }
                                     Authentication.name = accName;
+                                    // Reset moderator status for new account
+                                    Authentication.mod = false;
+                                    UserSubscriptions.modOf = null;
 
                                     UserSubscriptions.switchAccounts();
 
@@ -4872,9 +4875,9 @@ public class MainActivity extends BaseActivity
 
     public class AsyncNotificationBadge extends AsyncTask<Void, Void, Void> {
         int count;
-
         boolean restart;
         int modCount;
+        boolean isCurrentUserMod = false; // Track if current user is mod
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -4889,12 +4892,22 @@ public class MainActivity extends BaseActivity
                         restart = true;
                         return null;
                     }
+
+                    // Update current user's mod status
                     Authentication.mod = me.isMod();
+                    isCurrentUserMod = Authentication.mod;
 
                     Authentication.authentication
                             .edit()
                             .putBoolean(Reddit.SHARED_PREF_IS_MOD, Authentication.mod)
                             .apply();
+
+                    // If this account is a moderator, load the moderated subreddits
+                    if (Authentication.mod) {
+                        UserSubscriptions.modOf = UserSubscriptions.getModeratedSubs();
+                    } else {
+                        UserSubscriptions.modOf = null;
+                    }
 
                     if (Reddit.notificationTime != -1) {
                         Reddit.notifications = new NotificationJobScheduler(MainActivity.this);
@@ -4924,6 +4937,19 @@ public class MainActivity extends BaseActivity
                     }
                 } else {
                     me = Authentication.reddit.me();
+
+                    // Update current user's mod status
+                    Authentication.mod = me.isMod();
+                    isCurrentUserMod = Authentication.mod;
+
+                    // If this account is a moderator, load the moderated subreddits
+                    if (Authentication.mod) {
+                        if (UserSubscriptions.modOf == null || UserSubscriptions.modOf.isEmpty()) {
+                            UserSubscriptions.modOf = UserSubscriptions.getModeratedSubs();
+                        }
+                    } else {
+                        UserSubscriptions.modOf = null;
+                    }
                 }
                 count = me.getInboxCount(); // Force reload of the LoggedInAccount object
                 UserSubscriptions.doFriendsOfMain(MainActivity.this);
@@ -4942,21 +4968,27 @@ public class MainActivity extends BaseActivity
                 restartTheme();
                 return;
             }
-            if (Authentication.mod && Authentication.didOnline) {
-                RelativeLayout mod = headerMain.findViewById(R.id.mod);
+
+            // Always hide the mod button first
+            RelativeLayout mod = headerMain.findViewById(R.id.mod);
+            mod.setVisibility(View.GONE);
+
+            // Only show mod button if user is a mod and has moderated subreddits
+            if (isCurrentUserMod && UserSubscriptions.modOf != null && !UserSubscriptions.modOf.isEmpty() && Authentication.didOnline) {
                 mod.setVisibility(View.VISIBLE);
 
                 mod.setOnClickListener(
                         new OnSingleClickListener() {
                             @Override
                             public void onSingleClick(View view) {
-                                if (modOf != null && !modOf.isEmpty()) {
+                                if (UserSubscriptions.modOf != null && !UserSubscriptions.modOf.isEmpty()) {
                                     Intent inte = new Intent(MainActivity.this, ModQueue.class);
                                     MainActivity.this.startActivity(inte);
                                 }
                             }
                         });
             }
+
             if (count != -1) {
                 int oldCount = Reddit.appRestart.getInt("inbox", 0);
                 if (count > oldCount) {
