@@ -256,6 +256,8 @@ public class MainActivity extends BaseActivity
                 current = current - 1;
             }
             if (current < 0) current = 0;
+            // Re-read settings before recreating the adapter to reflect changes
+            SettingValues.setAllValues(SettingValues.prefs);
             adapter = new MainPagerAdapter(getSupportFragmentManager());
             pager.setAdapter(adapter);
             pager.setCurrentItem(current);
@@ -452,9 +454,14 @@ public class MainActivity extends BaseActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         if (NetworkUtil.isConnected(this)) {
-            if (SettingValues.expandedToolbar) {
+            if (SettingValues.toolbarLayoutSearchPriority) {
+                // Inflate the search-priority layout
+                inflater.inflate(R.menu.menu_subreddit_overview_search_priority, menu);
+            } else if (SettingValues.expandedToolbar) {
+                // Inflate the expanded layout (original behavior if search priority is off)
                 inflater.inflate(R.menu.menu_subreddit_overview_expanded, menu);
             } else {
+                // Inflate the original/default layout
                 inflater.inflate(R.menu.menu_subreddit_overview, menu);
             }
             // Hide the "Share Slide" menu if the user has Pro installed
