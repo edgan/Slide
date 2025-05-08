@@ -274,6 +274,9 @@ public class SideArrayAdapter extends ArrayAdapter<String> {
                                 }
                             }
 
+                            // Hide the toolbar search UI
+                            hideSearchbarUI();
+
                             // Hide keyboard regardless of which branch was taken
                             View currentFocusView = mainActivity.getCurrentFocus();
                             if (currentFocusView != null) {
