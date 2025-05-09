@@ -122,8 +122,6 @@ public class SubredditView extends BaseActivity {
             // Make sure the request was successful
             pager.setAdapter(new SubredditPagerAdapter(getSupportFragmentManager()));
         } else if (requestCode == 1) {
-            // Re-read settings before restarting theme to reflect changes
-            SettingValues.setAllValues(SettingValues.prefs);
             restartTheme();
         } else if (requestCode == 940) {
             if (adapter != null && adapter.getCurrentFragment() != null) {
@@ -248,14 +246,9 @@ public class SubredditView extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
 
-        if (SettingValues.toolbarLayoutSearchPriority) {
-            // Inflate the search-priority layout
-            inflater.inflate(R.menu.menu_single_subreddit_search_priority, menu);
-        } else if (SettingValues.expandedToolbar) {
-            // Inflate the expanded layout (original behavior if search priority is off)
+        if (SettingValues.expandedToolbar) {
             inflater.inflate(R.menu.menu_single_subreddit_expanded, menu);
         } else {
-            // Inflate the original/default layout
             inflater.inflate(R.menu.menu_single_subreddit, menu);
         }
 

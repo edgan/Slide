@@ -704,21 +704,6 @@ public class SettingsGeneralFragment<ActivityType extends AppCompatActivity> {
                     });
         }
 
-        final SwitchCompat toolbarLayoutSwitch =
-                context.findViewById(R.id.settings_general_toolbar_layout_toggle);
-        if (toolbarLayoutSwitch != null) {
-            toolbarLayoutSwitch.setChecked(SettingValues.toolbarLayoutSearchPriority);
-            toolbarLayoutSwitch.setOnCheckedChangeListener(
-                    (buttonView, isChecked) -> {
-                        SettingsActivity.changed = true; // Mark settings as changed
-                        SettingValues.toolbarLayoutSearchPriority = isChecked;
-                        SettingValues.prefs
-                                .edit()
-                                .putBoolean(SettingValues.PREF_TOOLBAR_LAYOUT_SEARCH_PRIORITY, isChecked)
-                                .apply();
-                    });
-        }
-
         final RelativeLayout viewTypeLayout = context.findViewById(R.id.settings_general_viewtype);
         if (viewTypeLayout != null) {
             TextView viewTypeCurrentView = context.findViewById(R.id.settings_general_viewtype_current);

@@ -43,7 +43,6 @@ public class SettingValues {
     public static final String PREF_READER_NIGHT = "readernight";
     public static final String PREF_COLOR_EVERYWHERE = "colorEverywhere";
     public static final String PREF_EXPANDED_TOOLBAR = "expandedToolbar";
-    public static final String PREF_TOOLBAR_LAYOUT_SEARCH_PRIORITY = "toolbarLayoutSearchPriority";
     public static final String PREF_SWAP = "Swap";
     public static final String PREF_ACTIONBAR_VISIBLE = "actionbarVisible";
     public static final String PREF_SMALL_TAG = "smallTag";
@@ -168,7 +167,6 @@ public class SettingValues {
     public static Palette.ThemeEnum theme;
     public static SharedPreferences prefs;
     public static boolean expandedToolbar;
-    public static boolean toolbarLayoutSearchPriority;
     public static boolean single;
     public static boolean swap;
     public static boolean album;
@@ -423,7 +421,6 @@ public class SettingValues {
         loadImageLq = prefs.getBoolean(PREF_IMAGE_LQ, false);
         showDomain = prefs.getBoolean(PREF_SHOW_DOMAIN, false);
         expandedToolbar = prefs.getBoolean(PREF_EXPANDED_TOOLBAR, false);
-        toolbarLayoutSearchPriority = prefs.getBoolean(PREF_TOOLBAR_LAYOUT_SEARCH_PRIORITY, false);
         voteGestures = prefs.getBoolean(PREF_VOTE_GESTURES, false);
         fullCommentOverride = prefs.getBoolean(PREF_FULL_COMMENT_OVERRIDE, false);
 

@@ -125,20 +125,6 @@ public class SettingsActivity extends BaseActivity implements RestartActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        if (findViewById(R.id.settings_search).getVisibility() == View.VISIBLE) {
-            findViewById(R.id.settings_search).setVisibility(View.GONE);
-            findViewById(R.id.search).setVisibility(View.VISIBLE);
-        } else {
-            // Ensure the standard back press behavior occurs,
-            // which includes finishing the activity and triggering onActivityResult
-            // in the calling activity. The onResume/onActivityResult methods in
-            // MainActivity/SubredditView handle checking the 'changed' flag.
-            super.onBackPressed();
-        }
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         applyColorTheme();
