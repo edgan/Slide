@@ -893,7 +893,7 @@ public class HeaderImageLinkView extends RelativeLayout {
         if (!full) {
             ((Reddit) getContext().getApplicationContext())
                     .getImageLoader()
-                    .displayImage(url, backdrop, null, errorListener);
+                    .displayImage(url, backdrop, bigOptions, errorListener);
         } else {
             ((Reddit) getContext().getApplicationContext())
                     .getImageLoader()
