@@ -1,11 +1,13 @@
 package me.edgan.redditslide.handler;
 
+import android.util.Log;
 import android.os.Handler;
 import android.text.Layout;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.method.BaseMovementMethod;
 import android.text.style.URLSpan;
+import android.text.style.ImageSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
@@ -101,17 +103,61 @@ public class TextViewLinkHandler extends BaseMovementMethod {
                     handler.removeCallbacksAndMessages(null);
 
                     if (!clickHandled) {
-                        // regular click
-                        if (link.length != 0) {
-                            int i = 0;
-                            if (sequence != null) {
-                                i = sequence.getSpanEnd(link[0]);
+                        URLSpan tappedUrlSpan = link[0];
+                        ImageSpan[] imageSpansAtTapOffset = buffer.getSpans(off, off, ImageSpan.class);
+                        int urlSpanStart = buffer.getSpanStart(tappedUrlSpan);
+                        int urlSpanEnd = buffer.getSpanEnd(tappedUrlSpan);
+
+                        ImageSpan[] allImageSpansInUrl = buffer.getSpans(urlSpanStart, urlSpanEnd, ImageSpan.class);
+                        boolean hasImageInUrl = allImageSpansInUrl.length > 0;
+                        boolean isEffectivelyImageOnlyLink = false;
+
+                        if (hasImageInUrl) {
+                            isEffectivelyImageOnlyLink = true;
+                            for (int i = urlSpanStart; i < urlSpanEnd; i++) {
+                                boolean charIsImage = false;
+                                for (ImageSpan imgSpan : allImageSpansInUrl) {
+                                    if (i >= buffer.getSpanStart(imgSpan) && i < buffer.getSpanEnd(imgSpan)) {
+                                        charIsImage = true;
+                                        break;
+                                    }
+                                }
+                                if (!charIsImage && !Character.isWhitespace(buffer.charAt(i))) {
+                                    isEffectivelyImageOnlyLink = false;
+                                    break;
+                                }
                             }
-                            if (!link[0].getURL().isEmpty()) {
-                                clickableText.onLinkClick(link[0].getURL(), i, subreddit, link[0]);
+                        }
+
+                        if (isEffectivelyImageOnlyLink) {
+                            if (imageSpansAtTapOffset.length > 0) {
+                                ImageSpan tappedImageSpan = imageSpansAtTapOffset[0];
+                                android.graphics.drawable.Drawable drawable = tappedImageSpan.getDrawable();
+                                if (drawable != null) {
+                                    float charCellLeftEdge = layout.getPrimaryHorizontal(off);
+                                    float charCellRightEdge = layout.getSecondaryHorizontal(off);
+                                    int imageDrawableWidth = drawable.getBounds().width();
+                                    // Drawable's visual right edge (assumes left-alignment in cell)
+                                    float visualImageDrawableRightEdge = charCellLeftEdge + imageDrawableWidth;
+
+                                    if (x >= charCellRightEdge) {
+                                        Selection.removeSelection(buffer);
+                                        return false;
+                                    } else if (x > visualImageDrawableRightEdge) {
+                                        Selection.removeSelection(buffer);
+                                        return false;
+                                    } else {
+                                        clickableText.onLinkClick(tappedUrlSpan.getURL(), urlSpanEnd, subreddit, tappedUrlSpan);
+                                    }
+                                } else {
+                                    clickableText.onLinkClick(tappedUrlSpan.getURL(), urlSpanEnd, subreddit, tappedUrlSpan);
+                                }
+                            } else { // Tap on whitespace within an effectively image-only link: allow expand/collapse.
+                                Selection.removeSelection(buffer);
+                                return false;
                             }
                         } else {
-                            return false;
+                            clickableText.onLinkClick(tappedUrlSpan.getURL(), urlSpanEnd, subreddit, tappedUrlSpan);
                         }
                     }
                     break;
