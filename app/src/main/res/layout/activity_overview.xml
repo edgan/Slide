@@ -81,7 +81,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/toolbar_search_suggestions"
             android:layout_width="256dp"
-            android:layout_height="316dp"
+            android:layout_height="match_parent"
             android:visibility="gone"
             android:layout_below="@id/header"
             android:elevation="8dp"
