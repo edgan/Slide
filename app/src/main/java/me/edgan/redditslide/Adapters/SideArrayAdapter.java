@@ -88,6 +88,12 @@ public class SideArrayAdapter extends ArrayAdapter<String> {
 
     private void hideSearchbarUI() {
         try {
+            AutoCompleteTextView toolbarSearchField = (AutoCompleteTextView) ((MainActivity) getContext()).findViewById(R.id.toolbar_search);
+            if (toolbarSearchField != null) {
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(toolbarSearchField.getWindowToken(), 0);
+            }
+
             // Hide the toolbar search UI without an animation because we're starting a new activity
             if ((SettingValues.subredditSearchMethod == Constants.SUBREDDIT_SEARCH_METHOD_TOOLBAR
                             || SettingValues.subredditSearchMethod
@@ -273,6 +279,9 @@ public class SideArrayAdapter extends ArrayAdapter<String> {
                                     mainActivity.startActivityForResult(intent, 2001);
                                 }
                             }
+
+                            // Hide the toolbar search UI
+                            hideSearchbarUI();
 
                             // Hide keyboard regardless of which branch was taken
                             View currentFocusView = mainActivity.getCurrentFocus();
