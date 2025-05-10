@@ -1,6 +1,5 @@
 package me.edgan.redditslide.handler;
 
-import android.util.Log;
 import android.os.Handler;
 import android.text.Layout;
 import android.text.Selection;
@@ -133,26 +132,29 @@ public class TextViewLinkHandler extends BaseMovementMethod {
                             if (imageSpansAtTapOffset.length > 0) {
                                 ImageSpan tappedImageSpan = imageSpansAtTapOffset[0];
                                 android.graphics.drawable.Drawable drawable = tappedImageSpan.getDrawable();
-                                if (drawable != null) {
-                                    float charCellLeftEdge = layout.getPrimaryHorizontal(off);
-                                    float charCellRightEdge = layout.getSecondaryHorizontal(off);
-                                    int imageDrawableWidth = drawable.getBounds().width();
-                                    // Drawable's visual right edge (assumes left-alignment in cell)
-                                    float visualImageDrawableRightEdge = charCellLeftEdge + imageDrawableWidth;
 
-                                    if (x >= charCellRightEdge) {
-                                        Selection.removeSelection(buffer);
-                                        return false;
-                                    } else if (x > visualImageDrawableRightEdge) {
-                                        Selection.removeSelection(buffer);
-                                        return false;
-                                    } else {
+                                if (drawable != null && drawable.getBounds().width() > 0 && drawable.getBounds().height() > 0) {
+                                    int spanStartOffset = buffer.getSpanStart(tappedImageSpan);
+
+                                    float imageDrawStartX = layout.getPrimaryHorizontal(spanStartOffset);
+                                    float imageDrawEndX = imageDrawStartX + drawable.getBounds().width();
+
+                                    int imageStartLine = layout.getLineForOffset(spanStartOffset);
+                                    float imageDrawEndY = layout.getLineBottom(imageStartLine);
+                                    float imageDrawStartY = imageDrawEndY - drawable.getBounds().height();
+
+                                    if (x >= imageDrawStartX && x < imageDrawEndX &&
+                                        y >= imageDrawStartY && y < imageDrawEndY) {
                                         clickableText.onLinkClick(tappedUrlSpan.getURL(), urlSpanEnd, subreddit, tappedUrlSpan);
+                                    } else {
+                                        Selection.removeSelection(buffer);
+                                        return false;
                                     }
                                 } else {
-                                    clickableText.onLinkClick(tappedUrlSpan.getURL(), urlSpanEnd, subreddit, tappedUrlSpan);
+                                    Selection.removeSelection(buffer);
+                                    return false;
                                 }
-                            } else { // Tap on whitespace within an effectively image-only link: allow expand/collapse.
+                            } else {
                                 Selection.removeSelection(buffer);
                                 return false;
                             }
