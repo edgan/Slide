@@ -4,6 +4,17 @@ The old changelog can be read in the [CHANGELOG.md](https://github.com/Haptic-Ap
 
 ---
 
+7.3.1 / 2025-5-9
+===========
+* Dismiss toolbar search and keyboard on suggestion selection
+* Prioritize Search icon, move Shadowbox to overflow
+* Fixed an intermittent display issue with Selftext preview images
+* Fixed earch dialog scales weirdly from FAB  #215
+* Fixed Tapping on "Moderation" does nothing. And I can't hide it either from drawer items #111
+* Added Hide subscribed subreddit tabs setting in Settings | General
+* Fixed NullPointerException on resume in MediaView (ExoPlayer) #178
+* Fixed many different crashes
+
 7.3.0 / 2025-4-24
 ============
 * Fixed Downloaded images are always saved as <subreddit>/download.jpeg #173
