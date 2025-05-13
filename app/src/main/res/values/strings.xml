@@ -85,9 +85,9 @@
 
 
     <!-- For editing the submission card layout -->
-    <string name="card_hide_post_button">“Hide post” button in actionbar</string>
+    <string name="card_hide_post_button">"Hide post" button in actionbar</string>
     <string name="card_tint_outside">Only tint outside the subreddit</string>
-    <string name="card_save_button">“Save post” button in actionbar</string>
+    <string name="card_save_button">"Save post" button in actionbar</string>
 
 
     <!-- Settings for Multi-column view -->
@@ -574,14 +574,12 @@
     <string name="wiki_err">No wiki found</string>
     <string name="wiki_err_msg">This subreddit doesn\'t have a wiki!</string>
 
-
     <!-- Subreddits -->
     <string name="subreddit_subscribers_string">%1$s subscribers</string>
     <string name="subreddit_active_users_string_new">%1$s here now</string>
     <string name="subreddit_err_msg">The subreddit %1$s could not be found. Perhaps it\'s spelled wrong?</string>
     <string name="subreddit_err_msg_new">The subreddit %1$s could not be found. Perhaps it\'s spelled wrong, or you do not have access to this subreddit.</string>
     <string name="subreddit_err">Subreddit not found</string>
-
 
     <!-- Search -->
     <string name="search_comments_hint">Search comments</string>
@@ -738,6 +736,7 @@
     <string name="settings_reddit_media_pref">Ignore subreddit media preferences</string>
     <string name="settings_description_synccit">Synccit allows you to sync your submission history between devices and your browser</string>
     <string name="settings_description_view_type">View types affect both the main view and single subreddit views.\n\nComment pane: comments slide out from next to posts and the comment page state is saved after swiping back (so you don\'t lose your place)\n\nNo subreddit tabs: disables swiping between subreddits\n\nSubreddit tabs: slide between your subreddits</string>
+    <string name="settings_short_description_view_type">View types affect both the main view and single subreddit views</string>
     <string name="settings_comment_hide_selftext_image">Hide lead image on selftext posts</string>
     <string name="settings_filter_flair">Flair filters</string>
     <string name="settings_view_type">View type</string>
@@ -1276,6 +1275,11 @@
     <string name="reddit_client_id_override">Reddit Client ID Override</string>
     <string name="click_custom_client_id">Click to set custom client ID</string>
     <string name="client_id_saved">Client ID saved: </string>
+    <string name="client_id_instructions">Client ID creation instructions</string>
+    <string name="client_id_scan_qr">Scan QR Code</string>
+    <string name="client_id_scan_prompt">Scan a QR code containing your Reddit Client ID</string>
+    <string name="camera_permission_denied">Camera permission is required to scan QR codes</string>
+    <string name="client_id_invalid_length">Invalid client ID: must be exactly 22 characters</string>
 
     <!-- Notification permission strings -->
     <string name="notifications_permission_title">Enable Notifications</string>
@@ -1324,4 +1328,8 @@
 
     <string name="submission_distinguished">Submission distinguished</string>
     <string name="submission_distinguished_removed">Submission distinguish removed</string>
+    <string name="setup_md_url">https://github.com/edgan/Slide/blob/master/docs/SETUP.md#reddit-client-id</string>
+
+    <string name="settings_general_hide_subreddit_tabs">Hide subscribed subreddit tabs</string>
+    <string name="settings_general_hide_subreddit_tabs_desc">Hide subscribed subreddits as tabs, but keep navigation buttons</string>
 </resources>

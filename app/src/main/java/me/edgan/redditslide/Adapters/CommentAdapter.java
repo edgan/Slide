@@ -1644,7 +1644,6 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return count;
     }
 
-
     public class AsyncForceLoadChild extends AsyncTask<String, Void, Integer> {
         CommentNode node;
         public int holderPos;

@@ -178,6 +178,7 @@ public class HeaderImageLinkView extends RelativeLayout {
                     || type == ContentType.Type.LINK
                     || type == ContentType.Type.REDDIT
                     || type == ContentType.Type.TUMBLR
+                    || type == ContentType.Type.STREAMABLE
                     || type == ContentType.Type.XKCD) {
                 handleTypes(submission, baseSub, full);
             } else if (type == ContentType.Type.REDDIT_GALLERY) {
@@ -892,7 +893,7 @@ public class HeaderImageLinkView extends RelativeLayout {
         if (!full) {
             ((Reddit) getContext().getApplicationContext())
                     .getImageLoader()
-                    .displayImage(url, backdrop, null, errorListener);
+                    .displayImage(url, backdrop, bigOptions, errorListener);
         } else {
             ((Reddit) getContext().getApplicationContext())
                     .getImageLoader()

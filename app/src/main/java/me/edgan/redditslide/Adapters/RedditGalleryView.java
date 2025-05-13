@@ -212,10 +212,9 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
                     main,
                     holder.exoVideoView,
                     holder.loader,
-                    null,
-                    null,
-                    false,
-                    false,
+                    null, // placeholder
+                    false, // closeIfNull
+                    false, // autostart
                     holder.rootView.findViewById(R.id.size),
                     subreddit,
                     submissionTitle
@@ -397,10 +396,9 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
                             main,
                             animatedHolder.exoVideoView,
                             animatedHolder.loader,
-                            null,
-                            null,
-                            true,
-                            false,
+                            null, // placeholder
+                            true, // closeIfNull
+                            false, // autostart
                             animatedHolder.rootView.findViewById(R.id.size),
                             subreddit,
                             submissionTitle

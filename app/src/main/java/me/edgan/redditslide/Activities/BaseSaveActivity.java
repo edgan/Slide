@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import me.edgan.redditslide.Notifications.ImageDownloadNotificationService;
+import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.StorageUtil;
 
 /**
@@ -16,8 +17,8 @@ public abstract class BaseSaveActivity extends FullScreenActivity {
 
     // Fields that child activities will need for image saving
     protected String subreddit;
-    protected String submissionTitle;
-    public static final String EXTRA_SUBMISSION_TITLE = "submissionTitle";
+    public String submissionTitle;
+    public static final String EXTRA_SUBMISSION_TITLE = ImageDownloadNotificationService.EXTRA_SUBMISSION_TITLE;
 
     private static final String TAG = "BaseSaveActivity";
     private static final int REQUEST_STORAGE_ACCESS = 1;
@@ -61,25 +62,16 @@ public abstract class BaseSaveActivity extends FullScreenActivity {
      * @param index Index in a gallery (if applicable)
      */
     protected void doImageSave(boolean isGif, String contentUrl, int index) {
-        if (!isGif) {
-            if (!StorageUtil.hasStorageAccess(this)) {
-                StorageUtil.showDirectoryChooser(this);
-            } else {
-                // We have permission, start the download service
-                Intent i = new Intent(this, ImageDownloadNotificationService.class);
-                i.putExtra("actuallyLoaded", contentUrl);
-                if (subreddit != null && !subreddit.isEmpty()) {
-                    i.putExtra("subreddit", subreddit);
-                }
-                if (submissionTitle != null) {
-                    i.putExtra(EXTRA_SUBMISSION_TITLE, submissionTitle);
-                }
-                i.putExtra("index", index);
-                startService(i);
-            }
-        } else {
-            MediaView.doOnClick.run();
-        }
+        // Updated to use the unified ImageSaveUtils, removing the old logic and doOnClick reference
+        ImageSaveUtils.doImageSave(
+                this,
+                isGif,
+                contentUrl,
+                index,
+                subreddit,
+                submissionTitle,
+                () -> StorageUtil.showDirectoryChooser(this) // Use directory chooser as the callback
+        );
     }
 
     /**

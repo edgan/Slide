@@ -1,6 +1,6 @@
 ---
 description: Include new strings
-globs: *
+globs: *.xml
 alwaysApply: true
 ---
 

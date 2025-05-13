@@ -11,36 +11,35 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.TextureView;
 import android.view.ViewGroup.LayoutParams;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.media.AudioAttributesCompat;
 import androidx.media.AudioFocusRequestCompat;
 import androidx.media.AudioManagerCompat;
-
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Tracks;
-import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.PlayerControlView;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.util.MimeTypes;
-import com.google.android.exoplayer2.video.VideoSize;
+import androidx.media3.common.Format;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.SimpleExoPlayer;
+import androidx.media3.common.Tracks;
+import androidx.media3.datasource.okhttp.OkHttpDataSource;
+import androidx.media3.exoplayer.source.MediaSource;
+import androidx.media3.exoplayer.source.ProgressiveMediaSource;
+import androidx.media3.exoplayer.dash.DashMediaSource;
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
+import androidx.media3.ui.AspectRatioFrameLayout;
+import androidx.media3.ui.PlayerControlView;
+import androidx.media3.datasource.DataSource;
+import androidx.media3.datasource.cache.CacheDataSource;
+import androidx.media3.common.MimeTypes;
+import androidx.media3.common.VideoSize;
 
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
@@ -65,6 +64,21 @@ public class ExoVideoView extends RelativeLayout {
     private boolean hqAttached = false;
     private AudioFocusHelper audioFocusHelper;
     private Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable hideControlsRunnable;
+
+
+    private ScaleGestureDetector scaleGestureDetector;
+    private float scaleFactor = 1.0f;
+    private AspectRatioFrameLayout videoFrame;
+
+    // Variables for panning
+    private float lastTouchX;
+    private float lastTouchY;
+    private float positionX = 0f;
+    private float positionY = 0f;
+    private boolean isDragging = false;
+    private boolean wasScaling = false; // Flag to track if scaling happened in the gesture
+    private boolean wasDragging = false; // Flag to track if dragging happened in the gesture
 
     // Static variable to hold the saved SurfaceTexture.
     private static SurfaceTexture sSavedSurfaceTexture;
@@ -120,6 +134,11 @@ public class ExoVideoView extends RelativeLayout {
         // Pause playback when view is detached
         stop();
 
+        // Cancel pending hide runnable
+        if (handler != null && hideControlsRunnable != null) {
+            handler.removeCallbacks(hideControlsRunnable);
+        }
+
         super.onDetachedFromWindow();
     }
 
@@ -134,51 +153,100 @@ public class ExoVideoView extends RelativeLayout {
             && SettingValues.lqVideos) {
             trackSelector.setParameters(
                     trackSelector.buildUponParameters().setForceLowestBitrate(true));
-            Log.d(TAG, "Forcing lowest bitrate");
         } else {
             trackSelector.setParameters(
                     trackSelector.buildUponParameters().setForceHighestSupportedBitrate(true));
-            Log.d(TAG, "Forcing highest supported bitrate");
         }
 
         // Release any existing player.
         if (player != null) {
-            Log.d(TAG, "Releasing existing player");
             player.release();
             player = null;
         }
 
         // Create the player.
-        player = new SimpleExoPlayer.Builder(context)
-                .setTrackSelector(trackSelector)
-                .build();
-        Log.d(TAG, "Player created");
+        player = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
 
         // Create an AspectRatioFrameLayout to size the video correctly.
         AspectRatioFrameLayout frame = new AspectRatioFrameLayout(context);
-        LayoutParams frameParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        frameParams.addRule(CENTER_IN_PARENT, TRUE);
-        frame.setLayoutParams(frameParams);
+
+        this.videoFrame = frame;
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        params.addRule(CENTER_IN_PARENT, TRUE);
+        frame.setLayoutParams(params);
         frame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
 
-        // Add listener to handle video size changes
+        // Initialize scale gesture detector
+        scaleGestureDetector = new ScaleGestureDetector(context, new VideoScaleListener());
+
+        // Add a Player.Listener for aspect ratio changes, logging, etc.
+        player.addListener(
+            new Player.Listener() {
+                // Make the video use the correct aspect ratio
+                @Override
+                public void onVideoSizeChanged(@NonNull VideoSize videoSize) {
+                    Log.d(TAG, "onVideoSizeChanged: width=" + videoSize.width + ", height=" + videoSize.height + ", unappliedRotationDegrees=" + videoSize.unappliedRotationDegrees);
+                    if (videoSize.width > 0 && videoSize.height > 0) {
+                        // Calculate the correct aspect ratio
+                        float aspectRatio = (float) videoSize.width / videoSize.height;
+
+                        // Apply any needed rotation
+                        if (videoSize.unappliedRotationDegrees == 90 ||
+                            videoSize.unappliedRotationDegrees == 270) {
+                            aspectRatio = 1.0f / aspectRatio;
+                        }
+
+                        // Set the aspect ratio
+                        Log.d(TAG, "Setting aspect ratio to: " + aspectRatio);
+                        frame.setAspectRatio(aspectRatio);
+                    }
+                }
+
+                // Logging
+                @Override
+                public void onTracksChanged(@NonNull Tracks tracks) {
+                    StringBuilder toLog = new StringBuilder();
+                    for (int groupIndex = 0; groupIndex < tracks.getGroups().size(); groupIndex++) {
+                        Tracks.Group group = tracks.getGroups().get(groupIndex);
+                        for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
+                            Format format = group.getTrackFormat(trackIndex);
+                            boolean isSelected = group.isTrackSelected(trackIndex);
+
+                            toLog.append("Format:\t")
+                                    .append(format)
+                                    .append(isSelected ? " (selected)" : "")
+                                    .append("\n");
+                        }
+                    }
+                }
+
+                @Override
+                public void onRenderedFirstFrame() {
+                    Log.d(TAG, "onRenderedFirstFrame: Fading in TextureView.");
+                    if (videoTextureView != null) {
+                        videoTextureView.animate().alpha(1f).setDuration(150).start(); // Short fade-in
+                    }
+                }
+            });
+
+        // --- Add listener for play state changes to manage UI timeout ---
         player.addListener(new Player.Listener() {
             @Override
-            public void onVideoSizeChanged(@NonNull VideoSize videoSize) {
-                Log.d(TAG, "onVideoSizeChanged: width=" + videoSize.width + ", height=" + videoSize.height + ", unappliedRotationDegrees=" + videoSize.unappliedRotationDegrees);
-                if (videoSize.width > 0 && videoSize.height > 0) {
-                    // Calculate the correct aspect ratio
-                    float aspectRatio = (float) videoSize.width / videoSize.height;
-
-                    // Apply any needed rotation
-                    if (videoSize.unappliedRotationDegrees == 90 ||
-                        videoSize.unappliedRotationDegrees == 270) {
-                        aspectRatio = 1.0f / aspectRatio;
+            public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
+                // If controls are visible when play state changes,
+                // reset the hide timer accordingly.
+                if (playerUI != null && playerUI.isVisible() && handler != null) {
+                    Log.d(TAG, "PlayWhenReady changed while UI visible. New state=" + playWhenReady);
+                    // Cancel any pending hide task
+                    Log.d(TAG, "PlayWhenReady Listener: Cancelling any pending hide runnable.");
+                    handler.removeCallbacks(hideControlsRunnable);
+                    // If starting to play, schedule a new hide task
+                    if (playWhenReady) {
+                        Log.d(TAG, "PlayWhenReady Listener: Scheduling hide runnable (delay 1000ms).");
+                        handler.postDelayed(hideControlsRunnable, 1000);
+                    } else {
+                        Log.d(TAG, "PlayWhenReady Listener: Not scheduling hide runnable (paused).");
                     }
-
-                    // Set the aspect ratio
-                    Log.d(TAG, "Setting aspect ratio to: " + aspectRatio);
-                    frame.setAspectRatio(aspectRatio);
                 }
             }
         });
@@ -186,6 +254,7 @@ public class ExoVideoView extends RelativeLayout {
         // --- Use a TextureView with a cached SurfaceTexture ---
         videoTextureView = new TextureView(context);
         videoTextureView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        videoTextureView.setAlpha(0f); // Make it transparent initially
         videoTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
@@ -223,28 +292,26 @@ public class ExoVideoView extends RelativeLayout {
 
         frame.addView(videoTextureView);
         player.setVideoTextureView(videoTextureView);
-        Log.d(TAG, "TextureView added and set as player's output");
-        // -------------------------------------------------------
 
         addView(frame);
-        Log.d(TAG, "Frame added to ExoVideoView");
 
         // Configure player options.
         player.setRepeatMode(Player.REPEAT_MODE_ALL);
         player.setVolume(SettingValues.unmuteDefault ? 1f : 0f);
         SettingValues.isMuted = !SettingValues.unmuteDefault;
-        Log.d(TAG, "Player configured: repeatMode and volume set");
 
         // Create audio focus helper.
-        audioFocusHelper = new AudioFocusHelper(
-                ContextCompat.getSystemService(context, AudioManager.class)
-        );
+        AudioManager audioManager = ContextCompat.getSystemService(context, AudioManager.class);
+        if (audioManager != null) {
+            audioFocusHelper = new AudioFocusHelper(audioManager);
+        }
     }
 
     private void setupUI() {
         playerUI = new PlayerControlView(context);
         playerUI.setPlayer(player);
-        playerUI.setShowTimeoutMs(2000);  // Controls will hide after 2 seconds
+        playerUI.setVisibility(View.GONE);
+        playerUI.setShowTimeoutMs(-1);  // Ensure built-in timeout is disabled
 
         // Add the player UI with proper positioning constraints
         RelativeLayout.LayoutParams playerUIParams = new RelativeLayout.LayoutParams(
@@ -253,13 +320,35 @@ public class ExoVideoView extends RelativeLayout {
         playerUIParams.bottomMargin = (int) (64 * context.getResources().getDisplayMetrics().density);
         addView(playerUI);
 
-        playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, true, 0));
+        // Define the hide action - it just hides if run.
+        hideControlsRunnable = () -> {
+            // The decision to run this is made elsewhere.
+            if (playerUI != null) {
+                // Check visibility just before hiding to avoid hiding if user tapped again quickly
+                if (playerUI.isVisible()) {
+                    playerUI.hide();
+                }
+            }
+        };
+
         setOnClickListener((v) -> {
-            playerUI.clearAnimation();
+            // Ensure playerUI, player, and handler are not null
+            if (playerUI == null || player == null || handler == null) return;
+
+            // Always remove pending runnable when screen is tapped
+            handler.removeCallbacks(hideControlsRunnable);
+
             if (playerUI.isVisible()) {
-                playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, false, 300));
+                // If visible, just hide.
+                playerUI.hide();
             } else {
-                playerUI.startAnimation(new PlayerUIFadeInAnimation(playerUI, true, 300));
+                // If hidden, show and decide whether to schedule auto-hide.
+                playerUI.show();
+                boolean isPlaying = player.getPlayWhenReady();
+                if (isPlaying) {
+                    // If playing, schedule the hide runnable.
+                    handler.postDelayed(hideControlsRunnable, 2000);
+                }
             }
         });
     }
@@ -268,53 +357,67 @@ public class ExoVideoView extends RelativeLayout {
      * Sets the player's URI and prepares for playback.
      */
     public void setVideoURI(Uri uri, VideoType type, Player.Listener listener) {
-        Log.d(TAG, "setVideoURI() called with uri: " + uri.toString());
-        DataSource.Factory downloader =
-                new OkHttpDataSource.Factory(Reddit.client)
-                        .setDefaultRequestProperties(GifUtils.AsyncLoadGif.makeHeaderMap(uri.getHost()));
-        DataSource.Factory cacheDataSourceFactory =
-                new CacheDataSource.Factory()
-                        .setCache(Reddit.videoCache)
-                        .setUpstreamDataSourceFactory(downloader);
+        Log.d(TAG, "setVideoURI() called with uri: " + (uri != null ? uri.toString() : "null"));
+        // Ensure player and uri are not null before proceeding
+        if (player != null && uri != null) {
+            DataSource.Factory downloader =
+                    new OkHttpDataSource.Factory(Reddit.client)
+                            .setDefaultRequestProperties(GifUtils.AsyncLoadGif.makeHeaderMap(uri.getHost()));
+            DataSource.Factory cacheDataSourceFactory =
+                    new CacheDataSource.Factory()
+                            .setCache(Reddit.videoCache)
+                            .setUpstreamDataSourceFactory(downloader);
 
-        MediaSource videoSource;
-        switch (type) {
-            case DASH:
-                Log.d(TAG, "Creating DASH media source");
-                videoSource =
-                        new DashMediaSource.Factory(cacheDataSourceFactory)
-                                .createMediaSource(MediaItem.fromUri(uri));
-                break;
-            case STANDARD:
-            default:
-                Log.d(TAG, "Creating standard media source");
-                videoSource =
-                        new ProgressiveMediaSource.Factory(cacheDataSourceFactory)
-                                .createMediaSource(MediaItem.fromUri(uri));
-                break;
-        }
+            MediaSource videoSource;
+            switch (type) {
+                case DASH:
+                    Log.d(TAG, "Creating DASH media source");
+                    videoSource =
+                            new DashMediaSource.Factory(cacheDataSourceFactory)
+                                    .createMediaSource(MediaItem.fromUri(uri));
+                    break;
+                case STANDARD:
+                default:
+                    Log.d(TAG, "Creating standard media source");
+                    videoSource =
+                            new ProgressiveMediaSource.Factory(cacheDataSourceFactory)
+                                    .createMediaSource(MediaItem.fromUri(uri));
+                    break;
+            }
 
-        player.setMediaSource(videoSource);
-        player.prepare();
-        if (listener != null) {
-            player.addListener(listener);
+            player.setMediaSource(videoSource);
+            player.prepare();
+            if (listener != null) {
+                player.addListener(listener);
+            }
         }
-        Log.d(TAG, "Media source set and player prepared");
+        // No else block needed, as we just won't proceed if player or uri is null
     }
 
     /** Starts video playback. */
     public void play() {
-        Log.d(TAG, "play() called");
-        player.play();
-        if (playbackStateChangedListener != null) {
-            playbackStateChangedListener.onPlaybackStateChanged(true);
+        // Ensure player is not null
+        if (player != null) {
+            player.play();
+            // Gain audio focus if helper is available
+            if (audioFocusHelper != null) {
+                audioFocusHelper.gainFocus();
+            }
+            if (playbackStateChangedListener != null) {
+                playbackStateChangedListener.onPlaybackStateChanged(true);
+            }
         }
     }
 
     /** Pauses video playback. */
     public void pause() {
+        // Ensure player is not null
         if (player != null) {
             player.pause();
+            // Lose audio focus if helper is available
+            if (audioFocusHelper != null) {
+                audioFocusHelper.loseFocus();
+            }
             if (playbackStateChangedListener != null) {
                 playbackStateChangedListener.onPlaybackStateChanged(false);
             }
@@ -323,17 +426,26 @@ public class ExoVideoView extends RelativeLayout {
 
     /** Stops video playback and releases the player. */
     public void stop() {
+        // Ensure player is not null before stopping/releasing
         if (player != null) {
             player.stop();
             player.release();
             player = null;
         }
-        audioFocusHelper.loseFocus();
+        // Ensure audioFocusHelper is not null before losing focus
+        if (audioFocusHelper != null) {
+            audioFocusHelper.loseFocus();
+        }
+        // Cancel pending hide runnable when explicitly stopping
+        if (handler != null && hideControlsRunnable != null) {
+            handler.removeCallbacks(hideControlsRunnable);
+        }
     }
 
     /** Seeks to a specified position (in milliseconds). */
     public void seekTo(long time) {
         Log.d(TAG, "seekTo() called with time: " + time);
+        // Ensure player is not null before seeking
         if (player != null) {
             player.seekTo(time);
         }
@@ -360,65 +472,87 @@ public class ExoVideoView extends RelativeLayout {
      */
     public void attachMuteButton(final ImageView mute) {
         Log.d(TAG, "attachMuteButton() called");
-        mute.setVisibility(GONE);
-        player.addListener(new Player.Listener() {
-            @Override
-            public void onTracksChanged(@NonNull Tracks tracks) {
-                Log.d(TAG, "attachMuteButton onTracksChanged");
-                if (muteAttached && !tracks.getGroups().isEmpty()) {
-                    return;
-                } else {
-                    muteAttached = true;
-                }
-                boolean foundAudio = false;
-                for (Tracks.Group group : tracks.getGroups()) {
-                    for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
-                        if (group.isTrackSelected(trackIndex)) {
-                            Format format = group.getTrackFormat(trackIndex);
-                            if (format != null && MimeTypes.isAudio(format.sampleMimeType)) {
-                                foundAudio = true;
-                                break;
+        // Ensure mute button and player are not null
+        if (mute != null && player != null) {
+            mute.setVisibility(GONE);
+            player.addListener(new Player.Listener() {
+                @Override
+                public void onTracksChanged(@NonNull Tracks tracks) {
+                    Log.d(TAG, "attachMuteButton onTracksChanged");
+                    if (muteAttached && !tracks.getGroups().isEmpty()) {
+                        return;
+                    } else {
+                        muteAttached = true;
+                    }
+                    boolean foundAudio = false;
+                    for (Tracks.Group group : tracks.getGroups()) {
+                        for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
+                            if (group.isTrackSelected(trackIndex)) {
+                                Format format = group.getTrackFormat(trackIndex);
+                                if (format != null && MimeTypes.isAudio(format.sampleMimeType)) {
+                                    foundAudio = true;
+                                    break;
+                                }
                             }
+                        }
+                        if (foundAudio) {
+                            break;
                         }
                     }
                     if (foundAudio) {
-                        break;
-                    }
-                }
-                if (foundAudio) {
-                    mute.setVisibility(VISIBLE);
-                    if (!SettingValues.isMuted) {
-                        player.setVolume(1f);
-                        mute.setImageResource(R.drawable.ic_volume_on);
-                        BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
-                        audioFocusHelper.gainFocus();
-                    } else {
-                        player.setVolume(0f);
-                        mute.setImageResource(R.drawable.ic_volume_off);
-                        BlendModeUtil.tintImageViewAsSrcAtop(mute, getResources().getColor(R.color.md_red_500));
-                    }
-                    mute.setOnClickListener((v) -> {
-                        if (SettingValues.isMuted) {
-                            Log.d(TAG, "Mute button clicked: unmuting");
-                            player.setVolume(1f);
-                            SettingValues.isMuted = false;
-                            SettingValues.prefs.edit().putBoolean(SettingValues.PREF_MUTE, false).apply();
-                            mute.setImageResource(R.drawable.ic_volume_on);
-                            BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
-                            audioFocusHelper.gainFocus();
-                        } else {
-                            Log.d(TAG, "Mute button clicked: muting");
-                            player.setVolume(0f);
-                            SettingValues.isMuted = true;
-                            SettingValues.prefs.edit().putBoolean(SettingValues.PREF_MUTE, true).apply();
-                            mute.setImageResource(R.drawable.ic_volume_off);
-                            BlendModeUtil.tintImageViewAsSrcAtop(mute, getResources().getColor(R.color.md_red_500));
-                            audioFocusHelper.loseFocus();
+                        mute.setVisibility(VISIBLE);
+                        // Ensure player still exists when setting initial state
+                        if (player != null) {
+                           if (!SettingValues.isMuted) {
+                                player.setVolume(1f);
+                                mute.setImageResource(R.drawable.ic_volume_on);
+                                BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
+                                // Gain focus only if helper exists
+                                if (audioFocusHelper != null) {
+                                    audioFocusHelper.gainFocus();
+                                }
+                            } else {
+                                player.setVolume(0f);
+                                mute.setImageResource(R.drawable.ic_volume_off);
+                                BlendModeUtil.tintImageViewAsSrcAtop(mute, getResources().getColor(R.color.md_red_500));
+                                // Lose focus only if helper exists
+                                if (audioFocusHelper != null) {
+                                     audioFocusHelper.loseFocus(); // Already checked, but good practice
+                                }
+                            }
                         }
-                    });
+                        mute.setOnClickListener((v) -> {
+                            // Ensure player still exists when clicked
+                            if (player != null) {
+                                if (SettingValues.isMuted) {
+                                    Log.d(TAG, "Mute button clicked: unmuting");
+                                    player.setVolume(1f);
+                                    SettingValues.isMuted = false;
+                                    SettingValues.prefs.edit().putBoolean(SettingValues.PREF_MUTE, false).apply();
+                                    mute.setImageResource(R.drawable.ic_volume_on);
+                                    BlendModeUtil.tintImageViewAsSrcAtop(mute, Color.WHITE);
+                                    // Gain focus only if helper exists
+                                    if (audioFocusHelper != null) {
+                                        audioFocusHelper.gainFocus();
+                                    }
+                                } else {
+                                    Log.d(TAG, "Mute button clicked: muting");
+                                    player.setVolume(0f);
+                                    SettingValues.isMuted = true;
+                                    SettingValues.prefs.edit().putBoolean(SettingValues.PREF_MUTE, true).apply();
+                                    mute.setImageResource(R.drawable.ic_volume_off);
+                                    BlendModeUtil.tintImageViewAsSrcAtop(mute, getResources().getColor(R.color.md_red_500));
+                                    // Lose focus only if helper exists
+                                    if (audioFocusHelper != null) {
+                                        audioFocusHelper.loseFocus();
+                                    }
+                                }
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -426,45 +560,54 @@ public class ExoVideoView extends RelativeLayout {
      */
     public void attachHqButton(final ImageView hq) {
         Log.d(TAG, "attachHqButton() called");
-        hq.setVisibility(GONE);
-        player.addListener(new Player.Listener() {
-            @Override
-            public void onTracksChanged(@NonNull Tracks tracks) {
-                Log.d(TAG, "attachHqButton onTracksChanged");
-                if (hqAttached || tracks.getGroups().isEmpty() ||
-                        trackSelector.getParameters().forceHighestSupportedBitrate) {
-                    return;
-                } else {
-                    hqAttached = true;
-                }
-                int videoTrackCounter = 0;
-                for (Tracks.Group group : tracks.getGroups()) {
-                    for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
-                        Format format = group.getTrackFormat(trackIndex);
-                        if (format != null && MimeTypes.isVideo(format.sampleMimeType)) {
-                            videoTrackCounter++;
+        // Ensure hq button and player are not null
+        if (hq != null && player != null) {
+            hq.setVisibility(GONE);
+            player.addListener(new Player.Listener() {
+                @Override
+                public void onTracksChanged(@NonNull Tracks tracks) {
+                    Log.d(TAG, "attachHqButton onTracksChanged");
+                    // Ensure trackSelector exists
+                    if (trackSelector != null) {
+                        if (hqAttached || tracks.getGroups().isEmpty() ||
+                                trackSelector.getParameters().forceHighestSupportedBitrate) {
+                            return;
+                        } else {
+                            hqAttached = true;
+                        }
+                        int videoTrackCounter = 0;
+                        for (Tracks.Group group : tracks.getGroups()) {
+                            for (int trackIndex = 0; trackIndex < group.getMediaTrackGroup().length; trackIndex++) {
+                                Format format = group.getTrackFormat(trackIndex);
+                                if (format != null && MimeTypes.isVideo(format.sampleMimeType)) {
+                                    videoTrackCounter++;
+                                    if (videoTrackCounter > 1) {
+                                        break;
+                                    }
+                                }
+                            }
                             if (videoTrackCounter > 1) {
                                 break;
                             }
                         }
-                    }
-                    if (videoTrackCounter > 1) {
-                        break;
+                        if (videoTrackCounter > 1) {
+                            hq.setVisibility(VISIBLE);
+                            hq.setOnClickListener((v) -> {
+                                Log.d(TAG, "HQ button clicked: forcing high bitrate");
+                                // Ensure trackSelector still exists when clicked
+                                if (trackSelector != null) {
+                                    trackSelector.setParameters(
+                                            trackSelector.buildUponParameters()
+                                                    .setForceLowestBitrate(false)
+                                                    .setForceHighestSupportedBitrate(true));
+                                    hq.setVisibility(GONE);
+                                }
+                            });
+                        }
                     }
                 }
-                if (videoTrackCounter > 1) {
-                    hq.setVisibility(VISIBLE);
-                    hq.setOnClickListener((v) -> {
-                        Log.d(TAG, "HQ button clicked: forcing high bitrate");
-                        trackSelector.setParameters(
-                                trackSelector.buildUponParameters()
-                                        .setForceLowestBitrate(false)
-                                        .setForceHighestSupportedBitrate(true));
-                        hq.setVisibility(GONE);
-                    });
-                }
-            }
-        });
+            });
+        }
     }
 
     /** Enum for video types. */
@@ -480,85 +623,225 @@ public class ExoVideoView extends RelativeLayout {
         private AudioFocusRequestCompat request;
 
         AudioFocusHelper(AudioManager manager) {
-            this.manager = manager;
-            if (request == null) {
-                AudioAttributesCompat audioAttributes =
-                        new AudioAttributesCompat.Builder()
-                                .setContentType(AudioAttributesCompat.CONTENT_TYPE_MOVIE)
-                                .setUsage(AudioAttributesCompat.USAGE_MEDIA)
-                                .build();
+            // Only proceed if manager is not null
+            if (manager != null) {
+                this.manager = manager;
+                // Initialize request only if it's null and manager is valid
+                if (request == null) {
+                    AudioAttributesCompat audioAttributes =
+                            new AudioAttributesCompat.Builder()
+                                    .setContentType(AudioAttributesCompat.CONTENT_TYPE_MOVIE)
+                                    .setUsage(AudioAttributesCompat.USAGE_MEDIA)
+                                    .build();
 
-                AudioFocusRequestCompat.Builder builder = new AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT)
-                        .setAudioAttributes(audioAttributes)
-                        .setOnAudioFocusChangeListener(this);
+                    AudioFocusRequestCompat.Builder builder = new AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN_TRANSIENT)
+                            .setAudioAttributes(audioAttributes)
+                            .setOnAudioFocusChangeListener(this);
 
-                if (SettingValues.pauseOnAudioFocus) {
-                    builder.setWillPauseWhenDucked(true);
+                    if (SettingValues.pauseOnAudioFocus) {
+                        builder.setWillPauseWhenDucked(true);
+                    }
+
+                    request = builder.build();
                 }
-
-                request = builder.build();
-
+            } else {
+                // If manager is null, ensure helper state reflects that
+                this.manager = null;
+                this.request = null;
             }
         }
 
         void loseFocus() {
             Log.d(TAG, "AudioFocusHelper: losing focus");
-            AudioManagerCompat.abandonAudioFocusRequest(manager, request);
+            // Only abandon focus if manager and request are valid
+            if (manager != null && request != null) {
+                AudioManagerCompat.abandonAudioFocusRequest(manager, request);
+            }
         }
 
         void gainFocus() {
             Log.d(TAG, "AudioFocusHelper: gaining focus");
-            AudioManagerCompat.requestAudioFocus(manager, request);
+            // Only request focus if manager and request are valid
+            if (manager != null && request != null) {
+                AudioManagerCompat.requestAudioFocus(manager, request);
+            }
         }
 
         @Override
         public void onAudioFocusChange(int focusChange) {
             Log.d(TAG, "AudioFocusHelper: onAudioFocusChange: " + focusChange);
-            if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                wasPlaying = player.getPlayWhenReady();
-                player.pause();
-            } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-                player.setPlayWhenReady(wasPlaying);
+            // Only proceed if player exists
+            if (player != null) {
+                if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                    wasPlaying = player.getPlayWhenReady();
+                    player.pause();
+                } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+                    player.setPlayWhenReady(wasPlaying);
+                }
             }
         }
     }
 
-    /** Simple animation for fading in/out the player UI. */
-    static class PlayerUIFadeInAnimation extends AnimationSet {
-        private PlayerControlView animationView;
-        private boolean toVisible;
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event == null) return super.onTouchEvent(null);
+        if (scaleGestureDetector == null) return super.onTouchEvent(event);
 
-        PlayerUIFadeInAnimation(PlayerControlView view, boolean toVisible, long duration) {
-            super(false);
-            this.toVisible = toVisible;
-            this.animationView = view;
-            float startAlpha = toVisible ? 0 : 1;
-            float endAlpha = toVisible ? 1 : 0;
-            AlphaAnimation alphaAnimation = new AlphaAnimation(startAlpha, endAlpha);
-            alphaAnimation.setDuration(duration);
-            addAnimation(alphaAnimation);
-            setAnimationListener(new PlayerUIFadeInAnimationListener());
+        // Pass event to scale detector FIRST
+        boolean scaleHandledByDetector = scaleGestureDetector.onTouchEvent(event);
+        boolean scalingInProgress = scaleGestureDetector.isInProgress();
+
+        final int action = event.getActionMasked();
+
+        // Reset flags on ACTION_DOWN
+        if (action == MotionEvent.ACTION_DOWN) {
+            lastTouchX = event.getX();
+            lastTouchY = event.getY();
+            isDragging = false;
+            wasScaling = false; // Reset scaling history flag for the new gesture
+            wasDragging = false; // Reset dragging history flag for the new gesture
         }
 
-        private class PlayerUIFadeInAnimationListener implements Animation.AnimationListener {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                animationView.show();
+        boolean dragHandled = false;
+        // Panning logic (only when zoomed and not currently scaling)
+        if (scaleFactor > 1.0f && !scalingInProgress) {
+            switch (action) {
+                case MotionEvent.ACTION_MOVE: {
+                    float dx = event.getX() - lastTouchX;
+                    float dy = event.getY() - lastTouchY;
+                    // Start dragging if movement is significant
+                    if (!isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+                        isDragging = true;
+                    }
+                    if (isDragging) {
+                        // Update position with constraints
+                        positionX += dx;
+                        positionY += dy;
+                        if (videoFrame != null) {
+                            float maxDeltaX = (videoFrame.getWidth() * (scaleFactor - 1)) / 2;
+                            float maxDeltaY = (videoFrame.getHeight() * (scaleFactor - 1)) / 2;
+                            positionX = Math.max(-maxDeltaX, Math.min(maxDeltaX, positionX));
+                            positionY = Math.max(-maxDeltaY, Math.min(maxDeltaY, positionY));
+                            // Apply translation
+                            videoFrame.setTranslationX(positionX);
+                            videoFrame.setTranslationY(positionY);
+                        }
+                        dragHandled = true; // Mark that dragging occurred
+                        wasDragging = true; // Mark that dragging occurred in this gesture
+                    }
+                    // Update last touch position regardless for next move calculation
+                    lastTouchX = event.getX();
+                    lastTouchY = event.getY();
+                    break;
+                }
+                 case MotionEvent.ACTION_POINTER_DOWN:
+                 case MotionEvent.ACTION_POINTER_UP: {
+                    // Update reference point to maintain smooth panning across pointer changes
+                     int index = event.getActionIndex();
+                     int newIndex = 0; // Default to the first pointer
+                     // If the primary pointer went up, use the next available one
+                     if (action == MotionEvent.ACTION_POINTER_UP && index == 0 && event.getPointerCount() > 1) {
+                         newIndex = 1;
+                     }
+                     lastTouchX = event.getX(newIndex);
+                     lastTouchY = event.getY(newIndex);
+                     break;
+                 }
+                 // ACTION_UP and ACTION_CANCEL handled below the switch
             }
+        } // end if (scaleFactor > 1.0f && !scalingInProgress)
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                if (toVisible) {
-                    animationView.show();
-                } else {
-                    animationView.hide();
+
+        // Determine if the event should be consumed (preventing click)
+        // Consume if:
+        // 1. Scaling is currently in progress (mid-gesture)
+        // 2. Dragging occurred during this MOVE event
+        // 3. The action is UP or CANCEL *and* scaling or dragging happened at any point during this gesture sequence
+        boolean consumeEvent = scalingInProgress || dragHandled ||
+                ((action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) && (wasScaling || wasDragging));
+
+        // Reset dragging state on UP or CANCEL, regardless of consumption, ready for next gesture
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+            isDragging = false;
+            // wasScaling and wasDragging are reset on ACTION_DOWN
+        }
+
+        if (consumeEvent) {
+            return true; // Consume the event, preventing click listener
+        } else {
+            // Not scaling, not dragging, not an UP/CANCEL after scaling.
+            // Pass to superclass to handle potential clicks etc.
+            return super.onTouchEvent(event);
+        }
+    }
+
+    /**
+     * Scale gesture listener to handle pinch-to-zoom events
+     */
+    private class VideoScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            // Ensure detector is not null
+            if (detector != null) {
+                wasScaling = true; // Mark that scaling has occurred in this gesture sequence
+
+                scaleFactor *= detector.getScaleFactor();
+
+                // Limit the scale factor to reasonable bounds
+                scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 3.0f));
+
+                // Apply the scale to the video frame if it exists
+                if (videoFrame != null) {
+                    videoFrame.setScaleX(scaleFactor);
+                    videoFrame.setScaleY(scaleFactor);
+                }
+                return true;
+            }
+            return false; // Indicate scale was not handled
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            // Ensure detector is not null
+            if (detector != null) {
+                // If scale is back to normal (or very close), reset to FIT mode and reset position
+                if (scaleFactor <= 1.05f) {
+                    scaleFactor = 1.0f;
+                    resetPosition(); // resetPosition handles internal null check
+                    if (videoFrame != null) {
+                        videoFrame.setScaleX(1.0f);
+                        videoFrame.setScaleY(1.0f);
+                        videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+                    }
                 }
             }
+        }
+    }
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-                // Purposefully left blank
-            }
+    /**
+     * Resets any applied zoom to default scale and position
+     */
+    public void resetZoom() {
+        scaleFactor = 1.0f;
+        resetPosition(); // resetPosition already has a null check for videoFrame
+        // Ensure videoFrame exists before resetting scale/mode
+        if (videoFrame != null) {
+            videoFrame.setScaleX(1.0f);
+            videoFrame.setScaleY(1.0f);
+            videoFrame.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+        }
+    }
+
+    /**
+     * Resets the panning position to center
+     */
+    private void resetPosition() {
+        positionX = 0f;
+        positionY = 0f;
+        // Ensure videoFrame exists before resetting translation
+        if (videoFrame != null) {
+            videoFrame.setTranslationX(0f);
+            videoFrame.setTranslationY(0f);
         }
     }
 

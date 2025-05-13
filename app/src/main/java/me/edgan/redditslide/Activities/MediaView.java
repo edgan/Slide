@@ -95,7 +95,6 @@ public class MediaView extends BaseSaveActivity {
     public String subreddit;
     private String submissionTitle;
     private int index;
-    public static Runnable doOnClick;
     public static boolean didLoadGif;
 
     public float previous;
@@ -132,7 +131,9 @@ public class MediaView extends BaseSaveActivity {
         super.onResume();
         if (videoView != null) {
             videoView.seekTo(stopPosition);
-            videoView.play();
+            if (videoView.isPlaying() || gif != null) {
+                videoView.play();
+            }
         }
     }
 
@@ -255,7 +256,6 @@ public class MediaView extends BaseSaveActivity {
                 this::showFirstDialog
         );
     }
-
     public void saveFile(final String baseUrl) {
         Uri storageUri = StorageUtil.getStorageUri(this);
 
@@ -379,7 +379,6 @@ public class MediaView extends BaseSaveActivity {
             gif.cancel(true);
         }
 
-        doOnClick = null;
         if (!didLoadGif && fileLoc != null && !fileLoc.isEmpty()) {
             new File(fileLoc).delete();
         }
@@ -444,11 +443,6 @@ public class MediaView extends BaseSaveActivity {
             stopPosition = savedInstanceState.getLong("position");
         }
 
-        doOnClick =
-                new Runnable() {
-                    @Override
-                    public void run() {}
-                };
         setContentView(R.layout.activity_media);
 
         // Keep the screen on
@@ -572,6 +566,7 @@ public class MediaView extends BaseSaveActivity {
 
     public void doLoad(final String contentUrl) {
         ContentType.Type contentType = ContentType.getContentType(contentUrl);
+        Log.v(TAG, "contentType: " + contentType.toString());
         switch (contentType) {
             case DEVIANTART:
                 doLoadDeviantArt(contentUrl);
@@ -581,6 +576,11 @@ public class MediaView extends BaseSaveActivity {
                 break;
             case IMGUR:
                 doLoadImgur(contentUrl);
+                break;
+            case LINK:
+                if (contentUrl.startsWith("https://giphy.com/")) {
+                    doLoadGif(contentUrl);
+                }
                 break;
             case XKCD:
                 doLoadXKCD(contentUrl);
@@ -619,7 +619,6 @@ public class MediaView extends BaseSaveActivity {
                         videoView,
                         loader,
                         findViewById(R.id.placeholder),
-                        doOnClick,
                         true,
                         true,
                         ((TextView) findViewById(R.id.size)),

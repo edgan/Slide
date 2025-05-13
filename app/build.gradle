@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    compileSdk 34
+    compileSdk 35
     namespace "me.edgan.redditslide"
 
 
@@ -49,7 +49,7 @@ android {
         multiDexEnabled true
         targetSdk 34
         vectorDrawables.useSupportLibrary true
-        versionCode 727
+        versionCode 731
         versionName androidGitVersion.name()
     }
 
@@ -145,13 +145,15 @@ if (githubPropertiesFile.exists()) {
     githubProperties.load(new FileInputStream(githubPropertiesFile))
 
     githubRelease {
+        def releaseNotes = System.getenv("RELEASE_NOTES") ?: "Automated release of version ${android.defaultConfig.versionName ?: "default-version"}"
+
         token = githubProperties["githubToken"]
         owner = "edgan"
         repo = "Slide"
         tagName = android.defaultConfig.versionName ?: "default-version"
         targetCommitish = "master"
         releaseName = "Release ${android.defaultConfig.versionName ?: "default-version"}"
-        body = "Automated release of version ${android.defaultConfig.versionName ?: "default-version"}"
+        body = "$releaseNotes"
         draft = false
         prerelease = false
         overwrite = false
@@ -207,14 +209,18 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 /** ExoPlayer **/
     // Application level media player
-    implementation "com.google.android.exoplayer:exoplayer-core:2.19.1"
-    implementation "com.google.android.exoplayer:exoplayer-dash:2.19.1"
-    implementation "com.google.android.exoplayer:exoplayer-ui:2.19.1"
-    implementation "com.google.android.exoplayer:extension-okhttp:2.19.1"
+    implementation "androidx.media3:media3-exoplayer:1.5.1"
+    implementation "androidx.media3:media3-ui:1.5.1"
+    implementation "androidx.media3:media3-common:1.5.1"
+    implementation("androidx.media3:media3-exoplayer-dash:1.5.1")
+    implementation "androidx.media3:media3-datasource-okhttp:1.5.1"
 
 /** Third-party **/
     // Good for debugging JRAW
     //implementation 'org.slf4j:slf4j-android:1.7.36'
+
+    // QR code scanning
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
 
 /**** Frontend (UI-related) ****/
 

@@ -1,6 +1,39 @@
-### CHANGELOG
+# CHANGELOG
 
 The old changelog can be read in the [CHANGELOG.md](https://github.com/Haptic-Apps/Slide/blob/master/CHANGELOG.md).
+
+---
+
+7.3.1 / 2025-5-9
+===========
+* Dismiss toolbar search and keyboard on suggestion selection
+* Prioritize Search icon, move Shadowbox to overflow
+* Fixed an intermittent display issue with Selftext preview images
+* Fixed earch dialog scales weirdly from FAB  #215
+* Fixed Tapping on "Moderation" does nothing. And I can't hide it either from drawer items #111
+* Added Hide subscribed subreddit tabs setting in Settings | General
+* Fixed NullPointerException on resume in MediaView (ExoPlayer) #178
+* Fixed many different crashes
+
+7.3.0 / 2025-4-24
+============
+* Fixed Downloaded images are always saved as <subreddit>/download.jpeg #173
+* Fixed issue with badly formatted code blocks
+* Fixed Brief flash when opening videos/GIFs #162
+* Fixed Controls briefly reappear when tapping to hide them #121
+* Fixed Controls briefly appear when opening a video #119
+* Fixed Pinch-to-zoom causes jumping in video player #168
+* Added support for inputting the client ID via a QR code
+* Fixed opening redd.it links inside and outside Slide #172
+
+7.2.9 / 2025-4-3
+===========
+* Fixed Some video downloads are corrupted #169
+
+7.2.8 / 2025-4-3
+================
+* Fix for crash related to "Pause video instead of ducking"
+* Fixed Add button for subreddits in "Manage your subreddits" is greyed out #167
 
 7.2.7 / 2025-3-28
 =================
@@ -9,7 +42,7 @@ The old changelog can be read in the [CHANGELOG.md](https://github.com/Haptic-Ap
 * Fixed YouTube links open in browser instead of YouTube app when using custom tabs #164
 * Properly themed all dialog boxes in Settings | Manage your subreddits
 * Added setting to put colored border around dialog boxes. Currently limited to Settings | Manage your subreddits, and not the default.
-* Truncated CHANGELOG.md to post fork, but link to the old CHANGELOG.md
+* Truncated CHANGELOG.md to post fork, but added link to the old CHANGELOG.md
 
 7.2.6 / 2025-3-26
 =================

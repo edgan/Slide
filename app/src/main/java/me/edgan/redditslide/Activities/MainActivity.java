@@ -469,7 +469,13 @@ public class MainActivity extends BaseActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         final String subreddit = usedArray.get(Reddit.currentPosition);
 
-        List<Submission> posts = ((SubmissionsView) adapter.getCurrentFragment()).posts.posts;
+        // Add null checks to prevent NullPointerException
+        List<Submission> posts = null;
+        if (adapter != null && adapter.getCurrentFragment() != null &&
+            adapter.getCurrentFragment() instanceof SubmissionsView &&
+            ((SubmissionsView) adapter.getCurrentFragment()).posts != null) {
+            posts = ((SubmissionsView) adapter.getCurrentFragment()).posts.posts;
+        }
 
         switch (item.getItemId()) {
             case R.id.filter:
@@ -657,12 +663,20 @@ public class MainActivity extends BaseActivity
 
                 return true;
             case R.id.save:
-                saveOffline(
-                        ((SubmissionsView) adapter.getCurrentFragment()).posts.posts,
-                        ((SubmissionsView) adapter.getCurrentFragment()).posts.subreddit);
+                if (adapter != null && adapter.getCurrentFragment() != null &&
+                    adapter.getCurrentFragment() instanceof SubmissionsView &&
+                    ((SubmissionsView) adapter.getCurrentFragment()).posts != null &&
+                    ((SubmissionsView) adapter.getCurrentFragment()).posts.posts != null) {
+                    saveOffline(
+                            ((SubmissionsView) adapter.getCurrentFragment()).posts.posts,
+                            ((SubmissionsView) adapter.getCurrentFragment()).posts.subreddit);
+                }
                 return true;
             case R.id.hide_posts:
-                ((SubmissionsView) adapter.getCurrentFragment()).clearSeenPosts(false);
+                if (adapter != null && adapter.getCurrentFragment() != null &&
+                    adapter.getCurrentFragment() instanceof SubmissionsView) {
+                    ((SubmissionsView) adapter.getCurrentFragment()).clearSeenPosts(false);
+                }
                 return true;
             case R.id.share:
                 Reddit.defaultShareText(
@@ -678,7 +692,10 @@ public class MainActivity extends BaseActivity
                 }
                 return true;
             case R.id.gallery:
-                if (posts != null && !posts.isEmpty()) {
+                if (posts != null && !posts.isEmpty() && adapter != null &&
+                    adapter.getCurrentFragment() != null &&
+                    adapter.getCurrentFragment() instanceof SubmissionsView &&
+                    ((SubmissionsView) adapter.getCurrentFragment()).posts != null) {
                     Intent i2 = new Intent(this, Gallery.class);
                     i2.putExtra(
                             "offline",
@@ -695,7 +712,10 @@ public class MainActivity extends BaseActivity
                 }
                 return true;
             case R.id.action_shadowbox:
-                if (posts != null && !posts.isEmpty()) {
+                if (posts != null && !posts.isEmpty() && adapter != null &&
+                    adapter.getCurrentFragment() != null &&
+                    adapter.getCurrentFragment() instanceof SubmissionsView &&
+                    ((SubmissionsView) adapter.getCurrentFragment()).posts != null) {
                     Intent i2 = new Intent(this, Shadowbox.class);
                     i2.putExtra(Shadowbox.EXTRA_PAGE, getCurrentPage());
                     i2.putExtra(
@@ -1226,8 +1246,6 @@ public class MainActivity extends BaseActivity
     }
 
     public HashMap<String, String> accounts = new HashMap<>();
-
-
 
     public void doForcePrefs() {
         HashSet<String> domains = new HashSet<>();
@@ -1835,14 +1853,4 @@ public class MainActivity extends BaseActivity
             d.dismiss();
         }
     }
-
-
-
-    /**
-     * If the user has the Subreddit Search method set to "long press on toolbar title", an
-     * OnLongClickListener needs to be set for the toolbar as well as handling all of the relevant
-     * onClicks for the views of the search bar.
-     */
-
-
 }

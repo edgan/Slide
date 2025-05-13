@@ -4,7 +4,7 @@ import android.util.Base64;
 
 import androidx.annotation.ColorInt;
 
-import com.google.android.exoplayer2.util.ColorParser;
+import androidx.media3.common.util.ColorParser;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;

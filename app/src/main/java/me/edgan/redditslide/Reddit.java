@@ -29,11 +29,11 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.multidex.MultiDexApplication;
 
-import com.google.android.exoplayer2.database.DatabaseProvider;
-import com.google.android.exoplayer2.database.ExoDatabaseProvider;
-import com.google.android.exoplayer2.upstream.cache.Cache;
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
+import androidx.media3.database.DatabaseProvider;
+import androidx.media3.database.ExoDatabaseProvider;
+import androidx.media3.datasource.cache.Cache;
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor;
+import androidx.media3.datasource.cache.SimpleCache;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.lusfold.androidkeyvaluestore.KVStore;
 import com.nostra13.universalimageloader.core.ImageLoader;

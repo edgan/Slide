@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -122,6 +123,7 @@ public class RedditGalleryPager extends BaseSaveActivity implements GalleryParen
             case R.id.download:
                 if (images != null) {
                     int index = 0;
+                    Log.d(TAG, "Download - submission title: " + (submissionTitle != null ? submissionTitle : "null"));
                     for (final GalleryImage elem : images) {
                         if (elem.isAnimated()) {
                             // Handle videos/GIFs using GifUtils
@@ -164,6 +166,15 @@ public class RedditGalleryPager extends BaseSaveActivity implements GalleryParen
 
         if (getIntent().hasExtra(EXTRA_SUBMISSION_TITLE)) {
             this.submissionTitle = getIntent().getStringExtra(EXTRA_SUBMISSION_TITLE);
+            Log.d(TAG, "Intent has EXTRA_SUBMISSION_TITLE: " + submissionTitle);
+        } else {
+            Log.d(TAG, "Intent is missing EXTRA_SUBMISSION_TITLE");
+            // Try to get from the original extras bundle too
+            Bundle extras = getIntent().getExtras();
+            if (extras != null && extras.containsKey(EXTRA_SUBMISSION_TITLE)) {
+                this.submissionTitle = extras.getString(EXTRA_SUBMISSION_TITLE);
+                Log.d(TAG, "Found title in extras bundle: " + submissionTitle);
+            }
         }
 
         setupToolbar();
@@ -549,6 +560,7 @@ public class RedditGalleryPager extends BaseSaveActivity implements GalleryParen
 
     @Override
     public String getGallerySubmissionTitle() {
+        Log.d(TAG, "getGallerySubmissionTitle called, returning: " + (submissionTitle != null ? "'" + submissionTitle + "'" : "null"));
         return submissionTitle;
     }
 
