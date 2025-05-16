@@ -62,10 +62,12 @@ public class ExoVideoView extends RelativeLayout {
     private PlayerControlView playerUI;
     private boolean muteAttached = false;
     private boolean hqAttached = false;
+    private boolean speedAttached = false;
+    private float[] speedOptions = {0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f};
+    private int currentSpeedIndex = 2; // 1.0x default
     private AudioFocusHelper audioFocusHelper;
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable hideControlsRunnable;
-
 
     private ScaleGestureDetector scaleGestureDetector;
     private float scaleFactor = 1.0f;
@@ -607,6 +609,45 @@ public class ExoVideoView extends RelativeLayout {
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * Attaches a speed control button to this view.
+     */
+    public void attachSpeedButton(final ImageView speed, final Context parentContext) {
+        Log.d(TAG, "attachSpeedButton() called");
+        if (speed != null && player != null) {
+            speed.setVisibility(VISIBLE);
+            speed.setImageResource(R.drawable.ic_speed);
+            speed.setOnClickListener(v -> {
+                // Show a dialog to pick speed
+                String[] speedLabels = new String[] {
+                        parentContext.getString(R.string.video_speed_0_5x),
+                        parentContext.getString(R.string.video_speed_0_75x),
+                        parentContext.getString(R.string.video_speed_1x),
+                        parentContext.getString(R.string.video_speed_1_25x),
+                        parentContext.getString(R.string.video_speed_1_5x),
+                        parentContext.getString(R.string.video_speed_2x)
+                };
+                new androidx.appcompat.app.AlertDialog.Builder(parentContext)
+                        .setTitle(R.string.video_speed)
+                        .setSingleChoiceItems(speedLabels, currentSpeedIndex, (dialog, which) -> {
+                            setPlaybackSpeed(speedOptions[which]);
+                            currentSpeedIndex = which;
+                            dialog.dismiss();
+                        })
+                        .show();
+            });
+        }
+    }
+
+    /**
+     * Sets the playback speed of the player.
+     */
+    public void setPlaybackSpeed(float speed) {
+        if (player != null) {
+            player.setPlaybackParameters(new androidx.media3.common.PlaybackParameters(speed));
         }
     }
 

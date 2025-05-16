@@ -626,6 +626,7 @@ public class MediaView extends BaseSaveActivity {
                         submissionTitle);
         videoView.attachMuteButton((ImageView) findViewById(R.id.mute));
         videoView.attachHqButton((ImageView) findViewById(R.id.hq));
+        videoView.attachSpeedButton((ImageView) findViewById(R.id.speed), this);
         gif.execute(dat);
         findViewById(R.id.more)
                 .setOnClickListener(
