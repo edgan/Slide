@@ -482,6 +482,16 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
                     }
                     rootView.findViewById(R.id.mute).setVisibility(View.GONE);
                     rootView.findViewById(R.id.hq).setVisibility(View.GONE);
+
+                    ImageView speedButton = rootView.findViewById(R.id.speed);
+                    if (speedButton != null) {
+                        if (current != null && current.isAnimated()) {
+                            speedButton.setVisibility(View.VISIBLE);
+                            exoVideoView.attachSpeedButton(speedButton, getActivity());
+                        } else {
+                            speedButton.setVisibility(View.GONE);
+                        }
+                    }
                 }
             }
 

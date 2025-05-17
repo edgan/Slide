@@ -67,9 +67,22 @@
             android:layout_height="56dp"
             android:theme="@style/Ripple.List"
             android:padding="15dp"
-            android:layout_toLeftOf="@+id/save"
+            android:layout_toLeftOf="@+id/speed"
             app:srcCompat="@drawable/ic_volume_off"
             android:tint="#e1e1e1" />
+
+        <ImageView
+            android:id="@+id/speed"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_toLeftOf="@id/save"
+            android:layout_marginEnd="4dp"
+            android:theme="@style/Ripple.List"
+            android:padding="15dp"
+            app:srcCompat="@drawable/ic_speed"
+            android:tint="#e1e1e1"
+            android:contentDescription="@string/video_speed_control_content_desc"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/save"
