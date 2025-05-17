@@ -63,8 +63,8 @@ public class ExoVideoView extends RelativeLayout {
     private boolean muteAttached = false;
     private boolean hqAttached = false;
     private boolean speedAttached = false;
-    private float[] speedOptions = {0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f};
-    private int currentSpeedIndex = 2; // 1.0x default
+    private float[] speedOptions = {0.25f, 0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f};
+    private int currentSpeedIndex = 3; // Normal (1.0x) default
     private AudioFocusHelper audioFocusHelper;
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable hideControlsRunnable;
@@ -623,6 +623,7 @@ public class ExoVideoView extends RelativeLayout {
             speed.setOnClickListener(v -> {
                 // Show a dialog to pick speed
                 String[] speedLabels = new String[] {
+                        parentContext.getString(R.string.video_speed_0_25x),
                         parentContext.getString(R.string.video_speed_0_5x),
                         parentContext.getString(R.string.video_speed_0_75x),
                         parentContext.getString(R.string.video_speed_1x),
