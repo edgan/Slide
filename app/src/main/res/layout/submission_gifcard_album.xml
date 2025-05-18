@@ -41,13 +41,23 @@
         android:layout_below="@+id/imagearea"
         android:layout_marginTop="-52dp">
 
+        <ImageView
+            android:id="@+id/comments"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="15dp"
+            android:theme="@style/Ripple.List"
+            android:tint="@android:color/white"
+            android:layout_alignParentLeft="true"
+            app:srcCompat="@drawable/ic_forum" />
+
         <TextView
                 android:layout_width="wrap_content"
                 android:paddingLeft="16dp"
                 android:gravity="center"
                 android:id="@+id/size"
                 android:layout_marginLeft="16dp"
-                android:layout_alignParentLeft="true"
+                android:layout_toRightOf="@+id/comments"
                 android:textSize="12sp"
                 android:layout_height="match_parent" />
 

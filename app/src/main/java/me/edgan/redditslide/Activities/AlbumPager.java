@@ -584,6 +584,23 @@ public class AlbumPager extends BaseSaveActivity {
             if (!SettingValues.imageDownloadButton) {
                 rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
             }
+
+            // Add comment button logic
+            View comments = rootView.findViewById(R.id.comments);
+            if (comments != null) {
+                if (getActivity().getIntent().hasExtra(MediaView.SUBMISSION_URL)) {
+                    comments.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getActivity().finish();
+                            SubmissionsView.datachanged(adapterPosition);
+                        }
+                    });
+                } else {
+                    comments.setVisibility(View.GONE);
+                }
+            }
+
             return rootView;
         }
 
