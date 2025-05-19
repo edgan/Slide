@@ -339,7 +339,7 @@ public class AlbumPager extends BaseSaveActivity {
                                                 for (int i = 0; i < adapter.getCount(); i++) {
                                                     Fragment frag = ((AlbumViewPagerAdapter)adapter).getFragment(i);
                                                     if (frag instanceof Gif) {
-                                                        ((Gif)frag).setPlaybackActive(i == position || i == adjustedPosition);
+                                                        ((Gif)frag).setPlaybackActive(i == adjustedPosition);
                                                     }
                                                 }
                                             }
