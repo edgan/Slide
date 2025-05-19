@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Spannable;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -198,6 +199,14 @@ public class SubredditView extends BaseActivity {
         }
         pager.setAdapter(adapter);
         pager.setCurrentItem(1);
+
+        if (SettingValues.oldSwipeMode) {
+            // Set an opaque background for the ViewPager
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            pager.setBackgroundColor(typedValue.data);
+        }
+
         mToolbar.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -1920,8 +1929,6 @@ public class SubredditView extends BaseActivity {
 
                                     ((SubredditPagerAdapter) pager.getAdapter())
                                             .blankPage.doOffset(positionOffset);
-                                    pager.setBackgroundColor(
-                                            Palette.adjustAlpha(positionOffset * 0.7f));
                                 }
                             }
                         });
@@ -2041,7 +2048,6 @@ public class SubredditView extends BaseActivity {
                     overridePendingTransition(0, R.anim.fade_out);
                 }
                 blankPage.doOffset(positionOffset);
-                pager.setBackgroundColor(Palette.adjustAlpha(positionOffset * 0.7f));
             } else if (positionOffset == 0) {
                 handlePositionOffset(position);
             }
@@ -2054,7 +2060,6 @@ public class SubredditView extends BaseActivity {
         }
 
         private void handlePositionOffset(int position) {
-
             if ((position == 0) || (position == 1)) {
                 doPageSelectedComments(position);
             } else {

@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -195,6 +196,13 @@ public class RedditGalleryPager extends BaseSaveActivity implements GalleryParen
 
         GalleryViewPagerAdapter adapter = new GalleryViewPagerAdapter(getSupportFragmentManager());
         p.setAdapter(adapter);
+
+        if (SettingValues.oldSwipeMode) {
+            // Set an opaque background for the ViewPager
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            p.setBackgroundColor(typedValue.data);
+        }
 
         p.post(
                 new Runnable() {

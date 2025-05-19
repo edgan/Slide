@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,7 +31,6 @@ import me.edgan.redditslide.Tumblr.TumblrUtils;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
-import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
@@ -142,6 +142,11 @@ public class Tumblr extends BaseSaveActivity {
         }
 
         if (SettingValues.oldSwipeMode) {
+            // Set an opaque background for the ViewPager
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            pager.setBackgroundColor(typedValue.data);
+
             pager.addOnPageChangeListener(
                     new ViewPager.SimpleOnPageChangeListener() {
                         @Override
@@ -157,9 +162,6 @@ public class Tumblr extends BaseSaveActivity {
                                     ((TumblrPagerAdapter) pager.getAdapter())
                                             .blankPage.doOffset(positionOffset);
                                 }
-                                ((TumblrPagerAdapter) pager.getAdapter())
-                                        .blankPage.realBack.setBackgroundColor(
-                                                Palette.adjustAlpha(positionOffset * 0.7f));
                             }
                         }
                     });

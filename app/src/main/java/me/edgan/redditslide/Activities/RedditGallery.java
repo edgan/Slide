@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,7 +33,6 @@ import me.edgan.redditslide.Views.ExoVideoView;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Views.ToolbarColorizeHelper;
 import me.edgan.redditslide.Visuals.ColorPreferences;
-import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.GifUtils;
 import me.edgan.redditslide.util.ImageSaveUtils;
@@ -186,6 +186,11 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
         pager.setAdapter(gallery);
         pager.setCurrentItem(1);
         if (SettingValues.oldSwipeMode) {
+            // Set an opaque background for the ViewPager
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            pager.setBackgroundColor(typedValue.data);
+
             pager.addOnPageChangeListener(
                 new ViewPager.SimpleOnPageChangeListener() {
                     @Override
@@ -198,10 +203,6 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
                             if (((RedditGalleryPagerAdapter) pager.getAdapter()).blankPage != null) {
                                 ((RedditGalleryPagerAdapter) pager.getAdapter()).blankPage.doOffset(positionOffset);
                             }
-
-                            ((RedditGalleryPagerAdapter) pager
-                                .getAdapter()).blankPage.realBack
-                                .setBackgroundColor(Palette.adjustAlpha(positionOffset * 0.7f));
                         }
                     }
                 }

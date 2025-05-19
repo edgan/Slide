@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -213,6 +214,13 @@ public class TumblrPager extends BaseSaveActivity {
             TumblrViewPagerAdapter adapter =
                     new TumblrViewPagerAdapter(getSupportFragmentManager());
             p.setAdapter(adapter);
+
+            if (SettingValues.oldSwipeMode) {
+                // Set an opaque background for the ViewPager
+                TypedValue typedValue = new TypedValue();
+                getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+                p.setBackgroundColor(typedValue.data);
+            }
 
             int startPage = 0;
 

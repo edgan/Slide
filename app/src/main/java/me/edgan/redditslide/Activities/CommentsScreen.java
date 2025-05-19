@@ -28,7 +28,6 @@ import me.edgan.redditslide.PostLoader;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
-import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.CustomViewPager;
 import me.edgan.redditslide.util.KeyboardUtil;
 
@@ -37,6 +36,8 @@ import net.dean.jraw.models.Submission;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import android.util.TypedValue;
 
 /**
  * This activity is responsible for the view when clicking on a post, showing the post and its
@@ -207,6 +208,7 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
 
             comments = new CommentsScreenPagerAdapter(getSupportFragmentManager());
             pager.setAdapter(comments);
+
             currentPage = firstPage;
 
             if (SettingValues.oldSwipeMode) {
@@ -218,6 +220,10 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
             pager.setEntryPageIndex(firstPage);
 
             if (SettingValues.oldSwipeMode) {
+                // Set an opaque background for the ViewPager
+                TypedValue typedValue = new TypedValue();
+                getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+                pager.setBackgroundColor(typedValue.data);
                 pager.addOnPageChangeListener(new CommonPageChangeListener() {
                     @Override
                     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -229,7 +235,6 @@ public class CommentsScreen extends BaseActivityAnim implements SubmissionDispla
                             if (adapter.blankPage != null) {
                                 adapter.blankPage.doOffset(positionOffset);
                             }
-                            pager.setBackgroundColor(Palette.adjustAlpha(positionOffset * 0.7f));
                         }
                     }
                 });
