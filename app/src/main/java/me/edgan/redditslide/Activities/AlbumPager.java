@@ -331,16 +331,16 @@ public class AlbumPager extends BaseSaveActivity {
 
                                         @Override
                                         public void onPageSelected(int position) {
-                                            // When a page is selected, explicitly tell all Gif fragments to check their visibility
                                             if (adapter != null && adapter.getCount() > 0) {
                                                 int adjustedPosition = position;
                                                 if (SettingValues.oldSwipeMode && position > 0) {
                                                     adjustedPosition = position - 1;
                                                 }
-
-                                                // Update the currently playing position in the Gif class
-                                                if (images.get(adjustedPosition).isAnimated()) {
-                                                    Gif.currentlyPlayingPosition = adjustedPosition;
+                                                for (int i = 0; i < adapter.getCount(); i++) {
+                                                    Fragment frag = ((AlbumViewPagerAdapter)adapter).getFragment(i);
+                                                    if (frag instanceof Gif) {
+                                                        ((Gif)frag).setPlaybackActive(i == position || i == adjustedPosition);
+                                                    }
                                                 }
                                             }
                                         }
@@ -364,6 +364,7 @@ public class AlbumPager extends BaseSaveActivity {
     }
 
     private class AlbumViewPagerAdapter extends FragmentStatePagerAdapter {
+        private final List<Fragment> fragmentRefs = new ArrayList<>();
         AlbumViewPagerAdapter(FragmentManager m) {
             super(m, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
@@ -373,27 +374,29 @@ public class AlbumPager extends BaseSaveActivity {
         public Fragment getItem(int i) {
             if (SettingValues.oldSwipeMode) {
                 if (i == 0) {
-                    return new BlankFragment();
+                    Fragment blank = new BlankFragment();
+                    fragmentRefs.add(blank);
+                    return blank;
                 }
-
                 i--;
             }
-
             Image current = images.get(i);
-
             Fragment f;
-
             if (current.isAnimated()) {
                 f = new Gif();
             } else {
                 f = new ImageFullNoSubmission();
             }
-
             Bundle args = new Bundle();
             args.putInt("page", i);
             f.setArguments(args);
-
+            fragmentRefs.add(f);
             return f;
+        }
+
+        public Fragment getFragment(int pos) {
+            if (pos >= 0 && pos < fragmentRefs.size()) return fragmentRefs.get(pos);
+            return null;
         }
 
         @Override
@@ -419,22 +422,22 @@ public class AlbumPager extends BaseSaveActivity {
         // Use package-private for access from AlbumPager
         static int currentlyPlayingPosition = -1;
 
-        @Override
-        public void setUserVisibleHint(boolean isVisibleToUser) {
-            super.setUserVisibleHint(isVisibleToUser);
-            // Only play if this fragment is visible and is the current playing position
-            if (isVisibleToUser && getCurrentPagerPosition() == i) {
-                currentlyPlayingPosition = i;
-                if (gif != null && gif instanceof ExoVideoView) {
+        public void setPlaybackActive(boolean active) {
+            if (gif != null && gif instanceof ExoVideoView) {
+                if (active) {
                     ((ExoVideoView) gif).play();
                     gif.setVisibility(View.VISIBLE);
-                }
-            } else {
-                if (gif != null && gif instanceof ExoVideoView) {
+                } else {
                     ((ExoVideoView) gif).pause();
                     gif.setVisibility(View.GONE);
                 }
             }
+        }
+
+        @Override
+        public void setUserVisibleHint(boolean isVisibleToUser) {
+            super.setUserVisibleHint(isVisibleToUser);
+            // No-op: playback is now controlled by onPageSelected
         }
 
         private int getCurrentPagerPosition() {
