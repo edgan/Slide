@@ -14,7 +14,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -366,7 +365,6 @@ public class AlbumPager extends BaseSaveActivity {
     }
 
     private class AlbumViewPagerAdapter extends FragmentStatePagerAdapter {
-        private final List<Fragment> fragmentRefs = new ArrayList<>();
         AlbumViewPagerAdapter(FragmentManager m) {
             super(m, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
@@ -376,9 +374,7 @@ public class AlbumPager extends BaseSaveActivity {
         public Fragment getItem(int i) {
             if (SettingValues.oldSwipeMode) {
                 if (i == 0) {
-                    Fragment blank = new BlankFragment();
-                    fragmentRefs.add(blank);
-                    return blank;
+                    return new BlankFragment();
                 }
                 i--;
             }
@@ -392,13 +388,7 @@ public class AlbumPager extends BaseSaveActivity {
             Bundle args = new Bundle();
             args.putInt("page", i);
             f.setArguments(args);
-            fragmentRefs.add(f);
             return f;
-        }
-
-        public Fragment getFragment(int pos) {
-            if (pos >= 0 && pos < fragmentRefs.size()) return fragmentRefs.get(pos);
-            return null;
         }
 
         @Override
