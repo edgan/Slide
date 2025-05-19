@@ -428,7 +428,7 @@ public class AlbumPager extends BaseSaveActivity {
                     ((ExoVideoView) gif).play();
                     gif.setVisibility(View.VISIBLE);
                 } else {
-                    ((ExoVideoView) gif).pause();
+                    ((ExoVideoView) gif).stop(); // Stop and release resources
                     gif.setVisibility(View.GONE);
                 }
             }
