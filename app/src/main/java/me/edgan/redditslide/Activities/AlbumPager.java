@@ -837,7 +837,7 @@ public class AlbumPager extends BaseSaveActivity {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(Bundle);
+            super.onCreate(savedInstanceState);
             Bundle bundle = this.getArguments();
             i = bundle.getInt("page", 0);
         }
