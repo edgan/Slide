@@ -336,8 +336,10 @@ public class AlbumPager extends BaseSaveActivity {
                                                 if (SettingValues.oldSwipeMode && position > 0) {
                                                     adjustedPosition = position - 1;
                                                 }
+                                                FragmentManager fm = getSupportFragmentManager();
                                                 for (int i = 0; i < adapter.getCount(); i++) {
-                                                    Fragment frag = ((AlbumViewPagerAdapter)adapter).getFragment(i);
+                                                    String tag = "android:switcher:" + R.id.images_horizontal + ":" + i;
+                                                    Fragment frag = fm.findFragmentByTag(tag);
                                                     if (frag instanceof Gif) {
                                                         ((Gif)frag).setPlaybackActive(i == adjustedPosition);
                                                     }
