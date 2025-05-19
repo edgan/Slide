@@ -498,6 +498,16 @@ public class AlbumPager extends BaseSaveActivity {
                 v.attachHqButton(hqButton);
             }
 
+            ImageView speedButton = rootView.findViewById(R.id.speed);
+            if (speedButton != null) {
+                if (((AlbumPager) getActivity()).images.get(i).isAnimated()) {
+                    speedButton.setVisibility(View.VISIBLE);
+                    v.attachSpeedButton(speedButton, getActivity());
+                } else {
+                    speedButton.setVisibility(View.GONE);
+                }
+            }
+
             final String url = ((AlbumPager) getActivity()).images.get(i).getImageUrl();
 
             // Important: Always start with autostart=false
@@ -574,6 +584,23 @@ public class AlbumPager extends BaseSaveActivity {
             if (!SettingValues.imageDownloadButton) {
                 rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
             }
+
+            // Add comment button logic
+            View comments = rootView.findViewById(R.id.comments);
+            if (comments != null) {
+                if (getActivity().getIntent().hasExtra(MediaView.SUBMISSION_URL)) {
+                    comments.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getActivity().finish();
+                            SubmissionsView.datachanged(adapterPosition);
+                        }
+                    });
+                } else {
+                    comments.setVisibility(View.GONE);
+                }
+            }
+
             return rootView;
         }
 
@@ -749,30 +776,58 @@ public class AlbumPager extends BaseSaveActivity {
                     loadImage(rootView, this, url, ((AlbumPager) getActivity()).images.size() == 1);
                 }
 
-                {
-                    rootView.findViewById(R.id.more)
-                            .setOnClickListener(
-                                    new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            ((AlbumPager) getActivity())
-                                                    .showBottomSheetImage(url, false, i);
-                                        }
-                                    });
-                    {
-                        rootView.findViewById(R.id.save)
-                                .setOnClickListener(
-                                        new View.OnClickListener() {
-
-                                            @Override
-                                            public void onClick(View v2) {
-                                                ((AlbumPager) getActivity())
-                                                        .doImageSave(false, url, i);
-                                            }
-                                        });
-                        if (!SettingValues.imageDownloadButton) {
-                            rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
-                        }
+                View more = rootView.findViewById(R.id.more);
+                if (more != null) {
+                    more.setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    ((AlbumPager) getActivity())
+                                            .showBottomSheetImage(url, false, i);
+                                }
+                            });
+                }
+                View save = rootView.findViewById(R.id.save);
+                if (save != null) {
+                    save.setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v2) {
+                                    ((AlbumPager) getActivity())
+                                            .doImageSave(false, url, i);
+                                }
+                            });
+                    if (!SettingValues.imageDownloadButton) {
+                        save.setVisibility(View.INVISIBLE);
+                    }
+                }
+                View panel = rootView.findViewById(R.id.panel);
+                if (panel != null) {
+                    panel.setVisibility(View.GONE);
+                }
+                View margin = rootView.findViewById(R.id.margin);
+                if (margin != null) {
+                    margin.setPadding(0, 0, 0, 0);
+                }
+                View hq = rootView.findViewById(R.id.hq);
+                if (hq != null) {
+                    hq.setVisibility(View.GONE);
+                }
+                View comments = rootView.findViewById(R.id.comments);
+                if (getActivity().getIntent().hasExtra(MediaView.SUBMISSION_URL)) {
+                    if (comments != null) {
+                        comments.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        getActivity().finish();
+                                        SubmissionsView.datachanged(adapterPosition);
+                                    }
+                                });
+                    }
+                } else {
+                    if (comments != null) {
+                        comments.setVisibility(View.GONE);
                     }
                 }
                 {
@@ -842,6 +897,10 @@ public class AlbumPager extends BaseSaveActivity {
                                         }
                                     });
                 }
+                View mute = rootView.findViewById(R.id.mute);
+                if (mute != null) {
+                    mute.setVisibility(View.GONE);
+                }
                 if (lq) {
                     rootView.findViewById(R.id.hq)
                             .setOnClickListener(
@@ -859,20 +918,6 @@ public class AlbumPager extends BaseSaveActivity {
                                     });
                 } else {
                     rootView.findViewById(R.id.hq).setVisibility(View.GONE);
-                }
-
-                if (getActivity().getIntent().hasExtra(MediaView.SUBMISSION_URL)) {
-                    rootView.findViewById(R.id.comments)
-                            .setOnClickListener(
-                                    new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            getActivity().finish();
-                                            SubmissionsView.datachanged(adapterPosition);
-                                        }
-                                    });
-                } else {
-                    rootView.findViewById(R.id.comments).setVisibility(View.GONE);
                 }
             }
             return rootView;
