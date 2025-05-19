@@ -476,44 +476,62 @@ public class RedditGalleryPager extends BaseSaveActivity implements GalleryParen
                         ((RedditGalleryPager) getActivity()).images.size() == 1);
             }
 
-            rootView.findViewById(R.id.more)
-                    .setOnClickListener(
+            View more = rootView.findViewById(R.id.more);
+            if (more != null) {
+                more.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ((RedditGalleryPager) getActivity())
+                                        .showBottomSheetImage(url, false, i);
+                            }
+                        });
+            }
+            View save = rootView.findViewById(R.id.save);
+            if (save != null) {
+                save.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v2) {
+                                ((RedditGalleryPager) getActivity()).doImageSave(false, url, i);
+                            }
+                        });
+                if (!SettingValues.imageDownloadButton) {
+                    save.setVisibility(View.INVISIBLE);
+                }
+            }
+            View panel = rootView.findViewById(R.id.panel);
+            if (panel != null) {
+                panel.setVisibility(View.GONE);
+            }
+            View margin = rootView.findViewById(R.id.margin);
+            if (margin != null) {
+                margin.setPadding(0, 0, 0, 0);
+            }
+            View hq = rootView.findViewById(R.id.hq);
+            if (hq != null) {
+                hq.setVisibility(View.GONE);
+            }
+            View mute = rootView.findViewById(R.id.mute);
+            if (mute != null) {
+                mute.setVisibility(View.GONE);
+            }
+            View comments = rootView.findViewById(R.id.comments);
+            if (getActivity().getIntent().hasExtra(MediaView.SUBMISSION_URL)) {
+                if (comments != null) {
+                    comments.setOnClickListener(
                             new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    ((RedditGalleryPager) getActivity())
-                                            .showBottomSheetImage(url, false, i);
+                                    getActivity().finish();
+                                    SubmissionsView.datachanged(adapterPosition);
                                 }
                             });
-            rootView.findViewById(R.id.save)
-                    .setOnClickListener(
-                            new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v2) {
-                                    ((RedditGalleryPager) getActivity()).doImageSave(false, url, i);
-                                }
-                            });
-            if (!SettingValues.imageDownloadButton) {
-                rootView.findViewById(R.id.save).setVisibility(View.INVISIBLE);
-            }
-
-            rootView.findViewById(R.id.panel).setVisibility(View.GONE);
-            (rootView.findViewById(R.id.margin)).setPadding(0, 0, 0, 0);
-
-            rootView.findViewById(R.id.hq).setVisibility(View.GONE);
-
-            if (getActivity().getIntent().hasExtra(MediaView.SUBMISSION_URL)) {
-                rootView.findViewById(R.id.comments)
-                        .setOnClickListener(
-                                new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        getActivity().finish();
-                                        SubmissionsView.datachanged(adapterPosition);
-                                    }
-                                });
+                }
             } else {
-                rootView.findViewById(R.id.comments).setVisibility(View.GONE);
+                if (comments != null) {
+                    comments.setVisibility(View.GONE);
+                }
             }
             return rootView;
         }

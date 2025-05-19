@@ -396,6 +396,16 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
         private View gifView;
         private ProgressBar loader;
 
+        // Helper method to get adapter position from activity
+        private int getAdapterPositionFromActivity(android.app.Activity activity) {
+            if (activity instanceof RedditGallery) {
+                return ((RedditGallery) activity).adapterPosition;
+            } else if (activity instanceof RedditGalleryPager) {
+                return activity.getIntent().getIntExtra(MediaView.ADAPTER_POSITION, -1);
+            }
+            return -1;
+        }
+
         // Override this in subclasses to provide appropriate parent
         protected GalleryParent getGalleryParent() {
             return (RedditGallery) getActivity();
@@ -483,6 +493,29 @@ public class RedditGallery extends BaseSaveActivity implements GalleryParent {
                     }
                     rootView.findViewById(R.id.mute).setVisibility(View.GONE);
                     rootView.findViewById(R.id.hq).setVisibility(View.GONE);
+
+                    ImageView speedButton = rootView.findViewById(R.id.speed);
+                    if (speedButton != null) {
+                        if (current != null && current.isAnimated()) {
+                            speedButton.setVisibility(View.VISIBLE);
+                            exoVideoView.attachSpeedButton(speedButton, getActivity());
+                        } else {
+                            speedButton.setVisibility(View.GONE);
+                        }
+                    }
+
+                    // Add comment button logic
+                    View comments = rootView.findViewById(R.id.comments);
+                    if (comments != null) {
+                        if (getActivity().getIntent().hasExtra(MediaView.SUBMISSION_URL)) {
+                            comments.setOnClickListener(v -> {
+                                getActivity().finish();
+                                SubmissionsView.datachanged(getAdapterPositionFromActivity(getActivity()));
+                            });
+                        } else {
+                            comments.setVisibility(View.GONE);
+                        }
+                    }
                 }
             }
 

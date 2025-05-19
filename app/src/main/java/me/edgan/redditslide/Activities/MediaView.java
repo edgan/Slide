@@ -19,7 +19,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -455,6 +454,13 @@ public class MediaView extends BaseSaveActivity {
         // Keep the screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        // Hide speed button by default
+        ImageView speedBtn = (ImageView) findViewById(R.id.speed);
+
+        if (speedBtn != null) {
+            speedBtn.setVisibility(View.GONE);
+        }
+
         final String firstUrl = getIntent().getExtras().getString(EXTRA_DISPLAY_URL, "");
         contentUrl = getIntent().getExtras().getString(EXTRA_URL);
 
@@ -631,8 +637,12 @@ public class MediaView extends BaseSaveActivity {
                         ((TextView) findViewById(R.id.size)),
                         subreddit,
                         submissionTitle);
+        // Show and attach speed button for GIFs
+        ImageView speedBtn = (ImageView) findViewById(R.id.speed);
+        if (speedBtn != null) speedBtn.setVisibility(View.VISIBLE);
         videoView.attachMuteButton((ImageView) findViewById(R.id.mute));
         videoView.attachHqButton((ImageView) findViewById(R.id.hq));
+        videoView.attachSpeedButton(speedBtn, this);
         gif.execute(dat);
         findViewById(R.id.more)
                 .setOnClickListener(
@@ -1038,7 +1048,7 @@ public class MediaView extends BaseSaveActivity {
                                     @Override
                                     public void onLoadingStarted(String imageUri, View view) {
                                         imageShown = true;
-                                        size.setVisibility(View.VISIBLE);
+                                        if (size != null) size.setVisibility(View.VISIBLE);
                                     }
 
                                     @Override
@@ -1052,7 +1062,7 @@ public class MediaView extends BaseSaveActivity {
                                     public void onLoadingComplete(
                                             String imageUri, View view, Bitmap loadedImage) {
                                         imageShown = true;
-                                        size.setVisibility(View.GONE);
+                                        if (size != null) size.setVisibility(View.GONE);
 
                                         File f =
                                                 ((Reddit) getApplicationContext())
@@ -1144,10 +1154,10 @@ public class MediaView extends BaseSaveActivity {
                                     @Override
                                     public void onProgressUpdate(
                                             String imageUri, View view, int current, int total) {
-                                        size.setText(FileUtil.readableFileSize(total));
-
-                                        ((ProgressBar) findViewById(R.id.progress))
-                                                .setProgress(Math.round(100.0f * current / total));
+                                        TextView size = (TextView) findViewById(R.id.size);
+                                        if (size != null) {
+                                            size.setText(String.format("%d%%", (int) (100.0 * current / total)));
+                                        }
                                     }
                                 });
             }
