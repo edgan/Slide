@@ -1332,4 +1332,15 @@
 
     <string name="settings_general_hide_subreddit_tabs">Hide subscribed subreddit tabs</string>
     <string name="settings_general_hide_subreddit_tabs_desc">Hide subscribed subreddits as tabs, but keep navigation buttons</string>
+
+    <!-- Video playback speed control -->
+    <string name="video_speed">Speed</string>
+    <string name="video_speed_0_25x">0.25x</string>
+    <string name="video_speed_0_5x">0.5x</string>
+    <string name="video_speed_0_75x">0.75x</string>
+    <string name="video_speed_1x">Normal</string>
+    <string name="video_speed_1_25x">1.25x</string>
+    <string name="video_speed_1_5x">1.5x</string>
+    <string name="video_speed_2x">2x</string>
+    <string name="video_speed_control_content_desc">Playback speed control</string>
 </resources>

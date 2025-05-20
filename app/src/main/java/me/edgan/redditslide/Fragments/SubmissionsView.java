@@ -585,19 +585,12 @@ public class SubmissionsView extends Fragment implements SubmissionDisplay {
     public void onResume() {
         super.onResume();
         if (adapter != null && adapterPosition > 0 && currentPosition == adapterPosition) {
-            if (adapter.dataSet.getPosts().size() >= adapterPosition - 1
-                    && adapter.dataSet.getPosts().get(adapterPosition - 1) == currentSubmission) {
-                // Use a Handler to post the click action to the main thread's message queue
-                // This prevents the "FragmentManager is already executing transactions" error
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isAdded() && adapter != null) {
-                            adapter.performClick(adapterPosition);
-                        }
-                    }
-                });
-                adapterPosition = -1;
+            List<Submission> postsList = adapter.dataSet.getPosts();
+            if (postsList != null && !postsList.isEmpty() && (adapterPosition - 1) >= 0 && (adapterPosition - 1) < postsList.size()) {
+                if (postsList.get(adapterPosition - 1) == currentSubmission) {
+                    adapter.performClick(adapterPosition);
+                    adapterPosition = -1;
+                }
             }
         }
     }
