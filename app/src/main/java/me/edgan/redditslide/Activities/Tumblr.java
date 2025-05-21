@@ -222,7 +222,7 @@ public class Tumblr extends BaseSaveActivity {
             new LoadIntoRecycler(((Tumblr) getActivity()).url, getActivity())
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             ((Tumblr) getActivity()).mToolbar = rootView.findViewById(R.id.toolbar);
-            ((Tumblr) getActivity()).mToolbar.setTitle(R.string.type_album);
+            ((Tumblr) getActivity()).mToolbar.setTitle(R.string.type_tumblr);
             ToolbarColorizeHelper.colorizeToolbar(
                     ((Tumblr) getActivity()).mToolbar, Color.WHITE, (getActivity()));
             ((Tumblr) getActivity()).setSupportActionBar(((Tumblr) getActivity()).mToolbar);

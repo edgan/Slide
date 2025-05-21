@@ -580,6 +580,7 @@ public class GifUtils {
         public enum VideoType {
             IMGUR,
             STREAMABLE,
+            TUMBLR,
             GFYCAT,
             DIRECT,
             OTHER,
@@ -661,6 +662,8 @@ public class GifUtils {
             if (realURL.contains("imgur.com")) return VideoType.IMGUR;
 
             if (realURL.contains("streamable.com")) return VideoType.STREAMABLE;
+
+            if (realURL.contains("tumblr.com")) return VideoType.TUMBLR;
 
             return VideoType.OTHER;
         }
@@ -924,6 +927,8 @@ public class GifUtils {
                 case REDDIT_GALLERY:
                     return Uri.parse(url);
                 case DIRECT:
+                case TUMBLR:
+                    return Uri.parse(url);
                 case IMGUR:
                     try {
                         return Uri.parse(url);
