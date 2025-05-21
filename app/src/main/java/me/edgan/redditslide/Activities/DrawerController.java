@@ -997,6 +997,12 @@ public class DrawerController {
         }
     }
 
+    public void clearDrawerSearch() {
+        if (drawerSearch != null) {
+            drawerSearch.setText("");
+        }
+    }
+
     private void collapse(final LinearLayout v) {
         int finalHeight = v.getHeight();
         ValueAnimator mAnimator = AnimatorUtil.slideAnimator(finalHeight, 0, v);

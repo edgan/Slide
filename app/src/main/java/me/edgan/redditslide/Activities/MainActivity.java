@@ -207,7 +207,9 @@ public class MainActivity extends BaseActivity
                     || SettingValues.subredditSearchMethod
                             == Constants.SUBREDDIT_SEARCH_METHOD_BOTH) {
                 drawerLayout.closeDrawers();
-                drawerSearch.setText("");
+                if (drawerController != null) {
+                    drawerController.clearDrawerSearch();
+                }
             }
 
             // clear the text from the toolbar search field
