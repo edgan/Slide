@@ -951,7 +951,6 @@ public class GifUtils {
                     return Uri.parse(url);
                 case DIRECT:
                 case TUMBLR:
-                    // Reverted: Let MediaView handle direct .gif URLs from Tumblr
                     return Uri.parse(url);
                 case IMGUR:
                     try {
