@@ -186,6 +186,11 @@ public class MainActivity extends BaseActivity
     SidebarController sidebarController;
     SidebarActions sidebarActions;
     SubredditSortController subredditSortController;
+
+    public DrawerController getDrawerController() {
+        return drawerController;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SETTINGS_RESULT) {

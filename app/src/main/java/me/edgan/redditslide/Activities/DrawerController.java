@@ -904,7 +904,7 @@ public class DrawerController {
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                drawerSearch.setText("");
+                                clearDrawerSearch();
                             }
                         });
 
@@ -960,7 +960,7 @@ public class DrawerController {
                                     }
 
                                     mainActivity.drawerLayout.closeDrawers();
-                                    drawerSearch.setText("");
+                                    clearDrawerSearch();
                                     View view = mainActivity.getCurrentFocus();
 
                                     if (view != null) {
