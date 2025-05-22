@@ -190,13 +190,19 @@ public class MainActivity extends BaseActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SETTINGS_RESULT) {
             int current = pager.getCurrentItem();
+
             if (commentPager && current == currentComment) {
                 current = current - 1;
             }
-            if (current < 0) current = 0;
+
+            if (current < 0) {
+                current = 0;
+            }
+
             adapter = new MainPagerAdapter(this, getSupportFragmentManager());
             pager.setAdapter(adapter);
             pager.setCurrentItem(current);
+
             if (mTabLayout != null) {
                 mTabLayout.setupWithViewPager(pager);
                 LayoutUtils.scrollToTabAfterLayout(mTabLayout, current);
@@ -211,11 +217,14 @@ public class MainActivity extends BaseActivity
             }
 
             // clear the text from the toolbar search field
-            if (findViewById(R.id.toolbar_search) != null) {
-                ((AutoCompleteTextView) findViewById(R.id.toolbar_search)).setText("");
+            AutoCompleteTextView toolbarSearchField = (AutoCompleteTextView) findViewById(R.id.toolbar_search);
+
+            if (toolbarSearchField != null) {
+                toolbarSearchField.setText("");
             }
 
             View view = MainActivity.this.getCurrentFocus();
+
             if (view != null) {
                 KeyboardUtil.hideKeyboard(this, view.getWindowToken(), 0);
             }
@@ -486,7 +495,6 @@ public class MainActivity extends BaseActivity
                         && !subreddit.equals("frontpage")
                         && !subreddit.contains(".")
                         && !subreddit.contains("+")
-                        && !subreddit.contains(".")
                         && !subreddit.contains("/m/")) {
                     drawerLayout.openDrawer(GravityCompat.END);
                 } else {
@@ -738,9 +746,7 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -775,7 +781,7 @@ public class MainActivity extends BaseActivity
                     .setMessage(
                             "NSFW content is now disabled by default. If you are over the age of"
                                     + " 18, to re-enable NSFW content, visit Settings > Content"
-                                     + " settings")
+                                    + " settings")
                     .setPositiveButton(R.string.btn_ok, null)
                     .setCancelable(false)
                     .show();

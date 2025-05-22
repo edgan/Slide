@@ -33,6 +33,7 @@ public class AsyncNotificationBadge extends AsyncTask<Void, Void, Void> {
     private MainActivity activity;
     int count;
     boolean restart;
+    boolean isCurrentUserMod = false; // Track if current user is mod
 
     public AsyncNotificationBadge(MainActivity activity) {
         this.activity = activity;
@@ -51,12 +52,19 @@ public class AsyncNotificationBadge extends AsyncTask<Void, Void, Void> {
                     restart = true;
                     return null;
                 }
+                // Update current user's mod status
                 Authentication.mod = me.isMod();
 
-                Authentication.authentication
-                        .edit()
-                        .putBoolean(Reddit.SHARED_PREF_IS_MOD, Authentication.mod)
-                        .apply();
+                isCurrentUserMod = Authentication.mod;
+
+                Authentication.authentication.edit().putBoolean(Reddit.SHARED_PREF_IS_MOD, Authentication.mod).apply();
+
+                // If this account is a moderator, load the moderated subreddits
+                if (Authentication.mod) {
+                    UserSubscriptions.modOf = UserSubscriptions.getModeratedSubs();
+                } else {
+                    UserSubscriptions.modOf = null;
+                }
 
                 if (Reddit.notificationTime != -1) {
                     Reddit.notifications = new NotificationJobScheduler(activity);
@@ -86,6 +94,19 @@ public class AsyncNotificationBadge extends AsyncTask<Void, Void, Void> {
                 }
             } else {
                 me = Authentication.reddit.me();
+
+                // Update current user's mod status
+                Authentication.mod = me.isMod();
+                isCurrentUserMod = Authentication.mod;
+
+                // If this account is a moderator, load the moderated subreddits
+                if (Authentication.mod) {
+                    if (UserSubscriptions.modOf == null || UserSubscriptions.modOf.isEmpty()) {
+                        UserSubscriptions.modOf = UserSubscriptions.getModeratedSubs();
+                    }
+                } else {
+                    UserSubscriptions.modOf = null;
+                }
             }
             count = me.getInboxCount(); // Force reload of the LoggedInAccount object
             UserSubscriptions.doFriendsOfMain(activity);
@@ -104,14 +125,19 @@ public class AsyncNotificationBadge extends AsyncTask<Void, Void, Void> {
             activity.restartTheme();
             return;
         }
+
         // Ensure headerMain is not null before accessing its children
         if (activity.headerMain == null) {
             Log.e(LogUtil.getTag(), "headerMain is null in AsyncNotificationBadge.onPostExecute");
             return; // Cannot proceed without headerMain
         }
 
-        if (Authentication.mod && Authentication.didOnline) {
-            RelativeLayout mod = activity.headerMain.findViewById(R.id.mod);
+        // Always hide the mod button first
+        RelativeLayout mod = activity.headerMain.findViewById(R.id.mod);
+        mod.setVisibility(View.GONE);
+
+        // Only show mod button if user is a mod and has moderated subreddits
+        if (isCurrentUserMod && UserSubscriptions.modOf != null && !UserSubscriptions.modOf.isEmpty() && Authentication.didOnline) {
             if (mod != null) {
                 mod.setVisibility(View.VISIBLE);
 
@@ -129,6 +155,7 @@ public class AsyncNotificationBadge extends AsyncTask<Void, Void, Void> {
                 Log.e(LogUtil.getTag(), "R.id.mod not found in headerMain");
             }
         }
+
         if (count != -1) {
             int oldCount = Reddit.appRestart.getInt("inbox", 0);
             if (count > oldCount) {

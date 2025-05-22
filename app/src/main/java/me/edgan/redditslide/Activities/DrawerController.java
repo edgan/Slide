@@ -204,7 +204,8 @@ public class DrawerController {
              * If the user is a known mod, show the "Moderation" drawer item quickly to stop the UI
              * from jumping
              */
-            if (UserSubscriptions.modOf != null && !UserSubscriptions.modOf.isEmpty() && Authentication.mod) {
+            header.findViewById(R.id.mod).setVisibility(View.GONE);
+            if (Authentication.mod && UserSubscriptions.modOf != null && !UserSubscriptions.modOf.isEmpty()) {
                 header.findViewById(R.id.mod).setVisibility(View.VISIBLE);
             }
 
@@ -362,6 +363,9 @@ public class DrawerController {
                                     }
 
                                     Authentication.name = accName;
+                                    // Reset moderator status for new account
+                                    Authentication.mod = false;
+                                    UserSubscriptions.modOf = null;
                                     UserSubscriptions.switchAccounts();
                                     Reddit.forceRestart(mainActivity, true);
                                 }

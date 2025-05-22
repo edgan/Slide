@@ -22,19 +22,29 @@ import androidx.viewpager.widget.ViewPager;
 
 
 import me.edgan.redditslide.Adapters.SubredditPosts;
+import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Constants;
 import me.edgan.redditslide.Fragments.SubmissionsView;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
 import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.UserSubscriptions;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.StringUtil;
 
+import java.util.Locale;
+
 public class MainPagerAdapter extends FragmentStatePagerAdapter {
     protected SubmissionsView mCurrentFragment;
     private MainActivity mainActivity;
+
+    // Helper method to check if a subreddit is special (frontpage, all) or a multi-reddit
+    protected boolean isSpecialOrMulti(String subreddit) {
+        String lowercase = subreddit.toLowerCase(Locale.ENGLISH);
+        return UserSubscriptions.specialSubreddits.contains(lowercase) || lowercase.contains("/m/");
+    }
 
     // Modified constructor to accept MainActivity
     public MainPagerAdapter(MainActivity mainActivity, FragmentManager fm) {
@@ -159,7 +169,18 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
         if (mainActivity.usedArray == null) {
             return 1;
         } else {
-            return mainActivity.usedArray.size();
+            if (SettingValues.hideSubredditTabs) {
+                // Count special subreddits like frontpage, all, etc. and multi-reddits
+                int count = 0;
+                for (String sub : mainActivity.usedArray) {
+                    if (isSpecialOrMulti(sub)) {
+                        count++;
+                    }
+                }
+                return count > 0 ? count : 1; // Always show at least one tab
+            } else {
+                return mainActivity.usedArray.size();
+            }
         }
     }
 
@@ -168,17 +189,62 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int i) {
         SubmissionsView f = new SubmissionsView();
         Bundle args = new Bundle();
-        String name;
-        if (i < mainActivity.usedArray.size()) {
-            if (mainActivity.multiNameToSubsMap.containsKey(mainActivity.usedArray.get(i))) {
-                name = mainActivity.multiNameToSubsMap.get(mainActivity.usedArray.get(i));
-            } else {
-                name = mainActivity.usedArray.get(i);
+        String name = ""; // Initialize with default empty string
+
+        if (SettingValues.hideSubredditTabs) {
+            int specialIndex = 0;
+            boolean found = false;
+
+            for (String sub : mainActivity.usedArray) {
+                if (isSpecialOrMulti(sub)) {
+                    if (specialIndex == i) {
+                        // Ensure full path for multi-reddits even when hidden
+                        if (sub.startsWith("/m/")) {
+                            if (mainActivity.multiNameToSubsMap.containsKey(sub)) {
+                                name = mainActivity.multiNameToSubsMap.get(sub);
+                            } else {
+                                // Construct full path if map lookup fails
+                                name = "api/user/" + Authentication.name + sub; // sub already starts with /m/
+                            }
+                        } else {
+                            name = sub; // Standard special subreddits (frontpage, all)
+                        }
+                        found = true;
+                        break;
+                    }
+                    specialIndex++;
+                }
             }
-            args.putString("id", name);
+
+            // Fallback to the first subreddit if no special subreddit or multi-reddit was found
+            if (!found && !mainActivity.usedArray.isEmpty()) {
+                name = mainActivity.usedArray.get(0);
+                // Handle potential multi-reddit fallback case
+                if (name.startsWith("/m/")) {
+                     if (mainActivity.multiNameToSubsMap.containsKey(name)) {
+                        name = mainActivity.multiNameToSubsMap.get(name);
+                    } else {
+                        // Construct full path if map lookup fails
+                        name = "api/user/" + Authentication.name + name; // name already starts with /m/
+                    }
+                }
+            }
         } else {
-            args.putString("id", "frontpage");
+            if (mainActivity.usedArray.size() > i) {
+                String potentialMulti = mainActivity.usedArray.get(i);
+                if (mainActivity.multiNameToSubsMap.containsKey(potentialMulti)) {
+                    name = mainActivity.multiNameToSubsMap.get(potentialMulti); // Use the full path from the map
+                } else if (potentialMulti.startsWith("/m/")) {
+                    // If map lookup fails BUT it looks like a multi-reddit, construct the path
+                    name = "api/user/" + Authentication.name + potentialMulti; // potentialMulti starts with /m/
+                } else {
+                    // Regular subreddit or other special case
+                    name = potentialMulti;
+                }
+            }
         }
+
+        args.putString("id", name);
         f.setArguments(args);
 
         return f;
@@ -226,11 +292,9 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
             return;
         }
 
-        if (object != null
-                && getCurrentFragment() != object
-                && position != mainActivity.toOpenComments
-                && object instanceof SubmissionsView) {
+        if (object != null && getCurrentFragment() != object && position != mainActivity.toOpenComments && object instanceof SubmissionsView) {
             mainActivity.shouldLoad = mainActivity.usedArray.get(position);
+
             if (mainActivity.multiNameToSubsMap.containsKey(mainActivity.usedArray.get(position))) {
                 mainActivity.shouldLoad = mainActivity.multiNameToSubsMap.get(mainActivity.usedArray.get(position));
             } else {
@@ -238,6 +302,7 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
             }
 
             mCurrentFragment = ((SubmissionsView) object);
+
             if (mCurrentFragment.posts == null && mCurrentFragment.isAdded()) {
                 mCurrentFragment.doAdapter();
             }
@@ -251,10 +316,29 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        if (mainActivity.usedArray != null && position < mainActivity.usedArray.size()) {
-            return StringUtil.abbreviate(mainActivity.usedArray.get(position), 25);
-        } else {
-            return "";
+        if (mainActivity.usedArray != null) {
+            if (SettingValues.hideSubredditTabs) {
+                // Find the position-th special subreddit or multi-reddit
+                int specialIndex = 0;
+                for (String sub : mainActivity.usedArray) {
+                    if (isSpecialOrMulti(sub)) {
+                        if (specialIndex == position) {
+                            // Display only the name part for tabs, e.g., "/m/tech" or "frontpage"
+                            return StringUtil.abbreviate(sub, 25);
+                        }
+                        specialIndex++;
+                    }
+                }
+                // Fallback to the first subreddit if no special subreddit or multi-reddit was found at index position
+                if (!mainActivity.usedArray.isEmpty()) {
+                     // Display only the name part for tabs
+                    return StringUtil.abbreviate(mainActivity.usedArray.get(0), 25);
+                }
+            } else {
+                // Display only the name part for tabs
+                return StringUtil.abbreviate(mainActivity.usedArray.get(position), 25);
+            }
         }
+        return "";
     }
 }

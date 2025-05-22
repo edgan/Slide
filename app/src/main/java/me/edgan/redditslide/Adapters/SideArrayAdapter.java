@@ -194,9 +194,7 @@ public class SideArrayAdapter extends ArrayAdapter<String> {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            boolean isSpecialOrMulti = UserSubscriptions.specialSubreddits.contains(subreddit.toLowerCase(Locale.ENGLISH))
-                                                     || subreddit.startsWith("/m/");
-
+                            boolean isSpecialOrMulti = UserSubscriptions.specialSubreddits.contains(subreddit.toLowerCase(Locale.ENGLISH)) || subreddit.startsWith("/m/");
                             if (SettingValues.hideSubredditTabs) {
                                 // WHEN TABS ARE HIDDEN:
                                 if (isSpecialOrMulti) {
