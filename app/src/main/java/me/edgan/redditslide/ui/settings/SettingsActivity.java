@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,7 +43,6 @@ import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import android.util.TypedValue;
 
 /** Created by ccrama on 3/5/2015. */
 public class SettingsActivity extends BaseActivity implements RestartActivity {
