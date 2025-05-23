@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,6 +36,7 @@ import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.ImageSaveUtils;
 import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.MiscUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,11 +149,10 @@ public class Album extends BaseSaveActivity {
         pager.setAdapter(album);
 
         pager.setCurrentItem(1);
+
         if (SettingValues.oldSwipeMode) {
-            // Set an opaque background for the ViewPager
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            pager.setBackgroundColor(typedValue.data);
+            MiscUtil.setupOldSwipeModeBackground(this, pager);
+
             pager.addOnPageChangeListener(
                     new ViewPager.SimpleOnPageChangeListener() {
                         @Override

@@ -1,7 +1,6 @@
 package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -10,9 +9,9 @@ import android.widget.ImageView;
 import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
-import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.ExoVideoView;
 import me.edgan.redditslide.util.GifUtils;
+import me.edgan.redditslide.util.MiscUtil;
 
 /**
  * Created by ccrama on 01/29/2016.
@@ -32,11 +31,7 @@ public class ForceTouchLink extends BaseActivityAnim {
 
         setContentView(R.layout.activity_force_touch_content);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         findViewById(android.R.id.content)
                 .setOnTouchListener(

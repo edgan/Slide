@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
@@ -25,6 +24,7 @@ import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.GetClosestColor;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.MiscUtil;
 
 import net.dean.jraw.models.Subreddit;
 
@@ -61,11 +61,7 @@ public class SettingsSubreddit extends BaseActivityAnim {
         applyColorTheme();
         setContentView(R.layout.activity_settings_subreddit);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         SettingsThemeFragment.changed = true;
 

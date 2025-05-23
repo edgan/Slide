@@ -12,7 +12,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -70,6 +69,7 @@ import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.ShareUtil;
 import me.edgan.redditslide.util.SubmissionParser;
+import me.edgan.redditslide.util.MiscUtil;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -211,16 +211,10 @@ public class TumblrPager extends BaseSaveActivity {
                 getSupportActionBar().setSubtitle(1 + "/" + images.size());
             }
 
-            TumblrViewPagerAdapter adapter =
-                    new TumblrViewPagerAdapter(getSupportFragmentManager());
+            TumblrViewPagerAdapter adapter = new TumblrViewPagerAdapter(getSupportFragmentManager());
             p.setAdapter(adapter);
 
-            if (SettingValues.oldSwipeMode) {
-                // Set an opaque background for the ViewPager
-                TypedValue typedValue = new TypedValue();
-                getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-                p.setBackgroundColor(typedValue.data);
-            }
+            MiscUtil.setupOldSwipeModeBackground(TumblrPager.this, p);
 
             int startPage = 0;
 
@@ -229,7 +223,6 @@ public class TumblrPager extends BaseSaveActivity {
             }
 
             p.setCurrentItem(startPage);
-
 
             p.post(
                     new Runnable() {

@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,10 +20,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.DataShare;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.UserSubscriptions;
 import me.edgan.redditslide.Views.DoEditorActions;
 import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.MiscUtil;
 
 import net.dean.jraw.ApiException;
 import net.dean.jraw.managers.InboxManager;
@@ -63,11 +62,7 @@ public class SendMessage extends BaseActivity {
         applyColorTheme();
         setContentView(R.layout.activity_sendmessage);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         final Toolbar b = (Toolbar) findViewById(R.id.toolbar);
         final String name;

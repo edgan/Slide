@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -46,6 +45,7 @@ import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.NetworkStateReceiver;
 import me.edgan.redditslide.util.NetworkUtil;
 import me.edgan.redditslide.util.StringUtil;
+import me.edgan.redditslide.util.MiscUtil;
 
 import net.dean.jraw.managers.AccountManager;
 
@@ -144,11 +144,7 @@ public class NewsActivity extends BaseActivity
 
         setContentView(R.layout.activity_news);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setPopupTheme(new ColorPreferences(this).getFontStyle().getBaseId());

@@ -6,13 +6,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.widget.Toast;
 
 import me.edgan.redditslide.OpenRedditLink;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.MiscUtil;
 
 import java.util.Locale;
 
@@ -26,11 +25,7 @@ public class OpenContent extends Activity {
         super.onCreate(savedInstance);
         setContentView(R.layout.clear);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         Intent intent = getIntent();
         Uri data = intent.getData();

@@ -2,7 +2,6 @@ package me.edgan.redditslide.ui.settings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -18,6 +17,7 @@ import me.edgan.redditslide.R;
 import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SubmissionCache;
 import me.edgan.redditslide.Views.CreateCardView;
+import me.edgan.redditslide.util.MiscUtil;
 
 import java.util.Map;
 
@@ -33,11 +33,7 @@ public class EditCardsLayout extends BaseActivityAnim {
         applyColorTheme();
         setContentView(R.layout.activity_settings_theme_card);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         setupAppBar(R.id.toolbar, R.string.settings_layout_default, true, true);
 

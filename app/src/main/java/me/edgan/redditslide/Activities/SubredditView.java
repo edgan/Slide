@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Spannable;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -200,12 +199,7 @@ public class SubredditView extends BaseActivity {
         pager.setAdapter(adapter);
         pager.setCurrentItem(1);
 
-        if (SettingValues.oldSwipeMode) {
-            // Set an opaque background for the ViewPager
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            pager.setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, pager);
 
         mToolbar.setOnClickListener(
                 new View.OnClickListener() {

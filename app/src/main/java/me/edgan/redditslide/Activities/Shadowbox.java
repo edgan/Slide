@@ -1,7 +1,6 @@
 package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
-import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -26,6 +25,7 @@ import me.edgan.redditslide.OfflineSubreddit;
 import me.edgan.redditslide.PostLoader;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.util.MiscUtil;
 
 import net.dean.jraw.models.Submission;
 
@@ -63,12 +63,7 @@ public class Shadowbox extends FullScreenActivity implements SubmissionDisplay {
         applyDarkColorTheme(subreddit);
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_slide);
-
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         long offline = getIntent().getLongExtra("offline", 0L);
 

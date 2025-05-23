@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -47,6 +46,7 @@ import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.MiscUtil;
 import me.edgan.redditslide.util.SortingUtil;
 
 import net.dean.jraw.models.MultiReddit;
@@ -329,19 +329,12 @@ public class MultiredditOverview extends BaseActivityAnim {
     @Override
     public void onCreate(Bundle savedInstance) {
         overrideSwipeFromAnywhere();
-
         multiActivity = this;
-
         super.onCreate(savedInstance);
 
         applyColorTheme("");
         setContentView(R.layout.activity_multireddits);
-
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         setupAppBar(R.id.toolbar, R.string.title_multireddits, true, false);
 

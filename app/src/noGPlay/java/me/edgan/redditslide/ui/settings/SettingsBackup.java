@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.util.Log;
-import android.util.TypedValue;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.documentfile.provider.DocumentFile;
@@ -20,6 +19,7 @@ import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.util.LayoutUtils;
 import me.edgan.redditslide.util.StorageUtil;
+import me.edgan.redditslide.util.MiscUtil;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -48,8 +48,7 @@ public class SettingsBackup extends BaseActivityAnim {
     // Progress dialog
     private MaterialDialog progress;
 
-    // We’ll store the final URI of the newly created local backup file so we can offer to "View"
-    // it.
+    // We’ll store the final URI of the newly created local backup file so we can offer to "View" it.
     private Uri localBackupFileUri = null;
 
     @Override
@@ -58,11 +57,7 @@ public class SettingsBackup extends BaseActivityAnim {
         applyColorTheme();
         setContentView(R.layout.activity_settings_sync);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         setupAppBar(R.id.toolbar, R.string.settings_title_backup, true, true);
 

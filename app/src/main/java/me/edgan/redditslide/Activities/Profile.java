@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -59,6 +58,7 @@ import me.edgan.redditslide.util.LinkUtil;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.SortingUtil;
 import me.edgan.redditslide.util.TimeUtils;
+import me.edgan.redditslide.util.MiscUtil;
 
 import net.dean.jraw.fluent.FluentRedditClient;
 import net.dean.jraw.http.RestResponse;
@@ -119,12 +119,7 @@ public class Profile extends BaseActivityAnim {
 
         applyColorTheme();
         setContentView(R.layout.activity_profile);
-
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         setupUserAppBar(R.id.toolbar, name, true, name);
         mToolbar.setPopupTheme(new ColorPreferences(this).getFontStyle().getBaseId());

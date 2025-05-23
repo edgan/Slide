@@ -59,6 +59,7 @@ import me.edgan.redditslide.ui.settings.SettingsBackup;
 import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.LogUtil;
 import me.edgan.redditslide.util.QrCodeScannerHelper;
+import me.edgan.redditslide.util.MiscUtil;
 
 /** Created by ccrama on 3/5/2015. */
 public class Tutorial extends AppCompatActivity {
@@ -84,11 +85,7 @@ public class Tutorial extends AppCompatActivity {
         binding = ActivityTutorialBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         // The pager adapter, which provides the pages to the view pager widget.
         binding.tutorialViewPager.setAdapter(new TutorialPagerAdapter(getSupportFragmentManager()));

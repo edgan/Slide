@@ -1,7 +1,6 @@
 package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.widget.HorizontalScrollView;
@@ -11,12 +10,12 @@ import androidx.appcompat.widget.AppCompatButton;
 import me.edgan.redditslide.OpenRedditLink;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
-import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.Views.CommentOverflow;
 import me.edgan.redditslide.Views.SidebarLayout;
 import me.edgan.redditslide.Views.TitleTextView;
 import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.util.MiscUtil;
 import me.edgan.redditslide.util.SubmissionParser;
 
 import java.util.List;
@@ -39,21 +38,13 @@ public class Announcement extends BaseActivity {
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         super.onCreate(savedInstance);
         setContentView(R.layout.submission_dialog);
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
-
-        SpoilerRobotoTextView spoilerRobotoTextView =
-                (SpoilerRobotoTextView) findViewById(R.id.submission_dialog_firstTextView);
-        CommentOverflow commentOverflow =
-                (CommentOverflow) findViewById(R.id.submission_dialog_commentOverflow);
+        SpoilerRobotoTextView spoilerRobotoTextView = (SpoilerRobotoTextView) findViewById(R.id.submission_dialog_firstTextView);
+        CommentOverflow commentOverflow = (CommentOverflow) findViewById(R.id.submission_dialog_commentOverflow);
         TitleTextView titleTextView = (TitleTextView) findViewById(R.id.submission_dialog_title);
         AppCompatButton okBtn = (AppCompatButton) findViewById(R.id.submission_dialog_ok);
-        AppCompatButton commentsBtn =
-                (AppCompatButton) findViewById(R.id.submission_dialog_comments);
+        AppCompatButton commentsBtn = (AppCompatButton) findViewById(R.id.submission_dialog_comments);
 
         setViews(
                 Reddit.appRestart.getString("page", ""),
@@ -66,17 +57,12 @@ public class Announcement extends BaseActivity {
 
         commentsBtn.setOnClickListener(
                 v -> {
-                    OpenRedditLink.openUrl(
-                            Announcement.this, Reddit.appRestart.getString("url", ""), true);
+                    OpenRedditLink.openUrl(Announcement.this, Reddit.appRestart.getString("url", ""), true);
                     finish();
                 });
     }
 
-    private void setViews(
-            String rawHTML,
-            String subredditName,
-            SpoilerRobotoTextView firstTextView,
-            CommentOverflow commentOverflow) {
+    private void setViews(String rawHTML, String subredditName, SpoilerRobotoTextView firstTextView, CommentOverflow commentOverflow) {
         if (rawHTML.isEmpty()) {
             return;
         }

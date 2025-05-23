@@ -4,7 +4,6 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.TypedValue;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -18,11 +17,11 @@ import com.google.android.material.tabs.TabLayout;
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.Fragments.WikiPage;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.ToggleSwipeViewPager;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.MiscUtil;
 
 import net.dean.jraw.managers.WikiManager;
 
@@ -57,11 +56,7 @@ public class Wiki extends BaseActivityAnim implements WikiPage.WikiPageListener 
         createCustomJavaScript();
         setContentView(R.layout.activity_slidetabs);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         setupSubredditAppBar(R.id.toolbar, "/r/" + subreddit + " wiki", true, subreddit);
 

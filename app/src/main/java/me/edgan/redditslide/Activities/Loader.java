@@ -2,10 +2,9 @@ package me.edgan.redditslide.Activities;
 
 /** Created by carlo_000 on 1/20/2016. */
 import android.os.Bundle;
-import android.util.TypedValue;
 
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.util.MiscUtil;
 
 /** Created by ccrama on 9/17/2015. */
 public class Loader extends BaseActivity {
@@ -16,12 +15,7 @@ public class Loader extends BaseActivity {
         super.onCreate(savedInstance);
         applyColorTheme();
         setContentView(R.layout.activity_loading);
-
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         MainActivity.loader = this;
     }

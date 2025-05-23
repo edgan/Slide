@@ -1,7 +1,6 @@
 package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
@@ -18,10 +17,10 @@ import me.edgan.redditslide.Fragments.InboxPage;
 import me.edgan.redditslide.Fragments.ModLog;
 import me.edgan.redditslide.Fragments.ModPage;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.UserSubscriptions;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
+import me.edgan.redditslide.util.MiscUtil;
 
 /** Created by ccrama on 9/17/2015. */
 public class ModQueue extends BaseActivityAnim {
@@ -37,11 +36,7 @@ public class ModQueue extends BaseActivityAnim {
         applyColorTheme("");
         setContentView(R.layout.activity_inbox);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         setupAppBar(R.id.toolbar, R.string.drawer_moderation, true, true);
 

@@ -3,7 +3,6 @@ package me.edgan.redditslide.Activities;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,12 +18,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.OpenRedditLink;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.UserSubscriptions;
 import me.edgan.redditslide.Views.CommentOverflow;
 import me.edgan.redditslide.util.SubmissionParser;
 import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
+import me.edgan.redditslide.util.MiscUtil;
 
 import net.dean.jraw.ApiException;
 import net.dean.jraw.managers.AccountManager;
@@ -47,11 +46,7 @@ public class Crosspost extends BaseActivity {
         applyColorTheme();
         setContentView(R.layout.activity_crosspost);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = this.getWindow();

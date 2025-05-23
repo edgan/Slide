@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,9 +12,9 @@ import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.BuildConfig;
 import me.edgan.redditslide.OpenRedditLink;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.util.ClipboardUtil;
 import me.edgan.redditslide.util.LinkUtil;
+import me.edgan.redditslide.util.MiscUtil;
 
 /** Created by l3d00m on 11/12/2015. */
 public class SettingsAbout extends BaseActivityAnim {
@@ -25,11 +24,7 @@ public class SettingsAbout extends BaseActivityAnim {
         applyColorTheme();
         setContentView(R.layout.activity_settings_about);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         setupAppBar(R.id.toolbar, R.string.settings_title_about, true, true);
 

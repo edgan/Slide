@@ -3,7 +3,6 @@ package me.edgan.redditslide.Activities;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +33,7 @@ import me.edgan.redditslide.ui.settings.SettingsGeneralFragment;
 import me.edgan.redditslide.util.KeyboardUtil;
 import me.edgan.redditslide.util.LayoutUtils;
 import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.MiscUtil;
 
 import net.dean.jraw.managers.InboxManager;
 
@@ -185,13 +185,7 @@ public class Inbox extends BaseActivityAnim {
         SettingValues.prefs.edit().putLong("lastInbox", System.currentTimeMillis()).apply();
         applyColorTheme("");
         setContentView(R.layout.activity_inbox);
-
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
-
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
         setupAppBar(R.id.toolbar, R.string.title_inbox, true, true);
         mToolbar.setPopupTheme(new ColorPreferences(this).getFontStyle().getBaseId());
 

@@ -2,7 +2,6 @@ package me.edgan.redditslide.Activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -17,9 +16,9 @@ import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.OfflineSubreddit;
 import me.edgan.redditslide.PostLoader;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
 import me.edgan.redditslide.util.LayoutUtils;
+import me.edgan.redditslide.util.MiscUtil;
 
 import net.dean.jraw.models.Submission;
 
@@ -54,11 +53,7 @@ public class Gallery extends FullScreenActivity implements SubmissionDisplay {
         super.onCreate(savedInstance);
         setContentView(R.layout.gallery);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         getWindow()
                 .getDecorView()

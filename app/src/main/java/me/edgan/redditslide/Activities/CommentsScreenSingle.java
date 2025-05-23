@@ -33,6 +33,7 @@ import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SwipeLayout.Utils;
 import me.edgan.redditslide.UserSubscriptions;
 import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.MiscUtil;
 
 import net.dean.jraw.models.Submission;
 
@@ -188,9 +189,7 @@ public class CommentsScreenSingle extends BaseActivityAnim {
         pager.setCurrentItem(1);
 
         if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            pager.setBackgroundColor(typedValue.data);
+            MiscUtil.setupOldSwipeModeBackground(this, pager);
 
             pager.addOnPageChangeListener(new CommonPageChangeListener() {
                 @Override

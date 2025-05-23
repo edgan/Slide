@@ -2,7 +2,6 @@ package me.edgan.redditslide.Activities;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.util.LogUtil;
+import me.edgan.redditslide.util.MiscUtil;
 
 public class SettingsGeneralActivity extends AppCompatActivity {
 
@@ -21,13 +20,7 @@ public class SettingsGeneralActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_general);
-
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
-
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
     }
 
     @Override

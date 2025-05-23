@@ -3,7 +3,6 @@ package me.edgan.redditslide.ui.settings;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 
@@ -17,6 +16,7 @@ import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Synccit.MySynccitReadTask;
 import me.edgan.redditslide.Synccit.MySynccitUpdateTask;
 import me.edgan.redditslide.Synccit.SynccitRead;
+import me.edgan.redditslide.util.MiscUtil;
 
 import java.util.Collections;
 
@@ -31,11 +31,7 @@ public class SettingsSynccit extends BaseActivityAnim {
         applyColorTheme();
         setContentView(R.layout.activity_settings_synccit);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         setupAppBar(R.id.toolbar, R.string.settings_synccit, true, true);
 

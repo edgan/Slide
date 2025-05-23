@@ -1,7 +1,6 @@
 package me.edgan.redditslide.ui.settings;
 
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -11,6 +10,7 @@ import androidx.appcompat.widget.PopupMenu;
 import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.util.MiscUtil;
 
 /** Created by ccrama on 3/5/2015. */
 public class SettingsViewType extends BaseActivityAnim {
@@ -20,11 +20,7 @@ public class SettingsViewType extends BaseActivityAnim {
         applyColorTheme();
         setContentView(R.layout.activity_settings_viewtype);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         setupAppBar(R.id.toolbar, R.string.settings_view_type, true, true);
 

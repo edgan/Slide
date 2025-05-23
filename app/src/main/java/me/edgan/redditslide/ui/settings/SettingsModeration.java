@@ -1,12 +1,11 @@
 package me.edgan.redditslide.ui.settings;
 
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.ViewGroup;
 
 import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
+import me.edgan.redditslide.util.MiscUtil;
 
 public class SettingsModeration extends BaseActivityAnim {
     private SettingsModerationFragment fragment = new SettingsModerationFragment(this);
@@ -17,11 +16,7 @@ public class SettingsModeration extends BaseActivityAnim {
         applyColorTheme();
         setContentView(R.layout.activity_settings_moderation);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         setupAppBar(R.id.toolbar, R.string.settings_moderation, true, true);
 

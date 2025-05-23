@@ -1,7 +1,6 @@
 package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
-import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -9,11 +8,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Fragments.ReadLaterView;
 import me.edgan.redditslide.R;
-import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Visuals.ColorPreferences;
+import me.edgan.redditslide.util.MiscUtil;
 
 /** Created by ccrama on 9/17/2015. */
 public class PostReadLater extends BaseActivityAnim {
@@ -27,11 +25,7 @@ public class PostReadLater extends BaseActivityAnim {
         applyColorTheme();
         setContentView(R.layout.activity_read_later);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         setupAppBar(R.id.toolbar, this.getString(R.string.read_later), true, true);
         mToolbar.setPopupTheme(new ColorPreferences(this).getFontStyle().getBaseId());

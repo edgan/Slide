@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,6 +47,7 @@ import me.edgan.redditslide.ui.settings.SettingsThemeFragment;
 import me.edgan.redditslide.util.BlendModeUtil;
 import me.edgan.redditslide.util.DialogUtil;
 import me.edgan.redditslide.util.DisplayUtil;
+import me.edgan.redditslide.util.MiscUtil;
 
 import net.dean.jraw.http.MultiRedditUpdateRequest;
 import net.dean.jraw.managers.MultiRedditManager;
@@ -225,11 +225,7 @@ public class ReorderSubreddits extends BaseActivityAnim {
         applyColorTheme();
         setContentView(R.layout.activity_sort);
 
-        if (SettingValues.oldSwipeMode) {
-            TypedValue typedValue = new TypedValue();
-            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
-            getWindow().getDecorView().setBackgroundColor(typedValue.data);
-        }
+        MiscUtil.setupOldSwipeModeBackground(this, getWindow().getDecorView());
 
         setupAppBar(R.id.toolbar, R.string.settings_manage_subscriptions, false, true);
         mToolbar.setPopupTheme(new ColorPreferences(this).getFontStyle().getBaseId());
