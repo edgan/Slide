@@ -2,6 +2,7 @@ package me.edgan.redditslide.ui.settings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -31,6 +32,12 @@ public class EditCardsLayout extends BaseActivityAnim {
 
         applyColorTheme();
         setContentView(R.layout.activity_settings_theme_card);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
 
         setupAppBar(R.id.toolbar, R.string.settings_layout_default, true, true);
 
