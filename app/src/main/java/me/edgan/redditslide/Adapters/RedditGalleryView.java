@@ -288,6 +288,10 @@ public class RedditGalleryView extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             holder.saveButton.setVisibility(View.GONE);
             holder.moreButton.setVisibility(View.GONE);
+            View commentsButton = holder.rootView.findViewById(R.id.comments);
+            if (commentsButton != null) {
+                commentsButton.setVisibility(View.GONE);
+            }
 
             // Hide the "save" button if user preference is off
             if (!SettingValues.imageDownloadButton) {

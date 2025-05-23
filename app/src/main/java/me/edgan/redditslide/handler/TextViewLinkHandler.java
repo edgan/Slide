@@ -6,6 +6,7 @@ import android.text.Selection;
 import android.text.Spannable;
 import android.text.method.BaseMovementMethod;
 import android.text.style.URLSpan;
+import android.text.style.ImageSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
@@ -101,17 +102,64 @@ public class TextViewLinkHandler extends BaseMovementMethod {
                     handler.removeCallbacksAndMessages(null);
 
                     if (!clickHandled) {
-                        // regular click
-                        if (link.length != 0) {
-                            int i = 0;
-                            if (sequence != null) {
-                                i = sequence.getSpanEnd(link[0]);
+                        URLSpan tappedUrlSpan = link[0];
+                        ImageSpan[] imageSpansAtTapOffset = buffer.getSpans(off, off, ImageSpan.class);
+                        int urlSpanStart = buffer.getSpanStart(tappedUrlSpan);
+                        int urlSpanEnd = buffer.getSpanEnd(tappedUrlSpan);
+
+                        ImageSpan[] allImageSpansInUrl = buffer.getSpans(urlSpanStart, urlSpanEnd, ImageSpan.class);
+                        boolean hasImageInUrl = allImageSpansInUrl.length > 0;
+                        boolean isEffectivelyImageOnlyLink = false;
+
+                        if (hasImageInUrl) {
+                            isEffectivelyImageOnlyLink = true;
+                            for (int i = urlSpanStart; i < urlSpanEnd; i++) {
+                                boolean charIsImage = false;
+                                for (ImageSpan imgSpan : allImageSpansInUrl) {
+                                    if (i >= buffer.getSpanStart(imgSpan) && i < buffer.getSpanEnd(imgSpan)) {
+                                        charIsImage = true;
+                                        break;
+                                    }
+                                }
+                                if (!charIsImage && !Character.isWhitespace(buffer.charAt(i))) {
+                                    isEffectivelyImageOnlyLink = false;
+                                    break;
+                                }
                             }
-                            if (!link[0].getURL().isEmpty()) {
-                                clickableText.onLinkClick(link[0].getURL(), i, subreddit, link[0]);
+                        }
+
+                        if (isEffectivelyImageOnlyLink) {
+                            if (imageSpansAtTapOffset.length > 0) {
+                                ImageSpan tappedImageSpan = imageSpansAtTapOffset[0];
+                                android.graphics.drawable.Drawable drawable = tappedImageSpan.getDrawable();
+
+                                if (drawable != null && drawable.getBounds().width() > 0 && drawable.getBounds().height() > 0) {
+                                    int spanStartOffset = buffer.getSpanStart(tappedImageSpan);
+
+                                    float imageDrawStartX = layout.getPrimaryHorizontal(spanStartOffset);
+                                    float imageDrawEndX = imageDrawStartX + drawable.getBounds().width();
+
+                                    int imageStartLine = layout.getLineForOffset(spanStartOffset);
+                                    float imageDrawEndY = layout.getLineBottom(imageStartLine);
+                                    float imageDrawStartY = imageDrawEndY - drawable.getBounds().height();
+
+                                    if (x >= imageDrawStartX && x < imageDrawEndX &&
+                                        y >= imageDrawStartY && y < imageDrawEndY) {
+                                        clickableText.onLinkClick(tappedUrlSpan.getURL(), urlSpanEnd, subreddit, tappedUrlSpan);
+                                    } else {
+                                        Selection.removeSelection(buffer);
+                                        return false;
+                                    }
+                                } else {
+                                    Selection.removeSelection(buffer);
+                                    return false;
+                                }
+                            } else {
+                                Selection.removeSelection(buffer);
+                                return false;
                             }
                         } else {
-                            return false;
+                            clickableText.onLinkClick(tappedUrlSpan.getURL(), urlSpanEnd, subreddit, tappedUrlSpan);
                         }
                     }
                     break;
