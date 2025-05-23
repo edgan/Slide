@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import com.canhub.cropper.CropImageView;
 
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.CanvasView;
 import me.edgan.redditslide.Views.DoEditorActions;
 import me.edgan.redditslide.Visuals.Palette;
@@ -52,6 +54,13 @@ public class Draw extends BaseActivity implements ColorChooserDialog.ColorCallba
         super.onCreate(savedInstance);
         applyColorTheme("");
         setContentView(R.layout.activity_draw);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         drawView = (CanvasView) findViewById(R.id.paintView);
         drawView.setBaseColor(Color.parseColor("#303030"));
         color = findViewById(R.id.color);

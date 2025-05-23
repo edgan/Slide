@@ -3,6 +3,7 @@ package me.edgan.redditslide.Activities;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import com.wuman.jreadability.Readability;
 import me.edgan.redditslide.Constants;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.Visuals.Palette;
 import me.edgan.redditslide.util.LinkUtil;
@@ -37,6 +39,12 @@ public class ReaderMode extends BaseActivityAnim {
         super.onCreate(savedInstanceState);
         applyColorTheme("");
         setContentView(R.layout.activity_reader);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
 
         mSubredditColor =
                 getIntent().getExtras().getInt(LinkUtil.EXTRA_COLOR, Palette.getDefaultColor());

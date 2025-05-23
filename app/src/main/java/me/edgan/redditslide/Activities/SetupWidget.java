@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import me.edgan.redditslide.Adapters.SubChooseAdapter;
 import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.UserSubscriptions;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.FontPreferences;
@@ -60,6 +62,13 @@ public class SetupWidget extends BaseActivity {
     public void doShortcut() {
 
         setContentView(R.layout.activity_setup_widget);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         setupAppBar(R.id.toolbar, R.string.widget_creation_title, true, true);
         header = getLayoutInflater().inflate(R.layout.widget_header, null);
 

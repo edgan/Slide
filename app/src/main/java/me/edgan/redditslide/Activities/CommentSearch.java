@@ -2,6 +2,7 @@ package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
 import android.text.Editable;
+import android.util.TypedValue;
 import android.widget.EditText;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,7 @@ import me.edgan.redditslide.Adapters.CommentItem;
 import me.edgan.redditslide.Adapters.CommentObject;
 import me.edgan.redditslide.DataShare;
 import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
 
@@ -34,6 +36,12 @@ public class CommentSearch extends BaseActivityAnim {
         super.onCreate(savedInstance);
         applyColorTheme();
         setContentView(R.layout.activity_filtercomments);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
 
         final EditText search = (EditText) findViewById(R.id.search);
         RecyclerView rv = (RecyclerView) findViewById(R.id.vertical_content);

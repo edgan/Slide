@@ -2,6 +2,7 @@ package me.edgan.redditslide.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ import me.edgan.redditslide.Adapters.ContributionAdapter;
 import me.edgan.redditslide.Adapters.SubredditSearchPosts;
 import me.edgan.redditslide.Constants;
 import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Visuals.ColorPreferences;
@@ -48,6 +50,13 @@ public class Related extends BaseActivityAnim {
 
         applyColorTheme("");
         setContentView(R.layout.activity_search);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         Intent intent = getIntent();
         if (intent.hasExtra(Intent.EXTRA_TEXT)
                 && !intent.getExtras().getString(Intent.EXTRA_TEXT, "").isEmpty()) {

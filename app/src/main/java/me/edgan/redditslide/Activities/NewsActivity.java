@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -142,6 +143,12 @@ public class NewsActivity extends BaseActivity
         applyColorTheme();
 
         setContentView(R.layout.activity_news);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setPopupTheme(new ColorPreferences(this).getFontStyle().getBaseId());

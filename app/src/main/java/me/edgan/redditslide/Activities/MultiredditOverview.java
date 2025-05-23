@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -335,6 +336,13 @@ public class MultiredditOverview extends BaseActivityAnim {
 
         applyColorTheme("");
         setContentView(R.layout.activity_multireddits);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         setupAppBar(R.id.toolbar, R.string.title_multireddits, true, false);
 
         findViewById(R.id.header).setBackgroundColor(Palette.getDefaultColor());

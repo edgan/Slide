@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,6 +40,7 @@ import me.edgan.redditslide.Authentication;
 import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.R;
 import me.edgan.redditslide.Reddit;
+import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.SpoilerRobotoTextView;
 import me.edgan.redditslide.Views.CommentOverflow;
 import me.edgan.redditslide.Views.SidebarLayout;
@@ -108,6 +110,13 @@ public class LiveThread extends BaseActivityAnim {
         applyColorTheme();
 
         setContentView(R.layout.activity_livethread);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         baseRecycler = (RecyclerView) findViewById(R.id.content_view);
         baseRecycler.setLayoutManager(new LinearLayoutManager(LiveThread.this));
         new AsyncTask<Void, Void, Void>() {

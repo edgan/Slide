@@ -1,6 +1,7 @@
 package me.edgan.redditslide.Activities;
 
 import android.os.Bundle;
+import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,6 +14,7 @@ import me.edgan.redditslide.ContentType;
 import me.edgan.redditslide.Fragments.AlbumFullComments;
 import me.edgan.redditslide.Fragments.MediaFragmentComment;
 import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
 
 import net.dean.jraw.models.Comment;
 
@@ -32,6 +34,12 @@ public class ShadowboxComments extends FullScreenActivity {
         applyDarkColorTheme(comments.get(0).comment.getComment().getSubredditName());
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_slide);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
 
         ViewPager pager = (ViewPager) findViewById(R.id.content_view);
         commentPager = new ShadowboxCommentsPagerAdapter(getSupportFragmentManager());

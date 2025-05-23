@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import me.edgan.redditslide.Adapters.ContributionAdapter;
 import me.edgan.redditslide.Adapters.SubredditSearchPosts;
 import me.edgan.redditslide.Constants;
 import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Views.CatchStaggeredGridLayoutManager;
 import me.edgan.redditslide.Views.PreCachingLayoutManager;
 import me.edgan.redditslide.Visuals.ColorPreferences;
@@ -242,6 +244,13 @@ public class Search extends BaseActivityAnim {
 
         applyColorTheme("");
         setContentView(R.layout.activity_search);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         where = getIntent().getExtras().getString(EXTRA_TERM, "");
 
         time = TimePeriod.ALL;

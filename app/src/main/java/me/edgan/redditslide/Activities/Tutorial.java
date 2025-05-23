@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,6 +83,12 @@ public class Tutorial extends AppCompatActivity {
 
         binding = ActivityTutorialBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
 
         // The pager adapter, which provides the pages to the view pager widget.
         binding.tutorialViewPager.setAdapter(new TutorialPagerAdapter(getSupportFragmentManager()));
