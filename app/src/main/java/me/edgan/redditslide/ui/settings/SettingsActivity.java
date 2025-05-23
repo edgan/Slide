@@ -42,6 +42,7 @@ import me.edgan.redditslide.util.stubs.SimpleTextWatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import android.util.TypedValue;
 
 /** Created by ccrama on 3/5/2015. */
 public class SettingsActivity extends BaseActivity implements RestartActivity {
@@ -129,6 +130,13 @@ public class SettingsActivity extends BaseActivity implements RestartActivity {
         super.onCreate(savedInstanceState);
         applyColorTheme();
         setContentView(R.layout.activity_settings);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         setupAppBar(R.id.toolbar, R.string.title_settings, true, true);
 
         if (getIntent() != null
