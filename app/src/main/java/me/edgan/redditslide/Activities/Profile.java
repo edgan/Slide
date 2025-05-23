@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -118,6 +119,13 @@ public class Profile extends BaseActivityAnim {
 
         applyColorTheme();
         setContentView(R.layout.activity_profile);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         setupUserAppBar(R.id.toolbar, name, true, name);
         mToolbar.setPopupTheme(new ColorPreferences(this).getFontStyle().getBaseId());
 

@@ -3,6 +3,7 @@ package me.edgan.redditslide.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import me.edgan.redditslide.Fragments.SubredditListView;
 import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.Visuals.ColorPreferences;
 import me.edgan.redditslide.Visuals.Palette;
 
@@ -92,6 +94,12 @@ public class Discover extends BaseActivityAnim {
 
         applyColorTheme("");
         setContentView(R.layout.activity_multireddits);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
 
         ((DrawerLayout) findViewById(R.id.drawer_layout))
                 .setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,6 +29,13 @@ public class SettingsGeneral extends BaseActivityAnim implements StorageUtil.Dir
         super.onCreate(savedInstanceState);
         applyColorTheme();
         setContentView(R.layout.activity_settings_general);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         setupAppBar(R.id.toolbar, R.string.settings_title_general, true, true);
 
         ((ViewGroup) findViewById(R.id.settings_general))

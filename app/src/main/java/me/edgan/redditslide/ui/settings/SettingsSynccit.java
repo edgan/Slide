@@ -3,6 +3,7 @@ package me.edgan.redditslide.ui.settings;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;
 
@@ -29,6 +30,13 @@ public class SettingsSynccit extends BaseActivityAnim {
         super.onCreate(savedInstanceState);
         applyColorTheme();
         setContentView(R.layout.activity_settings_synccit);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         setupAppBar(R.id.toolbar, R.string.settings_synccit, true, true);
 
         name = (EditText) findViewById(R.id.name);

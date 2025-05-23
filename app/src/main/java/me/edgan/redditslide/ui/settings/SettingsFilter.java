@@ -7,6 +7,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -41,6 +42,13 @@ public class SettingsFilter extends BaseActivityAnim {
         super.onCreate(savedInstanceState);
         applyColorTheme();
         setContentView(R.layout.activity_settings_filters);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         setupAppBar(R.id.toolbar, R.string.settings_title_filter, true, true);
 
         // Initialize memory filters as empty at app start

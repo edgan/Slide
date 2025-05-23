@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -223,6 +224,13 @@ public class ReorderSubreddits extends BaseActivityAnim {
         super.onCreate(savedInstanceState);
         applyColorTheme();
         setContentView(R.layout.activity_sort);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         setupAppBar(R.id.toolbar, R.string.settings_manage_subscriptions, false, true);
         mToolbar.setPopupTheme(new ColorPreferences(this).getFontStyle().getBaseId());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

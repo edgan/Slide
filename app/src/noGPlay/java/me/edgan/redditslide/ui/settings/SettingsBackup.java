@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.util.Log;
+import android.util.TypedValue;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.documentfile.provider.DocumentFile;
@@ -56,6 +57,13 @@ public class SettingsBackup extends BaseActivityAnim {
         super.onCreate(savedInstanceState);
         applyColorTheme();
         setContentView(R.layout.activity_settings_sync);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         setupAppBar(R.id.toolbar, R.string.settings_title_backup, true, true);
 
         // Set up the local backup/restore UI

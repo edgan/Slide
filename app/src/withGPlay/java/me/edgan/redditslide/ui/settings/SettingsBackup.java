@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.util.Log;
+import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -34,6 +35,7 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import me.edgan.redditslide.Activities.BaseActivityAnim;
 import me.edgan.redditslide.R;
+import me.edgan.redditslide.SettingValues;
 import me.edgan.redditslide.util.LayoutUtils;
 import me.edgan.redditslide.util.StorageUtil;
 
@@ -97,6 +99,13 @@ public class SettingsBackup extends BaseActivityAnim {
 
         applyColorTheme();
         setContentView(R.layout.activity_settings_sync);
+
+        if (SettingValues.oldSwipeMode) {
+            TypedValue typedValue = new TypedValue();
+            getTheme().resolveAttribute(R.attr.card_background, typedValue, true);
+            getWindow().getDecorView().setBackgroundColor(typedValue.data);
+        }
+
         setupAppBar(R.id.toolbar, R.string.settings_title_backup, true, true);
 
         // Initialize Google sign-in
